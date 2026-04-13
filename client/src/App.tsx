@@ -9,7 +9,7 @@ const TINTS = {
   coral: '#FF6B9D',
   orange: '#FF9D6B',
   yellow: '#FFD666',
-  green: '#6BFF9D',
+  green: '#22C55E',
   blue: '#6BD4FF',
   purple: '#9D6BFF',
 };

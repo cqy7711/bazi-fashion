@@ -15,7 +15,7 @@ const PALETTE = {
   coral: '#FF6B9D', coralLight: 'rgba(255,107,157,0.12)',
   orange: '#FF9D6B', orangeLight: 'rgba(255,157,107,0.12)',
   yellow: '#FFD666', yellowLight: 'rgba(255,214,102,0.12)',
-  green: '#6BFF9D', greenLight: 'rgba(107,255,157,0.12)',
+  green: '#22C55E', greenLight: 'rgba(34,197,94,0.12)',
   blue: '#6BD4FF', blueLight: 'rgba(107,212,255,0.12)',
   purple: '#9D6BFF', purpleLight: 'rgba(157,107,255,0.12)',
 };

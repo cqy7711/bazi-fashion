@@ -20,7 +20,7 @@ const PALETTE = {
   coral: '#FF6B9D', coralLight: 'rgba(255,107,157,0.1)',
   orange: '#FF9D6B', orangeLight: 'rgba(255,157,107,0.1)',
   yellow: '#FFD666', yellowLight: 'rgba(255,214,102,0.12)',
-  green: '#6BFF9D', greenLight: 'rgba(107,255,157,0.1)',
+  green: '#22C55E', greenLight: 'rgba(34,197,94,0.1)',
   blue: '#6BD4FF', blueLight: 'rgba(107,212,255,0.1)',
   purple: '#9D6BFF', purpleLight: 'rgba(157,107,255,0.1)',
   text: '#1A1A2E', textSecondary: '#6B7280', textMuted: '#A0A8C0',
