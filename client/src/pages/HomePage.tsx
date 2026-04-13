@@ -1088,11 +1088,12 @@ export default function HomePage() {
         </div>
       </motion.div>
 
-      {/* ── 主体单栏布局 ── */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      {/* ── 主体双栏布局 ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.5fr)', gap: '20px', alignItems: 'start' }}>
 
-        {/* 第一行：我的生辰 | 命盘信息 | 今日运势 并排 */}
-        <div style={{ display: 'flex', flexDirection: 'row', gap: '12px', alignItems: 'stretch' }}>
+        {/* ── 左栏：我的生辰 + 命盘信息（并排）+ 今日运势（下方） ── */}
+        <motion.div {...fadeUp} transition={{ delay: 0.05 }}>
+          <div style={{ display: 'flex', flexDirection: 'row', gap: '12px', alignItems: 'stretch' }}>
 
           {/* 用户记录卡片 */}
           <div style={{
@@ -1274,7 +1275,7 @@ export default function HomePage() {
                         background: elementColors[dmEl],
                         fontFamily: 'Outfit', fontSize: '14px', fontWeight: 800, color: '#fff',
                       }}>
-                        {previewInfo.baziResult.dayPillar}
+                        {(previewInfo.baziResult as any).dayPillar}
                       </span>
                       <div>
                         <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: elementColors[dmEl], margin: 0 }}>
@@ -1592,13 +1593,14 @@ export default function HomePage() {
             </div>
           )}
 
-        </div>{/* 关闭第一行 flex */}
+        </motion.div>
 
-        {/* 第二行：今日穿搭 | 今日手串 并排 */}
-        <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'stretch' }}>
+        {/* ── 右栏：今日穿搭 + 手串 ── */}
+        {selectedRecord && previewInfo && previewInfo.baziResult && (
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
-          {/* 今日穿搭建议卡片 */}
-          {outfitRec && (
+            {/* 今日穿搭建议卡片 */}
+            {outfitRec && (
               <div style={{
                 background: '#FFFFFF', borderRadius: '24px', padding: '20px',
                 boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8', marginBottom: '16px',
@@ -1879,9 +1881,9 @@ export default function HomePage() {
                       {/* 色彩推荐 */}
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
                         {[
-                          { label: '宜穿', items: outfitRec.primaryColors || [], color: PALETTE.green, bg: `${PALETTE.green}08` },
-                          { label: '辅助', items: outfitRec.secondaryColors || [], color: PALETTE.blue, bg: `${PALETTE.blue}08` },
-                          { label: '规避', items: outfitRec.avoidColors || [], color: '#C0C5D8', bg: '#F8F9FC' },
+                          { label: '宜穿', items: (outfitRec || {}).primaryColors || [], color: PALETTE.green, bg: `${PALETTE.green}08` },
+                          { label: '辅助', items: (outfitRec || {}).secondaryColors || [], color: PALETTE.blue, bg: `${PALETTE.blue}08` },
+                          { label: '规避', items: (outfitRec || {}).avoidColors || [], color: '#C0C5D8', bg: '#F8F9FC' },
                         ].map(({ label, items, color, bg }) => (
                           <div key={label} style={{
                             background: bg, borderRadius: '12px', padding: '10px 8px', textAlign: 'center',
@@ -2495,7 +2497,7 @@ export default function HomePage() {
                       })()}
 
                       {/* 次选手串 - 简化展示 */}
-                      {(braceletRec.recommendations || (braceletRec as any).secondaryBracelets || []).map((r: any, i: number) => {
+                      {((braceletRec as any).recommendations || (braceletRec as any).secondaryBracelets || []).map((r: any, i: number) => {
                         const material = r.material || r.name || '';
                         const details = getBraceletDetails(material);
                         // 优先使用API返回的图片，其次使用本地数据库
