@@ -1088,10 +1088,10 @@ export default function HomePage() {
         </div>
       </motion.div>
 
-      {/* ── 主体双栏布局 ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.5fr)', gap: '20px', alignItems: 'start' }}>
+      {/* ── 主体单列布局 ── */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'stretch' }}>
 
-        {/* ── 左栏：我的生辰 + 命盘信息（并排）+ 今日运势（下方） ── */}
+        {/* ── 第一行：我的生辰 + 命盘信息 + 今日运势（3列并排） ── */}
         <motion.div {...fadeUp} transition={{ delay: 0.05 }}>
           <div style={{ display: 'flex', flexDirection: 'row', gap: '12px', alignItems: 'stretch' }}>
 
@@ -1452,12 +1452,12 @@ export default function HomePage() {
               </div>
             )
           )}
-          </div>{/* 结束：我的生辰 + 命盘信息并排 */}
+          </div>
 
-          {/* 今日运势 - 移至命盘信息旁边，并排显示 */}
+          {/* 今日运势 - 第一行第三列 */}
           {dailyFortune && (
             <div style={{
-              flex: '0 0 38%',
+              flex: 1,
               background: '#FFFFFF', borderRadius: '24px', padding: '20px',
               boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8',
               maxHeight: '520px', overflowY: 'auto',
@@ -1597,13 +1597,14 @@ export default function HomePage() {
 
         {/* ── 右栏：今日穿搭 + 手串 ── */}
         {selectedRecord && previewInfo && previewInfo.baziResult && (
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }} style={{ display: 'flex', flexDirection: 'row', gap: '12px', alignItems: 'stretch' }}>
 
             {/* 今日穿搭建议卡片 */}
             {outfitRec && (
               <div style={{
+                flex: 1,
                 background: '#FFFFFF', borderRadius: '24px', padding: '20px',
-                boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8', marginBottom: '16px',
+                boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
                   <div style={{
@@ -2265,8 +2266,9 @@ export default function HomePage() {
                 {/* 今日手串推荐卡片 - 独立卡片 */}
                 {braceletRec && (
                   <div style={{
+                    flex: 1,
                     background: '#FFFFFF', borderRadius: '24px', padding: '20px',
-                    boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8', marginBottom: '16px',
+                    boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8',
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
                       <div style={{
