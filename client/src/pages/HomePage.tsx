@@ -1652,10 +1652,9 @@ export default function HomePage() {
                       <d.icon style={{ width: '13px', height: '13px', color: d.color }} />
                       <p style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700, color: '#555' }}>{d.label}</p>
                     </div>
-                    {/* 分数 + 标签 */}
-                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px', marginBottom: '3px' }}>
+                    {/* 分数 */}
+                    <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '3px' }}>
                       <p style={{ fontFamily: 'Outfit', fontSize: '22px', fontWeight: 900, color: getScoreColor(d.score), lineHeight: 1 }}>{d.score}</p>
-                      <p style={{ fontFamily: 'Outfit', fontSize: '9.5px', fontWeight: 600, color: getScoreColor(d.score), opacity: 0.75 }}>{d.label}</p>
                     </div>
                     {/* 描述文字 */}
                     <p style={{ fontFamily: 'Outfit', fontSize: '10px', color: '#999', lineHeight: 1.35, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.desc}</p>
