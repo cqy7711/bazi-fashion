@@ -1173,29 +1173,98 @@ export default function HomePage() {
               </div>
             ) : selectedRecord ? (
               <div>
+                {/* 顶部装饰条 */}
+                <div style={{
+                  height: '4px', borderRadius: '2px', marginBottom: '14px',
+                  background: `linear-gradient(90deg, ${PALETTE.coral}, ${PALETTE.orange}, ${PALETTE.purple})`,
+                }} />
+
                 {/* 用户详细信息 */}
-                <div style={{ marginBottom: '12px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '22px', fontWeight: 800, color: PALETTE.coral }}>{selectedRecord.name}</span>
-                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#A0A8C0', background: '#F5F5F8', padding: '3px 10px', borderRadius: '9999px' }}>{selectedRecord.gender === 'male' ? '♂ 男' : '♀ 女'}</span>
+                <div style={{ marginBottom: '14px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '22px', fontWeight: 800, color: PALETTE.coral }}>{selectedRecord.name}</span>
+                      <span style={{
+                        fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600,
+                        color: selectedRecord.gender === 'male' ? PALETTE.blue : PALETTE.purple,
+                        background: selectedRecord.gender === 'male' ? `${PALETTE.blue}15` : `${PALETTE.purple}15`,
+                        padding: '2px 10px', borderRadius: '9999px',
+                      }}>{selectedRecord.gender === 'male' ? '♂ 男' : '♀ 女'}</span>
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '6px' }}>
+
+                  {/* 出生时间信息网格 */}
+                  <div style={{
+                    display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px',
+                    marginBottom: '10px',
+                  }}>
                     {[
-                      { label: '年', value: selectedRecord.birthYear },
-                      { label: '月', value: selectedRecord.birthMonth },
-                      { label: '日', value: selectedRecord.birthDay },
-                      { label: '时', value: selectedRecord.birthHour != null ? `${selectedRecord.birthHour}:00` : '未知' },
+                      { label: '年', value: selectedRecord.birthYear, color: PALETTE.coral },
+                      { label: '月', value: selectedRecord.birthMonth, color: PALETTE.orange },
+                      { label: '日', value: selectedRecord.birthDay, color: PALETTE.purple },
+                      { label: '时', value: selectedRecord.birthHour != null ? `${selectedRecord.birthHour}:00` : '--', color: PALETTE.blue },
                     ].map(item => (
-                      <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#A0A8C0' }}>{item.label}</span>
-                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#1A1A2E' }}>{item.value}</span>
+                      <div key={item.label} style={{
+                        background: `${item.color}10`,
+                        borderRadius: '10px', padding: '8px 4px',
+                        textAlign: 'center', border: `1px solid ${item.color}20`,
+                      }}>
+                        <div style={{ fontFamily: 'Outfit', fontSize: '9px', color: '#A0A8C0', marginBottom: '2px' }}>{item.label}</div>
+                        <div style={{ fontFamily: 'Outfit', fontSize: '14px', fontWeight: 800, color: item.color }}>{item.value}</div>
                       </div>
                     ))}
                   </div>
-                  <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#A0A8C0' }}>
-                    {selectedRecord.calendarType === 'lunar' ? '农历' : '公历'}
+
+                  {/* 历法和旬空信息 */}
+                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                    <span style={{
+                      fontFamily: 'Outfit', fontSize: '10px', fontWeight: 600,
+                      color: PALETTE.green, background: `${PALETTE.green}15`,
+                      padding: '3px 10px', borderRadius: '9999px',
+                    }}>{selectedRecord.calendarType === 'lunar' ? '🌙 农历' : '☀️ 公历'}</span>
+                    {previewInfo?.baziResult && (
+                      <span style={{
+                        fontFamily: 'Outfit', fontSize: '10px', fontWeight: 600,
+                        color: PALETTE.orange, background: `${PALETTE.orange}15`,
+                        padding: '3px 10px', borderRadius: '9999px',
+                      }}>{previewInfo.baziResult.yearPillar?.ganZhu || ''}年</span>
+                    )}
                   </div>
                 </div>
+
+                {/* 八字四柱展示 */}
+                {previewInfo?.baziResult && (
+                  <div style={{
+                    background: 'linear-gradient(135deg, #FAFAFA, #F5F5F8)',
+                    borderRadius: '14px', padding: '12px', marginBottom: '12px',
+                    border: '1px solid #F0F1F8',
+                  }}>
+                    <div style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 600, color: '#A0A8C0', marginBottom: '8px', textAlign: 'center' }}>
+                      八字四柱
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '4px' }}>
+                      {[
+                        { label: '年柱', value: previewInfo.baziResult.yearPillar?.ganZhu || '--', element: previewInfo.baziResult.yearPillar?.element || '' },
+                        { label: '月柱', value: previewInfo.baziResult.monthPillar?.ganZhu || '--', element: previewInfo.baziResult.monthPillar?.element || '' },
+                        { label: '日柱', value: previewInfo.baziResult.dayPillar?.ganZhu || '--', element: previewInfo.baziResult.dayPillar?.element || '' },
+                        { label: '时柱', value: previewInfo.baziResult.hourPillar?.ganZhu || '--', element: previewInfo.baziResult.hourPillar?.element || '' },
+                      ].map(p => {
+                        const elColor = elementColors[p.element] || PALETTE.coral;
+                        return (
+                          <div key={p.label} style={{ textAlign: 'center' }}>
+                            <div style={{ fontFamily: 'Outfit', fontSize: '9px', color: '#A0A8C0', marginBottom: '2px' }}>{p.label}</div>
+                            <div style={{
+                              fontFamily: 'Outfit', fontSize: '12px', fontWeight: 800,
+                              color: elColor, background: `${elColor}15`,
+                              padding: '4px 2px', borderRadius: '6px',
+                            }}>{p.value}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 {/* 编辑 / 删除按钮 */}
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <motion.button
