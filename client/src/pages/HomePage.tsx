@@ -1257,11 +1257,11 @@ export default function HomePage() {
                   water: '水气通于冬，代表智慧、流动与变通。日主为水者，通常聪明机敏，适应力强，善于察言观色，但若水气过旺则易消极逃避。宜积极进取，勇于面对挑战。',
                 };
                 const mingGeDesc: Record<string, string> = {
-                  wood: '木命人仁慈温和，具有较强的创造力和直觉感知力。性格上倾向于理想主义，有同情心，善于倾听。由于木气旺相，需注意肝胆健康，避免熬夜。此命格适合文化创意、教育、农林、设计等行业，与木火属性的事物缘分较深。',
-                  fire: '火命人热情开朗，行动力强，善于表达和社交。精力充沛，思维敏捷，有领导气质。但由于火气过旺，需注意心血管健康和脾气管理。此命格适合销售、演讲、政治、娱乐、公关等需要表达和影响力的行业。',
-                  earth: '土命人稳重踏实，诚实守信，有责任心和耐心。善于积累和管理，做事有始有终。由于土气厚重，需注意脾胃消化和思虑过度。此命格适合建筑、农业、管理、财务、仓储等需要稳定和耐心的行业。',
-                  metal: '金命人果断坚定，正义感强，善于决断和逻辑分析。做事有原则，讲究效率，有较强的执行力。由于金气清刚，需注意肺部呼吸系统和筋骨关节。此命格适合金融、法律、科技、外交、机械等需要决断和理性的行业。',
-                  water: '水命人聪明灵活，适应力强，善于变通和随机应变。思维敏捷，有洞察力，善于把握机会。由于水气流通，需注意泌尿系统和肾功能。此命格适合贸易、物流、媒体、服务、金融等需要灵活应变的行业。',
+                  wood: '🌿 性格温和仁慈，创造力与直觉力强，理想主义者\n💪 优点：有同情心，善于倾听，规划能力强\n⚠️ 注意：肝胆健康，避免熬夜和情绪压抑\n💼 适合：文化创意、教育、农林、设计\n🔥 缘分：与木火属性事物缘分深',
+                  fire: '🔥 性格热情开朗，行动力与表达力强，天生的领导者\n💪 优点：精力充沛，思维敏捷，感染力强\n⚠️ 注意：心血管健康，脾气管理，少熬夜\n💼 适合：销售、演讲、政治、娱乐、公关\n💡 建议：修身养性，避免过度竞争',
+                  earth: '🏔️ 性格稳重踏实，诚信可靠，责任心与耐心极强\n💪 优点：善于积累，做事有始有终，脚踏实地\n⚠️ 注意：脾胃消化，避免思虑过度和消极\n💼 适合：建筑、农业、管理、财务、仓储\n💡 建议：开阔视野，多与外界交流',
+                  metal: '⚔️ 性格果断坚定，正义感强，原则性强且讲究效率\n💪 优点：决策力强，逻辑清晰，执行力高\n⚠️ 注意：肺部呼吸，筋骨关节，少吃辛辣\n💼 适合：金融、法律、科技、外交、机械\n💡 建议：柔和待人，注重情义沟通',
+                  water: '🌊 性格聪明灵活，适应力与变通性极强，洞察力敏锐\n💪 优点：善于察言观色，把握机会，思维敏捷\n⚠️ 注意：泌尿系统，肾功能，避免过度劳累\n💼 适合：贸易、物流、媒体、服务、金融\n💡 建议：积极进取，勇于面对挑战',
                 };
                 return (
                   <div style={{
@@ -1294,10 +1294,14 @@ export default function HomePage() {
                       background: `${elementColors[dmEl]}10`,
                       border: `1px solid ${elementColors[dmEl]}15`,
                     }}>
-                      <p style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 600, color: elementColors[dmEl], marginBottom: '4px' }}>命格分析</p>
-                      <p style={{ fontFamily: 'Outfit', fontSize: '10px', color: '#6B7280', lineHeight: 1.5 }}>
-                        {mingGeDesc[dmEl]}
-                      </p>
+                      <p style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 600, color: elementColors[dmEl], marginBottom: '6px' }}>命格分析</p>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                        {mingGeDesc[dmEl].split('\n').map((line, i) => (
+                          <p key={i} style={{ fontFamily: 'Outfit', fontSize: '10px', color: '#6B7280', lineHeight: 1.6, margin: 0 }}>
+                            {line}
+                          </p>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 );
