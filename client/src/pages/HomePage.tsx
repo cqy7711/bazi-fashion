@@ -1204,11 +1204,226 @@ export default function HomePage() {
           </div>
         </motion.div>
 
-        {selectedRecord && previewInfo && previewInfo.baziResult && (
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }} style={{ display: 'flex', flexDirection: 'row', gap: '12px', alignItems: 'stretch' }}>
+        {selectedRecord && (
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} style={{ display: 'flex', flexDirection: 'row', gap: '12px', alignItems: 'stretch' }}>
 
-            {/* 今日穿搭建议卡片 */}
-            {outfitRec && (
+            {/* 用户详细信息卡片 */}
+            <div style={{
+              flex: 0.8,
+              background: '#FFFFFF', borderRadius: '24px', padding: '20px',
+              boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+                <div style={{
+                  width: '28px', height: '28px', borderRadius: '8px',
+                  background: `${PALETTE.coral}15`, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <Star style={{ width: '14px', height: '14px', color: PALETTE.coral }} />
+                </div>
+                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#1A1A2E' }}>用户信息</span>
+              </div>
+              {/* 顶部渐变装饰条 */}
+              <div style={{
+                height: '3px', borderRadius: '2px', marginBottom: '12px',
+                background: `linear-gradient(90deg, ${PALETTE.coral}, ${PALETTE.orange}, ${PALETTE.purple})`,
+              }} />
+              <div style={{ marginBottom: '10px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontFamily: 'Outfit', fontSize: '20px', fontWeight: 800, color: PALETTE.coral }}>{selectedRecord.name}</span>
+                    <span style={{
+                      fontFamily: 'Outfit', fontSize: '10px', fontWeight: 600,
+                      color: selectedRecord.gender === 'male' ? PALETTE.blue : PALETTE.purple,
+                      background: selectedRecord.gender === 'male' ? `${PALETTE.blue}15` : `${PALETTE.purple}15`,
+                      padding: '2px 8px', borderRadius: '9999px',
+                    }}>{selectedRecord.gender === 'male' ? '♂ 男' : '♀ 女'}</span>
+                  </div>
+                </div>
+                {/* 出生时间信息网格 */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '4px', marginBottom: '10px' }}>
+                  {[
+                    { label: '年', value: selectedRecord.birthYear, color: PALETTE.coral },
+                    { label: '月', value: selectedRecord.birthMonth, color: PALETTE.orange },
+                    { label: '日', value: selectedRecord.birthDay, color: PALETTE.purple },
+                    { label: '时', value: selectedRecord.birthHour != null ? `${selectedRecord.birthHour}:00` : '--', color: PALETTE.blue },
+                  ].map(item => (
+                    <div key={item.label} style={{
+                      background: `${item.color}10`,
+                      borderRadius: '8px', padding: '6px 4px',
+                      textAlign: 'center', border: `1px solid ${item.color}20`,
+                    }}>
+                      <div style={{ fontFamily: 'Outfit', fontSize: '8px', color: '#A0A8C0', marginBottom: '1px' }}>{item.label}</div>
+                      <div style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 800, color: item.color }}>{item.value}</div>
+                    </div>
+                  ))}
+                </div>
+                {/* 历法信息 */}
+                <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                  <span style={{
+                    fontFamily: 'Outfit', fontSize: '10px', fontWeight: 600,
+                    color: PALETTE.green, background: `${PALETTE.green}15`,
+                    padding: '3px 8px', borderRadius: '9999px',
+                  }}>{selectedRecord.calendarType === 'lunar' ? '🌙 农历' : '☀️ 公历'}</span>
+                </div>
+              </div>
+              {/* 编辑 / 删除按钮 */}
+              <div style={{ display: 'flex', gap: '6px' }}>
+                <motion.button
+                  onClick={() => handleEdit(selectedRecord)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.96 }}
+                  style={{
+                    flex: 1, padding: '6px 10px',
+                    borderRadius: '8px', border: `1.5px solid ${PALETTE.blue}40`,
+                    background: `${PALETTE.blue}08`, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
+                    fontFamily: 'Outfit', fontSize: '10px', fontWeight: 600, color: PALETTE.blue,
+                  }}
+                >
+                  <Edit3 style={{ width: '11px', height: '11px' }} />编辑
+                </motion.button>
+                <motion.button
+                  onClick={() => handleDelete(selectedRecord.id)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.96 }}
+                  style={{
+                    flex: 1, padding: '6px 10px',
+                    borderRadius: '8px', border: '1.5px solid #FF475740',
+                    background: '#FFF0F0', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
+                    fontFamily: 'Outfit', fontSize: '10px', fontWeight: 600, color: '#FF4757',
+                  }}
+                >
+                  <X style={{ width: '11px', height: '11px' }} />删除
+                </motion.button>
+              </div>
+            </div>
+
+            {/* 命盘信息卡片 */}
+            {previewInfo?.baziResult && (
+              <div style={{
+                flex: 1.2,
+                background: '#FFFFFF', borderRadius: '24px', padding: '20px',
+                boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+                  <div style={{
+                    width: '28px', height: '28px', borderRadius: '8px',
+                    background: `${PALETTE.green}15`, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Sparkles style={{ width: '14px', height: '14px', color: PALETTE.green }} />
+                  </div>
+                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#1A1A2E' }}>命盘信息</span>
+                </div>
+                {/* 日主 */}
+                {previewInfo.baziResult.dayMasterElement && (
+                  <div style={{ marginBottom: '10px' }}>
+                    <div style={{ fontFamily: 'Outfit', fontSize: '9px', color: '#A0A8C0', marginBottom: '4px' }}>日主</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{
+                        fontFamily: 'Outfit', fontSize: '22px', fontWeight: 900,
+                        color: elementColors[previewInfo.baziResult.dayMasterElement] || PALETTE.coral,
+                      }}>
+                        {previewInfo.baziResult.dayMasterElement === 'wood' ? '木' :
+                         previewInfo.baziResult.dayMasterElement === 'fire' ? '火' :
+                         previewInfo.baziResult.dayMasterElement === 'earth' ? '土' :
+                         previewInfo.baziResult.dayMasterElement === 'metal' ? '金' : '水'}命
+                      </span>
+                      <span style={{
+                        fontFamily: 'Outfit', fontSize: '10px', fontWeight: 600,
+                        color: '#6B7280', background: '#F5F5F8',
+                        padding: '2px 8px', borderRadius: '9999px',
+                      }}>日主旺盛</span>
+                    </div>
+                  </div>
+                )}
+                {/* 喜用五行 */}
+                {previewInfo.baziResult.xiYongFiveElements && previewInfo.baziResult.xiYongFiveElements.length > 0 && (
+                  <div style={{ marginBottom: '10px' }}>
+                    <div style={{ fontFamily: 'Outfit', fontSize: '9px', color: '#A0A8C0', marginBottom: '4px' }}>喜用五行</div>
+                    <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                      {previewInfo.baziResult.xiYongFiveElements.map((el: string, i: number) => (
+                        <span key={i} style={{
+                          fontFamily: 'Outfit', fontSize: '10px', fontWeight: 600,
+                          color: '#FFFFFF', background: elementColors[el] || PALETTE.coral,
+                          padding: '2px 8px', borderRadius: '9999px',
+                        }}>
+                          {el === 'wood' ? '木' : el === 'fire' ? '火' : el === 'earth' ? '土' : el === 'metal' ? '金' : '水'}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {/* 八字四柱 */}
+                {previewInfo.baziResult.yearPillar && (
+                  <div style={{
+                    background: 'linear-gradient(135deg, #FAFAFA, #F5F5F8)',
+                    borderRadius: '12px', padding: '10px',
+                    border: '1px solid #F0F1F8',
+                  }}>
+                    <div style={{ fontFamily: 'Outfit', fontSize: '9px', color: '#A0A8C0', marginBottom: '6px', textAlign: 'center' }}>八字四柱</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '4px' }}>
+                      {[
+                        { label: '年柱', value: previewInfo.baziResult.yearPillar },
+                        { label: '月柱', value: previewInfo.baziResult.monthPillar },
+                        { label: '日柱', value: previewInfo.baziResult.dayPillar },
+                        { label: '时柱', value: previewInfo.baziResult.hourPillar },
+                      ].map(p => (
+                        <div key={p.label} style={{ textAlign: 'center' }}>
+                          <div style={{ fontFamily: 'Outfit', fontSize: '8px', color: '#A0A8C0', marginBottom: '2px' }}>{p.label}</div>
+                          <div style={{
+                            fontFamily: 'Outfit', fontSize: '11px', fontWeight: 800,
+                            color: PALETTE.green, background: `${PALETTE.green}15`,
+                            padding: '3px 2px', borderRadius: '6px',
+                          }}>{p.value}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* 今日运势卡片 */}
+            {dailyFortune && (
+              <div style={{
+                flex: 1,
+                background: '#FFFFFF', borderRadius: '24px', padding: '20px',
+                boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+                  <div style={{
+                    width: '28px', height: '28px', borderRadius: '8px',
+                    background: `${PALETTE.purple}15`, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Star style={{ width: '14px', height: '14px', color: PALETTE.purple }} />
+                  </div>
+                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#1A1A2E' }}>今日运势</span>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {[
+                    { label: '事业', value: dailyFortune.career || dailyFortune.work || '平顺', color: PALETTE.blue },
+                    { label: '财运', value: dailyFortune.wealth || dailyFortune.finance || '一般', color: PALETTE.green },
+                    { label: '感情', value: dailyFortune.love || dailyFortune.relationship || '稳定', color: PALETTE.coral },
+                    { label: '健康', value: dailyFortune.health || '良好', color: PALETTE.orange },
+                  ].map(item => (
+                    <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{
+                        fontFamily: 'Outfit', fontSize: '9px', fontWeight: 600,
+                        color: item.color, background: `${item.color}15`,
+                        padding: '2px 6px', borderRadius: '9999px', minWidth: '36px', textAlign: 'center',
+                      }}>{item.label}</span>
+                      <span style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#4B5563' }}>{item.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </motion.div>
+        )}
+
+        {/* 今日穿搭建议卡片 */}
+        {outfitRec && (
               <div style={{
                 flex: 1,
                 background: '#FFFFFF', borderRadius: '24px', padding: '20px',
