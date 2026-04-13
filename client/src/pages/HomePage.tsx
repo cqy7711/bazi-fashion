@@ -1095,12 +1095,13 @@ export default function HomePage() {
         <motion.div {...fadeUp} transition={{ delay: 0.05 }}>
           <div style={{ display: 'flex', flexDirection: 'row', gap: '12px', alignItems: 'stretch' }}>
 
-          {/* 用户记录卡片 */}
+          {/* 用户记录卡片 - 单用户展示 + 切换按钮 */}
           <div style={{
             background: '#FFFFFF', borderRadius: '24px', padding: '20px',
             boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8',
             flex: 1,
           }}>
+            {/* 头部：标题 + 右上角操作按钮 */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{
@@ -1111,8 +1112,47 @@ export default function HomePage() {
                 </div>
                 <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: '#1A1A2E' }}>我的生辰</span>
               </div>
+              {/* 右上角：切换 + 新建 */}
+              <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                {records.length > 1 && (
+                  <motion.select
+                    value={selectedId || ''}
+                    onChange={e => selectRecord(e.target.value)}
+                    whileHover={{ scale: 1.02 }}
+                    style={{
+                      padding: '4px 8px', borderRadius: '8px',
+                      border: `1.5px solid ${PALETTE.coral}40`,
+                      background: `${PALETTE.coral}08`,
+                      fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600,
+                      color: PALETTE.coral, cursor: 'pointer', outline: 'none',
+                    }}
+                  >
+                    {records.map(r => (
+                      <option key={r.id} value={r.id}>{r.name}</option>
+                    ))}
+                  </motion.select>
+                )}
+                <motion.button
+                  onClick={() => {
+                    setShowForm(true);
+                    setForm({ name: '', birthYear: new Date().getFullYear() - 25, birthMonth: 1, birthDay: 1, birthHour: 12, gender: 'male', calendarType: 'solar', languageStyle: 'normal' });
+                  }}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  style={{
+                    width: '28px', height: '28px',
+                    borderRadius: '50%', border: `2px solid ${PALETTE.coral}50`,
+                    background: `${PALETTE.coral}10`, cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    transition: 'all 0.2s',
+                  }}
+                >
+                  <Plus style={{ width: '14px', height: '14px', color: PALETTE.coral }} />
+                </motion.button>
+              </div>
             </div>
 
+            {/* 内容区 */}
             {loading ? (
               <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
                 <Loader2 style={{ width: '18px', height: '18px', color: PALETTE.coral, animation: 'spin 1s linear infinite' }} />
@@ -1127,103 +1167,68 @@ export default function HomePage() {
                   <Star style={{ width: '22px', height: '22px', color: PALETTE.coral }} />
                 </div>
                 <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#A0A8C0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                  还没有记录，点击下方新建开始
+                  还没有记录，点击上方 + 新建
                   <Sparkles style={{ width: '12px', height: '12px', color: PALETTE.coral }} />
                 </p>
               </div>
-            ) : (
-              <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px', scrollbarWidth: 'none' }}>
-                {records.map(r => (
-                  <motion.div
-                    key={r.id}
-                    onClick={() => selectRecord(r.id)}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={e => e.key === 'Enter' && selectRecord(r.id)}
-                    whileHover={{ y: -2 }}
+            ) : selectedRecord ? (
+              <div>
+                {/* 用户详细信息 */}
+                <div style={{ marginBottom: '12px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '22px', fontWeight: 800, color: PALETTE.coral }}>{selectedRecord.name}</span>
+                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#A0A8C0', background: '#F5F5F8', padding: '3px 10px', borderRadius: '9999px' }}>{selectedRecord.gender === 'male' ? '♂ 男' : '♀ 女'}</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', marginBottom: '6px' }}>
+                    {[
+                      { label: '年', value: selectedRecord.birthYear },
+                      { label: '月', value: selectedRecord.birthMonth },
+                      { label: '日', value: selectedRecord.birthDay },
+                      { label: '时', value: selectedRecord.birthHour != null ? `${selectedRecord.birthHour}:00` : '未知' },
+                    ].map(item => (
+                      <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#A0A8C0' }}>{item.label}</span>
+                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#1A1A2E' }}>{item.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#A0A8C0' }}>
+                    {selectedRecord.calendarType === 'lunar' ? '农历' : '公历'}
+                  </div>
+                </div>
+                {/* 编辑 / 删除按钮 */}
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <motion.button
+                    onClick={() => handleEdit(selectedRecord)}
+                    whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.96 }}
                     style={{
-                      flexShrink: 0, width: '100px', padding: '12px 10px',
-                      textAlign: 'center', borderRadius: '14px',
-                      border: selectedId === r.id ? `2px solid ${PALETTE.coral}` : '1.5px solid #F0F1F8',
-                      background: selectedId === r.id ? `${PALETTE.coral}08` : '#FFFFFF',
-                      cursor: 'pointer', transition: 'all 0.2s', position: 'relative',
+                      flex: 1, padding: '8px 12px',
+                      borderRadius: '10px', border: `1.5px solid ${PALETTE.blue}40`,
+                      background: `${PALETTE.blue}08`, cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
+                      fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600, color: PALETTE.blue,
                     }}
                   >
-                    <p style={{
-                      fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 800,
-                      color: selectedId === r.id ? PALETTE.coral : '#1A1A2E',
-                      marginBottom: '4px',
-                      whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-                    }}>{r.name}</p>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#A0A8C0', lineHeight: 1.4 }}>
-                      {r.birthYear}.{String(r.birthMonth).padStart(2,'0')}.{String(r.birthDay).padStart(2,'0')}
-                    </p>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#C0C5D8' }}>
-                      {r.birthHour}:00 · {r.gender === 'male' ? '♂' : '♀'}
-                    </p>
-                    {selectedId === r.id && (
-                      <div style={{
-                        marginTop: '6px', paddingTop: '4px',
-                        borderTop: `1px solid ${PALETTE.coralLight}`,
-                        fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: PALETTE.coral, fontWeight: 600,
-                      }}>已选中</div>
-                    )}
-                    <div
-                      role="button"
-                      tabIndex={0}
-                      title="编辑"
-                      onClick={(e) => { e.stopPropagation(); handleEdit(r); }}
-                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); handleEdit(r); } }}
-                      style={{
-                        position: 'absolute', top: '3px', left: '3px',
-                        width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        background: 'rgba(255,255,255,0.9)', border: '1px solid #E8EAF6', cursor: 'pointer',
-                        color: '#A0A8C0', fontSize: '9px', fontWeight: 700,
-                        borderRadius: '5px', transition: 'all 0.2s', zIndex: 10,
-                      }}
-                      onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.color = PALETTE.blue; el.style.background = '#EFF6FF'; el.style.borderColor = PALETTE.blue; }}
-                      onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.color = '#A0A8C0'; el.style.background = 'rgba(255,255,255,0.9)'; el.style.borderColor = '#E8EAF6'; }}
-                    ><Edit3 style={{ width: '10px', height: '10px' }} /></div>
-                    <div
-                      role="button"
-                      tabIndex={0}
-                      title="删除"
-                      onClick={(e) => { e.stopPropagation(); handleDelete(r.id); }}
-                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); handleDelete(r.id); } }}
-                      style={{
-                        position: 'absolute', top: '3px', right: '3px',
-                        width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        background: 'rgba(255,255,255,0.9)', border: '1px solid #E8EAF6', cursor: 'pointer',
-                        color: '#A0A8C0', fontSize: '9px', fontWeight: 700,
-                        borderRadius: '5px', transition: 'all 0.2s', zIndex: 10,
-                      }}
-                      onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.color = '#FF4757'; el.style.background = '#FFF0F0'; el.style.borderColor = '#FF4757'; }}
-                      onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.color = '#A0A8C0'; el.style.background = 'rgba(255,255,255,0.9)'; el.style.borderColor = '#E8EAF6'; }}
-                    ><X style={{ width: '10px', height: '10px' }} /></div>
-                  </motion.div>
-                ))}
+                    <Edit3 style={{ width: '12px', height: '12px' }} />编辑
+                  </motion.button>
+                  <motion.button
+                    onClick={() => handleDelete(selectedRecord.id)}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.96 }}
+                    style={{
+                      flex: 1, padding: '8px 12px',
+                      borderRadius: '10px', border: '1.5px solid #FF475740',
+                      background: '#FFF0F0', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
+                      fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600, color: '#FF4757',
+                    }}
+                  >
+                    <X style={{ width: '12px', height: '12px' }} />删除
+                  </motion.button>
+                </div>
               </div>
-            )}
-
-            {/* 新建按钮 - 圆形+按钮 */}
-            <motion.button
-              onClick={() => {
-                setShowForm(true);
-                setForm({ name: '', birthYear: new Date().getFullYear() - 25, birthMonth: 1, birthDay: 1, birthHour: 12, gender: 'male', calendarType: 'solar', languageStyle: 'normal' });
-              }}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              style={{
-                width: '28px', height: '28px', marginTop: '10px',
-                borderRadius: '50%', border: `2px solid ${PALETTE.coral}50`,
-                background: `${PALETTE.coral}10`, cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                transition: 'all 0.2s',
-              }}
-            >
-              <Plus style={{ width: '14px', height: '14px', color: PALETTE.coral }} />
-            </motion.button>
+            ) : null}
           </div>
 
           {/* 命盘信息卡片 - 增强版 */}
