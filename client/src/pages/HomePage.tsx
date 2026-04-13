@@ -1240,7 +1240,7 @@ export default function HomePage() {
 
         {/* ​—​ 第二行：用户详情 + 命盘信息 + 今日运势（选中用户时显示） —​ */}
         {selectedRecord && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.08 }} style={{ display: 'flex', flexDirection: 'row', gap: '12px', marginBottom: '16px' }}>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.08 }} style={{ display: 'flex', flexDirection: 'row', gap: '12px', marginBottom: '16px', alignItems: 'stretch' }}>
 
 
           {/* 命盘信息卡片 */}
@@ -1619,23 +1619,23 @@ export default function HomePage() {
 
               {/* ===== 新布局：左圆环 + 右侧2x2网格 + 底部4卡片 + 宜不宜 + 提示 ===== */}
               
-              {/* ===== 顶部：总分圆环(居中) ===== */}
+              {/* ===== 顶部：总分圆环(居中,加大) ===== */}
               <div style={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center',
-                marginBottom: '8px', padding: '4px 0'
+                marginBottom: '10px', padding: '6px 0'
               }}>
-                <svg width="68" height="68" viewBox="0 0 72 72" style={{ display: 'block' }}>
+                <svg width="86" height="86" viewBox="0 0 72 72" style={{ display: 'block' }}>
                   <circle cx="36" cy="36" r="30" fill="none" stroke="#F0E8E5" strokeWidth="7" />
                   <circle cx="36" cy="36" r="30" fill="none"
                     stroke={getScoreColor(dailyFortune.totalScore)} strokeWidth="7"
                     strokeDasharray={`${(dailyFortune.totalScore / 100) * 188.5} 188.5`}
                     strokeLinecap="round" transform="rotate(-90 36 36)" />
-                  <text x="36" y="34" textAnchor="middle" dominantBaseline="middle"
-                    style={{ fontFamily: 'Outfit', fontSize: '19px', fontWeight: 900, fill: getScoreColor(dailyFortune.totalScore) }}>{dailyFortune.totalScore}</text>
+                  <text x="36" y="33" textAnchor="middle" dominantBaseline="middle"
+                    style={{ fontFamily: 'Outfit', fontSize: '22px', fontWeight: 900, fill: getScoreColor(dailyFortune.totalScore) }}>{dailyFortune.totalScore}</text>
                   <text x="36" y="50" textAnchor="middle" dominantBaseline="middle"
-                    style={{ fontFamily: 'Outfit', fontSize: '9px', fill: '#B0A8C0' }}>总分</text>
+                    style={{ fontFamily: 'Outfit', fontSize: '10px', fill: '#B0A8C0' }}>总分</text>
                 </svg>
-                <span style={{ fontFamily: 'Outfit', fontSize: '11px', color: getScoreColor(dailyFortune.totalScore), fontWeight: 700, marginTop: '1px' }}>{dailyFortune.totalLabel}</span>
+                <span style={{ fontFamily: 'Outfit', fontSize: '12px', color: getScoreColor(dailyFortune.totalScore), fontWeight: 700, marginTop: '2px' }}>{dailyFortune.totalLabel}</span>
               </div>
 
               {/* ===== 六宫格：事业/财运/感情/健康/人际/专注 ===== */}
