@@ -1609,14 +1609,6 @@ export default function HomePage() {
                     {new Date().getMonth() + 1}月{new Date().getDate()}日
                   </span>
                 </div>
-                <div style={{
-                  marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '6px',
-                  padding: '4px 12px', borderRadius: '9999px',
-                  background: `${getScoreColor(dailyFortune.totalScore)}15`, border: `1px solid ${getScoreColor(dailyFortune.totalScore)}30`,
-                }}>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 900, color: getScoreColor(dailyFortune.totalScore) }}>{dailyFortune.totalScore}</span>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600, color: getScoreColor(dailyFortune.totalScore) }}>{dailyFortune.totalLabel}</span>
-                </div>
               </div>
 
               {/* ===== 新布局：左圆环 + 右侧2x2网格 + 底部4卡片 + 宜不宜 + 提示 ===== */}
