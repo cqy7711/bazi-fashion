@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 350">
+  <defs>
+    <!-- 琥珀球体3D效果 -->
+    <radialGradient id="amberSphere" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#FFF8E1"/>
+      <stop offset="15%" stop-color="#FFE082"/>
+      <stop offset="35%" stop-color="#FFB300"/>
+      <stop offset="60%" stop-color="#FF8F00"/>
+      <stop offset="85%" stop-color="#E65100"/>
+      <stop offset="100%" stop-color="#BF360C"/>
+    </radialGradient>
+    <!-- 高光 - 参考图中的强烈反光 -->
+    <radialGradient id="specular" cx="30%" cy="25%" r="25%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.95)"/>
+      <stop offset="40%" stop-color="rgba(255,255,255,0.4)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+    <!-- 边缘反光 -->
+    <radialGradient id="rimLight" cx="50%" cy="50%" r="50%">
+      <stop offset="70%" stop-color="rgba(255,200,100,0)"/>
+      <stop offset="85%" stop-color="rgba(255,200,100,0.3)"/>
+      <stop offset="100%" stop-color="rgba(255,200,100,0.6)"/>
+    </radialGradient>
+    <!-- 内部纹理 - 琥珀的包裹体 -->
+    <filter id="amberInclusion">
+      <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="4" seed="10" result="noise"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.4 0" in="noise" result="clouds"/>
+      <feBlend in="SourceGraphic" in2="clouds" mode="multiply"/>
+    </filter>
+    <!-- 珠子阴影 -->
+    <radialGradient id="beadShadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(0,0,0,0.3)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="500" height="350" fill="#F5F5F5"/>
+
+  <!-- 手串阴影 -->
+  <ellipse cx="250" cy="260" rx="180" ry="35" fill="rgba(0,0,0,0.15)"/>
+
+  <!-- 珠子定义 -->
+  <g id="amberBead">
+    <!-- 阴影 -->
+    <ellipse cx="0" cy="42" rx="32" ry="10" fill="url(#beadShadow)"/>
+    <!-- 球体 -->
+    <circle r="35" fill="url(#amberSphere)"/>
+    <!-- 内部纹理 -->
+    <circle r="33" fill="url(#amberSphere)" filter="url(#amberInclusion)" opacity="0.8"/>
+    <!-- 边缘反光 -->
+    <circle r="35" fill="url(#rimLight)"/>
+    <!-- 主高光 -->
+    <ellipse cx="-12" cy="-12" rx="14" ry="10" fill="url(#specular)"/>
+    <!-- 次高光 -->
+    <ellipse cx="15" cy="8" rx="6" ry="4" fill="rgba(255,255,255,0.3)"/>
+    <!-- 珠孔 -->
+    <circle r="3" fill="#3E2723"/>
+  </g>
+
+  <!-- 手串排列 - 后层珠子 -->
+  <g transform="translate(250, 175)">
+    <!-- 穿线 -->
+    <path d="M -160,-30 Q -180,0 -160,30" fill="none" stroke="#D7CCC8" stroke-width="3"/>
+    
+    <!-- 后层珠子 (较暗，较小) -->
+    <g transform="translate(-150, -20) scale(0.9)"><use href="#amberBead"/></g>
+    <g transform="translate(-115, -45) scale(0.92)"><use href="#amberBead"/></g>
+    <g transform="translate(-70, -60) scale(0.95)"><use href="#amberBead"/></g>
+    <g transform="translate(-20, -68) scale(0.95)"><use href="#amberBead"/></g>
+    <g transform="translate(30, -65) scale(0.95)"><use href="#amberBead"/></g>
+    <g transform="translate(80, -55) scale(0.92)"><use href="#amberBead"/></g>
+    <g transform="translate(125, -35) scale(0.9)"><use href="#amberBead"/></g>
+    <g transform="translate(155, -5) scale(0.88)"><use href="#amberBead"/></g>
+    <g transform="translate(160, 35) scale(0.85)"><use href="#amberBead"/></g>
+  </g>
+
+  <!-- 手串排列 - 前层珠子 -->
+  <g transform="translate(250, 175)">
+    <!-- 前层珠子 (完整大小，更清晰) -->
+    <g transform="translate(140, 50)"><use href="#amberBead"/></g>
+    <g transform="translate(100, 75)"><use href="#amberBead"/></g>
+    <g transform="translate(55, 90)"><use href="#amberBead"/></g>
+    <g transform="translate(5, 98)"><use href="#amberBead"/></g>
+    <g transform="translate(-45, 95)"><use href="#amberBead"/></g>
+    <g transform="translate(-90, 82)"><use href="#amberBead"/></g>
+    <g transform="translate(-128, 60)"><use href="#amberBead"/></g>
+    <g transform="translate(-155, 28)"><use href="#amberBead"/></g>
+  </g>
+</svg>

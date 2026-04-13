@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 350">
+  <defs>
+    <!-- 红玛瑙球体 - 温润红玉 -->
+    <radialGradient id="agateSphere" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#FFCDD2"/>
+      <stop offset="15%" stop-color="#EF9A9A"/>
+      <stop offset="35%" stop-color="#E57373"/>
+      <stop offset="60%" stop-color="#C62828"/>
+      <stop offset="85%" stop-color="#8B0000"/>
+      <stop offset="100%" stop-color="#4A0000"/>
+    </radialGradient>
+    <!-- 红玛瑙高光 -->
+    <radialGradient id="agateSpecular" cx="30%" cy="25%" r="25%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.85)"/>
+      <stop offset="40%" stop-color="rgba(255,255,255,0.3)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+    <!-- 条纹纹理 -->
+    <filter id="agateBands">
+      <feTurbulence type="turbulence" baseFrequency="0.01 0.4" numOctaves="2" seed="25" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <radialGradient id="shadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(0,0,0,0.25)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="500" height="350" fill="#F5F5F5"/>
+  <ellipse cx="250" cy="260" rx="180" ry="35" fill="rgba(0,0,0,0.12)"/>
+
+  <g id="agateBead">
+    <ellipse cx="0" cy="42" rx="32" ry="10" fill="url(#shadow)"/>
+    <circle r="35" fill="url(#agateSphere)"/>
+    <!-- 条纹纹理 -->
+    <circle r="33" fill="url(#agateSphere)" filter="url(#agateBands)" opacity="0.5"/>
+    <ellipse cx="-12" cy="-12" rx="14" ry="10" fill="url(#agateSpecular)"/>
+    <ellipse cx="15" cy="8" rx="6" ry="4" fill="rgba(255,255,255,0.25)"/>
+    <circle r="3" fill="#4A0000"/>
+  </g>
+
+  <g transform="translate(250, 175)">
+    <path d="M -160,-30 Q -180,0 -160,30" fill="none" stroke="#8D6E63" stroke-width="3"/>
+    <g transform="translate(-150, -20) scale(0.9)"><use href="#agateBead"/></g>
+    <g transform="translate(-115, -45) scale(0.92)"><use href="#agateBead"/></g>
+    <g transform="translate(-70, -60) scale(0.95)"><use href="#agateBead"/></g>
+    <g transform="translate(-20, -68) scale(0.95)"><use href="#agateBead"/></g>
+    <g transform="translate(30, -65) scale(0.95)"><use href="#agateBead"/></g>
+    <g transform="translate(80, -55) scale(0.92)"><use href="#agateBead"/></g>
+    <g transform="translate(125, -35) scale(0.9)"><use href="#agateBead"/></g>
+    <g transform="translate(155, -5) scale(0.88)"><use href="#agateBead"/></g>
+    <g transform="translate(160, 35) scale(0.85)"><use href="#agateBead"/></g>
+  </g>
+
+  <g transform="translate(250, 175)">
+    <g transform="translate(140, 50)"><use href="#agateBead"/></g>
+    <g transform="translate(100, 75)"><use href="#agateBead"/></g>
+    <g transform="translate(55, 90)"><use href="#agateBead"/></g>
+    <g transform="translate(5, 98)"><use href="#agateBead"/></g>
+    <g transform="translate(-45, 95)"><use href="#agateBead"/></g>
+    <g transform="translate(-90, 82)"><use href="#agateBead"/></g>
+    <g transform="translate(-128, 60)"><use href="#agateBead"/></g>
+    <g transform="translate(-155, 28)"><use href="#agateBead"/></g>
+  </g>
+</svg>

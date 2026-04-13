@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 350">
+  <defs>
+    <!-- 纯银球体 - 金属光泽 -->
+    <radialGradient id="silverSphere" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="15%" stop-color="#FAFAFA"/>
+      <stop offset="30%" stop-color="#E0E0E0"/>
+      <stop offset="50%" stop-color="#BDBDBD"/>
+      <stop offset="70%" stop-color="#9E9E9E"/>
+      <stop offset="85%" stop-color="#757575"/>
+      <stop offset="100%" stop-color="#616161"/>
+    </radialGradient>
+    <!-- 金属高光 -->
+    <radialGradient id="silverSpecular" cx="28%" cy="22%" r="28%">
+      <stop offset="0%" stop-color="rgba(255,255,255,1)"/>
+      <stop offset="25%" stop-color="rgba(255,255,255,0.8)"/>
+      <stop offset="50%" stop-color="rgba(255,255,255,0.3)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+    <!-- 边缘高光线 -->
+    <radialGradient id="silverRim" cx="50%" cy="50%" r="50%">
+      <stop offset="65%" stop-color="rgba(255,255,255,0)"/>
+      <stop offset="80%" stop-color="rgba(255,255,255,0.5)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0.9)"/>
+    </radialGradient>
+    <radialGradient id="shadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(0,0,0,0.25)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="500" height="350" fill="#F5F5F5"/>
+  <ellipse cx="250" cy="260" rx="180" ry="35" fill="rgba(0,0,0,0.12)"/>
+
+  <g id="silverBead">
+    <ellipse cx="0" cy="42" rx="32" ry="10" fill="url(#shadow)"/>
+    <circle r="35" fill="url(#silverSphere)"/>
+    <circle r="35" fill="url(#silverRim)"/>
+    <ellipse cx="-10" cy="-10" rx="16" ry="12" fill="url(#silverSpecular)"/>
+    <ellipse cx="12" cy="5" rx="10" ry="6" fill="rgba(255,255,255,0.4)"/>
+    <ellipse cx="-5" cy="20" rx="6" ry="3" fill="rgba(255,255,255,0.3)"/>
+    <circle r="3" fill="#424242"/>
+  </g>
+
+  <g transform="translate(250, 175)">
+    <path d="M -160,-30 Q -180,0 -160,30" fill="none" stroke="#9E9E9E" stroke-width="3"/>
+    <g transform="translate(-150, -20) scale(0.9)"><use href="#silverBead"/></g>
+    <g transform="translate(-115, -45) scale(0.92)"><use href="#silverBead"/></g>
+    <g transform="translate(-70, -60) scale(0.95)"><use href="#silverBead"/></g>
+    <g transform="translate(-20, -68) scale(0.95)"><use href="#silverBead"/></g>
+    <g transform="translate(30, -65) scale(0.95)"><use href="#silverBead"/></g>
+    <g transform="translate(80, -55) scale(0.92)"><use href="#silverBead"/></g>
+    <g transform="translate(125, -35) scale(0.9)"><use href="#silverBead"/></g>
+    <g transform="translate(155, -5) scale(0.88)"><use href="#silverBead"/></g>
+    <g transform="translate(160, 35) scale(0.85)"><use href="#silverBead"/></g>
+  </g>
+
+  <g transform="translate(250, 175)">
+    <g transform="translate(140, 50)"><use href="#silverBead"/></g>
+    <g transform="translate(100, 75)"><use href="#silverBead"/></g>
+    <g transform="translate(55, 90)"><use href="#silverBead"/></g>
+    <g transform="translate(5, 98)"><use href="#silverBead"/></g>
+    <g transform="translate(-45, 95)"><use href="#silverBead"/></g>
+    <g transform="translate(-90, 82)"><use href="#silverBead"/></g>
+    <g transform="translate(-128, 60)"><use href="#silverBead"/></g>
+    <g transform="translate(-155, 28)"><use href="#silverBead"/></g>
+  </g>
+</svg>

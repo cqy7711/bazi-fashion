@@ -1,0 +1,131 @@
+// 本地类型定义 - 从 shared 重新导出
+// 用于 HomePage 等页面
+
+export type LanguageStyle = 'normal' | 'stock' | 'game' | 'fairytale' | 'fortune' | 'workplace';
+
+export interface FiveElementsAnalysis {
+  wood: number;
+  fire: number;
+  earth: number;
+  metal: number;
+  water: number;
+}
+
+export interface BaziResult {
+  yearStem: string; yearBranch: string;
+  monthStem: string; monthBranch: string;
+  dayStem: string; dayBranch: string;
+  hourStem: string; hourBranch: string;
+  dayMaster: string;
+  dayMasterElement: string;
+  shiShen: { year: string; month: string; day: string; hour: string };
+}
+
+export interface UserBirthInfoListItem {
+  id: string;
+  name: string;
+  birthYear: number; birthMonth: number; birthDay: number; birthHour: number;
+  gender: 'male' | 'female';
+  calendarType: 'solar' | 'lunar';
+  languageStyle?: LanguageStyle;
+  birthLocation?: string;
+  favorableElements?: string[];
+  unfavorableElements?: string[];
+}
+
+export interface UserBirthInfo extends UserBirthInfoListItem {
+  baziResult?: BaziResult;
+  fiveElements?: FiveElementsAnalysis;
+  bodyStrengthScore?: number;
+}
+
+export interface OutfitRecommendation {
+  primaryColor: string; secondaryColor: string; avoidColor: string;
+  primaryDesc: string; secondaryDesc: string; avoidDesc: string;
+  primaryColors: any[]; secondaryColors: any[]; avoidColors: any[];
+  styleSuggestion?: string; materialSuggestion?: string;
+  outfitPlans?: Array<{ title: string; desc: string; items: string[]; color: string }>;
+  todayFortune?: { goodThings: string[]; precautions: string[] };
+  outfits: Array<{ title: string; desc: string; items: string[]; color: string }>;
+  // 新增字段
+  weatherInfo?: {
+    city: string;
+    weather: string;
+    temperature: number;
+    humidity: number;
+    element: string;
+    description: string;
+  };
+  weatherBasedColors?: any[];
+  outfitImages?: Array<{
+    url: string;
+    title: string;
+    description: string;
+    colors: string[];
+    style: string;
+  }>;
+  liuriFortune?: {
+    element: string;
+    relation: string;
+    boost: number;
+    description: string;
+  };
+}
+
+export interface BraceletRecommendation {
+  matchingPrinciple?: string;
+  notes?: string[];
+  primaryBracelet?: {
+    name: string;
+    material: string;
+    color: string;
+    element: string;
+    effect: string;
+    image: string;
+    images?: string[];
+    whyRecommended?: string;
+    benefits?: string[];
+    usageTips?: string[];
+    knowledge?: string;
+    energyLevel?: string;
+  };
+  secondaryBracelets?: Array<{
+    name: string;
+    material: string;
+    color: string;
+    element: string;
+    effect: string;
+    image: string;
+    images?: string[];
+    whyRecommended?: string;
+    benefits?: string[];
+    usageTips?: string[];
+    knowledge?: string;
+    energyLevel?: string;
+  }>;
+}
+
+// 今日运势类型（从 API 获取）
+export interface DailyFortune {
+  dayGanZhi: string;       // 今日干支
+  dayGan: string;          // 今日天干
+  dayZhi: string;          // 今日地支
+  dayElement: string;      // 今日五行
+  dayRelation: string;     // 流日与日主关系
+  relationDescription: string;
+  totalScore: number;      // 综合运势 0-100
+  totalLabel: string;      // 大吉/吉/小吉/平/小凶/凶
+  careerScore: number;     // 事业运势
+  wealthScore: number;     // 财运
+  loveScore: number;      // 感情运势
+  healthScore: number;     // 健康运势
+  mainTip: string;         // 今日运势总提示
+  goodThings: string[];    // 今日宜做事项
+  avoidThings: string[];   // 今日不宜事项
+  luckyColor: { name: string; hex: string };  // 幸运颜色
+  luckyNumber: number;     // 幸运数字
+  luckyTime: string;       // 幸运时辰
+  luckyDirection: string;  // 幸运方位
+  avoidDirection: string;  // 避免方位
+  healthTip: string;       // 健康养生提示
+}

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <defs>
+    <radialGradient id="silver" cx="30%" cy="30%">
+      <stop offset="0%" style="stop-color:#E8E8E8"/>
+      <stop offset="50%" style="stop-color:#C0C0C0"/>
+      <stop offset="100%" style="stop-color:#808080"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="400" fill="#f8f9fa"/>
+  <circle cx="200" cy="200" r="130" fill="none" stroke="#333" stroke-width="8"/>
+  <circle cx="70" cy="200" r="22" fill="url(#silver)"/>
+  <circle cx="105" cy="145" r="22" fill="url(#silver)"/>
+  <circle cx="160" cy="105" r="22" fill="url(#silver)"/>
+  <circle cx="220" cy="95" r="22" fill="url(#silver)"/>
+  <circle cx="275" cy="115" r="22" fill="url(#silver)"/>
+  <circle cx="315" cy="160" r="22" fill="url(#silver)"/>
+  <circle cx="330" cy="220" r="22" fill="url(#silver)"/>
+  <circle cx="310" cy="275" r="22" fill="url(#silver)"/>
+  <circle cx="265" cy="310" r="22" fill="url(#silver)"/>
+  <circle cx="205" cy="325" r="22" fill="url(#silver)"/>
+  <circle cx="145" cy="305" r="22" fill="url(#silver)"/>
+  <circle cx="100" cy="255" r="22" fill="url(#silver)"/>
+</svg>

@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 350">
+  <defs>
+    <!-- 翡翠球体3D效果 - 温润质感 -->
+    <radialGradient id="jadeSphere" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#C8E6C9"/>
+      <stop offset="15%" stop-color="#81C784"/>
+      <stop offset="35%" stop-color="#4CAF50"/>
+      <stop offset="60%" stop-color="#388E3C"/>
+      <stop offset="85%" stop-color="#1B5E20"/>
+      <stop offset="100%" stop-color="#0D3D0F"/>
+    </radialGradient>
+    <!-- 翡翠高光 -->
+    <radialGradient id="jadeSpecular" cx="30%" cy="25%" r="25%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.85)"/>
+      <stop offset="40%" stop-color="rgba(255,255,255,0.3)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+    <!-- 边缘透光 - 翡翠特有的温润感 -->
+    <radialGradient id="jadeRim" cx="50%" cy="50%" r="50%">
+      <stop offset="65%" stop-color="rgba(129,199,132,0)"/>
+      <stop offset="85%" stop-color="rgba(129,199,132,0.4)"/>
+      <stop offset="100%" stop-color="rgba(200,230,201,0.6)"/>
+    </radialGradient>
+    <!-- 翡翠内部纹理 -->
+    <filter id="jadeVein">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" seed="15" result="noise"/>
+      <feColorMatrix type="matrix" values="0.9 0 0 0 0  0 1.1 0 0 0  0 0 0.9 0 0  0 0 0 0.3 0" in="noise"/>
+    </filter>
+    <radialGradient id="shadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(0,0,0,0.25)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="500" height="350" fill="#F5F5F5"/>
+  <ellipse cx="250" cy="260" rx="180" ry="35" fill="rgba(0,0,0,0.12)"/>
+
+  <g id="jadeBead">
+    <ellipse cx="0" cy="42" rx="32" ry="10" fill="url(#shadow)"/>
+    <circle r="35" fill="url(#jadeSphere)"/>
+    <circle r="33" fill="url(#jadeSphere)" filter="url(#jadeVein)" opacity="0.6"/>
+    <circle r="35" fill="url(#jadeRim)"/>
+    <ellipse cx="-12" cy="-12" rx="14" ry="10" fill="url(#jadeSpecular)"/>
+    <ellipse cx="15" cy="8" rx="6" ry="4" fill="rgba(255,255,255,0.25)"/>
+    <circle r="3" fill="#1B5E20"/>
+  </g>
+
+  <g transform="translate(250, 175)">
+    <path d="M -160,-30 Q -180,0 -160,30" fill="none" stroke="#A1887F" stroke-width="3"/>
+    <g transform="translate(-150, -20) scale(0.9)"><use href="#jadeBead"/></g>
+    <g transform="translate(-115, -45) scale(0.92)"><use href="#jadeBead"/></g>
+    <g transform="translate(-70, -60) scale(0.95)"><use href="#jadeBead"/></g>
+    <g transform="translate(-20, -68) scale(0.95)"><use href="#jadeBead"/></g>
+    <g transform="translate(30, -65) scale(0.95)"><use href="#jadeBead"/></g>
+    <g transform="translate(80, -55) scale(0.92)"><use href="#jadeBead"/></g>
+    <g transform="translate(125, -35) scale(0.9)"><use href="#jadeBead"/></g>
+    <g transform="translate(155, -5) scale(0.88)"><use href="#jadeBead"/></g>
+    <g transform="translate(160, 35) scale(0.85)"><use href="#jadeBead"/></g>
+  </g>
+
+  <g transform="translate(250, 175)">
+    <g transform="translate(140, 50)"><use href="#jadeBead"/></g>
+    <g transform="translate(100, 75)"><use href="#jadeBead"/></g>
+    <g transform="translate(55, 90)"><use href="#jadeBead"/></g>
+    <g transform="translate(5, 98)"><use href="#jadeBead"/></g>
+    <g transform="translate(-45, 95)"><use href="#jadeBead"/></g>
+    <g transform="translate(-90, 82)"><use href="#jadeBead"/></g>
+    <g transform="translate(-128, 60)"><use href="#jadeBead"/></g>
+    <g transform="translate(-155, 28)"><use href="#jadeBead"/></g>
+  </g>
+</svg>

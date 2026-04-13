@@ -1,0 +1,216 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700;900&family=Outfit:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Outfit', 'Noto Sans SC', -apple-system, sans-serif;
+  background-color: #FFFFFF;
+  color: #1A1A2E;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── 多巴胺渐变背景 ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 85% 10%, rgba(255, 107, 157, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 15% 85%, rgba(108, 189, 255, 0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 50% 50%, rgba(255, 212, 102, 0.05) 0%, transparent 70%);
+}
+
+/* ── 滚动条 ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,107,157,0.3); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,107,157,0.5); }
+
+::selection { background: rgba(255,107,157,0.2); color: #1A1A2E; }
+
+/* ── 动画 ── */
+@keyframes bounceIn {
+  0% { opacity: 0; transform: scale(0.7); }
+  60% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.animate-bounce-in { animation: bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+.animate-fade-up { animation: fadeUp 0.5s ease forwards; }
+.animate-float { animation: float 5s ease-in-out infinite; }
+.animate-wiggle { animation: wiggle 2s ease-in-out infinite; }
+.animate-shimmer { animation: shimmer 3s linear infinite; background-size: 200% auto; }
+.animate-gradient { animation: gradientShift 6s ease infinite; background-size: 200% 200%; }
+
+/* ── 多巴胺渐变文字 ── */
+.dopamine-gradient {
+  background: linear-gradient(135deg, #FF6B9D, #FF9D6B, #FFD966, #6BFF9D, #6BD4FF, #9D6BFF, #FF6B9D);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradientShift 4s ease infinite;
+}
+
+/* ── 玻璃态卡片 ── */
+.glass-card {
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.8);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.glass-card:hover {
+  box-shadow: 0 12px 40px rgba(0,0,0,0.1), 0 4px 12px rgba(0,0,0,0.06);
+  transform: translateY(-2px);
+}
+
+/* ── 悬浮彩色卡片 ── */
+.pop-card {
+  background: #FFFFFF;
+  border-radius: 20px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.pop-card:hover {
+  box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+  transform: translateY(-4px) scale(1.01);
+}
+
+/* ── 输入框 ── */
+input, select, textarea {
+  background-color: #F8F9FC !important;
+  border: 1.5px solid #E8EAF6 !important;
+  color: #1A1A2E !important;
+  border-radius: 14px !important;
+  transition: all 0.2s ease;
+  font-family: 'Outfit', 'Noto Sans SC', sans-serif !important;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none !important;
+  border-color: #FF6B9D !important;
+  box-shadow: 0 0 0 3px rgba(255,107,157,0.12) !important;
+}
+input::placeholder, textarea::placeholder {
+  color: #A0A8C0 !important;
+}
+select option { background: #FFFFFF; color: #1A1A2E; }
+
+/* ── 按钮 ── */
+.btn-primary {
+  background: linear-gradient(135deg, #FF6B9D, #FF9D6B);
+  color: #FFFFFF;
+  font-family: 'Outfit', 'Noto Sans SC', sans-serif;
+  font-weight: 600;
+  border: none;
+  border-radius: 14px;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 16px rgba(255,107,157,0.3);
+  cursor: pointer;
+  letter-spacing: 0.02em;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(255,107,157,0.4);
+  filter: brightness(1.05);
+}
+.btn-primary:active { transform: translateY(0); }
+
+.btn-secondary {
+  background: rgba(108,189,255,0.12);
+  color: #6BD4FF;
+  border: 1.5px solid rgba(108,189,255,0.3);
+  border-radius: 14px;
+  transition: all 0.25s ease;
+  font-family: 'Outfit', sans-serif;
+}
+.btn-secondary:hover {
+  background: rgba(108,189,255,0.2);
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: #8A92A8;
+  border: 1.5px solid #E8EAF6;
+  border-radius: 14px;
+  transition: all 0.2s ease;
+  font-family: 'Outfit', sans-serif;
+}
+.btn-ghost:hover {
+  background: rgba(255,107,157,0.06);
+  color: #FF6B9D;
+  border-color: rgba(255,107,157,0.3);
+}
+
+/* ── 彩色标签 ── */
+.tag-coral { background: rgba(255,107,157,0.12); color: #FF6B9D; border: 1px solid rgba(255,107,157,0.2); }
+.tag-orange { background: rgba(255,157,107,0.12); color: #FF9D6B; border: 1px solid rgba(255,157,107,0.2); }
+.tag-yellow { background: rgba(255,217,102,0.15); color: #D4A000; border: 1px solid rgba(255,217,102,0.3); }
+.tag-green { background: rgba(107,255,157,0.12); color: #00C47A; border: 1px solid rgba(107,255,157,0.2); }
+.tag-blue { background: rgba(107,212,255,0.12); color: #00A8E8; border: 1px solid rgba(107,212,255,0.2); }
+.tag-purple { background: rgba(157,107,255,0.12); color: #9D6BFF; border: 1px solid rgba(157,107,255,0.2); }
+
+/* ── 五行彩色系统（多巴胺风格）── */
+.el-wood { color: #00C47A; }
+.el-fire { color: #FF6B6B; }
+.el-earth { color: #D4A000; }
+.el-metal { color: #7B8FA8; }
+.el-water { color: #00A8E8; }
+
+/* ── 装饰元素 ── */
+.floating-shape {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.5;
+  animation: float 6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.bubble {
+  border-radius: 50%;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* ── 圆角 ── */
+.rounded-2xl { border-radius: 20px; }
+.rounded-xl { border-radius: 16px; }
+.rounded-lg { border-radius: 12px; }
+.rounded-full { border-radius: 9999px; }

@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 350">
+  <defs>
+    <!-- 黑曜石球体 - 墨黑玻璃光泽 -->
+    <radialGradient id="obsidianSphere" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#616161"/>
+      <stop offset="15%" stop-color="#424242"/>
+      <stop offset="35%" stop-color="#212121"/>
+      <stop offset="60%" stop-color="#0D0D0D"/>
+      <stop offset="85%" stop-color="#000000"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <!-- 黑曜石强烈反光 -->
+    <radialGradient id="obsidianSpecular" cx="30%" cy="25%" r="25%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.9)"/>
+      <stop offset="30%" stop-color="rgba(255,255,255,0.5)"/>
+      <stop offset="60%" stop-color="rgba(255,255,255,0.15)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+    </radialGradient>
+    <!-- 边缘反光 -->
+    <radialGradient id="obsidianRim" cx="50%" cy="50%" r="50%">
+      <stop offset="70%" stop-color="rgba(255,255,255,0)"/>
+      <stop offset="85%" stop-color="rgba(255,255,255,0.4)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0.7)"/>
+    </radialGradient>
+    <radialGradient id="shadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(0,0,0,0.4)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="500" height="350" fill="#F5F5F5"/>
+  <ellipse cx="250" cy="260" rx="180" ry="35" fill="rgba(0,0,0,0.15)"/>
+
+  <g id="obsidianBead">
+    <ellipse cx="0" cy="42" rx="32" ry="10" fill="url(#shadow)"/>
+    <circle r="35" fill="url(#obsidianSphere)"/>
+    <circle r="35" fill="url(#obsidianRim)"/>
+    <ellipse cx="-12" cy="-12" rx="14" ry="10" fill="url(#obsidianSpecular)"/>
+    <ellipse cx="12" cy="5" rx="8" ry="5" fill="rgba(255,255,255,0.35)"/>
+    <ellipse cx="-5" cy="18" rx="4" ry="2" fill="rgba(255,255,255,0.2)"/>
+    <circle r="3" fill="#000000"/>
+  </g>
+
+  <g transform="translate(250, 175)">
+    <path d="M -160,-30 Q -180,0 -160,30" fill="none" stroke="#212121" stroke-width="3"/>
+    <g transform="translate(-150, -20) scale(0.9)"><use href="#obsidianBead"/></g>
+    <g transform="translate(-115, -45) scale(0.92)"><use href="#obsidianBead"/></g>
+    <g transform="translate(-70, -60) scale(0.95)"><use href="#obsidianBead"/></g>
+    <g transform="translate(-20, -68) scale(0.95)"><use href="#obsidianBead"/></g>
+    <g transform="translate(30, -65) scale(0.95)"><use href="#obsidianBead"/></g>
+    <g transform="translate(80, -55) scale(0.92)"><use href="#obsidianBead"/></g>
+    <g transform="translate(125, -35) scale(0.9)"><use href="#obsidianBead"/></g>
+    <g transform="translate(155, -5) scale(0.88)"><use href="#obsidianBead"/></g>
+    <g transform="translate(160, 35) scale(0.85)"><use href="#obsidianBead"/></g>
+  </g>
+
+  <g transform="translate(250, 175)">
+    <g transform="translate(140, 50)"><use href="#obsidianBead"/></g>
+    <g transform="translate(100, 75)"><use href="#obsidianBead"/></g>
+    <g transform="translate(55, 90)"><use href="#obsidianBead"/></g>
+    <g transform="translate(5, 98)"><use href="#obsidianBead"/></g>
+    <g transform="translate(-45, 95)"><use href="#obsidianBead"/></g>
+    <g transform="translate(-90, 82)"><use href="#obsidianBead"/></g>
+    <g transform="translate(-128, 60)"><use href="#obsidianBead"/></g>
+    <g transform="translate(-155, 28)"><use href="#obsidianBead"/></g>
+  </g>
+</svg>
