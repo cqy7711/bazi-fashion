@@ -1286,9 +1286,6 @@ export default function HomePage() {
                         </p>
                       </div>
                     </div>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#6B7280', lineHeight: 1.6, marginBottom: '8px' }}>
-                      {elementDesc[dmEl]}
-                    </p>
                     <div style={{
                       padding: '8px 10px', borderRadius: '8px',
                       background: `${elementColors[dmEl]}10`,
