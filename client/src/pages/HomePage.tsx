@@ -1368,15 +1368,103 @@ export default function HomePage() {
 
                   return (
                     <div style={{ marginBottom: '14px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      {/* 格局类型标签 */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', width: '100%' }}>
-                        <span style={{
-                          fontFamily: 'Outfit', fontSize: '15px', fontWeight: 800,
-                          color: '#5D4037',
-                        }}>【{(previewInfo.baziResult as any)?.mingGeName || '均衡型'}】</span>
-                        <span style={{ fontSize: '11px', color: '#A0A8C0' }}>
-                          校正 {(previewInfo.baziResult as any)?.correctionCount || 0} ⚖️
-                        </span>
+                      {/* ===== 命格分析详细说明 ===== */}
+                      <div style={{
+                        width: '100%', padding: '12px 14px',
+                        background: 'linear-gradient(135deg, #FFF9F5, #FFFAF7)',
+                        border: '1px solid #F0E6DC',
+                        borderRadius: '12px',
+                        marginBottom: '10px',
+                      }}>
+                        {/* 标题行 */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                          <span style={{
+                            fontFamily: 'Outfit', fontSize: '15px', fontWeight: 800,
+                            color: '#5D4037',
+                          }}>【{(previewInfo.baziResult as any)?.mingGeName || '均衡型'}】</span>
+                          <span style={{
+                            fontSize: '10.5px', color: '#A08878', background: '#F5EDE4',
+                            padding: '1px 8px', borderRadius: '10px', fontWeight: 600,
+                          }}>{(previewInfo.baziResult as any)?.mingGeType || '正八格'}</span>
+                        </div>
+
+                        {/* 命格描述 + 日主五行生克 */}
+                        {(() => {
+                          const dm = (previewInfo.baziResult as any)?.dayMaster || '';
+                          const dmMap: Record<string, {name: string, color: string, desc: string}> = {
+                            wood:  { name: '木', color: '#4CAF50', desc: '木主仁，性直情和，代表生长、条达。木旺者仁慈温和，木弱者固执易怒。' },
+                            fire:  { name: '火', color: '#FF6B6B', desc: '火主礼，性急恭敬，代表炎上、光明。火旺者热情奔放，火弱者缺乏活力。' },
+                            earth: { name: '土', color: '#D4A000', desc: '土主信，性重厚实，代表承载、包容。土旺者稳重守信，土弱者多疑寡断。' },
+                            metal:{ name: '金', color: '#D4A017', desc: '金主义，性刚果断，代表收敛、肃杀。金旺者坚毅果敢，金弱者优柔寡断。' },
+                            water: { name: '水', color: '#00A8E8', desc: '水主智，性聪善变，代表润下、流动。水旺者机智灵活，水弱者浮躁不安。' },
+                          };
+                          const dmInfo = dmMap[dm] || { name: dm, color: '#888', desc: '' };
+                          
+                          // 相生相克关系
+                          const shengRel: Record<string, {sheng: string, beiSheng: string, ke: string, beiKe: string}> = {
+                            wood:  { sheng: '火(泄)', beiSheng: '水(印)', ke: '土(财)', beiKe: '金(官)' },
+                            fire:  { sheng: '土(泄)', beiSheng: '木(印)', ke: '金(财)', beiKe: '水(官)' },
+                            earth: { sheng: '金(泄)', beiSheng: '火(印)', ke: '水(财)', beiKe: '木(官)' },
+                            metal: { sheng: '水(泄)', beiSheng: '土(印)', ke: '木(财)', beiKe: '火(官)' },
+                            water: { sheng: '木(泄)', beiSheng: '金(印)', ke: '火(财)', beiKe: '土(官)' },
+                          };
+                          const rel = shengRel[dm] || { sheng: '-', beiSheng: '-', ke: '-', beiKe: '-' };
+
+                          return (
+                            <>
+                              {/* 日主五行说明 */}
+                              <div style={{
+                                fontSize: '12px', lineHeight: '1.65', color: '#6D5D50',
+                                marginBottom: '8px', paddingBottom: '8px',
+                                borderBottom: '1px dashed #EDE4DA',
+                              }}>
+                                <span style={{ color: dmInfo.color, fontWeight: 700 }}>日主{dmInfo.name}</span>
+                                {dmInfo.desc && <> · {dmInfo.desc}</>}
+                              </div>
+                              
+                              {/* 五行生克关系表 */}
+                              <div style={{ 
+                                display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4px 16px',
+                                fontSize: '11px',
+                              }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                  <span style={{ width: '14px', height: '14px', borderRadius: '50%', background: `${dmInfo.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px' }}>↗</span>
+                                  <span style={{ color: '#888' }}>生</span>
+                                  <span style={{ color: '#555', fontWeight: 600 }}>{rel.sheng}</span>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                  <span style={{ width: '14px', height: '14px', borderRadius: '50%', background: `${dmInfo.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px' }}>↙</span>
+                                  <span style={{ color: '#888' }}>被生</span>
+                                  <span style={{ color: '#555', fontWeight: 600 }}>{rel.beiSheng}</span>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                  <span style={{ width: '14px', height: '14px', borderRadius: '50%', background: `${dmInfo.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px' }}>✕</span>
+                                  <span style={{ color: '#888' }}>克</span>
+                                  <span style={{ color: '#555', fontWeight: 600 }}>{rel.ke}</span>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                  <span style={{ width: '14px', height: '14px', borderRadius: '50%', background: `${dmInfo.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px' }}>⊗</span>
+                                  <span style={{ color: '#888' }}>被克</span>
+                                  <span style={{ color: '#555', fontWeight: 600 }}>{rel.beiKe}</span>
+                                </div>
+                              </div>
+
+                              {/* 用神简述 */}
+                              {(previewInfo.baziResult as any)?.favorableElements && (() => {
+                                const fav = (previewInfo.baziResult as any).favorableElements;
+                                if (!fav) return null;
+                                const favNames = (Array.isArray(fav) ? fav : []).map((e: string) => elementNames[e] || e).filter(Boolean);
+                                return favNames.length > 0 ? (
+                                  <div style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px dashed #EDE4DA' }}>
+                                    <span style={{ fontSize: '11px', color: '#999' }}>用神：</span>
+                                    <span style={{ fontSize: '11.5px', color: PALETTE.coral, fontWeight: 700 }}>{favNames.join('、')}</span>
+                                    <span style={{ fontSize: '11px', color: '#AAA', marginLeft: '6px' }}>· 补益日主{dmInfo.name}命</span>
+                                  </div>
+                                ) : null;
+                              })()}
+                            </>
+                          );
+                        })()}
                       </div>
 
                       {/* SVG 圆形图 */}
