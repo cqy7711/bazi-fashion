@@ -1099,7 +1099,7 @@ export default function HomePage() {
           <div style={{
             background: '#FFFFFF', borderRadius: '24px', padding: '20px',
             boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8',
-            flex: 1,
+            flex: 0.8,
           }}>
             {/* 头部：标题 + 右上角操作按钮 */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
@@ -1236,6 +1236,7 @@ export default function HomePage() {
             <div style={{
               background: '#FFFFFF', borderRadius: '24px', padding: '20px',
               boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8',
+              flex: 1.2,
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
                 <div style={{
