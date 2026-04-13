@@ -1229,13 +1229,23 @@ export default function HomePage() {
                         fontFamily: 'Outfit', fontSize: '10px', fontWeight: 600,
                         color: PALETTE.orange, background: `${PALETTE.orange}15`,
                         padding: '3px 10px', borderRadius: '9999px',
-                      }}>{previewInfo.baziResult.yearPillar?.ganZhu || ''}年</span>
+                      }}>{previewInfo.baziResult.yearStem + previewInfo.baziResult.yearBranch}年</span>
                     )}
                   </div>
                 </div>
 
                 {/* 八字四柱展示 */}
                 {previewInfo?.baziResult && (
+                  (() => {
+                    const bz = previewInfo.baziResult;
+                    const pillarColors: Record<string, string> = { wood: PALETTE.green, fire: '#FF6B6B', earth: '#D4A000', metal: '#7B8FA8', water: '#00A8E8' };
+                    const pillars = [
+                      { label: '年柱', value: bz.yearStem + bz.yearBranch, element: bz.dayMasterElement },
+                      { label: '月柱', value: bz.monthStem + bz.monthBranch, element: bz.dayMasterElement },
+                      { label: '日柱', value: bz.dayStem + bz.dayBranch, element: bz.dayMasterElement },
+                      { label: '时柱', value: bz.hourStem + bz.hourBranch, element: bz.dayMasterElement },
+                    ];
+                    return (
                   <div style={{
                     background: 'linear-gradient(135deg, #FAFAFA, #F5F5F8)',
                     borderRadius: '14px', padding: '12px', marginBottom: '12px',
@@ -1245,13 +1255,8 @@ export default function HomePage() {
                       八字四柱
                     </div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '4px' }}>
-                      {[
-                        { label: '年柱', value: previewInfo.baziResult.yearPillar?.ganZhu || '--', element: previewInfo.baziResult.yearPillar?.element || '' },
-                        { label: '月柱', value: previewInfo.baziResult.monthPillar?.ganZhu || '--', element: previewInfo.baziResult.monthPillar?.element || '' },
-                        { label: '日柱', value: previewInfo.baziResult.dayPillar?.ganZhu || '--', element: previewInfo.baziResult.dayPillar?.element || '' },
-                        { label: '时柱', value: previewInfo.baziResult.hourPillar?.ganZhu || '--', element: previewInfo.baziResult.hourPillar?.element || '' },
-                      ].map(p => {
-                        const elColor = elementColors[p.element] || PALETTE.coral;
+                      {pillars.map(p => {
+                        const elColor = pillarColors[p.element] || PALETTE.coral;
                         return (
                           <div key={p.label} style={{ textAlign: 'center' }}>
                             <div style={{ fontFamily: 'Outfit', fontSize: '9px', color: '#A0A8C0', marginBottom: '2px' }}>{p.label}</div>
@@ -1265,7 +1270,10 @@ export default function HomePage() {
                       })}
                     </div>
                   </div>
-                )}
+                  );
+                })()
+                )
+                }
 
                 {/* 编辑 / 删除按钮 */}
                 <div style={{ display: 'flex', gap: '8px' }}>
