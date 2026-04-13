@@ -1246,8 +1246,10 @@ export default function HomePage() {
           {/* 命盘信息卡片 */}
           {selectedRecord && previewInfo && previewInfo.baziResult ? (
             <div style={{
+              flex: 1,
               background: '#FFFFFF', borderRadius: '24px', padding: '20px',
               boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8',
+              display: 'flex', flexDirection: 'column',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
                 <div style={{
@@ -1768,11 +1770,12 @@ export default function HomePage() {
 
             {/* 今日穿搭建议卡片 */}
             {outfitRec && (
-              <div style={{
-                flex: 1,
-                background: '#FFFFFF', borderRadius: '24px', padding: '20px',
-                boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8',
-              }}>
+            <div style={{
+              flex: 1,
+              background: '#FFFFFF', borderRadius: '24px', padding: '20px',
+              boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8',
+              display: 'flex', flexDirection: 'column',
+            }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
                   <div style={{
                     width: '32px', height: '32px', borderRadius: '10px', flexShrink: 0,
