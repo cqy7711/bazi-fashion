@@ -1088,11 +1088,12 @@ export default function HomePage() {
         </div>
       </motion.div>
 
-      {/* ── 主体单栏布局 ── */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      {/* ── 主体双栏布局 ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.5fr)', gap: '20px', alignItems: 'start' }}>
 
-        {/* 第一行：我的生辰 | 命盘信息 | 今日运势 并排 */}
-        <div style={{ display: 'flex', flexDirection: 'row', gap: '12px', alignItems: 'stretch' }}>
+        {/* ── 左栏：我的生辰 + 命盘信息（并排）+ 今日运势（下方） ── */}
+        <motion.div {...fadeUp} transition={{ delay: 0.05 }}>
+          <div style={{ display: 'flex', flexDirection: 'row', gap: '12px', alignItems: 'stretch' }}>
 
           {/* 用户记录卡片 */}
           <div style={{
@@ -1592,13 +1593,14 @@ export default function HomePage() {
             </div>
           )}
 
-        </div>{/* 关闭第一行 flex */}
+        </motion.div>
 
-        {/* 第二行：今日穿搭 | 今日手串 并排 */}
-        <div style={{ display: 'flex', flexDirection: 'row', gap: '16px', alignItems: 'stretch' }}>
+        {/* ── 右栏：今日穿搭 + 手串 ── */}
+        {selectedRecord && previewInfo && previewInfo.baziResult && (
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
-          {/* 今日穿搭建议卡片 */}
-          {outfitRec && (
+            {/* 今日穿搭建议卡片 */}
+            {outfitRec && (
               <div style={{
                 background: '#FFFFFF', borderRadius: '24px', padding: '20px',
                 boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8', marginBottom: '16px',
