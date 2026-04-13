@@ -1592,7 +1592,7 @@ export default function HomePage() {
               flex: 1,
               background: '#FFFFFF', borderRadius: '24px', padding: '20px',
               boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8',
-              maxHeight: '520px', overflowY: 'auto',
+              display: 'flex', flexDirection: 'column',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
                 <div style={{
