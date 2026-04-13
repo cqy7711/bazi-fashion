@@ -1163,13 +1163,47 @@ export default function HomePage() {
                     whileHover={{ y: -2 }}
                     whileTap={{ scale: 0.96 }}
                     style={{
-                      flexShrink: 0, width: '100px', padding: '12px 10px',
+                      flexShrink: 0, width: '110px', padding: '12px 10px',
                       textAlign: 'center', borderRadius: '14px',
                       border: selectedId === r.id ? `2px solid ${PALETTE.coral}` : '1.5px solid #F0F1F8',
                       background: selectedId === r.id ? `${PALETTE.coral}08` : '#FFFFFF',
                       cursor: 'pointer', transition: 'all 0.2s', position: 'relative',
                     }}
                   >
+                    {/* 编辑 / 删除按钮 — 右上角 */}
+                    <div style={{ position: 'absolute', top: '4px', right: '4px', display: 'flex', gap: '2px' }}>
+                      <div
+                        onClick={(e) => { e.stopPropagation(); handleEdit(r); }}
+                        onMouseDown={e => e.stopPropagation()}
+                        title="编辑"
+                        style={{
+                          width: '20px', height: '20px', borderRadius: '50%',
+                          background: 'rgba(59,130,246,0.1)', border: 'none',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          cursor: 'pointer', transition: 'background 0.15s',
+                        }}
+                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(59,130,246,0.2)')}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'rgba(59,130,246,0.1)')}
+                      >
+                        <Edit3 style={{ width: '11px', height: '11px', color: '#3B82F6' }} />
+                      </div>
+                      <div
+                        onClick={(e) => { e.stopPropagation(); handleDelete(r.id); }}
+                        onMouseDown={e => e.stopPropagation()}
+                        title="删除"
+                        style={{
+                          width: '20px', height: '20px', borderRadius: '50%',
+                          background: 'rgba(239,68,68,0.08)', border: 'none',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          cursor: 'pointer', transition: 'background 0.15s',
+                        }}
+                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(239,68,68,0.18)')}
+                        onMouseLeave={e => (e.currentTarget.style.background = 'rgba(239,68,68,0.08)')}
+                      >
+                        <X style={{ width: '11px', height: '11px', color: '#EF4444' }} />
+                      </div>
+                    </div>
+
                     <div style={{
                       width: '36px', height: '36px', margin: '0 auto 6px', borderRadius: '50%',
                       background: selectedId === r.id ? PALETTE.coral : `${PALETTE.coral}15`,
@@ -1193,7 +1227,7 @@ export default function HomePage() {
                         marginTop: '4px', paddingTop: '3px',
                         borderTop: `1px solid ${PALETTE.coralLight}`,
                         fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: PALETTE.coral, fontWeight: 600,
-                      }}>已选中 &#x2713;</div>
+                      }}>已选中 ✓</div>
                     )}
                   </motion.div>
                 ))}
@@ -2546,25 +2580,64 @@ export default function HomePage() {
 
       </div>
 
-      {/* ── 新建表单 ── */}
+      {/* ── 录入生辰弹窗 ── */}
       <AnimatePresence>
         {showForm && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.35 }}>
-            <div style={{
-              background: '#FFFFFF', borderRadius: '24px', padding: '32px',
-              boxShadow: '0 4px 24px rgba(0,0,0,0.06)', border: '1px solid #F0F1F8',
-            }}>
-              <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '17px', fontWeight: 800, color: '#1A1A2E', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{
-                  width: '28px', height: '28px', borderRadius: '8px',
-                  background: `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange})`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: '#FFFFFF',
-                }}>
-                  {(form as any)._editingId ? <Edit3 style={{ width: '16px', height: '16px' }} /> : <Star style={{ width: '16px', height: '16px' }} />}
-                </span>
-                {(form as any)._editingId ? '修改生辰' : '录入生辰'}
-              </h3>
+          <>
+            {/* 遮罩层 */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              onClick={() => setShowForm(false)}
+              style={{
+                position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)',
+                backdropFilter: 'blur(4px)', zIndex: 100,
+              }}
+            />
+            {/* 弹窗内容 */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.92, y: 30 }}
+              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                position: 'fixed', left: '50%', top: '50%',
+                transform: 'translate(-50%, -50%)', zIndex: 101,
+                width: 'min(520px, 90vw)', maxHeight: '88vh',
+                overflowY: 'auto',
+                background: '#FFFFFF', borderRadius: '28px', padding: '32px',
+                boxShadow: '0 24px 80px rgba(0,0,0,0.18)',
+              }}
+            >
+              {/* 标题栏 */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+                <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '18px', fontWeight: 800, color: '#1A1A2E', margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{
+                    width: '30px', height: '30px', borderRadius: '10px',
+                    background: `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange})`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: '#FFFFFF',
+                  }}>
+                    {(form as any)._editingId ? <Edit3 style={{ width: '16px', height: '16px' }} /> : <Star style={{ width: '16px', height: '16px' }} />}
+                  </span>
+                  {(form as any)._editingId ? '修改生辰' : '录入生辰'}
+                </h3>
+                <div
+                  onClick={() => setShowForm(false)}
+                  style={{
+                    width: '28px', height: '28px', borderRadius: '50%',
+                    background: '#F0F1F8', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer', transition: 'background 0.15s',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#E4E6EF')}
+                  onMouseLeave={e => (e.currentTarget.style.background = '#F0F1F8')}
+                >
+                  <X style={{ width: '14px', height: '14px', color: '#6B7280' }} />
+                </div>
+              </div>
+
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div>
                   <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '13px', color: '#6B7280', marginBottom: '8px', fontWeight: 500 }}>姓名</label>
@@ -2670,8 +2743,8 @@ export default function HomePage() {
                   </button>
                 </div>
               </form>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
 
