@@ -1170,38 +1170,39 @@ export default function HomePage() {
                       cursor: 'pointer', transition: 'all 0.2s', position: 'relative',
                     }}
                   >
-                    {/* 编辑 / 删除按钮 — 左上角 */}
-                    <div style={{ position: 'absolute', top: '4px', left: '4px', display: 'flex', gap: '2px' }}>
-                      <div
-                        onClick={(e) => { e.stopPropagation(); handleEdit(r); }}
-                        onMouseDown={e => e.stopPropagation()}
-                        title="编辑"
-                        style={{
-                          width: '20px', height: '20px', borderRadius: '50%',
-                          background: 'rgba(59,130,246,0.1)', border: 'none',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          cursor: 'pointer', transition: 'background 0.15s',
-                        }}
-                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(59,130,246,0.2)')}
-                        onMouseLeave={e => (e.currentTarget.style.background = 'rgba(59,130,246,0.1)')}
-                      >
-                        <Edit3 style={{ width: '11px', height: '11px', color: '#3B82F6' }} />
-                      </div>
-                      <div
-                        onClick={(e) => { e.stopPropagation(); handleDelete(r.id); }}
-                        onMouseDown={e => e.stopPropagation()}
-                        title="删除"
-                        style={{
-                          width: '20px', height: '20px', borderRadius: '50%',
-                          background: 'rgba(239,68,68,0.08)', border: 'none',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          cursor: 'pointer', transition: 'background 0.15s',
-                        }}
-                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(239,68,68,0.18)')}
-                        onMouseLeave={e => (e.currentTarget.style.background = 'rgba(239,68,68,0.08)')}
-                      >
-                        <X style={{ width: '11px', height: '11px', color: '#EF4444' }} />
-                      </div>
+                    {/* 编辑按钮 — 左上角 */}
+                    <div
+                      onClick={(e) => { e.stopPropagation(); handleEdit(r); }}
+                      onMouseDown={e => e.stopPropagation()}
+                      title="编辑"
+                      style={{
+                        position: 'absolute', top: '5px', left: '5px',
+                        width: '22px', height: '22px', borderRadius: '50%',
+                        background: 'rgba(59,130,246,0.12)', border: 'none',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        cursor: 'pointer', zIndex: 3,
+                      }}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(59,130,246,0.25)')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'rgba(59,130,246,0.12)')}
+                    >
+                      <Edit3 style={{ width: '12px', height: '12px', color: '#3B82F6' }} />
+                    </div>
+                    {/* 关闭按钮 — 右上角（取消选中） */}
+                    <div
+                      onClick={(e) => { e.stopPropagation(); setSelectedRecord(null); }}
+                      onMouseDown={e => e.stopPropagation()}
+                      title="取消选中"
+                      style={{
+                        position: 'absolute', top: '5px', right: '5px',
+                        width: '22px', height: '22px', borderRadius: '50%',
+                        background: 'rgba(160,168,192,0.12)', border: 'none',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        cursor: 'pointer', zIndex: 3,
+                      }}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(160,168,192,0.28)')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'rgba(160,168,192,0.12)')}
+                    >
+                      <X style={{ width: '11px', height: '11px', color: '#A0A8C0' }} />
                     </div>
 
                     <div style={{
@@ -1241,162 +1242,7 @@ export default function HomePage() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.08 }} style={{ display: 'flex', flexDirection: 'row', gap: '12px', marginBottom: '16px' }}>
 
 
-          {/* 用户信息卡片 - 高级图示 */}
-          <div style={{
-            flex: '0 0 240px',
-            background: '#FFFFFF', borderRadius: '24px', padding: '20px',
-            boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8',
-            display: 'flex', flexDirection: 'column',
-          }}>
-            {/* 卡片头部 */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-              <div style={{
-                width: '44px', height: '44px', borderRadius: '50%', flexShrink: 0,
-                background: `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange})`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: `0 4px 14px rgba(255,107,157,0.35)`,
-              }}>
-                <span style={{ fontFamily: 'Outfit', fontSize: '18px', fontWeight: 800, color: '#fff' }}>
-                  {selectedRecord.name.charAt(0)}
-                </span>
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 800, color: '#1A1A2E', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  {selectedRecord.name}
-                </p>
-                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: PALETTE.coral, fontWeight: 600 }}>
-                  {selectedRecord.gender === 'male' ? '♂ 男' : '♀ 女'}
-                </p>
-              </div>
-            </div>
-
-            {/* 信息网格 - 图标+标签 */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              {/* 出生日期 */}
-              <div style={{
-                padding: '12px 14px', borderRadius: '14px',
-                background: `${PALETTE.coral}06`, border: `1px solid ${PALETTE.coral}18`,
-                display: 'flex', alignItems: 'center', gap: '12px',
-              }}>
-                <div style={{
-                  width: '36px', height: '36px', borderRadius: '10px', flexShrink: 0,
-                  background: `linear-gradient(135deg, ${PALETTE.coral}18, ${PALETTE.coral}08)`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <Sparkles style={{ width: '17px', height: '17px', color: PALETTE.coral }} />
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '9px', fontWeight: 700, color: '#A0A8C0', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 3px 0' }}>出生日期</p>
-                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#1A1A2E', margin: 0, lineHeight: 1.3 }}>
-                    {selectedRecord.birthYear}.{String(selectedRecord.birthMonth).padStart(2,'0')}.{String(selectedRecord.birthDay).padStart(2,'0')}
-                  </p>
-                </div>
-              </div>
-
-              {/* 出生时辰 */}
-              <div style={{
-                padding: '12px 14px', borderRadius: '14px',
-                background: `${PALETTE.purple}06`, border: `1px solid ${PALETTE.purple}18`,
-                display: 'flex', alignItems: 'center', gap: '12px',
-              }}>
-                <div style={{
-                  width: '36px', height: '36px', borderRadius: '10px', flexShrink: 0,
-                  background: `linear-gradient(135deg, ${PALETTE.purple}18, ${PALETTE.purple}08)`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <Clock style={{ width: '17px', height: '17px', color: PALETTE.purple }} />
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '9px', fontWeight: 700, color: '#A0A8C0', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 3px 0' }}>出生时辰</p>
-                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#1A1A2E', margin: 0, lineHeight: 1.3 }}>{(() => {
-                    const h = selectedRecord.birthHour;
-                    const timeNames = ['子时','丑时','寅时','卯时','辰时','巳时','午时','未时','申时','酉时','戌时','亥时'];
-                    return h !== undefined && h >= 0 ? timeNames[h] || `${h}时` : '未知时辰';
-                  })()}</p>
-                </div>
-              </div>
-
-              {/* 出生地点 */}
-              <div style={{
-                padding: '12px 14px', borderRadius: '14px',
-                background: `${PALETTE.green}06`, border: `1px solid ${PALETTE.green}18`,
-                display: 'flex', alignItems: 'center', gap: '12px',
-              }}>
-                <div style={{
-                  width: '36px', height: '36px', borderRadius: '10px', flexShrink: 0,
-                  background: `linear-gradient(135deg, ${PALETTE.green}18, ${PALETTE.green}08)`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <MapPin style={{ width: '17px', height: '17px', color: PALETTE.green }} />
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '9px', fontWeight: 700, color: '#A0A8C0', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 3px 0' }}>出生地点</p>
-                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#1A1A2E', margin: 0, lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                    {selectedRecord.birthLocation || '未设置'}
-                  </p>
-                </div>
-              </div>
-
-              {/* 历法类型 */}
-              <div style={{
-                padding: '12px 14px', borderRadius: '14px',
-                background: `${PALETTE.orange}06`, border: `1px solid ${PALETTE.orange}18`,
-                display: 'flex', alignItems: 'center', gap: '12px',
-              }}>
-                <div style={{
-                  width: '36px', height: '36px', borderRadius: '10px', flexShrink: 0,
-                  background: `linear-gradient(135deg, ${PALETTE.orange}18, ${PALETTE.orange}08)`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <Calendar style={{ width: '17px', height: '17px', color: PALETTE.orange }} />
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '9px', fontWeight: 700, color: '#A0A8C0', textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 3px 0' }}>历法类型</p>
-                  <span style={{
-                    padding: '4px 10px', borderRadius: '6px',
-                    background: selectedRecord.calendarType === 'solar' ? `${PALETTE.blue}15` : `${PALETTE.yellow}15`,
-                    border: selectedRecord.calendarType === 'solar' ? `1px solid ${PALETTE.blue}30` : `1px solid ${PALETTE.yellow}30`,
-                    fontFamily: 'Outfit', fontSize: '11px', fontWeight: 700,
-                    color: selectedRecord.calendarType === 'solar' ? PALETTE.blue : '#D4A000',
-                  }}>
-                    {selectedRecord.calendarType === 'solar' ? '📅 公历' : '🏮 农历'}
-                  </span>
-                </div>
-              </div>
-
-              {/* 操作按钮 */}
-              <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
-                <motion.button
-                  onClick={() => handleEdit(selectedRecord as UserBirthInfoListItem)}
-                  whileHover={{ y: -1 }}
-                  whileTap={{ scale: 0.97 }}
-                  style={{
-                    flex: 1, padding: '9px', borderRadius: '12px',
-                    background: `${PALETTE.blue}08`, border: `1px solid ${PALETTE.blue}20`,
-                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
-                    fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 700, color: PALETTE.blue,
-                  }}
-                >
-                  <Edit3 style={{ width: '13px', height: '13px' }} /> 编辑
-                </motion.button>
-                <motion.button
-                  onClick={() => handleDelete(selectedRecord.id)}
-                  whileHover={{ y: -1 }}
-                  whileTap={{ scale: 0.97 }}
-                  style={{
-                    flex: 1, padding: '9px', borderRadius: '12px',
-                    background: `${PALETTE.coral}08`, border: `1px solid ${PALETTE.coral}20`,
-                    cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',
-                    fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 700, color: PALETTE.coral,
-                  }}
-                >
-                  <Trash2 style={{ width: '13px', height: '13px' }} /> 删除
-                </motion.button>
-              </div>
-            </div>
-          </div>
-
-          {/* 命盘信息卡片 - 增强版 */}
+          {/* 命盘信息卡片 */}
           {selectedRecord && previewInfo && previewInfo.baziResult ? (
             <div style={{
               background: '#FFFFFF', borderRadius: '24px', padding: '20px',
