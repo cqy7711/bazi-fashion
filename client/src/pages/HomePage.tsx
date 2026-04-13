@@ -1250,18 +1250,18 @@ export default function HomePage() {
                 const elementNames: Record<string, string> = { wood: '木', fire: '火', earth: '土', metal: '金', water: '水' };
                 const elementColors: Record<string, string> = { wood: PALETTE.green, fire: '#FF6B6B', earth: '#D4A000', metal: '#7B8FA8', water: '#00A8E8' };
                 const elementDesc: Record<string, string> = {
-                  wood: '木命人仁慈温和，富有创造力和同情心，适合文化创意、教育、农业等行业。',
-                  fire: '火命人热情奔放，积极进取，适合销售、演讲、政治、娱乐等行业。',
-                  earth: '土命人稳重踏实，诚实守信，适合建筑、农业、管理、仓储等行业。',
-                  metal: '金命人果断坚定，正义感强，适合金融、科技、法律、外交等行业。',
-                  water: '水命人聪明灵活，适应力强，适合贸易、物流、媒体、服务等行业。',
+                  wood: '木气通于春，代表生长、仁慈与创造。日主为木者，通常具有向上发展的生命力，思维清晰，善于规划，但若木气过旺则易固执己见。宜保持谦和心态，多接触自然有利于运势。',
+                  fire: '火气通于夏，代表热情、光明与礼节。日主为火者，通常精力充沛，善于表达，有感染力，但若火气过旺则易冲动急躁。宜修身养性，避免激烈竞争。',
+                  earth: '土气寄于四季之末，代表稳重、诚信与承载。日主为土者，通常责任心强，善于积累，有耐心，但若土气过旺则易固执保守。宜开阔视野，多与外界交流。',
+                  metal: '金气通于秋，代表刚毅、决断与清肃。日主为金者，通常意志坚定，原则性强，善于权衡利弊，但若金气过旺则易冷酷刻薄。宜柔和待人，注重情义。',
+                  water: '水气通于冬，代表智慧、流动与变通。日主为水者，通常聪明机敏，适应力强，善于察言观色，但若水气过旺则易消极逃避。宜积极进取，勇于面对挑战。',
                 };
                 const mingGeDesc: Record<string, string> = {
-                  wood: '木气旺盛，创造力强，需火来生土，土来生金，金来生水，水来生木，形成流通。',
-                  fire: '火势猛烈，行动力强，需土来泄火之气，金来助身，水来制火，木来生火相助。',
-                  earth: '土气厚重，稳定性强，需金来生水，水来生木，木来生火，火来生土相生。',
-                  metal: '金气清刚，决策力强，需土来生金，水来木来生木，木来生火，火来制金。',
-                  water: '水气流通，智慧性强，需金来生水，火来水来温养，木来生火，火来水制。',
+                  wood: '木命人仁慈温和，具有较强的创造力和直觉感知力。性格上倾向于理想主义，有同情心，善于倾听。由于木气旺相，需注意肝胆健康，避免熬夜。此命格适合文化创意、教育、农林、设计等行业，与木火属性的事物缘分较深。',
+                  fire: '火命人热情开朗，行动力强，善于表达和社交。精力充沛，思维敏捷，有领导气质。但由于火气过旺，需注意心血管健康和脾气管理。此命格适合销售、演讲、政治、娱乐、公关等需要表达和影响力的行业。',
+                  earth: '土命人稳重踏实，诚实守信，有责任心和耐心。善于积累和管理，做事有始有终。由于土气厚重，需注意脾胃消化和思虑过度。此命格适合建筑、农业、管理、财务、仓储等需要稳定和耐心的行业。',
+                  metal: '金命人果断坚定，正义感强，善于决断和逻辑分析。做事有原则，讲究效率，有较强的执行力。由于金气清刚，需注意肺部呼吸系统和筋骨关节。此命格适合金融、法律、科技、外交、机械等需要决断和理性的行业。',
+                  water: '水命人聪明灵活，适应力强，善于变通和随机应变。思维敏捷，有洞察力，善于把握机会。由于水气流通，需注意泌尿系统和肾功能。此命格适合贸易、物流、媒体、服务、金融等需要灵活应变的行业。',
                 };
                 return (
                   <div style={{
@@ -1302,98 +1302,6 @@ export default function HomePage() {
                   </div>
                 );
               })()}
-
-              {/* 五行占比 - 图标横排填满整行 */}
-              {previewInfo.fiveElements && (
-                (() => {
-                  const fe = previewInfo.fiveElements;
-                  const elements = [
-                    { key: 'wood', name: '木', color: PALETTE.green },
-                    { key: 'fire', name: '火', color: '#FF6B6B' },
-                    { key: 'earth', name: '土', color: '#D4A000' },
-                    { key: 'metal', name: '金', color: '#7B8FA8' },
-                    { key: 'water', name: '水', color: '#00A8E8' },
-                  ];
-                  const total = (fe.wood || 0) + (fe.fire || 0) + (fe.earth || 0) + (fe.metal || 0) + (fe.water || 0);
-                  return (
-                    <div style={{
-                      display: 'flex',
-                      gap: '8px',
-                      marginBottom: '14px',
-                    }}>
-                      {elements.map(el => {
-                        const val = fe[el.key as keyof typeof fe] || 0;
-                        const pct = total > 0 ? Math.round((val / total) * 100) : 0;
-                        return (
-                          <div key={el.key} style={{
-                            flex: 1,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            gap: '6px',
-                            padding: '12px 4px',
-                            borderRadius: '14px',
-                            background: `${el.color}08`,
-                            border: `1px solid ${el.color}20`,
-                          }}>
-                            {/* 圆形图标 */}
-                            <div style={{
-                              width: '36px',
-                              height: '36px',
-                              borderRadius: '50%',
-                              background: el.color,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              boxShadow: `0 3px 10px ${el.color}40`,
-                              flexShrink: 0,
-                            }}>
-                              <span style={{
-                                fontFamily: 'Outfit',
-                                fontSize: '14px',
-                                fontWeight: 800,
-                                color: '#fff',
-                              }}>{el.name}</span>
-                            </div>
-                            {/* 进度条 */}
-                            <div style={{
-                              width: '100%',
-                              height: '8px',
-                              borderRadius: '4px',
-                              background: `${el.color}20`,
-                              overflow: 'hidden',
-                            }}>
-                              <div style={{
-                                height: '100%',
-                                width: `${pct}%`,
-                                borderRadius: '4px',
-                                background: el.color,
-                                transition: 'width 0.6s ease',
-                              }} />
-                            </div>
-                            {/* 数值 */}
-                            <div style={{ textAlign: 'center' }}>
-                              <p style={{
-                                fontFamily: 'Outfit',
-                                fontSize: '12px',
-                                fontWeight: 700,
-                                color: el.color,
-                                margin: 0,
-                              }}>{val}次</p>
-                              <p style={{
-                                fontFamily: 'Outfit',
-                                fontSize: '9px',
-                                color: '#A0A8C0',
-                                margin: 0,
-                              }}>{pct}%</p>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  );
-                })()
-              )}
 
               {/* 喜用五行 */}
               {previewInfo.favorableElements && previewInfo.favorableElements.length > 0 && (
