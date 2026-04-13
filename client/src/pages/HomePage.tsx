@@ -1616,106 +1616,127 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* 四维横向排列 */}
-              <div style={{ display: 'flex', flexDirection: 'row', gap: '8px', overflowX: 'auto', marginBottom: '12px', paddingBottom: '4px', scrollbarWidth: 'none' }}>
-                {[
-                  { label: '事业', score: dailyFortune.careerScore, icon: TrendingUpIcon, desc: dailyFortune.relationDescription, color: PALETTE.coral },
-                  { label: '财运', score: dailyFortune.wealthScore, icon: Sparkles, desc: getDimensionDesc('wealth', dailyFortune.dayRelation || '', dailyFortune.wealthScore), color: '#F59E0B' },
-                  { label: '感情', score: dailyFortune.loveScore, icon: Heart, desc: getDimensionDesc('love', dailyFortune.dayRelation || '', dailyFortune.loveScore), color: PALETTE.coral },
-                  { label: '健康', score: dailyFortune.healthScore, icon: Apple, desc: getDimensionDesc('health', dailyFortune.dayRelation || '', dailyFortune.healthScore), color: '#22C55E' },
-                ].map(d => (
-                  <div key={d.label} style={{
-                    flex: 1, minWidth: '90px', padding: '10px 12px', borderRadius: '14px',
-                    background: `${getScoreColor(d.score)}0A`, border: `1px solid ${getScoreColor(d.score)}25`,
-                    display: 'flex', alignItems: 'center', gap: '8px',
-                  }}>
-                    <div style={{
-                      width: '36px', height: '36px', borderRadius: '50%', flexShrink: 0,
-                      background: `${getScoreColor(d.score)}18`,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+              {/* ===== 新布局：左圆环 + 右侧2x2网格 + 底部4卡片 + 宜不宜 + 提示 ===== */}
+              
+              {/* 主体区域：左侧圆环 + 右侧2x2网格 */}
+              <div style={{ display: 'flex', gap: '14px', marginBottom: '12px' }}>
+                
+                {/* 左侧圆环分数 */}
+                <div style={{
+                  width: '90px', flexShrink: 0,
+                  display: 'flex', flexDirection: 'column', alignItems: 'center',
+                  paddingTop: '6px',
+                }}>
+                  <svg width="72" height="72" viewBox="0 0 72 72" style={{ display: 'block' }}>
+                    <circle cx="36" cy="36" r="30" fill="none" stroke="#F0E8E5" strokeWidth="7" />
+                    <circle cx="36" cy="36" r="30" fill="none"
+                      stroke={getScoreColor(dailyFortune.totalScore)} strokeWidth="7"
+                      strokeDasharray={`${(dailyFortune.totalScore / 100) * 188.5} 188.5`}
+                      strokeLinecap="round" transform="rotate(-90 36 36)" />
+                    <text x="36" y="34" textAnchor="middle" dominantBaseline="middle"
+                      style={{ fontFamily: 'Outfit', fontSize: '20px', fontWeight: 900, fill: getScoreColor(dailyFortune.totalScore) }}>{dailyFortune.totalScore}</text>
+                    <text x="36" y="50" textAnchor="middle" dominantBaseline="middle"
+                      style={{ fontFamily: 'Outfit', fontSize: '10px', fill: '#B0A8C0' }}>总分</text>
+                  </svg>
+                  <span style={{ fontFamily: 'Outfit', fontSize: '11px', color: getScoreColor(dailyFortune.totalScore), fontWeight: 700, marginTop: '2px' }}>{dailyFortune.totalLabel}</span>
+                </div>
+
+                {/* 右侧2x2网格：事业/财运/感情/健康 */}
+                <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: '8px' }}>
+                  {[
+                    { label: '事业', score: dailyFortune.careerScore, icon: TrendingUpIcon, desc: dailyFortune.relationDescription, color: PALETTE.coral },
+                    { label: '财运', score: dailyFortune.wealthScore, icon: Sparkles, desc: getDimensionDesc('wealth', dailyFortune.dayRelation || '', dailyFortune.wealthScore), color: '#F59E0B' },
+                    { label: '感情', score: dailyFortune.loveScore, icon: Heart, desc: getDimensionDesc('love', dailyFortune.dayRelation || '', dailyFortune.loveScore), color: PALETTE.coral },
+                    { label: '健康', score: dailyFortune.healthScore, icon: Apple, desc: getDimensionDesc('health', dailyFortune.dayRelation || '', dailyFortune.healthScore), color: '#22C55E' },
+                  ].map(d => (
+                    <div key={d.label} style={{
+                      padding: '10px 12px', borderRadius: '12px',
+                      background: `${getScoreColor(d.score)}08`, border: `1px solid ${getScoreColor(d.score)}18`,
+                      display: 'flex', flexDirection: 'column',
                     }}>
-                      <d.icon style={{ width: '16px', height: '16px', color: getScoreColor(d.score) }} />
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '2px' }}>
-                        <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#A0A8C0' }}>{d.label}</p>
-                        <p style={{ fontFamily: 'Outfit', fontSize: '16px', fontWeight: 800, color: getScoreColor(d.score), lineHeight: 1 }}>{d.score}</p>
+                      {/* 标题行：图标+名称 */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '4px' }}>
+                        <d.icon style={{ width: '13px', height: '13px', color: d.color }} />
+                        <p style={{ fontFamily: 'Outfit', fontSize: '11.5px', fontWeight: 700, color: '#555' }}>{d.label}</p>
                       </div>
-                      <p style={{ fontFamily: 'Outfit', fontSize: '9px', color: '#888', lineHeight: 1.3, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.desc}</p>
+                      {/* 分数 + 标签 */}
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px', marginBottom: '3px' }}>
+                        <p style={{ fontFamily: 'Outfit', fontSize: '17px', fontWeight: 800, color: getScoreColor(d.score), lineHeight: 1 }}>{d.score}</p>
+                        <p style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 600, color: getScoreColor(d.score), opacity: 0.75 }}>{d.label}</p>
+                      </div>
+                      {/* 描述文字 */}
+                      <p style={{ fontFamily: 'Outfit', fontSize: '10px', color: '#999', lineHeight: 1.35, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.desc}</p>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
 
-              {/* 提示卡 - 横向紧凑 */}
+              {/* 4个幸运信息卡片横排：幸运色 | 幸运数字 | 吉时 | 吉祥方位 */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '8px', marginBottom: '10px' }}>
+                {/* 幸运色 */}
+                <div style={{ padding: '10px 8px', borderRadius: '12px', background: `linear-gradient(135deg, #FF6B9D06, #FF6B9D02)`, border: '1px solid #FF6B9D15', textAlign: 'center' }}>
+                  <div style={{
+                    width: '32px', height: '32px', borderRadius: '8px', margin: '0 auto 6px',
+                    background: dailyFortune.luckyColor.hex,
+                    boxShadow: '0 2px 8px rgba(255,107,157,0.25)',
+                  }} />
+                  <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 700, color: '#555' }}>幸运色</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '11.5px', fontWeight: 800, color: '#00C47A' }}>{dailyFortune.luckyColor.name}</p>
+                </div>
+                {/* 幸运数字 */}
+                <div style={{ padding: '10px 8px', borderRadius: '12px', background: `linear-gradient(135deg, #7C3AED06, #7C3AED02)`, border: '1px solid #7C3AED15', textAlign: 'center' }}>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '24px', fontWeight: 900, color: '#FF6B9D', lineHeight: 1.2, marginBottom: '4px' }}>{dailyFortune.luckyNumber}</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 700, color: '#555' }}>幸运数字</p>
+                </div>
+                {/* 吉时 */}
+                <div style={{ padding: '10px 8px', borderRadius: '12px', background: `linear-gradient(135deg, #00C47A06, #00C47A02)`, border: '1px solid #00C47A15', textAlign: 'center' }}>
+                  <Clock style={{ width: '20px', height: '20px', color: '#888', margin: '0 auto 4px' }} />
+                  <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 700, color: '#555', marginBottom: '2px' }}>吉时</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 800, color: '#00C47A' }}>{timeToBeijing(dailyFortune.luckyTime.split('·')[0])}</p>
+                </div>
+                {/* 吉祥方位 */}
+                <div style={{ padding: '10px 8px', borderRadius: '12px', background: `linear-gradient(135deg, #00A8E806, #00A8E802)`, border: '1px solid #00A8E815', textAlign: 'center' }}>
+                  <Compass style={{ width: '20px', height: '20px', color: '#888', margin: '0 auto 4px' }} />
+                  <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 700, color: '#555', marginBottom: '2px' }}>吉祥方位</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 800, color: '#FF6B9D' }}>{dailyFortune.avoidDirection.split('·')[0]}<span style={{ fontSize: '10px', color: '#AAA', marginLeft: '3px' }}>({dailyFortune.relationDescription.slice(0, 2)})</span></p>
+                </div>
+              </div>
+
+              {/* 小吉日提示 */}
               <div style={{
                 padding: '10px 14px', marginBottom: '10px',
-                background: `${getScoreColor(dailyFortune.totalScore)}0E`, borderRadius: '14px',
-                border: `1px solid ${getScoreColor(dailyFortune.totalScore)}20`,
-                fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#6B7280', lineHeight: 1.6,
+                background: `${getScoreColor(dailyFortune.totalScore)}0D`,
+                borderRadius: '12px',
+                border: `1px solid ${getScoreColor(dailyFortune.totalScore)}15`,
                 display: 'flex', alignItems: 'center', gap: '8px',
               }}>
                 <Lightbulb style={{ width: '14px', height: '14px', color: getScoreColor(dailyFortune.totalScore), flexShrink: 0 }} />
-                <span>{dailyFortune.mainTip}</span>
+                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11.5px', color: '#777', lineHeight: 1.55 }}>{dailyFortune.mainTip}</span>
+                <span style={{ marginLeft: 'auto', fontFamily: 'Outfit', fontSize: '10px', color: getScoreColor(dailyFortune.totalScore), opacity: 0.6, whiteSpace: 'nowrap' }}>{dailyFortune.totalLabel}</span>
               </div>
 
-              {/* 宜/不宜事项 横向紧凑 */}
-              <div style={{ display: 'flex', flexDirection: 'row', gap: '8px', marginTop: '10px' }}>
-                <div style={{ flex: 1, padding: '8px 12px', borderRadius: '12px', background: `${PALETTE.green}08`, border: `1px solid ${PALETTE.green}25`, display: 'flex', alignItems: 'center', gap: '6px' }}>
+              {/* 宜/不宜事项（保留） */}
+              <div style={{ display: 'flex', flexDirection: 'row', gap: '8px' }}>
+                <div style={{ flex: 1, padding: '8px 12px', borderRadius: '12px', background: `${PALETTE.green}08`, border: `1px solid ${PALETTE.green}22`, display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <Check style={{ width: '12px', height: '12px', color: PALETTE.green, flexShrink: 0 }} />
                   <div style={{ flex: 1 }}>
                     <p style={{ fontFamily: 'Outfit', fontSize: '9px', fontWeight: 700, color: PALETTE.green, marginBottom: '2px' }}>宜</p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px' }}>
-                      {dailyFortune.goodThings.slice(0, 2).map((g: string) => (
-                        <span key={g} style={{ padding: '1px 5px', borderRadius: '5px', background: `${PALETTE.green}15`, fontFamily: 'Outfit', fontSize: '9px', color: PALETTE.green }}>{g}</span>
+                      {dailyFortune.goodThings.slice(0, 3).map((g: string) => (
+                        <span key={g} style={{ padding: '1px 6px', borderRadius: '5px', background: `${PALETTE.green}14`, fontFamily: 'Outfit', fontSize: '9px', color: PALETTE.green }}>{g}</span>
                       ))}
                     </div>
                   </div>
                 </div>
-                <div style={{ flex: 1, padding: '8px 12px', borderRadius: '12px', background: `${PALETTE.coral}08`, border: `1px solid ${PALETTE.coral}25`, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ flex: 1, padding: '8px 12px', borderRadius: '12px', background: `${PALETTE.coral}08`, border: `1px solid ${PALETTE.coral}22`, display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <X style={{ width: '12px', height: '12px', color: PALETTE.coral, flexShrink: 0 }} />
                   <div style={{ flex: 1 }}>
                     <p style={{ fontFamily: 'Outfit', fontSize: '9px', fontWeight: 700, color: PALETTE.coral, marginBottom: '2px' }}>不宜</p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px' }}>
-                      {dailyFortune.avoidThings.slice(0, 2).map((a: string) => (
-                        <span key={a} style={{ padding: '1px 5px', borderRadius: '5px', background: `${PALETTE.coral}15`, fontFamily: 'Outfit', fontSize: '9px', color: PALETTE.coral }}>{a}</span>
+                      {dailyFortune.avoidThings.slice(0, 3).map((a: string) => (
+                        <span key={a} style={{ padding: '1px 6px', borderRadius: '5px', background: `${PALETTE.coral}14`, fontFamily: 'Outfit', fontSize: '9px', color: PALETTE.coral }}>{a}</span>
                       ))}
                     </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* 吉时/幸运色/幸运数/吉方 横向紧凑排列 */}
-              <div style={{ display: 'flex', flexDirection: 'row', gap: '8px', marginTop: '10px' }}>
-                <div style={{ flex: 1, padding: '8px 10px', borderRadius: '12px', background: '#00C47A08', border: '1px solid #00C47A20', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Clock style={{ width: '16px', height: '16px', color: '#00C47A', flexShrink: 0 }} />
-                  <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '10px', color: '#A0A8C0' }}>吉时</p>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 700, color: '#00C47A' }}>{timeToBeijing(dailyFortune.luckyTime.split('·')[0])}</p>
-                  </div>
-                </div>
-                <div style={{ flex: 1, padding: '8px 10px', borderRadius: '12px', background: '#FF6B9D08', border: '1px solid #FF6B9D20', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Sparkles style={{ width: '16px', height: '16px', color: '#FF6B9D', flexShrink: 0 }} />
-                  <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '10px', color: '#A0A8C0' }}>幸运色</p>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: dailyFortune.luckyColor.hex }} />
-                      <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 700, color: '#FF6B9D' }}>{dailyFortune.luckyColor.name}</p>
-                    </div>
-                  </div>
-                </div>
-                <div style={{ flex: 1, padding: '8px 10px', borderRadius: '12px', background: '#7C3AED08', border: '1px solid #7C3AED20', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Star style={{ width: '16px', height: '16px', color: '#7C3AED', flexShrink: 0 }} />
-                  <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '10px', color: '#A0A8C0' }}>幸运数</p>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 700, color: '#7C3AED' }}>{dailyFortune.luckyNumber}</p>
-                  </div>
-                </div>
-                <div style={{ flex: 1, padding: '8px 10px', borderRadius: '12px', background: '#00A8E808', border: '1px solid #00A8E820', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <MapPin style={{ width: '16px', height: '16px', color: '#00A8E8', flexShrink: 0 }} />
-                  <div>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '10px', color: '#A0A8C0' }}>吉方</p>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 700, color: '#00A8E8' }}>{dailyFortune.avoidDirection.split('·')[0]}</p>
                   </div>
                 </div>
               </div>
