@@ -119,6 +119,8 @@ export interface DailyFortune {
   wealthScore: number;     // 财运
   loveScore: number;      // 感情运势
   healthScore: number;     // 健康运势
+  socialScore?: number;    // 人际运势(新增)
+  studyScore?: number;     // 学习/专注运势(新增)
   mainTip: string;         // 今日运势总提示
   goodThings: string[];    // 今日宜做事项
   avoidThings: string[];   // 今日不宜事项
