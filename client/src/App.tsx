@@ -82,7 +82,7 @@ export default function App() {
                   color: '#1A1A2E', letterSpacing: '-0.02em',
                   lineHeight: 1.2,
                 }}>
-                  八字时尚推荐
+                  命理·时尚·运势
                 </h1>
                 <p style={{
                   fontFamily: 'Space Grotesk, sans-serif',
