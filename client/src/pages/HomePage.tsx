@@ -1410,14 +1410,14 @@ export default function HomePage() {
                             <g key={`s${i}`}>
                               <path d={`M ${fx},${fy} A ${arcR},${arcR} 0 ${largeArc},${sweep} ${ax2},${ay2}`}
                                 fill="none"
-                                stroke="#A07550"
-                                strokeWidth="1.6"
-                                strokeOpacity={0.88}
+                                stroke="#C4A882"
+                                strokeWidth="1.3"
+                                strokeOpacity={0.22}
                                 markerEnd="url(#arrowSheng)" />
                               <text x={pos(toA, 52)[0]} y={pos(toA, 52)[1]}
                                 textAnchor="middle"
                                 dominantBaseline="middle"
-                                style={{ fontSize: '10px', fill: '#8B6F50', fontFamily: 'Outfit', fontWeight: 700 }}
+                                style={{ fontSize: '10px', fill: '#C4B090', fontFamily: 'Outfit', fontWeight: 600 }}
                               >生</text>
                             </g>
                           );
@@ -1432,15 +1432,15 @@ export default function HomePage() {
                             <g key={`k${i}`}>
                               <path d={`M ${fx},${fy} L ${tx},${ty}`}
                                 fill="none"
-                                stroke="#9A9080"
-                                strokeWidth="1.3"
-                                strokeOpacity={0.7}
+                                stroke="#B8A898"
+                                strokeWidth="1.0"
+                                strokeOpacity={0.18}
                                 strokeDasharray="4,3"
                                 markerEnd="url(#arrowKe)" />
                               <text x={(fx + tx) / 2} y={(fy + ty) / 2}
                                 textAnchor="middle"
                                 dominantBaseline="middle"
-                                style={{ fontSize: '9px', fill: '#7A6A55', fontFamily: 'Outfit', fontWeight: 600 }}
+                                style={{ fontSize: '9px', fill: '#C0B5A5', fontFamily: 'Outfit', fontWeight: 500 }}
                               >克</text>
                             </g>
                           );
@@ -1449,10 +1449,10 @@ export default function HomePage() {
                         {/* 箭头定义 */}
                         <defs>
                           <marker id="arrowSheng" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
-                            <path d="M0,0 L7,3.5 L0,7 Z" fill="#A07550" opacity={0.88} />
+                            <path d="M0,0 L7,3.5 L0,7 Z" fill="#C4A882" opacity={0.25} />
                           </marker>
                           <marker id="arrowKe" markerWidth="6" markerHeight="6" refX="4.5" refY="3" orient="auto">
-                            <path d="M0,0 L6,3 L0,6 Z" fill="#9A9080" opacity={0.72} />
+                            <path d="M0,0 L6,3 L0,6 Z" fill="#B8A898" opacity={0.2} />
                           </marker>
                         </defs>
 
