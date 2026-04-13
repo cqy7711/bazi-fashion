@@ -1206,24 +1206,23 @@ export default function HomePage() {
               </div>
             )}
 
-            {/* 新建按钮 */}
+            {/* 新建按钮 - 圆形+按钮 */}
             <motion.button
               onClick={() => {
                 setShowForm(true);
                 setForm({ name: '', birthYear: new Date().getFullYear() - 25, birthMonth: 1, birthDay: 1, birthHour: 12, gender: 'male', calendarType: 'solar', languageStyle: 'normal' });
               }}
-              whileHover={{ y: -1 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
               style={{
-                width: '100%', marginTop: '10px', padding: '10px',
-                borderRadius: '14px', border: `2px dashed ${PALETTE.coral}40`,
-                background: `${PALETTE.coral}06`, cursor: 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
-                fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 700, color: PALETTE.coral,
+                width: '28px', height: '28px', marginTop: '10px',
+                borderRadius: '50%', border: `2px solid ${PALETTE.coral}50`,
+                background: `${PALETTE.coral}10`, cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'all 0.2s',
               }}
             >
-              <Plus style={{ width: '14px', height: '14px' }} /> 新建生辰
+              <Plus style={{ width: '14px', height: '14px', color: PALETTE.coral }} />
             </motion.button>
           </div>
 
@@ -2478,25 +2477,63 @@ export default function HomePage() {
 
       </div>
 
-      {/* ── 新建表单 ── */}
+      {/* ── 新建表单（弹窗） ── */}
       <AnimatePresence>
         {showForm && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.35 }}>
-            <div style={{
-              background: '#FFFFFF', borderRadius: '24px', padding: '32px',
-              boxShadow: '0 4px 24px rgba(0,0,0,0.06)', border: '1px solid #F0F1F8',
-            }}>
-              <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '17px', fontWeight: 800, color: '#1A1A2E', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{
-                  width: '28px', height: '28px', borderRadius: '8px',
-                  background: `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange})`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: '#FFFFFF',
-                }}>
-                  {(form as any)._editingId ? <Edit3 style={{ width: '16px', height: '16px' }} /> : <Star style={{ width: '16px', height: '16px' }} />}
-                </span>
-                {(form as any)._editingId ? '修改生辰' : '录入生辰'}
-              </h3>
+          <>
+            {/* 遮罩层 */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowForm(false)}
+              style={{
+                position: 'fixed', inset: 0, zIndex: 100,
+                background: 'rgba(0,0,0,0.4)',
+                backdropFilter: 'blur(4px)',
+              }}
+            />
+            {/* 弹窗主体 */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              transition={{ duration: 0.25 }}
+              style={{
+                position: 'fixed', top: '50%', left: '50%',
+                transform: 'translate(-50%, -50%)',
+                zIndex: 101, width: '90%', maxWidth: '480px',
+              }}
+            >
+              <div style={{
+                background: '#FFFFFF', borderRadius: '24px', padding: '32px',
+                boxShadow: '0 8px 40px rgba(0,0,0,0.15)', border: '1px solid #F0F1F8',
+                maxHeight: '85vh', overflowY: 'auto',
+              }}>
+                {/* 弹窗头部 */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+                  <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '17px', fontWeight: 800, color: '#1A1A2E', display: 'flex', alignItems: 'center', gap: '10px', margin: 0 }}>
+                    <span style={{
+                      width: '28px', height: '28px', borderRadius: '8px',
+                      background: `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange})`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: '#FFFFFF',
+                    }}>
+                      {(form as any)._editingId ? <Edit3 style={{ width: '16px', height: '16px' }} /> : <Star style={{ width: '16px', height: '16px' }} />}
+                    </span>
+                    {(form as any)._editingId ? '修改生辰' : '录入生辰'}
+                  </h3>
+                  <button
+                    onClick={() => setShowForm(false)}
+                    style={{
+                      width: '28px', height: '28px', borderRadius: '50%',
+                      border: 'none', background: '#F5F5F8', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}
+                  >
+                    <X style={{ width: '16px', height: '16px', color: '#A0A8C0' }} />
+                  </button>
+                </div>
               <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <div>
                   <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '13px', color: '#6B7280', marginBottom: '8px', fontWeight: 500 }}>姓名</label>
@@ -2602,8 +2639,9 @@ export default function HomePage() {
                   </button>
                 </div>
               </form>
-            </div>
-          </motion.div>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
 
