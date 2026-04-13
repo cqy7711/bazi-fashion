@@ -1189,7 +1189,7 @@ export default function HomePage() {
                     </div>
                     {/* 关闭按钮 — 右上角（取消选中） */}
                     <div
-                      onClick={(e) => { e.stopPropagation(); setSelectedRecord(null); }}
+                      onClick={(e) => { e.stopPropagation(); setSelectedId(null); setOutfitRec(null); setBraceletRec(null); setPreviewInfo(null); setDailyFortune(null); }}
                       onMouseDown={e => e.stopPropagation()}
                       title="取消选中"
                       style={{
@@ -1318,122 +1318,240 @@ export default function HomePage() {
                 );
               })()}
 
-              {/* 五行占比 - 图标横排填满整行 */}
+              {/* 五行占比 - 圆形相生相克图 */}
               {previewInfo.fiveElements && (
                 (() => {
                   const fe = previewInfo.fiveElements;
-                  const elements = [
-                    { key: 'wood', name: '木', color: PALETTE.green },
-                    { key: 'fire', name: '火', color: '#FF6B6B' },
-                    { key: 'earth', name: '土', color: '#D4A000' },
-                    { key: 'metal', name: '金', color: '#7B8FA8' },
-                    { key: 'water', name: '水', color: '#00A8E8' },
-                  ];
                   const total = (fe.wood || 0) + (fe.fire || 0) + (fe.earth || 0) + (fe.metal || 0) + (fe.water || 0);
+                  const elementNames: Record<string, string> = { wood: '木', fire: '火', earth: '土', metal: '金', water: '水' };
+
+                  // 五行配置: 圆形布局参数
+                  // 上:火 右上:土 右下:金 左下:水 左上:木
+                  const elements = [
+                    { key: 'fire', name: '火', color: '#FF6B6B', angle: -90, label: '食神' },
+                    { key: 'earth', name: '土', color: '#D4A000', angle: -18, label: '偏财' },
+                    { key: 'metal', name: '金', color: '#D4A017', angle: 54, label: '七杀' },
+                    { key: 'water', name: '水', color: '#00A8E8', angle: 126, label: '正印' },
+                    { key: 'wood', name: '木', color: '#4CAF50', angle: 198, label: '比肩' },
+                  ];
+                  const R = 72; // 圆形半径(元素圆心到中心距离)
+                  const CX = 130, CY = 120; // SVG中心点
+
+                  // 计算元素位置
+                  function pos(angle: number, r: number): [number, number] {
+                    return [CX + r * Math.cos((angle * Math.PI) / 180),
+                            CY + r * Math.sin((angle * Math.PI) / 180)];
+                  }
+
+                  // 相生关系(顺时针箭头): 木→火→土→金→水→木
+                  const shengPairs: [number, number][] = [[198,-90], [-90,-18], [-18,54], [54,126], [126,198]];
+                  // 相克关系(交叉箭头): 木→土, 土→水, 水→火, 火→金, 金→木
+                  const kePairs: [number, number][] = [[198,-18], [-18,126], [126,-90], [-90,54], [54,198]];
+
+                  // 箭头路径生成
+                  function arrowPath(fromAngle: number, toAngle: number, isSheng: boolean): string {
+                    const r1 = 30; // 起点到中心距离
+                    const r2 = 32; // 终点到中心距离(稍远一点)
+                    const [x1, y1] = pos(fromAngle, r1);
+                    const [x2, y2] = pos(toAngle, r2);
+                    // 控制点向中心弯曲
+                    const midR = isSheng ? 20 : 35;
+                    const mx = (x1 + x2) / 2;
+                    const my = (y1 + y2) / 2;
+                    return `M ${x1},${y1} Q ${mx},${my} ${x2},${y2}`;
+                  }
+
+                  // 找出日主元素索引
+                  const dmEl = previewInfo.baziResult?.dayMaster?.toLowerCase() || 'unknown';
+                  const dmIndex = elements.findIndex(e => e.key === dmEl);
+                  const dmAngle = dmIndex >= 0 ? elements[dmIndex].angle : null;
+
                   return (
-                    <div style={{
-                      display: 'flex',
-                      gap: '8px',
-                      marginBottom: '14px',
-                    }}>
-                      {elements.map(el => {
-                        const val = fe[el.key as keyof typeof fe] || 0;
-                        const pct = total > 0 ? Math.round((val / total) * 100) : 0;
-                        return (
-                          <div key={el.key} style={{
-                            flex: 1,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            gap: '6px',
-                            padding: '12px 4px',
-                            borderRadius: '14px',
-                            background: `${el.color}08`,
-                            border: `1px solid ${el.color}20`,
-                          }}>
-                            {/* 圆形图标 */}
-                            <div style={{
-                              width: '36px',
-                              height: '36px',
-                              borderRadius: '50%',
-                              background: el.color,
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              boxShadow: `0 3px 10px ${el.color}40`,
-                              flexShrink: 0,
-                            }}>
-                              <span style={{
-                                fontFamily: 'Outfit',
-                                fontSize: '14px',
-                                fontWeight: 800,
-                                color: '#fff',
-                              }}>{el.name}</span>
-                            </div>
-                            {/* 进度条 */}
-                            <div style={{
-                              width: '100%',
-                              height: '8px',
-                              borderRadius: '4px',
-                              background: `${el.color}20`,
-                              overflow: 'hidden',
-                            }}>
-                              <div style={{
-                                height: '100%',
-                                width: `${pct}%`,
-                                borderRadius: '4px',
-                                background: el.color,
-                                transition: 'width 0.6s ease',
-                              }} />
-                            </div>
-                            {/* 数值 */}
-                            <div style={{ textAlign: 'center' }}>
-                              <p style={{
-                                fontFamily: 'Outfit',
-                                fontSize: '12px',
-                                fontWeight: 700,
-                                color: el.color,
-                                margin: 0,
-                              }}>{val}次</p>
-                              <p style={{
-                                fontFamily: 'Outfit',
-                                fontSize: '9px',
-                                color: '#A0A8C0',
-                                margin: 0,
-                              }}>{pct}%</p>
-                            </div>
-                          </div>
-                        );
-                      })}
+                    <div style={{ marginBottom: '14px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                      {/* 格局类型标签 */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', width: '100%' }}>
+                        <span style={{
+                          fontFamily: 'Outfit', fontSize: '15px', fontWeight: 800,
+                          color: '#5D4037',
+                        }}>【{(previewInfo.baziResult as any)?.mingGeName || '均衡型'}】</span>
+                        <span style={{ fontSize: '11px', color: '#A0A8C0' }}>
+                          校正 {(previewInfo.baziResult as any)?.correctionCount || 0} ⚖️
+                        </span>
+                      </div>
+
+                      {/* SVG 圆形图 */}
+                      <svg width="260" height="240" viewBox="0 0 260 240" style={{ overflow: 'visible' }}>
+                        {/* ===== 相生弧线箭头(外圈，棕色) ===== */}
+                        {shengPairs.map(([fromA, toA], i) => {
+                          const fromEl = elements.find(e => e.angle === fromA)!;
+                          const toEl = elements.find(e => e.angle === toA)!;
+                          // 弧线路径：从元素外侧出发，沿外圈弯曲
+                          const fr = 36, tr = 38; // 半径偏移
+                          const [fx, fy] = pos(fromA, fr);
+                          const [tx, ty] = pos(toA, tr);
+                          // 用弧线连接
+                          const startRad = (fromA * Math.PI) / 180;
+                          const endRad = (toA * Math.PI) / 180;
+                          const arcR = 78; // 弧线半径(略大于R)
+                          const ax1 = CX + arcR * Math.cos(startRad);
+                          const ay1 = CY + arcR * Math.sin(startRad);
+                          const ax2 = CX + arcR * Math.cos(endRad);
+                          const ay2 = CY + arcR * Math.sin(endRad);
+                          // 判断是否跨象限(短弧 vs 长弧)
+                          let diff = toA - fromA;
+                          if (diff > 180) diff -= 360;
+                          if (diff < -180) diff += 360;
+                          const largeArc = Math.abs(diff) > 180 ? 1 : 0;
+                          const sweep = diff > 0 ? 1 : 0;
+
+                          // 箭头终点方向
+                          const endTangent = ((toA + (diff > 0 ? 85 : -85)) * Math.PI) / 180;
+                          return (
+                            <g key={`s${i}`}>
+                              <path d={`M ${fx},${fy} A ${arcR},${arcR} 0 ${largeArc},${sweep} ${ax2},${ay2}`}
+                                fill="none"
+                                stroke="#B08D70"
+                                strokeWidth="1.3"
+                                strokeOpacity={0.55}
+                                markerEnd="url(#arrowSheng)" />
+                              <text x={pos(toA, 52)[0]} y={pos(toA, 52)[1]}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                style={{ fontSize: '9.5px', fill: '#B08D70', fontFamily: 'Outfit', fontWeight: 600 }}
+                              >生</text>
+                            </g>
+                          );
+                        })}
+
+                        {/* ===== 相克直线箭头(内圈，灰色) ===== */}
+                        {kePairs.map(([fromA, toA], i) => {
+                          const fr = 26, tr = 28;
+                          const [fx, fy] = pos(fromA, fr);
+                          const [tx, ty] = pos(toA, tr);
+                          return (
+                            <g key={`k${i}`}>
+                              <path d={`M ${fx},${fy} L ${tx},${ty}`}
+                                fill="none"
+                                stroke="#C0BCAE"
+                                strokeWidth="1"
+                                strokeOpacity={0.45}
+                                strokeDasharray="3,3"
+                                markerEnd="url(#arrowKe)" />
+                              <text x={(fx + tx) / 2} y={(fy + ty) / 2}
+                                textAnchor="middle"
+                                dominantBaseline="middle"
+                                style={{ fontSize: '8px', fill: '#C0BCAE', fontFamily: 'Outfit', fontWeight: 500 }}
+                              >克</text>
+                            </g>
+                          );
+                        })}
+
+                        {/* 箭头定义 */}
+                        <defs>
+                          <marker id="arrowSheng" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
+                            <path d="M0,0 L7,3.5 L0,7 Z" fill="#B08D70" opacity={0.6} />
+                          </marker>
+                          <marker id="arrowKe" markerWidth="6" markerHeight="6" refX="4.5" refY="3" orient="auto">
+                            <path d="M0,0 L6,3 L0,6 Z" fill="#C0BCAE" opacity={0.45} />
+                          </marker>
+                        </defs>
+
+                        {/* ===== 五行元素圆圈 ===== */}
+                        {elements.map(el => {
+                          const val = fe[el.key as keyof typeof fe] || 0;
+                          const pct = total > 0 ? Math.round((val / total) * 100) : 0;
+                          const [cx, cy] = pos(el.angle, R);
+                          const isDayMaster = el.key === dmEl;
+                          const circleSize = isDayMaster ? 42 : 38;
+                          const fontSize = isDayMaster ? 16 : 15;
+                          const pctSize = isDayMaster ? 11 : 10;
+                          return (
+                            <g key={el.key}>
+                              {/* 外部十神标签 */}
+                              <text x={pos(el.angle, R + 48)[0]} y={pos(el.angle, R + 48)[1]}
+                                textAnchor={el.angle >= -90 && el.angle <= 90 ? 'start' : 'end'}
+                                dominantBaseline="middle"
+                                style={{
+                                  fontSize: '12px',
+                                  fill: el.color,
+                                  fontFamily: 'Outfit',
+                                  fontWeight: 700,
+                                }}
+                              >{el.label}</text>
+
+                              {/* 元素圆圈 */}
+                              <circle cx={cx} cy={cy} r={circleSize}
+                                fill={`${el.color}14`}
+                                stroke={el.color}
+                                strokeWidth={isDayMaster ? 2.2 : 1.5}
+                                strokeOpacity={isDayMaster ? 1 : 0.7}
+                              />
+
+                              {/* 元素名称 */}
+                              <text x={cx} y={cy - (pct > 0 ? 4 : 1)}
+                                textAnchor="middle"
+                                dominantBaseline="central"
+                                style={{
+                                  fontSize: `${fontSize}px`,
+                                  fill: el.color,
+                                  fontFamily: 'Outfit',
+                                  fontWeight: 800,
+                                }}
+                              >{el.name}</text>
+
+                              {/* 百分比 */}
+                              {pct > 0 && (
+                                <text x={cx} y={cy + 13}
+                                  textAnchor="middle"
+                                  dominantBaseline="central"
+                                  style={{
+                                    fontSize: `${pctSize}px`,
+                                    fill: el.color,
+                                    fontFamily: 'Outfit',
+                                    fontWeight: 700,
+                                    opacity: 0.85,
+                                  }}
+                                >{pct}%</text>
+                              )}
+
+                              {/* 日主标记 */}
+                              {isDayMaster && (
+                                <>
+                                  <rect x={cx - 16} y={cy + 22} width={32} height={15} rx={7.5}
+                                    fill={el.color} opacity={0.88} />
+                                  <text x={cx} y={cy + 29.5}
+                                    textAnchor="middle"
+                                    dominantBaseline="central"
+                                    style={{
+                                      fontSize: '10px',
+                                      fill: '#fff',
+                                      fontFamily: 'Outfit',
+                                      fontWeight: 800,
+                                    }}
+                                  >日主</text>
+                                </>
+                              )}
+                            </g>
+                          );
+                        })}
+                      </svg>
+
+                      {/* 喜用神标签 */}
+                      <div style={{
+                        marginTop: '8px', padding: '6px 20px', borderRadius: '20px',
+                        background: `${PALETTE.coral}10`, border: `1px solid ${PALETTE.coral}25`,
+                      }}>
+                        <span style={{
+                          fontFamily: 'Outfit', fontSize: '13px', fontWeight: 700,
+                          color: '#5D4037',
+                        }}>
+                          【喜用{previewInfo.favorableElements?.map(
+                            (e: string) => elementNames[e] || e).join('、')}】
+                        </span>
+                      </div>
                     </div>
                   );
                 })()
-              )}
-
-              {/* 喜用五行 */}
-              {previewInfo.favorableElements && previewInfo.favorableElements.length > 0 && (
-                <div style={{
-                  padding: '10px 12px', borderRadius: '12px',
-                  background: `${PALETTE.green}08`, border: `1px solid ${PALETTE.green}25`,
-                  marginBottom: '14px',
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: PALETTE.green, fontWeight: 600 }}>喜用五行</p>
-                    <div style={{ display: 'flex', gap: '4px', marginLeft: 'auto' }}>
-                      {previewInfo.favorableElements.map((el: string) => {
-                        const colors: Record<string, string> = { wood: PALETTE.green, fire: '#FF6B6B', earth: '#D4A000', metal: '#7B8FA8', water: '#00A8E8' };
-                        const names: Record<string, string> = { wood: '木', fire: '火', earth: '土', metal: '金', water: '水' };
-                        return (
-                          <span key={el} style={{
-                            padding: '2px 8px', borderRadius: '6px',
-                            background: `${colors[el]}18`, border: `1px solid ${colors[el]}35`,
-                            fontFamily: 'Outfit', fontSize: '10px', fontWeight: 600, color: colors[el],
-                          }}>{names[el]}</span>
-                        );
-                      })}
-                    </div>
-                  </div>
-                </div>
               )}
 
               {/* 详细分析按钮 */}
