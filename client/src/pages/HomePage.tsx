@@ -1110,28 +1110,30 @@ export default function HomePage() {
                 }}>
                   <Star style={{ width: '14px', height: '14px', color: PALETTE.coral }} />
                 </div>
-                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: '#1A1A2E' }}>我的生辰</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: '#1A1A2E' }}>{selectedRecord ? `${selectedRecord.name}的生辰` : '我的生辰'}</span>
+                  {records.length > 1 && (
+                    <motion.select
+                      value={selectedId || ''}
+                      onChange={e => selectRecord(e.target.value)}
+                      whileHover={{ scale: 1.02 }}
+                      style={{
+                        padding: '3px 6px', borderRadius: '6px',
+                        border: `1.5px solid ${PALETTE.coral}40`,
+                        background: `${PALETTE.coral}08`,
+                        fontFamily: 'Outfit, sans-serif', fontSize: '10px', fontWeight: 600,
+                        color: PALETTE.coral, cursor: 'pointer', outline: 'none',
+                      }}
+                    >
+                      {records.map(r => (
+                        <option key={r.id} value={r.id}>{r.name}</option>
+                      ))}
+                    </motion.select>
+                  )}
+                </div>
               </div>
-              {/* 右上角：切换 + 新建 */}
+              {/* 右上角：新建按钮 */}
               <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                {records.length > 1 && (
-                  <motion.select
-                    value={selectedId || ''}
-                    onChange={e => selectRecord(e.target.value)}
-                    whileHover={{ scale: 1.02 }}
-                    style={{
-                      padding: '4px 8px', borderRadius: '8px',
-                      border: `1.5px solid ${PALETTE.coral}40`,
-                      background: `${PALETTE.coral}08`,
-                      fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600,
-                      color: PALETTE.coral, cursor: 'pointer', outline: 'none',
-                    }}
-                  >
-                    {records.map(r => (
-                      <option key={r.id} value={r.id}>{r.name}</option>
-                    ))}
-                  </motion.select>
-                )}
                 <motion.button
                   onClick={() => {
                     setShowForm(true);
