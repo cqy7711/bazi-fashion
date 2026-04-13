@@ -1619,58 +1619,54 @@ export default function HomePage() {
 
               {/* ===== 新布局：左圆环 + 右侧2x2网格 + 底部4卡片 + 宜不宜 + 提示 ===== */}
               
-              {/* ===== 主体区域：左侧圆环 + 右侧2x2网格（紧凑） ===== */}
-              <div style={{ display: 'flex', alignItems: 'stretch', gap: '10px', marginBottom: '8px' }}>
-                {/* 左侧圆环分数（缩小） */}
-                <div style={{
-                  width: '76px', flexShrink: 0,
-                  display: 'flex', flexDirection: 'column', alignItems: 'center',
-                  paddingTop: '4px',
-                }}>
-                  <svg width="64" height="64" viewBox="0 0 72 72" style={{ display: 'block' }}>
-                    <circle cx="36" cy="36" r="30" fill="none" stroke="#F0E8E5" strokeWidth="7" />
-                    <circle cx="36" cy="36" r="30" fill="none"
-                      stroke={getScoreColor(dailyFortune.totalScore)} strokeWidth="7"
-                      strokeDasharray={`${(dailyFortune.totalScore / 100) * 188.5} 188.5`}
-                      strokeLinecap="round" transform="rotate(-90 36 36)" />
-                    <text x="36" y="34" textAnchor="middle" dominantBaseline="middle"
-                      style={{ fontFamily: 'Outfit', fontSize: '18px', fontWeight: 900, fill: getScoreColor(dailyFortune.totalScore) }}>{dailyFortune.totalScore}</text>
-                    <text x="36" y="50" textAnchor="middle" dominantBaseline="middle"
-                      style={{ fontFamily: 'Outfit', fontSize: '9px', fill: '#B0A8C0' }}>总分</text>
-                  </svg>
-                  <span style={{ fontFamily: 'Outfit', fontSize: '10.5px', color: getScoreColor(dailyFortune.totalScore), fontWeight: 700, marginTop: '1px' }}>{dailyFortune.totalLabel}</span>
-                </div>
+              {/* ===== 顶部：总分圆环(居中) ===== */}
+              <div style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center',
+                marginBottom: '8px', padding: '4px 0'
+              }}>
+                <svg width="68" height="68" viewBox="0 0 72 72" style={{ display: 'block' }}>
+                  <circle cx="36" cy="36" r="30" fill="none" stroke="#F0E8E5" strokeWidth="7" />
+                  <circle cx="36" cy="36" r="30" fill="none"
+                    stroke={getScoreColor(dailyFortune.totalScore)} strokeWidth="7"
+                    strokeDasharray={`${(dailyFortune.totalScore / 100) * 188.5} 188.5`}
+                    strokeLinecap="round" transform="rotate(-90 36 36)" />
+                  <text x="36" y="34" textAnchor="middle" dominantBaseline="middle"
+                    style={{ fontFamily: 'Outfit', fontSize: '19px', fontWeight: 900, fill: getScoreColor(dailyFortune.totalScore) }}>{dailyFortune.totalScore}</text>
+                  <text x="36" y="50" textAnchor="middle" dominantBaseline="middle"
+                    style={{ fontFamily: 'Outfit', fontSize: '9px', fill: '#B0A8C0' }}>总分</text>
+                </svg>
+                <span style={{ fontFamily: 'Outfit', fontSize: '11px', color: getScoreColor(dailyFortune.totalScore), fontWeight: 700, marginTop: '1px' }}>{dailyFortune.totalLabel}</span>
+              </div>
 
-                {/* 右侧2x2网格：事业/财运/感情/健康（紧凑） */}
-                <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '5px' }}>
-                  {[
-                    { label: '事业', score: dailyFortune.careerScore, icon: TrendingUpIcon, desc: dailyFortune.relationDescription?.slice(0, 14), color: PALETTE.coral },
-                    { label: '财运', score: dailyFortune.wealthScore, icon: Sparkles, desc: getDimensionDesc('wealth', dailyFortune.dayRelation || '', dailyFortune.wealthScore)?.slice(0, 14), color: '#F59E0B' },
-                    { label: '感情', score: dailyFortune.loveScore, icon: Heart, desc: getDimensionDesc('love', dailyFortune.dayRelation || '', dailyFortune.loveScore)?.slice(0, 14), color: PALETTE.coral },
-                    { label: '健康', score: dailyFortune.healthScore, icon: Apple, desc: getDimensionDesc('health', dailyFortune.dayRelation || '', dailyFortune.healthScore)?.slice(0, 14), color: '#22C55E' },
-                    { label: '人际', score: dailyFortune.socialScore ?? Math.round((dailyFortune.careerScore + dailyFortune.loveScore) / 2), icon: Users, desc: '人缘佳，利于社交合作', color: '#8B5CF6' },
-                    { label: '专注', score: dailyFortune.studyScore ?? Math.round((dailyFortune.careerScore + dailyFortune.healthScore) / 2), icon: BookOpen, desc: '思路清晰，适合深度工作', color: '#0EA5E9' },
-                  ].map(d => (
-                    <div key={d.label} style={{
-                      padding: '7px 9px', borderRadius: '10px',
-                      background: `${getScoreColor(d.score)}08`, border: `1px solid ${getScoreColor(d.score)}15`,
-                      display: 'flex', flexDirection: 'column',
-                    }}>
-                      {/* 标题行：图标+名称 */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '3px', marginBottom: '2px' }}>
-                        <d.icon style={{ width: '11px', height: '11px', color: d.color }} />
-                        <p style={{ fontFamily: 'Outfit', fontSize: '10.5px', fontWeight: 700, color: '#555' }}>{d.label}</p>
-                      </div>
-                      {/* 分数 + 标签 */}
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px', marginBottom: '1px' }}>
-                        <p style={{ fontFamily: 'Outfit', fontSize: '15px', fontWeight: 800, color: getScoreColor(d.score), lineHeight: 1 }}>{d.score}</p>
-                        <p style={{ fontFamily: 'Outfit', fontSize: '8px', fontWeight: 600, color: getScoreColor(d.score), opacity: 0.75 }}>{d.label}</p>
-                      </div>
-                      {/* 描述文字 */}
-                      <p style={{ fontFamily: 'Outfit', fontSize: '9px', color: '#999', lineHeight: 1.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.desc}</p>
+              {/* ===== 六宫格：事业/财运/感情/健康/人际/专注 ===== */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '5px', marginBottom: '8px' }}>
+                {[
+                  { label: '事业', score: dailyFortune.careerScore, icon: TrendingUpIcon, desc: dailyFortune.relationDescription?.slice(0, 14), color: PALETTE.coral },
+                  { label: '财运', score: dailyFortune.wealthScore, icon: Sparkles, desc: getDimensionDesc('wealth', dailyFortune.dayRelation || '', dailyFortune.wealthScore)?.slice(0, 14), color: '#F59E0B' },
+                  { label: '感情', score: dailyFortune.loveScore, icon: Heart, desc: getDimensionDesc('love', dailyFortune.dayRelation || '', dailyFortune.loveScore)?.slice(0, 14), color: PALETTE.coral },
+                  { label: '健康', score: dailyFortune.healthScore, icon: Apple, desc: getDimensionDesc('health', dailyFortune.dayRelation || '', dailyFortune.healthScore)?.slice(0, 14), color: '#22C55E' },
+                  { label: '人际', score: dailyFortune.socialScore ?? Math.round((dailyFortune.careerScore + dailyFortune.loveScore) / 2), icon: Users, desc: '人缘佳，利于社交合作', color: '#8B5CF6' },
+                  { label: '专注', score: dailyFortune.studyScore ?? Math.round((dailyFortune.careerScore + dailyFortune.healthScore) / 2), icon: BookOpen, desc: '思路清晰，适合深度工作', color: '#0EA5E9' },
+                ].map(d => (
+                  <div key={d.label} style={{
+                    padding: '7px 9px', borderRadius: '10px',
+                    background: `${getScoreColor(d.score)}08`, border: `1px solid ${getScoreColor(d.score)}15`,
+                    display: 'flex', flexDirection: 'column',
+                  }}>
+                    {/* 标题行：图标+名称 */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '3px', marginBottom: '2px' }}>
+                      <d.icon style={{ width: '11px', height: '11px', color: d.color }} />
+                      <p style={{ fontFamily: 'Outfit', fontSize: '10.5px', fontWeight: 700, color: '#555' }}>{d.label}</p>
                     </div>
-                  ))}
-                </div>
+                    {/* 分数 + 标签 */}
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px', marginBottom: '1px' }}>
+                      <p style={{ fontFamily: 'Outfit', fontSize: '15px', fontWeight: 800, color: getScoreColor(d.score), lineHeight: 1 }}>{d.score}</p>
+                      <p style={{ fontFamily: 'Outfit', fontSize: '8px', fontWeight: 600, color: getScoreColor(d.score), opacity: 0.75 }}>{d.label}</p>
+                    </div>
+                    {/* 描述文字 */}
+                    <p style={{ fontFamily: 'Outfit', fontSize: '9px', color: '#999', lineHeight: 1.25, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.desc}</p>
+                  </div>
+                ))}
               </div>
 
               {/* 4个幸运信息卡片：等高对齐，均匀分布(flex) */}
