@@ -72,6 +72,22 @@ export interface OutfitRecommendation {
   };
 }
 
+export interface BraceletSceneInfo {
+  scene: string;
+  name: string;
+  reason: string;
+}
+
+export interface BodyStrengthInfo {
+  type: string;
+  strategy: {
+    primaryAdvice: string;
+    secondaryAdvice: string;
+    avoidAdvice: string;
+  };
+  description: string;
+}
+
 export interface BraceletRecommendation {
   matchingPrinciple?: string;
   notes?: string[];
@@ -88,6 +104,8 @@ export interface BraceletRecommendation {
     usageTips?: string[];
     knowledge?: string;
     energyLevel?: string;
+    suitableScenes?: BraceletSceneInfo[];
+    sceneAdvice?: string;
   };
   secondaryBracelets?: Array<{
     name: string;
@@ -102,7 +120,40 @@ export interface BraceletRecommendation {
     usageTips?: string[];
     knowledge?: string;
     energyLevel?: string;
+    suitableScenes?: BraceletSceneInfo[];
+    sceneAdvice?: string;
   }>;
+  bodyStrength?: BodyStrengthInfo;
+  // 新增详细总结信息
+  summary?: {
+    wuxingDiagram?: {
+      primary: string;
+      primaryName: string;
+      secondaryName: string;
+      sheng: string;
+      ke: string;
+      shengDesc: string;
+      keDesc: string;
+    };
+    fortuneScores?: {
+      career: number;
+      wealth: number;
+      love: number;
+      health: number;
+      social: number;
+      study: number;
+    };
+    scenePriority?: Record<string, { score: number; icon: string; desc: string }>;
+    bodyStrengthStatus?: string;
+    tenGod?: string;
+    favorableElement?: string;
+    favorableElementName?: string;
+    secondaryElement?: string;
+    secondaryElementName?: string;
+    fortuneLevel?: string;
+    overallAdvice?: string;
+    wearingTips?: string;
+  };
 }
 
 // 今日运势类型（从 API 获取）

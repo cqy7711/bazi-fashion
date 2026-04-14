@@ -998,7 +998,7 @@ function generateWeatherTip(weather: WeatherInfo | undefined, primary: FiveEleme
       label: '日常休闲',
       subtitle: '舒适自在 · 随性自然',
       element: adjustedSecondary,
-      accentColor: '#6BFF9D',
+      accentColor: '#7C3AED',
       outfit: getSceneOutfit(adjustedSecondary, 'casual'),
       explanation: generateSceneExplanation('casual', adjustedSecondary, primary, weather, liuriBoost, flowDayAnalysis, gender, getSceneOutfit(adjustedSecondary, 'casual')),
       weatherTip: generateWeatherTip(weather, primary),
@@ -1162,6 +1162,67 @@ const TENGOD_BRACELET_ELEMENTS: Record<string, { primary: FiveElement; secondary
   '劫财': { primary: 'metal', secondary: 'earth', advice: '劫财纷争日，财来财去易散，金银固财，土主信实。' },
 };
 
+// 手串场景类型
+type BraceletScene = 'study' | 'work' | 'love' | 'wealth' | 'health' | 'social' | 'travel';
+
+// 手串场景数据库 - 每种材质对应的适合场景
+const BRACELET_SCENES: Record<string, { scenes: BraceletScene[]; reason: string }> = {
+  '绿幽灵水晶手串': { scenes: ['work', 'wealth', 'social'], reason: '增强事业运和贵人运，利职场晋升和财运' },
+  '翡翠手串': { scenes: ['health', 'love', 'social'], reason: '保平安，增进健康，利感情和人际' },
+  '檀木手串': { scenes: ['health', 'study', 'work'], reason: '安神静心，利学业和健康' },
+  '绿松石手串': { scenes: ['social', 'study', 'travel'], reason: '增强沟通能力，利学习和出行' },
+  '南红玛瑙手串': { scenes: ['love', 'social', 'work'], reason: '增强自信和行动力，利人缘和事业' },
+  '红珊瑚手串': { scenes: ['love', 'health', 'social'], reason: '辟邪护身，增进健康，利感情' },
+  '石榴石手串': { scenes: ['love', 'health', 'work'], reason: '增强活力和魅力，利事业和感情' },
+  '琥珀手串': { scenes: ['health', 'love', 'study'], reason: '安神定心，利学业和情绪平衡' },
+  '蜜蜡手串': { scenes: ['health', 'wealth', 'love'], reason: '辟邪纳福，利健康和感情' },
+  '黄水晶手串': { scenes: ['wealth', 'study', 'work'], reason: '招财进宝，利事业和学习' },
+  '虎眼石手串': { scenes: ['work', 'wealth', 'social'], reason: '增强决断力，利事业和财运' },
+  '和田黄玉手串': { scenes: ['health', 'love', 'wealth'], reason: '温润养身，利健康和感情' },
+  '白水晶手串': { scenes: ['study', 'work', 'health'], reason: '净化磁场，利学业和事业' },
+  '银饰手串': { scenes: ['health', 'social', 'travel'], reason: '辟邪护身，利出行和人际' },
+  '金发晶手串': { scenes: ['wealth', 'love', 'work'], reason: '招财聚财，利事业和感情' },
+  '月光石手串': { scenes: ['love', 'health', 'social'], reason: '增强直觉和魅力，利感情和健康' },
+  '黑曜石手串': { scenes: ['health', 'work', 'social'], reason: '强力辟邪，利健康和事业' },
+  '海蓝宝手串': { scenes: ['social', 'love', 'study'], reason: '增强沟通能力，利学习和感情' },
+  '青金石手串': { scenes: ['study', 'work', 'social'], reason: '增强智慧和洞察力，利学业事业' },
+  '黑玛瑙手串': { scenes: ['health', 'wealth', 'work'], reason: '稳定情绪，利健康和事业' },
+};
+
+// 身强身弱判断类型
+type BodyStrengthType = 'strong' | 'weak' | 'neutral';
+
+// 根据喜忌判断身强身弱
+function analyzeBodyStrength(favorable: FiveElement[], unfavorable: FiveElement[]): BodyStrengthType {
+  const favorCount = favorable.length;
+  const avoidCount = unfavorable.length;
+  
+  // 身强：喜用神多，忌神少
+  if (favorCount >= 3 && avoidCount <= 1) return 'strong';
+  // 身弱：忌神多，喜用神少
+  if (avoidCount >= 3 && favorCount <= 1) return 'weak';
+  return 'neutral';
+}
+
+// 身强身弱的手串推荐策略
+const BODY_STRENGTH_STRATEGY: Record<BodyStrengthType, { primaryAdvice: string; secondaryAdvice: string; avoidAdvice: string }> = {
+  strong: {
+    primaryAdvice: '身强宜泄不宜补，应选择能泄秀、转化的水晶，如火行、土行手串，帮助疏导能量。',
+    secondaryAdvice: '可选择配合使用，平衡整体能量。',
+    avoidAdvice: '不宜使用过多生扶之物。',
+  },
+  weak: {
+    primaryAdvice: '身弱宜补不宜泄，应选择能生扶、增强的水晶，如金行、水行手串，帮助补充能量。',
+    secondaryAdvice: '可选择配合使用，增强生扶力量。',
+    avoidAdvice: '不宜使用过多泄耗之物。',
+  },
+  neutral: {
+    primaryAdvice: '身势平衡，宜根据当日流日运势选择合适的手串调和。',
+    secondaryAdvice: '可根据场景需求灵活选择。',
+    avoidAdvice: '保持五行平衡即可。',
+  },
+};
+
 export function getBraceletRecommendation(
   favorable: FiveElement[],
   unfavorable: FiveElement[] = [],
@@ -1172,7 +1233,13 @@ export function getBraceletRecommendation(
   const primary = favorable[0] || 'earth';
   const secondary = favorable[1] || primary;
   const avoid = unfavorable[0];
-  const seed = `${new Date().toDateString()}`;
+  // 使用日期作为种子，确保每天推荐略有不同
+  const today = new Date();
+  const seed = `${today.getFullYear()}-${today.getMonth()}-${today.getDate()}-${today.getHours()}`;
+
+  // ========== 身强身弱分析 ==========
+  const bodyStrength = analyzeBodyStrength(favorable, unfavorable);
+  const strengthStrategy = BODY_STRENGTH_STRATEGY[bodyStrength];
 
   // ========== 流日十神分析 ==========
   let flowDayAnalysis: FlowDayTenGodAnalysis | null = null;
@@ -1180,20 +1247,44 @@ export function getBraceletRecommendation(
   let tenGodName = '';
 
   if (dayGan && dayGanZhi) {
-    const today = getTodayLiuri();
-    flowDayAnalysis = analyzeFlowDayTenGod(dayGan, dayGanZhi, today.dayPillar[0], today.dayPillar[1]);
+    const liuri = getTodayLiuri();
+    flowDayAnalysis = analyzeFlowDayTenGod(dayGan, dayGanZhi, liuri.dayPillar[0], liuri.dayPillar[1]);
     tenGodName = flowDayAnalysis.tenGod;
     tenGodAdvice = TENGOD_BRACELET_ELEMENTS[tenGodName]?.advice || flowDayAnalysis.description;
   }
 
-  // 根据十神分析调整五行用神
+  // 根据身强身弱和十神分析调整五行用神
   let adjustedPrimary = primary;
   let adjustedSecondary = secondary;
 
   if (flowDayAnalysis) {
-    // 使用十神分析得出的用神
-    adjustedPrimary = flowDayAnalysis.favorableElements[0] || primary;
+    // 流日运势影响
+    const boost = flowDayAnalysis.overallBoost;
+    
+    if (bodyStrength === 'strong') {
+      // 身强：需要泄秀，选择流日用神中能泄秀的五行
+      const flowFavorable = flowDayAnalysis.favorableElements;
+      // 火泄木、土泄火、金泄土、水泄金、木泄水
+      adjustedPrimary = flowFavorable[0] || primary;
+    } else if (bodyStrength === 'weak') {
+      // 身弱：需要生扶，选择流日用神中能生扶的五行
+      adjustedPrimary = flowDayAnalysis.favorableElements[0] || primary;
+    } else {
+      // 中性：直接使用流日用神
+      adjustedPrimary = flowDayAnalysis.favorableElements[0] || primary;
+    }
     adjustedSecondary = flowDayAnalysis.favorableElements[1] || flowDayAnalysis.favorableElements[0] || secondary;
+  } else {
+    // 无流日分析时，根据身强身弱做基础调整
+    if (bodyStrength === 'strong') {
+      // 身强宜泄：优先选择克的行（泄秀）
+      adjustedPrimary = KE[primary] || primary; // 被日主克的五行
+      adjustedSecondary = SHENG[primary] || secondary; // 日主生的五行（耗气）
+    } else if (bodyStrength === 'weak') {
+      // 身弱宜补：优先选择相生的行
+      adjustedPrimary = SHENG[primary] || primary; // 生扶日主的五行
+      adjustedSecondary = ING[primary] || secondary; // 印星生扶
+    }
   }
 
   const primaryOpts = BRACELET_DB[adjustedPrimary] || BRACELET_DB[primary];
@@ -1226,12 +1317,23 @@ export function getBraceletRecommendation(
     '黑玛瑙手串': { knowledge: '黑玛瑙属水，具有稳定和保护的能量，能够消除负面情绪。', benefits: ['稳定情绪', '增强毅力', '辟邪护身'], tips: ['定期净化', '避免高温', '单独存放'] },
   };
 
+  // 场景名称映射
+  const SCENE_NAMES: Record<BraceletScene, string> = {
+    study: '学习考试',
+    work: '职场工作',
+    love: '感情姻缘',
+    wealth: '财运投资',
+    health: '健康养生',
+    social: '社交人际',
+    travel: '出行旅游',
+  };
+
   // 动态功效描述生成器
   const getDynamicEffect = (b: BraceletItem, el: FiveElement, isPrimary: boolean): string => {
     const baseEffect = b.effect || `${ELEMENT_NAMES[el]}行手串，增强运势`;
     if (!flowDayAnalysis || !isPrimary) return baseEffect;
 
-    const today = getTodayLiuri();
+    const liuri = getTodayLiuri();
     const boost = flowDayAnalysis.overallBoost;
     const tenGod = tenGodName;
 
@@ -1256,20 +1358,87 @@ export function getBraceletRecommendation(
 
     const tenGodEffectDesc = tenGodEffect[tenGod] || tenGod + '运势';
 
-    return `${baseEffect}。今日${today.dayPillar}，${tenGod}当令，${tenGodEffectDesc}，${boostDesc}`;
+    return `${baseEffect}。今日${liuri.dayPillar}，${tenGod}当令，${tenGodEffectDesc}，${boostDesc}`;
+  };
+
+  // 获取手串适合场景
+  const getSuitableScenes = (braceletName: string): { scenes: BraceletScene[]; reason: string } => {
+    const sceneInfo = BRACELET_SCENES[braceletName];
+    if (sceneInfo) {
+      // 根据流日十神微调场景优先级
+      if (flowDayAnalysis) {
+        const tenGod = flowDayAnalysis.tenGod;
+        const scenePriority: Record<string, BraceletScene[]> = {
+          '食神': ['study', 'love', 'wealth'],
+          '伤官': ['social', 'work', 'love'],
+          '正财': ['wealth', 'health', 'work'],
+          '偏财': ['wealth', 'travel', 'social'],
+          '正官': ['work', 'social', 'love'],
+          '七杀': ['work', 'health', 'wealth'],
+          '正印': ['study', 'health', 'work'],
+          '偏印': ['study', 'health', 'social'],
+          '比肩': ['social', 'work', 'wealth'],
+          '劫财': ['wealth', 'health', 'work'],
+        };
+        const priorityScenes = scenePriority[tenGod] || sceneInfo.scenes;
+        // 优先返回与流日十神匹配的场景
+        const matchedScenes = priorityScenes.filter(s => sceneInfo.scenes.includes(s));
+        if (matchedScenes.length > 0) {
+          return { scenes: matchedScenes, reason: sceneInfo.reason };
+        }
+      }
+      return sceneInfo;
+    }
+    // 默认场景
+    return {
+      scenes: ['work', 'health', 'social'],
+      reason: '日常佩戴，增强整体运势',
+    };
+  };
+
+  // 根据流日十神增加场景描述
+  const getSceneAdvice = (scenes: BraceletScene[], tenGod: string): string => {
+    const sceneTenGodMap: Record<string, BraceletScene> = {
+      '正官': 'work',
+      '七杀': 'work',
+      '正财': 'wealth',
+      '偏财': 'wealth',
+      '正印': 'study',
+      '偏印': 'study',
+      '食神': 'love',
+      '伤官': 'social',
+      '比肩': 'social',
+      '劫财': 'wealth',
+    };
+    const bestScene = sceneTenGodMap[tenGod];
+    if (bestScene && scenes.includes(bestScene)) {
+      return `今日${SCENE_NAMES[bestScene]}运势为重，佩戴此手串相得益彰。`;
+    }
+    return '';
   };
 
   const enhance = (b: BraceletItem, el: FiveElement, isPrimary: boolean): BraceletItem => {
     const info = BRACELET_KNOWLEDGE[b.name] || { knowledge: `${b.name}属${ELEMENT_NAMES[el]}行，能够增强运势。`, benefits: ['增强运势', '平衡五行'], tips: ['建议日常佩戴', '定期净化'] };
+    const sceneInfo = getSuitableScenes(b.name);
+    const sceneAdvice = flowDayAnalysis ? getSceneAdvice(sceneInfo.scenes, flowDayAnalysis.tenGod) : '';
+    
     return {
       ...b,
       images: getBraceletImages(b.name),
-      whyRecommended: isPrimary ? `属${ELEMENT_NAMES[el]}行，是您的喜用神，能够有效增强您的运势。` : `可与主选手串形成五行相生搭配，增强整体效果。`,
+      whyRecommended: isPrimary 
+        ? `属${ELEMENT_NAMES[el]}行，是您的喜用神，能够有效增强您的运势。${strengthStrategy.primaryAdvice}`
+        : `可与主选手串形成五行相生搭配，增强整体效果。${strengthStrategy.secondaryAdvice}`,
       benefits: info.benefits,
       usageTips: info.tips,
       knowledge: info.knowledge,
       energyLevel: isPrimary ? '高' : '中',
       effect: getDynamicEffect(b, el, isPrimary),
+      suitableScenes: sceneInfo.scenes.map(s => ({
+        scene: s,
+        name: SCENE_NAMES[s],
+        reason: sceneInfo.reason,
+      })),
+      sceneAdvice: sceneAdvice,
     };
   };
 
@@ -1285,20 +1454,109 @@ export function getBraceletRecommendation(
         '辅助手串可搭配主选手串佩戴，或根据场合轮换使用。',
       ];
 
+  // 生成五行相生相克图示
+  const wuxingDiagram = (() => {
+    const elements = ['木', '火', '土', '金', '水'];
+    const sheng: Record<string, string> = { '木': '火', '火': '土', '土': '金', '金': '水', '水': '木' };
+    const ke: Record<string, string> = { '木': '金', '火': '水', '土': '木', '金': '火', '水': '土' };
+    
+    return {
+      primary: adjustedPrimary,
+      primaryName: ELEMENT_NAMES[adjustedPrimary],
+      secondaryName: ELEMENT_NAMES[adjustedSecondary],
+      sheng: sheng[ELEMENT_NAMES[adjustedPrimary]] || '',
+      ke: ke[ELEMENT_NAMES[adjustedPrimary]] || '',
+      shengDesc: `${ELEMENT_NAMES[adjustedPrimary]} → ${sheng[ELEMENT_NAMES[adjustedPrimary]] || ''}`,
+      keDesc: `${ELEMENT_NAMES[adjustedPrimary]} → ${ke[ELEMENT_NAMES[adjustedPrimary]] || ''}`,
+    };
+  })();
+
+  // 生成运势评分
+  const fortuneScores = flowDayAnalysis
+    ? {
+        career: flowDayAnalysis.careerScore,
+        wealth: flowDayAnalysis.wealthScore,
+        love: flowDayAnalysis.loveScore,
+        health: flowDayAnalysis.healthScore,
+        social: Math.round((flowDayAnalysis.careerScore + flowDayAnalysis.loveScore) / 2),
+        study: Math.round((flowDayAnalysis.careerScore + flowDayAnalysis.healthScore) / 2),
+      }
+    : null;
+
+  // 场景推荐优先级
+  const scenePriority = flowDayAnalysis
+    ? {
+        study: { score: fortuneScores?.study || 60, icon: '📚', desc: '学业考试' },
+        work: { score: fortuneScores?.career || 60, icon: '💼', desc: '职场工作' },
+        love: { score: fortuneScores?.love || 60, icon: '💕', desc: '感情姻缘' },
+        wealth: { score: fortuneScores?.wealth || 60, icon: '💰', desc: '财运投资' },
+        health: { score: fortuneScores?.health || 60, icon: '💪', desc: '健康养生' },
+        social: { score: fortuneScores?.social || 60, icon: '🤝', desc: '社交人际' },
+        travel: { score: 65, icon: '✈️', desc: '出行旅游' },
+      }
+    : null;
+
   return {
     primaryBracelet: enhance(primaryBracelet, adjustedPrimary, true),
     secondaryBracelets: secondaryBracelets.map(b => enhance(b, adjustedSecondary, false)),
     notes: todayFortuneTips,
     matchingPrinciple: flowDayAnalysis
       ? `今日流日${tenGodName}，您的用神宜${ELEMENT_NAMES[adjustedPrimary]}行，手串主选${ELEMENT_NAMES[adjustedPrimary]}行（${tenGodName}），辅选${ELEMENT_NAMES[adjustedSecondary]}行，十神相助，运势加成。`
-      : `您的命理用神为${favorable.map(e => ELEMENT_NAMES[e]).join('、')}行，主选手串属${ELEMENT_NAMES[adjustedPrimary]}行，辅助手串属${ELEMENT_NAMES[adjustedSecondary]}行。`,
+      : `您的命理用神为${favorable.map(e => ELEMENT_NAMES[e]).join('、')}行，主选手串属${ELEMENT_NAMES[adjustedPrimary]}行，辅助手串属${ELEMENT_NAMES[adjustedSecondary]}行。${bodyStrength === 'strong' ? '身强宜泄，选择泄秀之手串。' : bodyStrength === 'weak' ? '身弱宜补，选择生扶之手串。' : ''}`,
     elementKnowledge: {
       title: `${ELEMENT_NAMES[adjustedPrimary]}行手串与五行`,
       content: `${ELEMENT_NAMES[adjustedPrimary]}主${ELEMENT_NAMES[adjustedPrimary] === '木' ? '仁，代表生长、条达、向上的力量' : ELEMENT_NAMES[adjustedPrimary] === '火' ? '礼，代表热情、活力、光明' : ELEMENT_NAMES[adjustedPrimary] === '土' ? '信，代表稳重、包容、运化' : ELEMENT_NAMES[adjustedPrimary] === '金' ? '义，代表清净、肃杀、收敛' : '智，代表智慧、流动、柔和'}。${flowDayAnalysis ? `今日${tenGodName}当令，${ELEMENT_NAMES[adjustedPrimary]}行手串相助，运势更佳。` : `佩戴${ELEMENT_NAMES[adjustedPrimary]}行手串有助于增强运势。`}`,
     },
     userAnalysis: flowDayAnalysis
-      ? `今日${tenGodName}日，您的命理用神为${ELEMENT_NAMES[primary]}，今日运势用神为${ELEMENT_NAMES[adjustedPrimary]}。佩戴${ELEMENT_NAMES[adjustedPrimary]}行手串，${tenGodName}相助，运势加成。`
-      : `${ELEMENT_NAMES[adjustedPrimary]}行是您的命理用神，佩戴${ELEMENT_NAMES[adjustedPrimary]}行手串能够帮助您平衡五行，增强正面能量。`,
+      ? `今日${tenGodName}日，您的命理用神为${ELEMENT_NAMES[primary]}，今日运势用神为${ELEMENT_NAMES[adjustedPrimary]}。${bodyStrength === 'strong' ? '身强宜泄，选择'+ELEMENT_NAMES[adjustedPrimary]+'行手串泄秀。' : bodyStrength === 'weak' ? '身弱宜补，选择'+ELEMENT_NAMES[adjustedPrimary]+'行手串生扶。' : ''}佩戴${ELEMENT_NAMES[adjustedPrimary]}行手串，${tenGodName}相助，运势加成。`
+      : `${ELEMENT_NAMES[adjustedPrimary]}行是您的命理用神，${bodyStrength === 'strong' ? '身强宜泄，选择'+ELEMENT_NAMES[adjustedPrimary]+'行手串泄秀。' : bodyStrength === 'weak' ? '身弱宜补，选择'+ELEMENT_NAMES[adjustedPrimary]+'行手串生扶。' : ''}佩戴${ELEMENT_NAMES[adjustedPrimary]}行手串能够帮助您平衡五行，增强正面能量。`,
     flowDay: flowDayAnalysis,
+    bodyStrength: {
+      type: bodyStrength,
+      strategy: strengthStrategy,
+      description: bodyStrength === 'strong' ? '您的命格身强，宜泄不宜补，选择能疏导能量的手串。' : bodyStrength === 'weak' ? '您的命格身弱，宜补不宜泄，选择能生扶能量的手串。' : '您的命格平衡，可根据流日运势灵活选择手串。',
+    },
+    // 新增：详细总结信息
+    summary: {
+      // 五行相生相克图示
+      wuxingDiagram,
+      // 运势评分
+      fortuneScores,
+      // 场景推荐优先级
+      scenePriority,
+      // 身强身弱状态
+      bodyStrengthStatus: bodyStrength,
+      // 流日十神
+      tenGod: tenGodName || null,
+      // 今日用神
+      favorableElement: adjustedPrimary,
+      favorableElementName: ELEMENT_NAMES[adjustedPrimary],
+      secondaryElement: adjustedSecondary,
+      secondaryElementName: ELEMENT_NAMES[adjustedSecondary],
+      // 运势等级
+      fortuneLevel: flowDayAnalysis
+        ? flowDayAnalysis.overallBoost > 5 ? '极佳'
+          : flowDayAnalysis.overallBoost > 2 ? '上佳'
+          : flowDayAnalysis.overallBoost >= 0 ? '平稳'
+          : flowDayAnalysis.overallBoost > -3 ? '稍弱'
+          : '低迷'
+        : '普通',
+      // 综合建议
+      overallAdvice: flowDayAnalysis
+        ? flowDayAnalysis.overallBoost > 5
+          ? `今日运势极佳，${tenGodName}大旺，佩戴${ELEMENT_NAMES[adjustedPrimary]}行手串如虎添翼，宜积极进取！`
+          : flowDayAnalysis.overallBoost > 2
+          ? `今日运势上佳，${tenGodName}相助，佩戴手串可增强运势，宜把握机遇。`
+          : flowDayAnalysis.overallBoost >= 0
+          ? `今日运势平稳，${ELEMENT_NAMES[adjustedPrimary]}行手串可帮助稳中求进。`
+          : `今日运势稍弱，${ELEMENT_NAMES[adjustedPrimary]}行手串可帮助化解，但宜静心养神。`
+        : `根据您的命理，${ELEMENT_NAMES[adjustedPrimary]}行手串是您的用神之选。`,
+      // 推荐佩戴方式
+      wearingTips: bodyStrength === 'strong'
+        ? '身强宜泄，建议单独佩戴主选手串，或与相生五行手串搭配'
+        : bodyStrength === 'weak'
+        ? '身弱宜补，建议主副手串同时佩戴，增强生扶之力'
+        : '身格平衡，可根据场合灵活选择手串佩戴',
+    },
   };
 }

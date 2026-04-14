@@ -141,6 +141,26 @@ export type OutfitRecommendation = {
   dressingPrinciples?: string[];
 };
 
+export type BraceletScene = 'study' | 'work' | 'love' | 'wealth' | 'health' | 'social' | 'travel';
+
+export type BraceletSceneInfo = {
+  scene: BraceletScene;
+  name: string;
+  reason: string;
+};
+
+export type BodyStrengthType = 'strong' | 'weak' | 'neutral';
+
+export type BodyStrengthInfo = {
+  type: BodyStrengthType;
+  strategy: {
+    primaryAdvice: string;
+    secondaryAdvice: string;
+    avoidAdvice: string;
+  };
+  description: string;
+};
+
 export type BraceletItem = {
   name: string;
   material: string;
@@ -155,6 +175,8 @@ export type BraceletItem = {
   knowledge?: string;
   energyLevel?: string;
   origin?: string;
+  suitableScenes?: BraceletSceneInfo[];  // 适合场景列表
+  sceneAdvice?: string;  // 根据流日给出的场景建议
 };
 
 export type BraceletRecommendation = {
@@ -164,6 +186,8 @@ export type BraceletRecommendation = {
   matchingPrinciple?: string;
   elementKnowledge?: { title: string; content: string };
   userAnalysis?: string;
+  flowDay?: any;
+  bodyStrength?: BodyStrengthInfo;
 };
 
 export type FiveElementsAnalysis = {

@@ -7,7 +7,7 @@ import {
   Droplets, Leaf, Flame, Mountain, Snowflake, Wind, ShirtIcon, WatchIcon, Sparkle,
   CircleDot, ChevronDown, ChevronUp, X, Lightbulb, TrendingUpIcon, Heart, Zap, Apple,
   Compass, Clock, Edit3, Palette, Circle, Check, Trash2, Calendar,
-  Users, BookOpen
+  Users, BookOpen, Moon, Activity
 } from 'lucide-react';
 import type { UserBirthInfoListItem, UserBirthInfo, OutfitRecommendation, BraceletRecommendation, DailyFortune } from './types';
 
@@ -851,7 +851,7 @@ export default function HomePage() {
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [citySearch, setCitySearch] = useState('');
   const [locating, setLocating] = useState(false);
-  const [activeScene, setActiveScene] = useState<string | null>(null);
+  const [activeScene, setActiveScene] = useState<string | null>('work');
   const [locationLocked, setLocationLocked] = useState(false); // 定位锁定状态
 
   // 获取用户当前位置
@@ -1118,21 +1118,126 @@ export default function HomePage() {
               </div>
               <motion.button
                 onClick={() => {
-                  setShowForm(true);
-                  setForm({ name: '', birthYear: new Date().getFullYear() - 25, birthMonth: 1, birthDay: 1, birthHour: 12, gender: 'male', calendarType: 'solar', languageStyle: 'normal' });
+                  setShowForm(!showForm);
+                  if (!showForm) {
+                    setForm({ name: '', birthYear: new Date().getFullYear() - 25, birthMonth: 1, birthDay: 1, birthHour: 12, gender: 'male', calendarType: 'solar', languageStyle: 'normal' });
+                  }
                 }}
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 style={{
                   width: '28px', height: '28px',
-                  borderRadius: '50%', border: `2px solid ${PALETTE.coral}50`,
-                  background: `${PALETTE.coral}10`, cursor: 'pointer',
+                  borderRadius: '50%', border: `2px solid ${showForm ? PALETTE.coral : `${PALETTE.coral}50`}`,
+                  background: showForm ? `${PALETTE.coral}20` : `${PALETTE.coral}10`, cursor: 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  transition: 'all 0.2s',
                 }}
               >
-                <Plus style={{ width: '14px', height: '14px', color: PALETTE.coral }} />
+                {showForm ? <X style={{ width: '14px', height: '14px', color: PALETTE.coral }} /> : <Plus style={{ width: '14px', height: '14px', color: PALETTE.coral }} />}
               </motion.button>
             </div>
+
+            {/* 展开式录入表单 */}
+            <AnimatePresence>
+              {showForm && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  style={{ overflow: 'hidden' }}
+                >
+                  <div style={{ paddingTop: '16px', borderTop: `1px solid ${PALETTE.coral}15`, marginTop: '14px' }}>
+                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                      <div>
+                        <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#6B7280', marginBottom: '6px', fontWeight: 500 }}>姓名</label>
+                        <input
+                          value={form.name}
+                          onChange={e => setForm({ ...form, name: e.target.value })}
+                          placeholder="给自己起个名字"
+                          style={{ width: '100%', padding: '12px 14px', fontSize: '14px', borderRadius: '12px', border: '1.5px solid #E8EAF6', background: '#F8F9FC', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E', boxSizing: 'border-box' }}
+                          onFocus={e => (e.target as HTMLElement).style.borderColor = PALETTE.coral}
+                          onBlur={e => (e.target as HTMLElement).style.borderColor = '#E8EAF6'}
+                        />
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
+                        {[
+                          { label: '出生年', value: form.birthYear, options: YEAR_OPTIONS, key: 'birthYear' as const },
+                          { label: '出生月', value: form.birthMonth, options: MONTH_OPTIONS, key: 'birthMonth' as const },
+                          { label: '出生日', value: form.birthDay, options: DAY_OPTIONS, key: 'birthDay' as const },
+                          { label: '出生时', value: form.birthHour, options: HOUR_OPTIONS, key: 'birthHour' as const },
+                        ].map(({ label, value, options, key }) => (
+                          <div key={key}>
+                            <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#A0A8C0', marginBottom: '4px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{label}</label>
+                            <select
+                              value={value}
+                              onChange={e => setForm({ ...form, [key]: +e.target.value })}
+                              style={{ width: '100%', padding: '10px 12px', fontSize: '13px', borderRadius: '12px', border: '1.5px solid #E8EAF6', background: '#F8F9FC', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E' }}
+                              onFocus={e => (e.target as HTMLElement).style.borderColor = PALETTE.coral}
+                              onBlur={e => (e.target as HTMLElement).style.borderColor = '#E8EAF6'}
+                            >
+                              {options.map(o => <option key={o} value={o}>{key === 'birthHour' ? `${o}:00` : o}</option>)}
+                            </select>
+                          </div>
+                        ))}
+                      </div>
+                      <div>
+                        <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#A0A8C0', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>性别</label>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                          {[{ v: 'male', l: '男 ♂', color: PALETTE.blue }, { v: 'female', l: '女 ♀', color: PALETTE.purple }].map(({ v, l, color }) => (
+                            <button key={v} type="button"
+                              onClick={() => setForm({ ...form, gender: v as 'male' | 'female' })}
+                              style={{
+                                padding: '10px', borderRadius: '12px', border: `2px solid ${form.gender === v ? color : '#E8EAF6'}`,
+                                background: form.gender === v ? `${color}12` : '#FFFFFF', cursor: 'pointer',
+                                fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 600, color: form.gender === v ? color : '#A0A8C0',
+                                transition: 'all 0.2s',
+                              }}
+                            >{l}</button>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#A0A8C0', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>历法</label>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                          {[{ v: 'solar', l: '公历（新历）' }, { v: 'lunar', l: '农历（旧历）' }].map(({ v, l }) => (
+                            <button key={v} type="button"
+                              onClick={() => setForm({ ...form, calendarType: v as 'solar' | 'lunar' })}
+                              style={{
+                                padding: '10px', borderRadius: '12px', border: `2px solid ${form.calendarType === v ? PALETTE.coral : '#E8EAF6'}`,
+                                background: form.calendarType === v ? `${PALETTE.coral}12` : '#FFFFFF', cursor: 'pointer',
+                                fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 600, color: form.calendarType === v ? PALETTE.coral : '#A0A8C0',
+                                transition: 'all 0.2s',
+                              }}
+                            >{l}</button>
+                          ))}
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', gap: '10px', paddingTop: '4px' }}>
+                        <button type="button" onClick={() => setShowForm(false)}
+                          style={{
+                            flex: 1, padding: '12px', fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 600,
+                            background: '#F8F9FC', border: '1.5px solid #E8EAF6', color: '#A0A8C0', borderRadius: '12px', cursor: 'pointer',
+                          }}
+                        >取消</button>
+                        <button type="submit" disabled={submitting}
+                          style={{
+                            flex: 2, padding: '12px', fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700,
+                            background: `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange})`,
+                            border: 'none', color: '#FFFFFF', borderRadius: '12px', cursor: 'pointer',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                            boxShadow: `0 4px 14px ${PALETTE.coral}30`,
+                          }}
+                        >
+                          {submitting ? <Loader2 style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} /> : <Sparkle style={{ width: '14px', height: '14px' }} />}
+                          {(form as any)._editingId ? '保存修改' : '录入生辰'}
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {loading ? (
               <div style={{ display: 'flex', justifyContent: 'center', padding: '20px' }}>
@@ -1731,10 +1836,10 @@ export default function HomePage() {
                 <div style={{ flex: 1, padding: '7px 10px', borderRadius: '10px', background: `${PALETTE.green}08`, border: `1px solid ${PALETTE.green}20`, display: 'flex', alignItems: 'center', gap: '5px' }}>
                   <Check style={{ width: '11px', height: '11px', color: PALETTE.green, flexShrink: 0 }} />
                   <div style={{ flex: 1 }}>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '8.5px', fontWeight: 700, color: PALETTE.green, marginBottom: '1.5px' }}>宜</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700, color: PALETTE.green, marginBottom: '1.5px' }}>宜</p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px' }}>
                       {dailyFortune.goodThings.slice(0, 3).map((g: string) => (
-                        <span key={g} style={{ padding: '1px 5px', borderRadius: '4px', background: `${PALETTE.green}12`, fontFamily: 'Outfit', fontSize: '8.5px', color: PALETTE.green }}>{g}</span>
+                        <span key={g} style={{ padding: '1px 5px', borderRadius: '4px', background: `${PALETTE.green}12`, fontFamily: 'Outfit', fontSize: '11px', color: PALETTE.green }}>{g}</span>
                       ))}
                     </div>
                   </div>
@@ -1742,10 +1847,10 @@ export default function HomePage() {
                 <div style={{ flex: 1, padding: '7px 10px', borderRadius: '10px', background: `${PALETTE.coral}08`, border: `1px solid ${PALETTE.coral}20`, display: 'flex', alignItems: 'center', gap: '5px' }}>
                   <X style={{ width: '11px', height: '11px', color: PALETTE.coral, flexShrink: 0 }} />
                   <div style={{ flex: 1 }}>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '8.5px', fontWeight: 700, color: PALETTE.coral, marginBottom: '1.5px' }}>不宜</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700, color: PALETTE.coral, marginBottom: '1.5px' }}>不宜</p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px' }}>
                       {dailyFortune.avoidThings.slice(0, 3).map((a: string) => (
-                        <span key={a} style={{ padding: '1px 5px', borderRadius: '4px', background: `${PALETTE.coral}12`, fontFamily: 'Outfit', fontSize: '8.5px', color: PALETTE.coral }}>{a}</span>
+                        <span key={a} style={{ padding: '1px 5px', borderRadius: '4px', background: `${PALETTE.coral}12`, fontFamily: 'Outfit', fontSize: '11px', color: PALETTE.coral }}>{a}</span>
                       ))}
                     </div>
                   </div>
@@ -1776,7 +1881,7 @@ export default function HomePage() {
                   }}>
                     <Shirt style={{ width: '16px', height: '16px', color: '#FFFFFF' }} />
                   </div>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 800, color: '#1A1A2E' }}>今日穿搭建议</span>
+                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 800, color: '#1A1A2E' }}>今日色彩搭配</span>
                   <motion.button
                     onClick={() => setActiveTab(activeTab === 'outfit' ? null : 'outfit')}
                     whileHover={{ y: -1 }}
@@ -1803,6 +1908,62 @@ export default function HomePage() {
                     };
                     const elementNames: Record<string, string> = {
                       wood: '木', fire: '火', earth: '土', metal: '金', water: '水',
+                    };
+                    // 颜色关键词到颜色值的映射
+                    const colorMap: Record<string, { bg: string; text: string }> = {
+                      '深蓝': { bg: '#1E3A5F', text: '#FFFFFF' },
+                      '白色': { bg: '#F5F5F5', text: '#333333' },
+                      '灰色': { bg: '#6B7280', text: '#FFFFFF' },
+                      '黑色': { bg: '#1F2937', text: '#FFFFFF' },
+                      '墨绿': { bg: '#0D3328', text: '#FFFFFF' },
+                      '浅蓝': { bg: '#87CEEB', text: '#1F2937' },
+                      '卡其': { bg: '#C3B091', text: '#333333' },
+                      '酒红': { bg: '#722F37', text: '#FFFFFF' },
+                      '金色': { bg: '#D4AF37', text: '#333333' },
+                      '银色': { bg: '#C0C0C0', text: '#333333' },
+                      '红色': { bg: '#DC2626', text: '#FFFFFF' },
+                      '绿色': { bg: '#16A34A', text: '#FFFFFF' },
+                      '棕色': { bg: '#8B4513', text: '#FFFFFF' },
+                      '蓝色': { bg: '#2563EB', text: '#FFFFFF' },
+                      '橙色': { bg: '#EA580C', text: '#FFFFFF' },
+                      '粉色': { bg: '#EC4899', text: '#FFFFFF' },
+                      '紫色': { bg: '#7C3AED', text: '#FFFFFF' },
+                      '黄色': { bg: '#FACC15', text: '#333333' },
+                    };
+                    // 渲染带颜色高亮的穿搭建议
+                    const renderColorSuggestion = (text: string) => {
+                      // 提取颜色关键词
+                      let colorKey = '';
+                      let colorInfo: { bg: string; text: string } | null = null;
+                      for (const key of Object.keys(colorMap)) {
+                        if (text.includes(key)) {
+                          colorKey = key;
+                          colorInfo = colorMap[key];
+                          break;
+                        }
+                      }
+                      if (colorInfo) {
+                        const parts = text.split(colorKey);
+                        return (
+                          <>
+                            {parts[0]}
+                            <span style={{
+                              display: 'inline-block',
+                              padding: '1px 6px',
+                              borderRadius: '4px',
+                              background: colorInfo.bg,
+                              color: colorInfo.text,
+                              fontWeight: 700,
+                              fontSize: '10px',
+                              margin: '0 2px',
+                            }}>
+                              {colorKey}
+                            </span>
+                            {parts[1]}
+                          </>
+                        );
+                      }
+                      return text;
                     };
                     const getSceneIconSmall = (iconStr: string) => {
                       switch(iconStr) {
@@ -1840,12 +2001,12 @@ export default function HomePage() {
                               color: scene.accentColor,
                             }}>{scene.label}</span>
                           </div>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', marginBottom: '6px' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '6px' }}>
                             {colors.slice(0, 2).map((color: string, i: number) => (
                               <span key={i} style={{
                                 fontFamily: 'Outfit', fontSize: '10px', color: '#6B7280',
                               }}>
-                                · {color}
+                                · {renderColorSuggestion(color)}
                               </span>
                             ))}
                           </div>
@@ -1866,540 +2027,6 @@ export default function HomePage() {
                 </div>
               </div>
               )}
-
-                {/* 点击展开详细内容 */}
-                <AnimatePresence>
-                  {activeTab === 'outfit' && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.3 }}
-                      style={{ overflow: 'hidden', marginTop: '12px' }}
-                    >
-                      {/* 天气信息 */}
-                      <div style={{
-                        display: 'flex', gap: '12px', alignItems: 'stretch',
-                        background: `linear-gradient(135deg, ${PALETTE.coralLight}, ${PALETTE.orangeLight})`,
-                        borderRadius: '16px', padding: '14px 16px',
-                        border: `1px solid ${PALETTE.coral}25`, marginBottom: '12px',
-                      }}>
-                        <div style={{
-                          width: '50px', height: '50px', borderRadius: '12px', flexShrink: 0,
-                          background: '#FFFFFF', display: 'flex', flexDirection: 'column',
-                          alignItems: 'center', justifyContent: 'center',
-                        }}>
-                          {(outfitRec as any).weatherInfo?.weather?.includes('晴') ? (
-                            <Sun style={{ width: '24px', height: '24px', color: '#FF9D6B' }} />
-                          ) : (outfitRec as any).weatherInfo?.weather?.includes('雨') ? (
-                            <CloudRain style={{ width: '24px', height: '24px', color: '#6BD4FF' }} />
-                          ) : (outfitRec as any).weatherInfo?.weather?.includes('阴') ? (
-                            <Cloud style={{ width: '24px', height: '24px', color: '#94A3B8' }} />
-                          ) : (
-                            <Wind style={{ width: '24px', height: '24px', color: '#6BD4FF' }} />
-                          )}
-                          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 700, color: '#1A1A2E' }}>{(outfitRec as any).weatherInfo?.temperature || '--'}°</span>
-                        </div>
-                            <div style={{ flex: 1 }}>
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                              <MapPin style={{ width: '12px', height: '12px', color: '#6B7280' }} />
-                              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 600, color: '#1A1A2E' }}>{(outfitRec as any).weatherInfo?.city || userLocation?.city || '未设置'}</span>
-                              {locationLocked && userLocation?.city && (
-                                <span style={{
-                                  display: 'inline-flex', alignItems: 'center', gap: '2px',
-                                  padding: '2px 6px', borderRadius: '4px',
-                                  background: `${PALETTE.green}15`, border: `1px solid ${PALETTE.green}30`,
-                                  fontSize: '9px', color: PALETTE.green, fontWeight: 600,
-                                }}>
-                                  <Sparkle style={{ width: '8px', height: '8px' }} />
-                                  已锁定
-                                </span>
-                              )}
-                              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#6B7280' }}>{(outfitRec as any).weatherInfo?.weather || '加载中...'}</span>
-                            </div>
-                            <div style={{ position: 'relative' }}>
-                              <button
-                                onClick={() => locationLocked ? unlockLocation() : setShowCityDropdown(!showCityDropdown)}
-                                style={{
-                                  padding: '4px 10px', borderRadius: '8px',
-                                  background: locationLocked ? `${PALETTE.coral}10` : '#FFFFFF',
-                                  border: `1px solid ${locationLocked ? PALETTE.coral : '#E8EAF6'}`,
-                                  cursor: 'pointer', fontSize: '10px',
-                                  color: locationLocked ? PALETTE.coral : '#6B7280',
-                                  fontFamily: 'Outfit, sans-serif',
-                                  display: 'flex', alignItems: 'center', gap: '4px',
-                                }}
-                              >
-                                {locationLocked ? (
-                                  <>
-                                    <Navigation style={{ width: '10px', height: '10px' }} />
-                                    修改位置
-                                  </>
-                                ) : (
-                                  <>
-                                    <Navigation style={{ width: '10px', height: '10px' }} />
-                                    {showCityDropdown ? '收起' : '选择城市'}
-                                  </>
-                                )}
-                              </button>
-                              {showCityDropdown && (
-                                <div style={{
-                                  position: 'absolute', top: '100%', right: 0, marginTop: '4px',
-                                  background: '#FFFFFF', borderRadius: '12px',
-                                  boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
-                                  border: '1px solid #E8EAF6', zIndex: 100,
-                                  width: '220px', maxHeight: '320px', overflow: 'hidden',
-                                }}>
-                                  <div style={{ padding: '10px', borderBottom: '1px solid #F0F1F8' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#F8F9FC', borderRadius: '8px', padding: '6px 10px' }}>
-                                      <Search style={{ width: '12px', height: '12px', color: '#A0A8C0' }} />
-                                      <input
-                                        type="text"
-                                        value={citySearch}
-                                        onChange={e => setCitySearch(e.target.value)}
-                                        placeholder="搜索城市..."
-                                        style={{
-                                          border: 'none', background: 'transparent', outline: 'none',
-                                          fontSize: '12px', fontFamily: 'Outfit, sans-serif',
-                                          color: '#1A1A2E', width: '100%',
-                                        }}
-                                      />
-                                      {citySearch && (
-                                        <X style={{ width: '10px', height: '10px', color: '#A0A8C0', cursor: 'pointer' }} onClick={() => setCitySearch('')} />
-                                      )}
-                                    </div>
-                                  </div>
-                                  
-                                  {/* 自动定位选项 */}
-                                  <div
-                                    onClick={() => {
-                                      detectLocation();
-                                      setShowCityDropdown(false);
-                                      setCitySearch('');
-                                    }}
-                                    style={{
-                                      padding: '8px 10px', cursor: 'pointer',
-                                      display: 'flex', alignItems: 'center', gap: '6px',
-                                      fontFamily: 'Outfit, sans-serif', fontSize: '12px',
-                                      color: '#6B7280',
-                                      background: locating ? '#F8F9FC' : 'transparent',
-                                      borderBottom: '1px solid #F0F1F8',
-                                    }}
-                                    onMouseEnter={e => (e.currentTarget.style.background = '#F8F9FC')}
-                                    onMouseLeave={e => (e.currentTarget.style.background = locating ? '#F8F9FC' : 'transparent')}
-                                  >
-                                    <RefreshCw style={{ width: '12px', height: '12px', animation: locating ? 'spin 1s linear infinite' : 'none' }} />
-                                    {locating ? '定位中...' : '自动定位'}
-                                  </div>
-                                  
-                                  {/* 城市列表 */}
-                                  <div style={{ flex: 1, overflowY: 'auto', maxHeight: '220px' }}>
-                                    {(citySearch ? MAJOR_CITIES.filter(c => c.includes(citySearch)) : MAJOR_CITIES).map(city => (
-                                      <div
-                                        key={city}
-                                        onClick={() => selectCity(city)}
-                                        style={{
-                                          padding: '8px 10px', cursor: 'pointer',
-                                          fontFamily: 'Outfit, sans-serif', fontSize: '12px',
-                                          color: userLocation?.city === city ? PALETTE.coral : '#6B7280',
-                                          background: userLocation?.city === city ? `${PALETTE.coral}10` : 'transparent',
-                                          fontWeight: userLocation?.city === city ? 600 : 400,
-                                        }}
-                                        onMouseEnter={e => {
-                                          if (userLocation?.city !== city) {
-                                            e.currentTarget.style.background = '#F8F9FC';
-                                          }
-                                        }}
-                                        onMouseLeave={e => {
-                                          if (userLocation?.city !== city) {
-                                            e.currentTarget.style.background = 'transparent';
-                                          }
-                                        }}
-                                      >
-                                        <MapPin style={{ width: '10px', height: '10px', display: 'inline', marginRight: '4px', verticalAlign: 'middle' }} />
-                                        {city}
-                                      </div>
-                                    ))}
-                                    {citySearch && MAJOR_CITIES.filter(c => c.includes(citySearch)).length === 0 && (
-                                      <div style={{ padding: '16px', textAlign: 'center', color: '#A0A8C0', fontSize: '12px' }}>
-                                        未找到城市 "{citySearch}"
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                          {(outfitRec as any).liuriFortune && (
-                            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#6B7280', lineHeight: 1.5, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                              <Sparkle style={{ width: '12px', height: '12px', color: PALETTE.yellow }} />
-                              {(outfitRec as any).liuriFortune.description}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* 色彩推荐 */}
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                        {[
-                          { label: '宜穿', items: (outfitRec || {}).primaryColors || [], color: PALETTE.green, bg: `${PALETTE.green}08` },
-                          { label: '辅助', items: (outfitRec || {}).secondaryColors || [], color: PALETTE.blue, bg: `${PALETTE.blue}08` },
-                          { label: '规避', items: (outfitRec || {}).avoidColors || [], color: '#C0C5D8', bg: '#F8F9FC' },
-                        ].map(({ label, items, color, bg }) => (
-                          <div key={label} style={{
-                            background: bg, borderRadius: '12px', padding: '10px 8px', textAlign: 'center',
-                            border: `1px solid ${color}25`,
-                          }}>
-                            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '9px', fontWeight: 700, color: '#A0A8C0', marginBottom: '6px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>{label}</p>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px', justifyContent: 'center' }}>
-                              {(items as any[]).map((item: any, i: number) => <ElementBadge key={i} el={typeof item === 'string' ? item : item.element} />)}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* 场景穿搭推荐 - 横向并排，点击展开 */}
-                      {(() => {
-                        const scenes = (outfitRec as any).sceneRecommendations || [];
-                        const elementColors: Record<string, string> = {
-                          wood: '#4ADE80', fire: '#FF6B6B', earth: '#D4A000', metal: '#94A3B8', water: '#00A8E8',
-                        };
-                        const elementNames: Record<string, string> = {
-                          wood: '木', fire: '火', earth: '土', metal: '金', water: '水',
-                        };
-                        
-                        // 场景图标映射
-                        const getSceneIcon = (iconStr: string) => {
-                          switch(iconStr) {
-                            case 'briefcase': return <Briefcase style={{ width: '18px', height: '18px' }} />;
-                            case 'shirt': return <ShirtIcon style={{ width: '18px', height: '18px' }} />;
-                            case 'party': return <PartyPopper style={{ width: '18px', height: '18px' }} />;
-                            case 'gift': return <Gift style={{ width: '18px', height: '18px' }} />;
-                            default: return <Star style={{ width: '18px', height: '18px' }} />;
-                          }
-                        };
-
-                        return (
-                          <>
-                            {/* 场景选择按钮 - 横向并排 */}
-                            <div style={{
-                              display: 'grid',
-                              gridTemplateColumns: `repeat(${Math.min(scenes.length, 4)}, 1fr)`,
-                              gap: '8px',
-                            }}>
-                              {scenes.map((scene: any) => (
-                                <motion.button
-                                  key={scene.id}
-                                  onClick={() => setActiveScene(activeScene === scene.id ? null : scene.id)}
-                                  whileHover={{ y: -2, scale: 1.02 }}
-                                  whileTap={{ scale: 0.98 }}
-                                  style={{
-                                    padding: '12px 10px',
-                                    borderRadius: '14px',
-                                    background: activeScene === scene.id 
-                                      ? `${scene.accentColor}15` 
-                                      : '#FFFFFF',
-                                    border: `1.5px solid ${activeScene === scene.id ? scene.accentColor : '#E8EAF6'}`,
-                                    cursor: 'pointer',
-                                    textAlign: 'center',
-                                    transition: 'all 0.2s',
-                                    boxShadow: activeScene === scene.id 
-                                      ? `0 4px 12px ${scene.accentColor}25` 
-                                      : '0 2px 6px rgba(0,0,0,0.04)',
-                                  }}
-                                >
-                                  <div style={{
-                                    width: '36px', height: '36px', borderRadius: '10px',
-                                    background: `${scene.accentColor}20`,
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    margin: '0 auto 8px',
-                                    color: scene.accentColor,
-                                  }}>
-                                    {getSceneIcon(scene.icon)}
-                                  </div>
-                                  <p style={{
-                                    fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 700,
-                                    color: activeScene === scene.id ? scene.accentColor : '#1A1A2E',
-                                    marginBottom: '2px',
-                                  }}>{scene.label}</p>
-                                  <p style={{
-                                    fontFamily: 'Outfit, sans-serif', fontSize: '9px', color: '#A0A8C0',
-                                  }}>{scene.subtitle}</p>
-                                  <div style={{
-                                    marginTop: '6px', paddingTop: '4px',
-                                    borderTop: `1px solid ${scene.accentColor}15`,
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px',
-                                  }}>
-                                    <div style={{
-                                      width: '8px', height: '8px', borderRadius: '50%',
-                                      background: elementColors[scene.element] || '#A0A8C0',
-                                    }} />
-                                    <span style={{
-                                      fontFamily: 'Outfit, sans-serif', fontSize: '9px', fontWeight: 600,
-                                      color: elementColors[scene.element] || '#6B7280',
-                                    }}>
-                                      {elementNames[scene.element] || scene.element}
-                                    </span>
-                                  </div>
-                                  {activeScene === scene.id && (
-                                    <ChevronUp style={{ width: '14px', height: '14px', color: scene.accentColor, marginTop: '4px' }} />
-                                  )}
-                                </motion.button>
-                              ))}
-                            </div>
-
-                            {/* 场景详细展开内容 */}
-                            {scenes.map((scene: any) => (
-                              <AnimatePresence key={scene.id}>
-                                {activeScene === scene.id && (
-                                  <motion.div
-                                    initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                                    animate={{ opacity: 1, height: 'auto', marginTop: '12px' }}
-                                    exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                                    transition={{ duration: 0.3 }}
-                                    style={{ overflow: 'hidden' }}
-                                  >
-                                    <div style={{
-                                      background: '#FFFFFF', borderRadius: '16px',
-                                      boxShadow: `0 2px 12px ${scene.accentColor}15`,
-                                      border: `1.5px solid ${scene.accentColor}30`,
-                                      overflow: 'hidden',
-                                      position: 'relative',
-                                    }}>
-                                      {/* 背景装饰图标 */}
-                                      <div style={{
-                                        position: 'absolute', right: '10px', top: '10px',
-                                        opacity: 0.06, pointerEvents: 'none',
-                                      }}>
-                                        {getSceneIcon(scene.icon)}
-                                        <div style={{ 
-                                          fontSize: '80px', 
-                                          position: 'absolute', 
-                                          right: '-10px', 
-                                          top: '-10px',
-                                          color: scene.accentColor,
-                                        }}>
-                                          {getSceneIcon(scene.icon)}
-                                        </div>
-                                      </div>
-
-                                      {/* 详细穿搭内容 */}
-                                      <div style={{ padding: '16px', position: 'relative', zIndex: 1 }}>
-                                        {/* 场景头部高亮 */}
-                                        <div style={{
-                                          padding: '12px 14px',
-                                          background: `linear-gradient(135deg, ${scene.accentColor}18, ${scene.accentColor}08)`,
-                                          borderRadius: '12px', marginBottom: '14px',
-                                          border: `1px solid ${scene.accentColor}25`,
-                                          display: 'flex', alignItems: 'center', gap: '10px',
-                                        }}>
-                                          <div style={{
-                                            width: '40px', height: '40px', borderRadius: '10px',
-                                            background: scene.accentColor,
-                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                            color: '#FFFFFF',
-                                          }}>
-                                            {getSceneIcon(scene.icon)}
-                                          </div>
-                                          <div style={{ flex: 1 }}>
-                                            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{scene.label}</p>
-                                            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#6B7280', margin: '2px 0 0' }}>{scene.subtitle}</p>
-                                          </div>
-                                          <div style={{
-                                            padding: '6px 12px', borderRadius: '9999px',
-                                            background: `${elementColors[scene.element] || scene.accentColor}20`,
-                                            border: `1px solid ${elementColors[scene.element] || scene.accentColor}40`,
-                                            display: 'flex', alignItems: 'center', gap: '4px',
-                                          }}>
-                                            <div style={{
-                                              width: '6px', height: '6px', borderRadius: '50%',
-                                              background: elementColors[scene.element] || scene.accentColor,
-                                            }} />
-                                            <span style={{
-                                              fontFamily: 'Outfit, sans-serif', fontSize: '10px', fontWeight: 700,
-                                              color: elementColors[scene.element] || scene.accentColor,
-                                            }}>
-                                              {elementNames[scene.element] || scene.element}属性
-                                            </span>
-                                          </div>
-                                        </div>
-
-                                        {/* 详细穿搭方案 */}
-                                        {scene.outfit && (
-                                          <div style={{
-                                            background: `${scene.accentColor}06`,
-                                            borderRadius: '12px', padding: '14px', marginBottom: '12px',
-                                            border: `1px solid ${scene.accentColor}15`,
-                                          }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
-                                              <Sparkle style={{ width: '14px', height: '14px', color: scene.accentColor }} />
-                                              <p style={{
-                                                fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 700,
-                                                color: scene.accentColor, margin: 0,
-                                              }}>推荐穿搭方案</p>
-                                            </div>
-                                            
-                                            {/* 上装 */}
-                                            {scene.outfit.top && (
-                                              <div style={{ marginBottom: '10px' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                                                  <div style={{ 
-                                                    width: '24px', height: '24px', borderRadius: '6px',
-                                                    background: `${scene.accentColor}15`,
-                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                  }}>
-                                                    <ShirtIcon style={{ width: '12px', height: '12px', color: scene.accentColor }} />
-                                                  </div>
-                                                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600, color: '#1A1A2E' }}>上装</span>
-                                                </div>
-                                                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#6B7280', lineHeight: 1.6, paddingLeft: '32px' }}>
-                                                  <HighlightColors text={scene.outfit.top} baseColor={scene.accentColor} />
-                                                </p>
-                                              </div>
-                                            )}
-                                            
-                                            {/* 下装 */}
-                                            {scene.outfit.bottom && (
-                                              <div style={{ marginBottom: '10px' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                                                  <div style={{ 
-                                                    width: '24px', height: '24px', borderRadius: '6px',
-                                                    background: `${scene.accentColor}15`,
-                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                  }}>
-                                                    <Shirt style={{ width: '12px', height: '12px', color: scene.accentColor }} />
-                                                  </div>
-                                                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600, color: '#1A1A2E' }}>下装</span>
-                                                </div>
-                                                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#6B7280', lineHeight: 1.6, paddingLeft: '32px' }}>
-                                                  <HighlightColors text={scene.outfit.bottom} baseColor={scene.accentColor} />
-                                                </p>
-                                              </div>
-                                            )}
-                                            
-                                            {/* 鞋子 */}
-                                            {scene.outfit.shoes && (
-                                              <div style={{ marginBottom: '10px' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                                                  <div style={{ 
-                                                    width: '24px', height: '24px', borderRadius: '6px',
-                                                    background: `${scene.accentColor}15`,
-                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                  }}>
-                                                    <WatchIcon style={{ width: '12px', height: '12px', color: scene.accentColor }} />
-                                                  </div>
-                                                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600, color: '#1A1A2E' }}>鞋子</span>
-                                                </div>
-                                                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#6B7280', lineHeight: 1.6, paddingLeft: '32px' }}>
-                                                  <HighlightColors text={scene.outfit.shoes} baseColor={scene.accentColor} />
-                                                </p>
-                                              </div>
-                                            )}
-                                            
-                                            {/* 材质 */}
-                                            {scene.outfit.material && (
-                                              <div style={{
-                                                padding: '10px 12px',
-                                                background: '#FFFFFF',
-                                                borderRadius: '8px', marginBottom: '10px',
-                                              }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                                                  <Sparkle style={{ width: '12px', height: '12px', color: PALETTE.yellow }} />
-                                                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600, color: '#1A1A2E' }}>材质建议</span>
-                                                </div>
-                                                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#6B7280', lineHeight: 1.6, paddingLeft: '20px' }}>
-                                                  <HighlightColors text={scene.outfit.material} baseColor={scene.accentColor} />
-                                                </p>
-                                              </div>
-                                            )}
-                                            
-                                            {/* 配饰 */}
-                                            {scene.outfit.accessories && scene.outfit.accessories.length > 0 && (
-                                              <div>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-                                                  <Crown style={{ width: '12px', height: '12px', color: PALETTE.purple }} />
-                                                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600, color: '#1A1A2E' }}>配饰搭配</span>
-                                                </div>
-                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', paddingLeft: '20px' }}>
-                                                  {scene.outfit.accessories.map((acc: string, i: number) => (
-                                                    <span key={i} style={{
-                                                      padding: '4px 10px', borderRadius: '9999px',
-                                                      background: `${scene.accentColor}12`,
-                                                      border: `1px solid ${scene.accentColor}25`,
-                                                      fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#1A1A2E',
-                                                    }}>{acc}</span>
-                                                  ))}
-                                                </div>
-                                              </div>
-                                            )}
-                                          </div>
-                                        )}
-
-                                        {/* 场景说明 */}
-                                        <div style={{
-                                          padding: '12px 14px',
-                                          background: `linear-gradient(135deg, ${scene.accentColor}08, ${scene.accentColor}04)`,
-                                          borderRadius: '10px',
-                                          marginBottom: '8px',
-                                          border: `1px solid ${scene.accentColor}20`,
-                                        }}>
-                                          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                                            <Lightbulb style={{ width: '14px', height: '14px', color: scene.accentColor, flexShrink: 0, marginTop: '1px' }} />
-                                            <p style={{
-                                              fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#6B7280',
-                                              lineHeight: 1.7,
-                                            }}><HighlightColors text={scene.explanation} baseColor={scene.accentColor} /></p>
-                                          </div>
-                                        </div>
-                                        
-                                        {/* 天气提示 */}
-                                        {scene.weatherTip && (
-                                          <div style={{
-                                            display: 'flex', alignItems: 'center', gap: '6px',
-                                            padding: '8px 12px',
-                                            background: '#F8F9FC',
-                                            borderRadius: '8px',
-                                          }}>
-                                            <Sun style={{ width: '12px', height: '12px', color: PALETTE.orange }} />
-                                            <p style={{
-                                              fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#A0A8C0',
-                                              lineHeight: 1.5,
-                                            }}>{scene.weatherTip}</p>
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </motion.div>
-                                )}
-                              </AnimatePresence>
-                            ))}
-                          </>
-                        );
-                      })()}
-
-                      {/* 穿搭风格建议 */}
-                      {(outfitRec as any).styleSuggestion && (
-                        <div style={{
-                          background: `linear-gradient(135deg, ${PALETTE.yellow}10, ${PALETTE.orange}10)`,
-                          borderRadius: '14px', padding: '14px',
-                          border: `1px solid ${PALETTE.yellow}25`,
-                        }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                            <Lightbulb style={{ width: '16px', height: '16px', color: PALETTE.yellow }} />
-                            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>穿搭风格建议</p>
-                          </div>
-                          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#6B7280', lineHeight: 1.7, marginBottom: '6px' }}>
-                            {(outfitRec as any).styleSuggestion}
-                          </p>
-                          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#6B7280', lineHeight: 1.7 }}>
-                            <span style={{ fontWeight: 700, color: PALETTE.yellow }}>材质推荐：</span>{(outfitRec as any).materialSuggestion}
-                          </p>
-                        </div>
-                      )}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
 
                 {/* 空状态提示 */}
                 {(!selectedRecord || !previewInfo || !previewInfo.baziResult) && (
@@ -2489,423 +2116,407 @@ export default function HomePage() {
                         </div>
                       );
                     })()}
+                    
+                    {/* 命理分析总结 - 在主界面展示 */}
+                    {(braceletRec as any).summary && (() => {
+                      const summary = (braceletRec as any).summary;
+                      return (
+                        <div style={{ marginTop: '14px' }}>
+                          {/* 运势等级和用神 */}
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <Sparkles style={{ width: '14px', height: '14px', color: PALETTE.purple }} />
+                              <span style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700, color: '#1A1A2E' }}>命理分析</span>
+                            </div>
+                            <div style={{ padding: '3px 10px', borderRadius: '8px', background: summary.fortuneLevel === '极佳' ? `${PALETTE.green}15` : summary.fortuneLevel === '上佳' ? `${PALETTE.blue}15` : summary.fortuneLevel === '平稳' ? `${PALETTE.yellow}15` : `${PALETTE.orange}15`, border: `1px solid ${summary.fortuneLevel === '极佳' ? PALETTE.green : summary.fortuneLevel === '上佳' ? PALETTE.blue : summary.fortuneLevel === '平稳' ? PALETTE.yellow : PALETTE.orange}30` }}>
+                              <span style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 700, color: summary.fortuneLevel === '极佳' ? PALETTE.green : summary.fortuneLevel === '上佳' ? PALETTE.blue : summary.fortuneLevel === '平稳' ? PALETTE.yellow : PALETTE.orange }}>{summary.fortuneLevel}运势</span>
+                            </div>
+                          </div>
+                          
+                          {/* 五行图示 */}
+                          {summary.wuxingDiagram && (
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px', background: `linear-gradient(135deg, ${PALETTE.purple}08, ${PALETTE.blue}08)`, borderRadius: '12px', border: `1px solid ${PALETTE.purple}15`, marginBottom: '10px' }}>
+                              <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: `linear-gradient(135deg, ${PALETTE.purple}, ${PALETTE.blue})`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                                <span style={{ fontFamily: 'Outfit', fontSize: '16px', fontWeight: 800, color: '#FFFFFF' }}>{summary.wuxingDiagram.primaryName}</span>
+                              </div>
+                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '3px', padding: '2px 6px', borderRadius: '4px', background: `${PALETTE.green}10` }}>
+                                  <TrendingUp style={{ width: '10px', height: '10px', color: PALETTE.green }} />
+                                  <span style={{ fontFamily: 'Outfit', fontSize: '9px', color: PALETTE.green, fontWeight: 700 }}>{summary.wuxingDiagram.sheng}</span>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '3px', padding: '2px 6px', borderRadius: '4px', background: `${PALETTE.orange}10` }}>
+                                  <TrendingUp style={{ width: '10px', height: '10px', color: PALETTE.orange, transform: 'rotate(180deg)' }} />
+                                  <span style={{ fontFamily: 'Outfit', fontSize: '9px', color: PALETTE.orange, fontWeight: 700 }}>{summary.wuxingDiagram.ke}</span>
+                                </div>
+                              </div>
+                              <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: `${PALETTE.blue}15`, border: `1.5px solid ${PALETTE.blue}40`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                                <span style={{ fontFamily: 'Outfit', fontSize: '14px', fontWeight: 700, color: '#1A1A2E' }}>{summary.wuxingDiagram.secondaryName}</span>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* 身强身弱和用神 */}
+                          <div style={{ display: 'flex', gap: '6px', marginBottom: '10px' }}>
+                            <div style={{ flex: 1, padding: '6px 8px', borderRadius: '8px', background: `${PALETTE.purple}08`, border: `1px solid ${PALETTE.purple}15` }}>
+                              <p style={{ fontFamily: 'Outfit', fontSize: '9px', fontWeight: 600, color: PALETTE.purple, marginBottom: '2px' }}>身强身弱</p>
+                              <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{summary.bodyStrengthStatus === 'strong' ? '身强' : summary.bodyStrengthStatus === 'weak' ? '身弱' : '中性'}</p>
+                            </div>
+                            <div style={{ flex: 1, padding: '6px 8px', borderRadius: '8px', background: `${PALETTE.blue}08`, border: `1px solid ${PALETTE.blue}15` }}>
+                              <p style={{ fontFamily: 'Outfit', fontSize: '9px', fontWeight: 600, color: PALETTE.blue, marginBottom: '2px' }}>今日用神</p>
+                              <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{summary.favorableElementName}行</p>
+                            </div>
+                            {summary.tenGod && (
+                              <div style={{ flex: 1, padding: '6px 8px', borderRadius: '8px', background: `${PALETTE.coral}08`, border: `1px solid ${PALETTE.coral}15` }}>
+                                <p style={{ fontFamily: 'Outfit', fontSize: '9px', fontWeight: 600, color: PALETTE.coral, marginBottom: '2px' }}>流日十神</p>
+                                <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{summary.tenGod}</p>
+                              </div>
+                            )}
+                          </div>
+                          
+                          {/* 综合建议 */}
+                          {summary.overallAdvice && (
+                            <div style={{ padding: '8px 10px', background: '#FFFFFF', borderRadius: '10px', border: `1px solid ${PALETTE.purple}20` }}>
+                              <Lightbulb style={{ width: '12px', height: '12px', color: PALETTE.purple, marginBottom: '4px' }} />
+                              <p style={{ fontFamily: 'Outfit', fontSize: '10px', color: '#6B7280', margin: 0, lineHeight: 1.5 }}>{summary.overallAdvice}</p>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 )}
-
-                {/* 手串推荐内容 - 展开详情 */}
-                {activeTab === 'bracelet' && braceletRec && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                      
-                      {/* 首选手串 - 详细展示 */}
-                      {(braceletRec as any).primaryBracelet && (() => {
-                        const primary = (braceletRec as any).primaryBracelet;
-                        const material = primary.material || primary.name || '';
-                        const details = getBraceletDetails(material);
-                        // 优先使用API返回的图片，其次使用本地数据库
-                        const images = (primary.images && primary.images.length > 0) ? primary.images : getBraceletImages(material);
-                        
-                        return (
-                          <div style={{
-                            background: 'linear-gradient(135deg, #FFFFFF, #F8F9FC)',
-                            borderRadius: '20px', padding: '20px',
-                            border: '2px solid',
-                            borderImage: `linear-gradient(135deg, ${PALETTE.purple}, ${PALETTE.blue}) 1`,
-                            boxShadow: `0 4px 20px ${PALETTE.purple}15`,
-                          }}>
-                            {/* 标题区 */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-                              <div style={{
-                                width: '42px', height: '42px', borderRadius: '12px',
-                                background: `linear-gradient(135deg, ${PALETTE.purple}, ${PALETTE.blue})`,
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                boxShadow: `0 4px 14px ${PALETTE.purple}35`,
-                              }}>
-                                <Gem style={{ width: '20px', height: '20px', color: '#FFFFFF' }} />
-                              </div>
-                              <div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '16px', fontWeight: 800, color: '#1A1A2E' }}>{primary.name || material}</p>
-                                  <span style={{
-                                    padding: '2px 8px', borderRadius: '6px',
-                                    background: `linear-gradient(135deg, ${PALETTE.purple}, ${PALETTE.blue})`,
-                                    fontSize: '10px', fontWeight: 700, color: '#FFFFFF',
-                                    fontFamily: 'Outfit, sans-serif',
-                                  }}>首选</span>
-                                </div>
-                                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#A0A8C0', marginTop: '2px' }}>{primary.color || ''}</p>
-                              </div>
-                            </div>
-                            
-                            {/* 基本信息 */}
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '14px' }}>
-                              <div style={{ 
-                                padding: '10px', borderRadius: '10px', background: `${PALETTE.purple}08`,
-                                textAlign: 'center', border: `1px solid ${PALETTE.purple}15`,
-                              }}>
-                                <p style={{ fontSize: '9px', color: '#A0A8C0', fontFamily: 'Outfit', fontWeight: 600, marginBottom: '4px', textTransform: 'uppercase' }}>材质</p>
-                                <p style={{ fontSize: '12px', fontWeight: 700, color: '#1A1A2E', fontFamily: 'Outfit' }}>{primary.material}</p>
-                              </div>
-                              <div style={{ 
-                                padding: '10px', borderRadius: '10px', background: `${PALETTE.blue}08`,
-                                textAlign: 'center', border: `1px solid ${PALETTE.blue}15`,
-                              }}>
-                                <p style={{ fontSize: '9px', color: '#A0A8C0', fontFamily: 'Outfit', fontWeight: 600, marginBottom: '4px', textTransform: 'uppercase' }}>色彩</p>
-                                <p style={{ fontSize: '12px', fontWeight: 700, color: '#1A1A2E', fontFamily: 'Outfit' }}>{primary.color || '-'}</p>
-                              </div>
-                              <div style={{ 
-                                padding: '10px', borderRadius: '10px', background: `${PALETTE.green}08`,
-                                textAlign: 'center', border: `1px solid ${PALETTE.green}15`,
-                              }}>
-                                <p style={{ fontSize: '9px', color: '#A0A8C0', fontFamily: 'Outfit', fontWeight: 600, marginBottom: '4px', textTransform: 'uppercase' }}>五行</p>
-                                <p style={{ fontSize: '12px', fontWeight: 700, color: '#1A1A2E', fontFamily: 'Outfit' }}>{primary.element || primary.wuxing || '金'}</p>
-                              </div>
-                            </div>
-                            
-                            {/* 材质宝石标签 */}
-                            {primary.stones && primary.stones.length > 0 && (
-                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '14px' }}>
-                                {(primary.stones as any[]).map((s: any, i: number) => (
-                                  <span key={i} style={{
-                                    padding: '4px 10px', borderRadius: '9999px',
-                                    background: `${PALETTE.purple}10`, border: `1px solid ${PALETTE.purple}25`,
-                                    fontFamily: 'Outfit', fontSize: '11px', color: PALETTE.purple, fontWeight: 500,
-                                  }}>
-                                    {typeof s === 'string' ? s : (s.name || s.color || '')}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
-                            
-                            {/* 详细解说区域 */}
-                            {details && (
-                              <>
-                                {/* 功效详解 */}
-                                <div style={{
-                                  padding: '12px 14px', borderRadius: '12px',
-                                  background: `linear-gradient(135deg, ${PALETTE.purple}06, ${PALETTE.blue}06)`,
-                                  border: `1px solid ${PALETTE.purple}15`, marginBottom: '10px',
-                                }}>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-                                    <Sparkles style={{ width: '14px', height: '14px', color: PALETTE.purple }} />
-                                    <span style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700, color: '#1A1A2E' }}>功效详解</span>
-                                  </div>
-                                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                                    {details.effects.slice(0, 4).map((eff, i) => (
-                                      <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                                        <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: PALETTE.purple, marginTop: '5px', flexShrink: 0 }} />
-                                        <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#6B7280', lineHeight: 1.5 }}>{eff}</p>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                                
-                                {/* 对用户增益 */}
-                                <div style={{
-                                  padding: '12px 14px', borderRadius: '12px',
-                                  background: `linear-gradient(135deg, ${PALETTE.green}08, ${PALETTE.yellow}06)`,
-                                  border: `1px solid ${PALETTE.green}20`, marginBottom: '10px',
-                                }}>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-                                    <TrendingUp style={{ width: '14px', height: '14px', color: PALETTE.green }} />
-                                    <span style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700, color: '#1A1A2E' }}>对您的增益作用</span>
-                                  </div>
-                                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                                    {details.benefits.slice(0, 4).map((ben, i) => (
-                                      <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                                        <Heart style={{ width: '12px', height: '12px', color: PALETTE.green, marginTop: '2px', flexShrink: 0 }} />
-                                        <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#6B7280', lineHeight: 1.5 }}>{ben}</p>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                                
-                                {/* 养护指南 */}
-                                <div style={{
-                                  padding: '12px 14px', borderRadius: '12px',
-                                  background: `linear-gradient(135deg, ${PALETTE.blue}06, ${PALETTE.coral}06)`,
-                                  border: `1px solid ${PALETTE.blue}15`,
-                                }}>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-                                    <Heart style={{ width: '14px', height: '14px', color: PALETTE.blue }} />
-                                    <span style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700, color: '#1A1A2E' }}>养护指南</span>
-                                  </div>
-                                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                                    {details.care.slice(0, 4).map((c, i) => (
-                                      <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px' }}>
-                                        <Droplets style={{ width: '12px', height: '12px', color: PALETTE.blue, marginTop: '2px', flexShrink: 0 }} />
-                                        <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#6B7280', lineHeight: 1.5 }}>{c}</p>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              </>
-                            )}
-                            
-                            {/* 如果没有详细解说，显示原有效果 */}
-                            {!details && primary.effect && (
-                              <div style={{
-                                padding: '12px 14px', borderRadius: '12px',
-                                background: `${PALETTE.purple}06`,
-                                border: `1px solid ${PALETTE.purple}15`,
-                              }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-                                  <Sparkles style={{ width: '14px', height: '14px', color: PALETTE.purple }} />
-                                  <span style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700, color: '#1A1A2E' }}>功效</span>
-                                </div>
-                                <p style={{ fontFamily: 'Outfit', fontSize: '12px', color: '#6B7280', lineHeight: 1.7 }}>{primary.effect}</p>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })()}
-
-                      {/* 次选手串 - 简化展示 */}
-                      {((braceletRec as any).recommendations || (braceletRec as any).secondaryBracelets || []).map((r: any, i: number) => {
-                        const material = r.material || r.name || '';
-                        const details = getBraceletDetails(material);
-                        // 优先使用API返回的图片，其次使用本地数据库
-                        const images = (r.images && r.images.length > 0) ? r.images : getBraceletImages(material);
-                        
-                        return (
-                          <div key={i} style={{
-                            background: '#FFFFFF', borderRadius: '16px', padding: '16px',
-                            boxShadow: '0 2px 10px rgba(0,0,0,0.04)', border: '1px solid #F0F1F8',
-                          }}>
-                            <div style={{ flex: 1 }}>
-                                {/* 标题 */}
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                                  <Gem style={{ width: '14px', height: '14px', color: PALETTE.purple }} />
-                                  <h4 style={{ fontFamily: 'Outfit', fontSize: '14px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{material}</h4>
-                                  <span style={{
-                                    padding: '2px 6px', borderRadius: '4px',
-                                    background: `${PALETTE.purple}10`,
-                                    fontSize: '9px', fontWeight: 600, color: PALETTE.purple,
-                                    fontFamily: 'Outfit',
-                                  }}>次选</span>
-                                </div>
-                                
-                                {/* 颜色 */}
-                                <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#A0A8C0', marginBottom: '6px' }}>{r.color || ''}</p>
-                                
-                                {/* 简述 */}
-                                <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#6B7280', lineHeight: 1.5 }}>
-                                  {r.effect || details?.description?.slice(0, 50) || ''}{r.effect && r.effect.length > 50 ? '...' : ''}
-                                </p>
-                              </div>
-                            
-                            {/* 增益作用预览 */}
-                            {details && details.benefits.length > 0 && (
-                              <div style={{
-                                marginTop: '10px', padding: '8px 10px',
-                                background: `${PALETTE.green}06`, borderRadius: '8px',
-                                border: `1px solid ${PALETTE.green}15`,
-                              }}>
-                                <p style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 600, color: PALETTE.green, marginBottom: '4px' }}>增益作用</p>
-                                <p style={{ fontFamily: 'Outfit', fontSize: '10px', color: '#6B7280', lineHeight: 1.4 }}>
-                                  {details.benefits[0]}{details.benefits.length > 1 ? ' · ' + details.benefits[1] : ''}
-                                </p>
-                              </div>
-                            )}
-                            
-                            {/* 适用场合 */}
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px', marginTop: '8px' }}>
-                              {(details?.occasions || r.occasions || r.usageTips || []).slice(0, 3).map((occ: string, j: number) => (
-                                <span key={j} style={{
-                                  padding: '2px 8px', borderRadius: '9999px',
-                                  background: `${PALETTE.purple}08`, border: `1px solid ${PALETTE.purple}15`,
-                                  fontFamily: 'Outfit', fontSize: '10px', color: PALETTE.purple,
-                                }}>
-                                  {occ}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
 
           </motion.div>
         )}
 
-      </div>
-
-      {/* ── 录入生辰弹窗 ── */}
+      {/* ── 详情展开区域（横向展开，左右对齐） ── */}
       <AnimatePresence>
-        {showForm && (
-          <>
-            {/* 遮罩层 */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              onClick={() => setShowForm(false)}
-              style={{
-                position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)',
-                backdropFilter: 'blur(4px)', zIndex: 100,
-              }}
-            />
-            {/* 弹窗内容 */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.92, y: 30 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.92, y: 30 }}
-              transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              style={{
-                position: 'fixed', left: '50%', top: '50%',
-                transform: 'translate(-50%, -50%)', zIndex: 101,
-                width: 'min(520px, 90vw)', maxHeight: '88vh',
-                overflowY: 'auto',
-                background: '#FFFFFF', borderRadius: '28px', padding: '32px',
-                boxShadow: '0 24px 80px rgba(0,0,0,0.18)',
-              }}
-            >
-              {/* 标题栏 */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
-                <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '18px', fontWeight: 800, color: '#1A1A2E', margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <span style={{
-                    width: '30px', height: '30px', borderRadius: '10px',
-                    background: `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange})`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: '#FFFFFF',
+        {activeTab && selectedRecord && previewInfo && previewInfo.baziResult && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            style={{ overflow: 'hidden' }}
+          >
+            <div style={{ 
+              display: 'flex', 
+              flexDirection: 'row', 
+              gap: '12px', 
+              alignItems: 'stretch',
+              paddingTop: '12px'
+            }}>
+              {/* 今日穿搭详情 */}
+              {activeTab === 'outfit' && outfitRec && (
+                <div style={{
+                  flex: 1,
+                  background: '#FFFFFF', borderRadius: '24px', padding: '20px',
+                  boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8',
+                }}>
+                  {/* 天气信息 */}
+                  <div style={{
+                    display: 'flex', gap: '12px', alignItems: 'stretch',
+                    background: `linear-gradient(135deg, ${PALETTE.coralLight}, ${PALETTE.orangeLight})`,
+                    borderRadius: '16px', padding: '14px 16px',
+                    border: `1px solid ${PALETTE.coral}25`, marginBottom: '14px',
                   }}>
-                    {(form as any)._editingId ? <Edit3 style={{ width: '16px', height: '16px' }} /> : <Star style={{ width: '16px', height: '16px' }} />}
-                  </span>
-                  {(form as any)._editingId ? '修改生辰' : '录入生辰'}
-                </h3>
-                <div
-                  onClick={() => setShowForm(false)}
-                  style={{
-                    width: '28px', height: '28px', borderRadius: '50%',
-                    background: '#F0F1F8', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    cursor: 'pointer', transition: 'background 0.15s',
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.background = '#E4E6EF')}
-                  onMouseLeave={e => (e.currentTarget.style.background = '#F0F1F8')}
-                >
-                  <X style={{ width: '14px', height: '14px', color: '#6B7280' }} />
-                </div>
-              </div>
-
-              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div>
-                  <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '13px', color: '#6B7280', marginBottom: '8px', fontWeight: 500 }}>姓名</label>
-                  <input
-                    value={form.name}
-                    onChange={e => setForm({ ...form, name: e.target.value })}
-                    placeholder="给自己起个名字"
-                    style={{ width: '100%', padding: '14px 18px', fontSize: '15px', borderRadius: '16px', border: '1.5px solid #E8EAF6', background: '#F8F9FC', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E', boxSizing: 'border-box' }}
-                    onFocus={e => (e.target as HTMLElement).style.borderColor = PALETTE.coral}
-                    onBlur={e => (e.target as HTMLElement).style.borderColor = '#E8EAF6'}
-                  />
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
-                  {[
-                    { label: '出生年', value: form.birthYear, options: YEAR_OPTIONS, key: 'birthYear' as const },
-                    { label: '出生月', value: form.birthMonth, options: MONTH_OPTIONS, key: 'birthMonth' as const },
-                    { label: '出生日', value: form.birthDay, options: DAY_OPTIONS, key: 'birthDay' as const },
-                    { label: '出生时', value: form.birthHour, options: HOUR_OPTIONS, key: 'birthHour' as const },
-                  ].map(({ label, value, options, key }) => (
-                    <div key={key}>
-                      <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#A0A8C0', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{label}</label>
-                      <select
-                        value={value}
-                        onChange={e => setForm({ ...form, [key]: +e.target.value })}
-                        style={{ width: '100%', padding: '12px 14px', fontSize: '14px', borderRadius: '14px', border: '1.5px solid #E8EAF6', background: '#F8F9FC', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E' }}
-                        onFocus={e => (e.target as HTMLElement).style.borderColor = PALETTE.coral}
-                        onBlur={e => (e.target as HTMLElement).style.borderColor = '#E8EAF6'}
-                      >
-                        {options.map(o => <option key={o} value={o}>{key === 'birthHour' ? `${o}:00` : o}</option>)}
-                      </select>
+                    <div style={{
+                      width: '50px', height: '50px', borderRadius: '12px', flexShrink: 0,
+                      background: '#FFFFFF', display: 'flex', flexDirection: 'column',
+                      alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      {(outfitRec as any).weatherInfo?.weather?.includes('晴') ? (
+                        <Sun style={{ width: '24px', height: '24px', color: '#FF9D6B' }} />
+                      ) : (outfitRec as any).weatherInfo?.weather?.includes('雨') ? (
+                        <CloudRain style={{ width: '24px', height: '24px', color: '#6BD4FF' }} />
+                      ) : (outfitRec as any).weatherInfo?.weather?.includes('阴') ? (
+                        <Cloud style={{ width: '24px', height: '24px', color: '#94A3B8' }} />
+                      ) : (
+                        <Wind style={{ width: '24px', height: '24px', color: '#6BD4FF' }} />
+                      )}
+                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 700, color: '#1A1A2E' }}>{(outfitRec as any).weatherInfo?.temperature || '--'}°</span>
                     </div>
-                  ))}
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#A0A8C0', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>性别</label>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                    {[{ v: 'male', l: '男 ♂', color: PALETTE.blue }, { v: 'female', l: '女 ♀', color: PALETTE.purple }].map(({ v, l, color }) => (
-                      <button key={v} type="button"
-                        onClick={() => setForm({ ...form, gender: v as any })}
-                        style={{
-                          padding: '12px', fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 600,
-                          background: form.gender === v ? `${color}15` : '#F8F9FC',
-                          border: form.gender === v ? `2px solid ${color}` : '2px solid #E8EAF6',
-                          color: form.gender === v ? color : '#A0A8C0',
-                          borderRadius: '14px', cursor: 'pointer', transition: 'all 0.2s',
-                        }}
-                      >{l}</button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 出生地点 */}
-                <div style={{ gridColumn: '1 / -1' }}>
-                  <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#A0A8C0', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>出生地点（真太阳时用）</label>
-                  <input
-                    value={(form as any).birthLocation || ''}
-                    onChange={e => setForm({ ...form, birthLocation: e.target.value } as any)}
-                    placeholder="如：北京市 或 浙江省杭州市（精确到城市即可）"
-                    style={{ width: '100%', padding: '14px 18px', fontSize: '14px', borderRadius: '16px', border: '1.5px solid #E8EAF6', background: '#F8F9FC', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E', boxSizing: 'border-box' }}
-                    onFocus={e => (e.target as HTMLElement).style.borderColor = PALETTE.orange}
-                    onBlur={e => (e.target as HTMLElement).style.borderColor = '#E8EAF6'}
-                  />
-                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#C0C5D8', marginTop: '6px' }}>填写出生城市，系统将按真太阳时重新计算八字时辰</p>
-                </div>
-
-                {/* 历法 */}
-                <div>
-                  <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#A0A8C0', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>历法</label>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                      {[{ v: 'solar', l: '公历', color: PALETTE.blue }, { v: 'lunar', l: '农历', color: PALETTE.purple }].map(({ v, l, color }) => (
-                        <button key={v} type="button"
-                          onClick={() => setForm({ ...form, calendarType: v as any })}
-                          style={{
-                            padding: '12px', fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 600,
-                            background: form.calendarType === v ? `${color}15` : '#F8F9FC',
-                            border: form.calendarType === v ? `2px solid ${color}` : '2px solid #E8EAF6',
-                            color: form.calendarType === v ? color : '#A0A8C0',
-                            borderRadius: '14px', cursor: 'pointer', transition: 'all 0.2s',
-                          }}
-                        >{l}</button>
-                      ))}
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <MapPin style={{ width: '12px', height: '12px', color: '#6B7280' }} />
+                          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 600, color: '#1A1A2E' }}>{(outfitRec as any).weatherInfo?.city || userLocation?.city || '未设置'}</span>
+                          {locationLocked && userLocation?.city && (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', padding: '2px 6px', borderRadius: '4px', background: `${PALETTE.green}15`, border: `1px solid ${PALETTE.green}30`, fontSize: '9px', color: PALETTE.green, fontWeight: 600 }}>
+                              <Sparkle style={{ width: '8px', height: '8px' }} />已锁定
+                            </span>
+                          )}
+                          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#6B7280' }}>{(outfitRec as any).weatherInfo?.weather || '加载中...'}</span>
+                        </div>
+                        <button onClick={() => locationLocked ? unlockLocation() : setShowCityDropdown(!showCityDropdown)} style={{ padding: '4px 10px', borderRadius: '8px', background: locationLocked ? `${PALETTE.coral}10` : '#FFFFFF', border: `1px solid ${locationLocked ? PALETTE.coral : '#E8EAF6'}`, cursor: 'pointer', fontSize: '10px', color: locationLocked ? PALETTE.coral : '#6B7280', fontFamily: 'Outfit, sans-serif', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          {locationLocked ? <><Navigation style={{ width: '10px', height: '10px' }} />修改位置</> : <><Navigation style={{ width: '10px', height: '10px' }} />{showCityDropdown ? '收起' : '选择城市'}</>}
+                        </button>
+                      </div>
+                      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#6B7280', margin: 0 }}>
+                        今日五行：<span style={{ color: PALETTE.coral, fontWeight: 600 }}>{(outfitRec as any).weatherInfo?.wuxing || '加载中'}</span>
+                      </p>
                     </div>
                   </div>
-
-                <div style={{ display: 'flex', gap: '12px', paddingTop: '4px' }}>
-                  <button type="button" onClick={() => setShowForm(false)}
-                    style={{
-                      padding: '13px 24px', fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 600,
-                      background: '#F8F9FC', border: '1.5px solid #E8EAF6', color: '#A0A8C0', borderRadius: '14px', cursor: 'pointer',
-                    }}
-                  >取消</button>
-                  <button type="submit" disabled={submitting}
-                    style={{
-                      flex: 1, padding: '13px 24px', fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700,
-                      background: `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange})`,
-                      color: '#FFFFFF', border: 'none', borderRadius: '14px', cursor: submitting ? 'wait' : 'pointer',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                      boxShadow: '0 4px 16px rgba(255,107,157,0.3)',
-                    }}
-                  >
-                    {submitting ? <Loader2 style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} /> : <Sparkles style={{ width: '16px', height: '16px' }} />}
-                    {submitting ? '处理中…' : ((form as any)._editingId ? '保存修改' : '开始八字测算')}
-                  </button>
+                  {/* 场景穿搭推荐 */}
+                  {(() => {
+                    const scenes = (outfitRec as any).sceneRecommendations || [];
+                    const getSceneIcon = (iconStr: string) => {
+                      switch(iconStr) { case 'briefcase': return <Briefcase style={{ width: '16px', height: '16px' }} />; case 'shirt': return <ShirtIcon style={{ width: '16px', height: '16px' }} />; case 'party': return <PartyPopper style={{ width: '16px', height: '16px' }} />; case 'gift': return <Gift style={{ width: '16px', height: '16px' }} />; default: return <Star style={{ width: '16px', height: '16px' }} />; }
+                    };
+                    return (
+                      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(scenes.length, 4)}, 1fr)`, gap: '8px', marginBottom: '12px' }}>
+                        {scenes.map((scene: any) => (
+                          <motion.button key={scene.id} onClick={() => setActiveScene(activeScene === scene.id ? null : scene.id)} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ padding: '10px', borderRadius: '12px', background: activeScene === scene.id ? `${scene.accentColor}20` : `${scene.accentColor}08`, border: `1.5px solid ${activeScene === scene.id ? scene.accentColor : `${scene.accentColor}25`}`, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}>
+                            <div style={{ color: scene.accentColor }}>{getSceneIcon(scene.icon)}</div>
+                            <span style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 700, color: scene.accentColor }}>{scene.label}</span>
+                          </motion.button>
+                        ))}
+                      </div>
+                    );
+                  })()}
+                  {/* 场景详细展开 */}
+                  {(() => {
+                    const scenes = (outfitRec as any).sceneRecommendations || [];
+                    const scene = scenes.find((s: any) => s.id === activeScene);
+                    if (!scene) return null;
+                    return (
+                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }} style={{ background: `linear-gradient(135deg, ${scene.accentColor}10, ${scene.accentColor}05)`, borderRadius: '16px', padding: '16px', border: `1.5px solid ${scene.accentColor}25` }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
+                          <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: scene.accentColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Star style={{ width: '18px', height: '18px', color: '#FFFFFF' }} />
+                          </div>
+                          <div>
+                            <p style={{ fontFamily: 'Outfit', fontSize: '14px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{scene.label}</p>
+                            <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#A0A8C0', margin: '2px 0 0' }}>{scene.element}属性 · {scene.weatherTip?.slice(0, 15) || ''}</p>
+                          </div>
+                        </div>
+                        {/* 颜色推荐 */}
+                        {scene.colors && <div style={{ marginBottom: '12px' }}>
+                          <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 600, color: '#6B7280', marginBottom: '6px' }}>推荐颜色</p>
+                          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                            {scene.colors.map((c: string, i: number) => <span key={i} style={{ padding: '4px 10px', borderRadius: '8px', background: `${scene.accentColor}12`, border: `1px solid ${scene.accentColor}25`, fontFamily: 'Outfit', fontSize: '11px', color: '#1A1A2E' }}>{c}</span>)}
+                          </div>
+                        </div>}
+                        {/* 场景说明 */}
+                        <div style={{ padding: '10px', background: '#FFFFFF', borderRadius: '10px', border: `1px solid ${scene.accentColor}20` }}>
+                          <Lightbulb style={{ width: '14px', height: '14px', color: scene.accentColor, marginBottom: '6px' }} />
+                          <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#6B7280', lineHeight: 1.7, margin: 0 }}>{scene.explanation}</p>
+                        </div>
+                      </motion.div>
+                    );
+                  })()}
                 </div>
-              </form>
-            </motion.div>
-          </>
+              )}
+              
+              {/* 今日手串详情 */}
+              {activeTab === 'bracelet' && braceletRec && (
+                <div style={{
+                  flex: 1,
+                  background: '#FFFFFF', borderRadius: '24px', padding: '20px',
+                  boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8',
+                }}>
+                  {/* 主手串详情 */}
+                  {(braceletRec as any).primaryBracelet && (() => {
+                    const primary = (braceletRec as any).primaryBracelet;
+                    const material = primary.material || primary.name || '';
+                    const details = getBraceletDetails(material);
+                    return (
+                      <div style={{ marginBottom: '16px' }}>
+                        {/* 主手串标题 */}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: `linear-gradient(135deg, ${PALETTE.purple}, ${PALETTE.blue})`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <Gem style={{ width: '20px', height: '20px', color: '#FFFFFF' }} />
+                            </div>
+                            <div>
+                              <p style={{ fontFamily: 'Outfit', fontSize: '16px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{material}</p>
+                              <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#A0A8C0', margin: '2px 0 0' }}>{primary.color || ''} · 首选推荐</p>
+                            </div>
+                          </div>
+                          {primary.element && (
+                            <ElementBadge el={primary.element} />
+                          )}
+                        </div>
+
+                        {/* 主手串与今日运势搭配 */}
+                        <div style={{ padding: '12px', background: `linear-gradient(135deg, ${PALETTE.purple}08, ${PALETTE.blue}08)`, borderRadius: '12px', border: `1px solid ${PALETTE.purple}15`, marginBottom: '12px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+                            <Sparkles style={{ width: '14px', height: '14px', color: PALETTE.purple }} />
+                            <p style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700, color: PALETTE.purple, margin: 0 }}>今日运势搭配</p>
+                          </div>
+                          <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#6B7280', margin: 0, lineHeight: 1.7 }}>
+                            {primary.whyRecommended || `今日${(braceletRec as any).summary?.tenGod || '流日'}当令，${material}五行属${primary.element || ''}，与日主${(braceletRec as any).bodyStrength?.type === 'strong' ? '身强' : (braceletRec as any).bodyStrength?.type === 'weak' ? '身弱' : '中性'}格局相宜，${primary.effect || '可增强运势'}`}
+                          </p>
+                        </div>
+
+                        {/* 主手串功效说明 */}
+                        {primary.effect && (
+                          <div style={{ padding: '10px 12px', background: `${PALETTE.purple}08`, borderRadius: '10px', border: `1px solid ${PALETTE.purple}15`, marginBottom: '10px' }}>
+                            <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 600, color: PALETTE.purple, marginBottom: '4px' }}>推荐功效</p>
+                            <p style={{ fontFamily: 'Outfit', fontSize: '12px', color: '#6B7280', margin: 0, lineHeight: 1.6 }}>{primary.effect}</p>
+                          </div>
+                        )}
+
+                        {/* 适合佩戴场景 */}
+                        {primary.suitableScenes && primary.suitableScenes.length > 0 && (
+                          <div style={{ marginBottom: '10px' }}>
+                            <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 600, color: '#1A1A2E', marginBottom: '8px' }}>适合场景</p>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                              {primary.suitableScenes.map((scene: any, idx: number) => (
+                                <div key={idx} style={{ padding: '6px 10px', borderRadius: '8px', background: `${PALETTE.green}10`, border: `1px solid ${PALETTE.green}25`, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                  <span style={{ fontSize: '12px' }}>{scene.icon || '✦'}</span>
+                                  <span style={{ fontFamily: 'Outfit', fontSize: '10px', color: PALETTE.green, fontWeight: 600 }}>{scene.name || scene.scene}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* 详细解说 */}
+                        {details && (
+                          <>
+                            {/* 简介 */}
+                            {details.description && (
+                              <div style={{ padding: '10px 12px', background: '#FFFFFF', borderRadius: '10px', border: `1px solid ${PALETTE.blue}20`, marginBottom: '8px' }}>
+                                <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 600, color: PALETTE.blue, marginBottom: '4px' }}>手串简介</p>
+                                <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#6B7280', margin: 0, lineHeight: 1.6 }}>{details.description}</p>
+                              </div>
+                            )}
+                            {/* 功效列表 */}
+                            {details.effects && details.effects.length > 0 && (
+                              <div style={{ padding: '10px 12px', background: '#FFFFFF', borderRadius: '10px', border: `1px solid ${PALETTE.green}20`, marginBottom: '8px' }}>
+                                <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 600, color: PALETTE.green, marginBottom: '6px' }}>功效作用</p>
+                                {details.effects.map((eff, idx) => (
+                                  <p key={idx} style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#6B7280', margin: '2px 0', paddingLeft: '10px', lineHeight: 1.5 }}>
+                                    · {eff}
+                                  </p>
+                                ))}
+                              </div>
+                            )}
+                            {/* 适用场景 */}
+                            {details.occasions && details.occasions.length > 0 && (
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
+                                {details.occasions.map((occ, idx) => (
+                                  <span key={idx} style={{ padding: '4px 10px', borderRadius: '8px', background: `${PALETTE.coral}10`, border: `1px solid ${PALETTE.coral}25`, fontFamily: 'Outfit', fontSize: '10px', color: PALETTE.coral }}>{occ}</span>
+                                ))}
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    );
+                  })()}
+
+                  {/* 次选手串 */}
+                  {(braceletRec as any).secondaryBracelets && (braceletRec as any).secondaryBracelets.length > 0 && (
+                    <div style={{ marginBottom: '16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
+                        <Sparkles style={{ width: '14px', height: '14px', color: PALETTE.purple }} />
+                        <p style={{ fontFamily: 'Outfit', fontSize: '13px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>次选推荐</p>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        {(braceletRec as any).secondaryBracelets.map((sec: any, idx: number) => {
+                          const secMaterial = sec.material || sec.name || '';
+                          const secDetails = getBraceletDetails(secMaterial);
+                          return (
+                            <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '12px', borderRadius: '12px', background: `${PALETTE.blue}05`, border: `1px solid ${PALETTE.blue}15` }}>
+                              <div style={{ display: 'flex', gap: '10px' }}>
+                                <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: `${PALETTE.blue}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                  <Gem style={{ width: '20px', height: '20px', color: PALETTE.blue }} />
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
+                                    <p style={{ fontFamily: 'Outfit', fontSize: '13px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{secMaterial}</p>
+                                    {sec.element && <ElementBadge el={sec.element} />}
+                                  </div>
+                                  <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#6B7280', margin: 0, lineHeight: 1.4 }}>{sec.effect || secDetails?.description?.slice(0, 50) || ''}</p>
+                                </div>
+                              </div>
+                              {/* 次选手串与今日运势搭配 */}
+                              {sec.whyRecommended && (
+                                <div style={{ padding: '8px 10px', background: `${PALETTE.purple}06`, borderRadius: '8px', border: `1px solid ${PALETTE.purple}12` }}>
+                                  <p style={{ fontFamily: 'Outfit', fontSize: '10px', color: PALETTE.purple, margin: 0, lineHeight: 1.5 }}>💫 {sec.whyRecommended}</p>
+                                </div>
+                              )}
+                              {/* 适合场景标签 */}
+                              {sec.suitableScenes && sec.suitableScenes.length > 0 && (
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                                  {sec.suitableScenes.slice(0, 3).map((scene: any, sIdx: number) => (
+                                    <span key={sIdx} style={{ padding: '3px 8px', borderRadius: '6px', background: `${PALETTE.green}10`, border: `1px solid ${PALETTE.green}25`, fontFamily: 'Outfit', fontSize: '9px', color: PALETTE.green }}>{scene.name || scene.scene}</span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
+    </div>
+
+
       {/* 关闭城市下拉 */}
       {showCityDropdown && (
-        <div
-          style={{
-            position: 'fixed', inset: 0, zIndex: 50,
-          }}
-          onClick={() => setShowCityDropdown(false)}
-        />
+        <>
+          <div
+            style={{
+              position: 'fixed', inset: 0, zIndex: 50,
+            }}
+            onClick={() => setShowCityDropdown(false)}
+          />
+          {/* 城市选择弹窗 */}
+          <div style={{
+            position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+            zIndex: 51, width: '85%', maxWidth: '360px',
+            background: '#FFFFFF', borderRadius: '20px', padding: '20px',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.15)',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+              <h3 style={{ fontFamily: 'Outfit', fontSize: '16px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>选择城市</h3>
+              <button onClick={() => setShowCityDropdown(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
+                <X style={{ width: '20px', height: '20px', color: '#6B7280' }} />
+              </button>
+            </div>
+            {/* 搜索框 */}
+            <input
+              type="text"
+              placeholder="搜索城市..."
+              value={citySearch}
+              onChange={(e) => setCitySearch(e.target.value)}
+              style={{
+                width: '100%', padding: '10px 14px', borderRadius: '10px',
+                border: `1.5px solid ${PALETTE.purple}30`, outline: 'none',
+                fontFamily: 'Outfit', fontSize: '13px', marginBottom: '12px',
+                boxSizing: 'border-box',
+              }}
+            />
+            {/* 城市列表 */}
+            <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+              {(citySearch ? MAJOR_CITIES.filter(c => c.includes(citySearch)) : MAJOR_CITIES).map((city) => (
+                <div
+                  key={city}
+                  onClick={() => selectCity(city)}
+                  style={{
+                    padding: '10px 12px', borderRadius: '8px', cursor: 'pointer',
+                    fontFamily: 'Outfit', fontSize: '13px', color: '#1A1A2E',
+                    transition: 'background 0.15s',
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = `${PALETTE.purple}10`)}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                >
+                  {city}
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
