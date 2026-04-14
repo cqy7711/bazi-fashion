@@ -979,6 +979,11 @@ function generateWeatherTip(weather: WeatherInfo | undefined, primary: FiveEleme
 }
 
   // 构建场景化穿搭推荐
+  const getSceneColors = (element: string): string[] => {
+    const colors = COLOR_DB[element as FiveElement] || COLOR_DB.earth;
+    return colors.slice(0, 2).map(c => c.color);
+  };
+  
   const sceneRecommendations = [
     {
       id: 'work',
@@ -988,6 +993,7 @@ function generateWeatherTip(weather: WeatherInfo | undefined, primary: FiveEleme
       element: adjustedPrimary,
       accentColor: '#6BD4FF',
       outfit: getSceneOutfit(adjustedPrimary, 'work'),
+      colors: getSceneColors(adjustedPrimary),  // 同步色彩数据
       explanation: generateSceneExplanation('work', adjustedPrimary, adjustedSecondary, weather, liuriBoost, flowDayAnalysis, gender, getSceneOutfit(adjustedPrimary, 'work')),
       weatherTip: generateWeatherTip(weather, primary),
       tips: [`主色调：${COLOR_DB[adjustedPrimary][0]?.color}、${COLOR_DB[adjustedPrimary][1]?.color || COLOR_DB[adjustedPrimary][0]?.color}`, '材质建议：' + STYLE_DB[primary].material.split('、')[0]],
@@ -1000,6 +1006,7 @@ function generateWeatherTip(weather: WeatherInfo | undefined, primary: FiveEleme
       element: adjustedSecondary,
       accentColor: '#7C3AED',
       outfit: getSceneOutfit(adjustedSecondary, 'casual'),
+      colors: getSceneColors(adjustedSecondary),  // 同步色彩数据
       explanation: generateSceneExplanation('casual', adjustedSecondary, primary, weather, liuriBoost, flowDayAnalysis, gender, getSceneOutfit(adjustedSecondary, 'casual')),
       weatherTip: generateWeatherTip(weather, primary),
       tips: [`主色调：${COLOR_DB[adjustedSecondary][0]?.color}、${COLOR_DB[adjustedSecondary][1]?.color || COLOR_DB[adjustedSecondary][0]?.color}`, '材质建议：' + STYLE_DB[adjustedSecondary].material.split('、')[0]],
@@ -1012,6 +1019,7 @@ function generateWeatherTip(weather: WeatherInfo | undefined, primary: FiveEleme
       element: primary,
       accentColor: '#FF6B9D',
       outfit: getSceneOutfit(primary, 'party'),
+      colors: getSceneColors(primary),  // 同步色彩数据
       explanation: generateSceneExplanation('party', primary, secondary, weather, liuriBoost, flowDayAnalysis, gender, getSceneOutfit(primary, 'party')),
       weatherTip: generateWeatherTip(weather, primary),
       tips: [`主色调：${COLOR_DB[primary][0]?.color}`, '可适当加入亮色配饰提升活力'],
@@ -1024,6 +1032,7 @@ function generateWeatherTip(weather: WeatherInfo | undefined, primary: FiveEleme
       element: adjustedPrimary,
       accentColor: '#FF9D6B',
       outfit: getSceneOutfit(adjustedPrimary, 'festival'),
+      colors: getSceneColors(adjustedPrimary),  // 同步色彩数据
       explanation: generateSceneExplanation('festival', adjustedPrimary, primary, weather, liuriBoost, flowDayAnalysis, gender, getSceneOutfit(adjustedPrimary, 'festival')),
       weatherTip: generateWeatherTip(weather, primary),
       tips: [`主色调：${COLOR_DB[adjustedPrimary][0]?.color}、${COLOR_DB[primary][0]?.color}`, '可加入金色或喜庆红色元素增添节日氛围'],
@@ -1516,6 +1525,95 @@ export function getBraceletRecommendation(
       strategy: strengthStrategy,
       description: bodyStrength === 'strong' ? '您的命格身强，宜泄不宜补，选择能疏导能量的手串。' : bodyStrength === 'weak' ? '您的命格身弱，宜补不宜泄，选择能生扶能量的手串。' : '您的命格平衡，可根据流日运势灵活选择手串。',
     },
+    
+    // ========== 新增：喜用神忌用神详细分析 ==========
+    xiYongAnalysis: {
+      // 喜用神分析
+      favorableAnalysis: (() => {
+        const total = favorable.length + unfavorable.length;
+        const favorPercent = total > 0 ? Math.round((favorable.length / total) * 100) : 50;
+        const elementPercentages = favorable.map((el, i) => ({
+          element: el,
+          name: ELEMENT_NAMES[el],
+          percentage: i === 0 ? favorPercent : Math.round(favorPercent * 0.6),
+        }));
+        
+        return {
+          count: favorable.length,
+          percentage: favorPercent,
+          elements: elementPercentages,
+          description: favorable.length >= 3
+            ? '您的喜用神较为充足，命局整体能量较强。'
+            : favorable.length >= 1
+            ? '您的喜用神数量适中，命局能量较为平衡。'
+            : '您的喜用神较少，需要外部能量补充。',
+        };
+      })(),
+      
+      // 忌神分析
+      unfavorableAnalysis: (() => {
+        const total = favorable.length + unfavorable.length;
+        const avoidPercent = total > 0 ? Math.round((unfavorable.length / total) * 100) : 0;
+        const elementPercentages = unfavorable.map((el) => ({
+          element: el,
+          name: ELEMENT_NAMES[el],
+          percentage: avoidPercent,
+        }));
+        
+        return {
+          count: unfavorable.length,
+          percentage: avoidPercent,
+          elements: elementPercentages,
+          description: unfavorable.length === 0
+            ? '您的命局中忌神较少，整体较为和谐。'
+            : unfavorable.length <= 2
+            ? '您的忌神影响有限，通过手串调和可有效化解。'
+            : '您的忌神较多，需要特别注意五行调和。',
+        };
+      })(),
+      
+      // 身强身弱与喜忌神的关系分析
+      strengthRelation: {
+        bodyStrength: bodyStrength,
+        bodyStrengthName: bodyStrength === 'strong' ? '身强' : bodyStrength === 'weak' ? '身弱' : '中性',
+        // 根据身强身弱分析用神策略
+        strategy: bodyStrength === 'strong' ? {
+          name: '泄秀为主',
+          description: `身强则日主能量旺盛，需要通过"泄"来调和。选择${ELEMENT_NAMES[KE[primary]]}行（克）或${ELEMENT_NAMES[SHENG[primary]]}行（耗）的手串，可以疏导过旺的能量，达到阴阳平衡。`,
+          recommendedElement: KE[primary],
+          recommendedElementName: ELEMENT_NAMES[KE[primary]],
+          avoidElement: SHENG[primary],
+          avoidElementName: ELEMENT_NAMES[SHENG[primary]],
+        } : bodyStrength === 'weak' ? {
+          name: '生扶为主',
+          description: `身弱则日主能量不足，需要通过"生"来补充。选择${ELEMENT_NAMES[SHENG[primary]]}行（印）或${ELEMENT_NAMES[ING[primary]]}行（水）的手串，可以生扶日主能量，增强自身力量。`,
+          recommendedElement: SHENG[primary],
+          recommendedElementName: ELEMENT_NAMES[SHENG[primary]],
+          avoidElement: KE[primary],
+          avoidElementName: ELEMENT_NAMES[KE[primary]],
+        } : {
+          name: '平衡调和',
+          description: '身势较为平衡，可以根据流日运势灵活选择手串，既可补强也可泄秀，保持五行流通即可。',
+          recommendedElement: primary,
+          recommendedElementName: ELEMENT_NAMES[primary],
+          avoidElement: null,
+          avoidElementName: null,
+        },
+        // 综合判断
+        overallJudgment: (() => {
+          if (bodyStrength === 'strong') {
+            return `您的命局身强，喜用神${favorable.length}个，忌神${unfavorable.length}个。身强格局应选择"泄"的方式，即选择克日主或日主所生的五行作为用神，疏导过剩能量。今日推荐${ELEMENT_NAMES[adjustedPrimary]}行手串，正是泄秀之选。`;
+          } else if (bodyStrength === 'weak') {
+            return `您的命局身弱，喜用神${favorable.length}个，忌神${unfavorable.length}个。身弱格局应选择"补"的方式，即选择生日主或与日主同类的五行作为用神，补充不足能量。今日推荐${ELEMENT_NAMES[adjustedPrimary]}行手串，正是生扶之选。`;
+          } else {
+            return `您的命局较为平衡，喜用神${favorable.length}个，忌神${unfavorable.length}个。可根据流日运势灵活选择手串，今日推荐${ELEMENT_NAMES[adjustedPrimary]}行手串，配合流日运势调和五行。`;
+          }
+        })(),
+        // 手串推荐原理
+        braceletPrinciple: `手串五行属性与命局喜忌神相配合：喜用神对应的五行手串可增强正面能量，忌神对应的五行手串需避免或谨慎使用。`,
+      },
+    },
+    
     // 新增：详细总结信息
     summary: {
       // 五行相生相克图示

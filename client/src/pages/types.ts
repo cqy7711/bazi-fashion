@@ -124,6 +124,37 @@ export interface BraceletRecommendation {
     sceneAdvice?: string;
   }>;
   bodyStrength?: BodyStrengthInfo;
+  
+  // ========== 新增：喜用神忌用神详细分析 ==========
+  xiYongAnalysis?: {
+    favorableAnalysis: {
+      count: number;
+      percentage: number;
+      elements: Array<{ element: string; name: string; percentage: number }>;
+      description: string;
+    };
+    unfavorableAnalysis: {
+      count: number;
+      percentage: number;
+      elements: Array<{ element: string; name: string; percentage: number }>;
+      description: string;
+    };
+    strengthRelation: {
+      bodyStrength: string;
+      bodyStrengthName: string;
+      strategy: {
+        name: string;
+        description: string;
+        recommendedElement: string;
+        recommendedElementName: string;
+        avoidElement: string | null;
+        avoidElementName: string | null;
+      };
+      overallJudgment: string;
+      braceletPrinciple: string;
+    };
+  };
+  
   // 新增详细总结信息
   summary?: {
     wuxingDiagram?: {

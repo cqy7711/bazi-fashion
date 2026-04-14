@@ -1975,13 +1975,8 @@ export default function HomePage() {
                       }
                     };
                     return scenes.slice(0, 4).map((scene: any) => {
-                      const colorSuggestions: Record<string, string[]> = {
-                        work: ['深蓝色西装', '白色衬衫', '灰色领带', '黑色皮鞋'],
-                        casual: ['墨绿色T恤', '浅蓝色牛仔裤', '白色运动鞋', '卡其色休闲裤'],
-                        party: ['酒红色连衣裙', '金色配饰', '黑色高跟鞋', '银色手拿包'],
-                        holiday: ['红色毛衣', '金色配饰', '绿色连衣裙', '棕色皮靴'],
-                      };
-                      const colors = colorSuggestions[scene.id] || ['纯色系服装', '简约配色'];
+                      // 使用 API 返回的真实色彩推荐数据，每日刷新
+                      const colors = (scene.colors && scene.colors.length > 0) ? scene.colors : ['纯色系服装', '简约配色'];
                       return (
                         <div key={scene.id} style={{
                           padding: '12px', borderRadius: '14px',
@@ -2154,24 +2149,6 @@ export default function HomePage() {
                               </div>
                             </div>
                           )}
-                          
-                          {/* 身强身弱和用神 */}
-                          <div style={{ display: 'flex', gap: '6px', marginBottom: '10px' }}>
-                            <div style={{ flex: 1, padding: '6px 8px', borderRadius: '8px', background: `${PALETTE.purple}08`, border: `1px solid ${PALETTE.purple}15` }}>
-                              <p style={{ fontFamily: 'Outfit', fontSize: '9px', fontWeight: 600, color: PALETTE.purple, marginBottom: '2px' }}>身强身弱</p>
-                              <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{summary.bodyStrengthStatus === 'strong' ? '身强' : summary.bodyStrengthStatus === 'weak' ? '身弱' : '中性'}</p>
-                            </div>
-                            <div style={{ flex: 1, padding: '6px 8px', borderRadius: '8px', background: `${PALETTE.blue}08`, border: `1px solid ${PALETTE.blue}15` }}>
-                              <p style={{ fontFamily: 'Outfit', fontSize: '9px', fontWeight: 600, color: PALETTE.blue, marginBottom: '2px' }}>今日用神</p>
-                              <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{summary.favorableElementName}行</p>
-                            </div>
-                            {summary.tenGod && (
-                              <div style={{ flex: 1, padding: '6px 8px', borderRadius: '8px', background: `${PALETTE.coral}08`, border: `1px solid ${PALETTE.coral}15` }}>
-                                <p style={{ fontFamily: 'Outfit', fontSize: '9px', fontWeight: 600, color: PALETTE.coral, marginBottom: '2px' }}>流日十神</p>
-                                <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{summary.tenGod}</p>
-                              </div>
-                            )}
-                          </div>
                           
                           {/* 综合建议 */}
                           {summary.overallAdvice && (

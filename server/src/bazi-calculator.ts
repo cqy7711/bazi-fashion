@@ -788,6 +788,125 @@ export type BaziPattern = {
   description: string;
   mainGod: string;
   subGod?: string;
+  // 详细分析
+  formation: string;         // 成格条件
+  characteristics: string;   // 格局特点
+  strengths: string;         // 优势
+  weaknesses: string;        // 劣势
+  suitableCareer: string[];  // 适合职业
+  avoidCareer: string[];     // 不适合职业
+  luckTips: string;          // 运势提示
+};
+
+// 格局详细特征库
+const PATTERN_DETAILS: Record<string, {
+  formation: string;
+  characteristics: string;
+  strengths: string[];
+  weaknesses: string[];
+  suitableCareer: string[];
+  avoidCareer: string[];
+  luckTips: string;
+}> = {
+  '印格': {
+    formation: '月令为正印或偏印，且印星有根气',
+    characteristics: '主人聪明好学、心地善良、有仁慈之心，重视声誉地位，学业运佳',
+    strengths: ['学业优秀', '名誉观念强', '善于学习', '心地善良', '有贵人运'],
+    weaknesses: ['过于理想化', '有时优柔寡断', '可能过于依赖他人'],
+    suitableCareer: ['教育工作者', '学术研究', '医疗健康', '政府机关', '文化出版'],
+    avoidCareer: ['销售业务', '激烈竞争行业'],
+    luckTips: '印星为用时学业、名誉顺利；印星受损则学业受阻、名誉受损'
+  },
+  '食神格': {
+    formation: '月令为食神，食神旺而身强，有泄秀之路',
+    characteristics: '主人聪明秀气、性格温和、乐观开朗，福禄深厚，财运佳',
+    strengths: ['聪明伶俐', '口才良好', '财运亨通', '心地善良', '福气深厚'],
+    weaknesses: ['有时过于享乐', '缺乏上进心', '过于理想化'],
+    suitableCareer: ['餐饮美食', '演艺娱乐', '艺术创作', '财务会计', '自由职业'],
+    avoidCareer: ['政治权谋', '高压销售'],
+    luckTips: '食神为用时财运佳、身体健康；食神被夺则财运受阻、健康下滑'
+  },
+  '伤官格': {
+    formation: '月令为伤官，伤官旺而身强，有印制伤官',
+    characteristics: '主人才华横溢、思维敏捷、敢于创新，但易有叛逆心理',
+    strengths: ['才华出众', '思维敏捷', '敢于创新', '表现力强', '艺术天分'],
+    weaknesses: ['叛逆心理', '口舌是非', '不够稳重', '容易得罪人'],
+    suitableCareer: ['艺术创作', '演艺表演', '自媒体', '法律', '自由职业'],
+    avoidCareer: ['传统官僚', '国企体制内'],
+    luckTips: '伤官配印则才华得以发挥；伤官无制则易惹是非、口舌不断'
+  },
+  '官杀格': {
+    formation: '月令为正官或七杀，官杀有制化，身强能任官杀',
+    characteristics: '主人事业心强、有管理能力、责任心重，利于仕途发展',
+    strengths: ['事业心强', '管理能力', '责任心重', '有上进心', '自律性强'],
+    weaknesses: ['压力过大', '过于严肃', '可能过于追求地位'],
+    suitableCareer: ['企业管理', '政府机关', '法律', '金融', '教育培训'],
+    avoidCareer: ['自由散漫职业', '风险过大行业'],
+    luckTips: '官杀为用则事业顺利、地位提升；官杀攻身则压力增大、小人是非'
+  },
+  '财格': {
+    formation: '月令为正财或偏财，财星有根，身强能担财',
+    characteristics: '主人财运佳、善于理财、精明能干，重视物质生活',
+    strengths: ['财运亨通', '理财能力强', '精明能干', '物质充裕', '社交能力强'],
+    weaknesses: ['过于务实', '可能贪财', '有时过于计较'],
+    suitableCareer: ['金融投资', '商业贸易', '财务会计', '企业管理', '销售'],
+    avoidCareer: ['学术研究', '清贫行业'],
+    luckTips: '财星为用则财运滚滚；财多身弱则破财、负债、身体虚弱'
+  },
+  '比劫格': {
+    formation: '月令为比肩或劫财，比劫旺盛，利于竞争',
+    characteristics: '主人独立性高、竞争意识强、敢闯敢拼，人缘广泛',
+    strengths: ['独立自主', '竞争意识', '敢闯敢拼', '人脉广泛', '意志坚定'],
+    weaknesses: ['容易冲动', '人际纠纷', '过于自我'],
+    suitableCareer: ['创业投资', '销售业务', '体育竞技', '演艺表演', '自由职业'],
+    avoidCareer: ['按部就班工作', '稳定但低收入行业'],
+    luckTips: '比劫帮身则竞争得利、朋友相助；比劫夺财则破财、投资失利'
+  },
+  '专旺格': {
+    formation: '日主极旺（身过旺），全局一行与日主同气',
+    characteristics: '日主强旺至极，顺其气势而行，专旺格为上等格局',
+    strengths: ['气势强旺', '意志坚定', '行动力强', '容易成功', '有独特魅力'],
+    weaknesses: ['过于固执', '不听劝告', '可能刚愎自用'],
+    suitableCareer: ['创业当老板', '投资', '艺术创作', '行业领袖'],
+    avoidCareer: ['按部就班工作', '服从性工作'],
+    luckTips: '专旺格宜顺不宜逆，顺势而为则大展宏图；逆势而行则处处受阻'
+  },
+  '从财格': {
+    formation: '日主极弱，财星旺盛，顺从财星气势',
+    characteristics: '财运为命局核心，善于理财，物质欲望强',
+    strengths: ['财运极佳', '理财有道', '物质充裕', '社交能力强', '善于把握机会'],
+    weaknesses: ['依赖心重', '物质主义', '缺乏主见'],
+    suitableCareer: ['金融投资', '商业贸易', '企业管理', '销售'],
+    avoidCareer: ['学术研究', '清高行业'],
+    luckTips: '从财格行运时财运大发；行比劫运则破财伤身'
+  },
+  '从杀格': {
+    formation: '日主极弱，官杀旺盛，顺从官杀气势',
+    characteristics: '事业心重，有权力欲望，善于管理，有权威',
+    strengths: ['事业心强', '管理能力', '有权威', '执行力强', '易获地位'],
+    weaknesses: ['压力过大', '小人是非', '过于追求权力'],
+    suitableCareer: ['政府机关', '企业管理', '法律', '金融'],
+    avoidCareer: ['自由职业', '清闲行业'],
+    luckTips: '从杀格行官杀运则事业腾飞；行食伤运则破败、不顺'
+  },
+  '从儿格': {
+    formation: '日主极弱，食伤旺盛，顺从食伤气势',
+    characteristics: '才华横溢，表达能力强，有艺术天分',
+    strengths: ['才华出众', '表达力强', '艺术天分', '创意无限', '人缘佳'],
+    weaknesses: ['不够稳重', '缺乏耐心', '过于理想化'],
+    suitableCareer: ['艺术创作', '演艺表演', '教育培训', '自媒体', '设计'],
+    avoidCareer: ['行政管理', '金融投资'],
+    luckTips: '从儿格行财运则才华变现、财运亨通；行印运则才华受阻'
+  },
+  '普通格': {
+    formation: '八字格局不明显，需平衡五行流通',
+    characteristics: '命局平和，无特殊格局，以中和平衡为贵',
+    strengths: ['运势平稳', '起伏不大', '适应性强', '心态平和'],
+    weaknesses: ['缺乏突出优势', '成就有限', '中规中矩'],
+    suitableCareer: ['稳定职业', '技术岗位', '服务行业'],
+    avoidCareer: ['风险过大行业'],
+    luckTips: '普通格喜用神得地用则吉；岁运配合好也能有所成就'
+  }
 };
 
 /**
@@ -799,94 +918,206 @@ export function determineBaziPattern(bazi: BaziResult, bodyStrength: BodyStrengt
   const dm = bazi.dayMaster;
   const dmElement = bazi.dayMasterElement;
   const ss = bazi.shiShen;
+  const monthGod = ss.monthStem;
 
   // 从格判断
   if (bodyStrength === 'very_strong') {
+    const details = PATTERN_DETAILS['专旺格'];
     return {
       type: '从格',
       name: '专旺格',
-      description: '日主极旺，不可克制，顺其气势以比劫、印星为用',
+      description: `日主${dmElement}极旺，不可克制，顺其气势以比劫、印星为用。专旺格为上等格局，主人意志坚定、气势强旺，容易成就大事业。`,
       mainGod: '印星/比劫',
+      formation: details.formation,
+      characteristics: details.characteristics,
+      strengths: details.strengths.join('、'),
+      weaknesses: details.weaknesses.join('、'),
+      suitableCareer: details.suitableCareer,
+      avoidCareer: details.avoidCareer,
+      luckTips: details.luckTips
     };
   }
   if (bodyStrength === 'very_weak') {
     // 判断从什么：从财、从杀、从儿（食伤）
-    const monthElement = STEM_ELEMENTS[bazi.monthPillar[0]];
-    const monthGod = ss.monthStem;
     if (['正财', '偏财'].includes(monthGod)) {
-      return { type: '从格', name: '从财格', description: '日主极弱，顺从财星气势，以财星为用', mainGod: '财星' };
+      const details = PATTERN_DETAILS['从财格'];
+      return {
+        type: '从格', name: '从财格',
+        description: `日主${dmElement}极弱，财星旺盛，顺从财星气势。财星为用，主人财运极佳、善于理财。`,
+        mainGod: '财星',
+        formation: details.formation,
+        characteristics: details.characteristics,
+        strengths: details.strengths.join('、'),
+        weaknesses: details.weaknesses.join('、'),
+        suitableCareer: details.suitableCareer,
+        avoidCareer: details.avoidCareer,
+        luckTips: details.luckTips
+      };
     }
     if (['正官', '七杀'].includes(monthGod)) {
-      return { type: '从格', name: '从杀格', description: '日主极弱，官杀旺而从之，以官杀为用', mainGod: '官杀' };
+      const details = PATTERN_DETAILS['从杀格'];
+      return {
+        type: '从格', name: '从杀格',
+        description: `日主${dmElement}极弱，官杀旺而从之。官杀为用，主人事业心强、有管理能力。`,
+        mainGod: '官杀',
+        formation: details.formation,
+        characteristics: details.characteristics,
+        strengths: details.strengths.join('、'),
+        weaknesses: details.weaknesses.join('、'),
+        suitableCareer: details.suitableCareer,
+        avoidCareer: details.avoidCareer,
+        luckTips: details.luckTips
+      };
     }
     if (['食神', '伤官'].includes(monthGod)) {
-      return { type: '从格', name: '从儿格', description: '日主极弱，食伤旺而从之，以食伤为用', mainGod: '食伤' };
+      const details = PATTERN_DETAILS['从儿格'];
+      return {
+        type: '从格', name: '从儿格',
+        description: `日主${dmElement}极弱，食伤旺而从之。食伤为用，主人才华横溢、表达能力强。`,
+        mainGod: '食伤',
+        formation: details.formation,
+        characteristics: details.characteristics,
+        strengths: details.strengths.join('、'),
+        weaknesses: details.weaknesses.join('、'),
+        suitableCareer: details.suitableCareer,
+        avoidCareer: details.avoidCareer,
+        luckTips: details.luckTips
+      };
     }
-    return { type: '从格', name: '从旺格', description: '日主极弱，全局无根，从全局之势', mainGod: '全局' };
+    const details = PATTERN_DETAILS['普通格'];
+    return {
+      type: '从格', name: '从旺格',
+      description: `日主${dmElement}极弱，全局无根，从全局之势。`,
+      mainGod: '全局',
+      formation: details.formation,
+      characteristics: details.characteristics,
+      strengths: details.strengths.join('、'),
+      weaknesses: details.weaknesses.join('、'),
+      suitableCareer: details.suitableCareer,
+      avoidCareer: details.avoidCareer,
+      luckTips: details.luckTips
+    };
   }
 
   // 正八格判断（以月令为主）
-  const monthGod = ss.monthStem;
   const yearGod = ss.yearStem;
 
-  // 印格：月令为正印或偏印
+  // 印格
   if (['正印', '偏印'].includes(monthGod)) {
+    const details = PATTERN_DETAILS['印格'];
     return {
       type: '正八格', name: '印格',
-      description: '月令为印星，印星为用，利于学业、地位、声誉',
+      description: `月令${monthGod}，${monthGod === '正印' ? '正印为用' : '偏印为用'}。印星主学业、声誉、地位，利于文化、教育、学术发展。`,
       mainGod: '印星',
       subGod: monthGod === '正印' ? '偏印' : '正印',
+      formation: details.formation,
+      characteristics: details.characteristics,
+      strengths: details.strengths.join('、'),
+      weaknesses: details.weaknesses.join('、'),
+      suitableCareer: details.suitableCareer,
+      avoidCareer: details.avoidCareer,
+      luckTips: details.luckTips
     };
   }
-  // 食神格：月令为食神
+  // 食神格
   if (monthGod === '食神') {
+    const details = PATTERN_DETAILS['食神格'];
     return {
       type: '正八格', name: '食神格',
-      description: '月令为食神，食神为用，主人聪明秀气、平安福禄',
+      description: `月令食神，食神为用。食神主人聪明秀气、福禄深厚财运佳，又称"福神格"。`,
       mainGod: '食神',
       subGod: '伤官',
+      formation: details.formation,
+      characteristics: details.characteristics,
+      strengths: details.strengths.join('、'),
+      weaknesses: details.weaknesses.join('、'),
+      suitableCareer: details.suitableCareer,
+      avoidCareer: details.avoidCareer,
+      luckTips: details.luckTips
     };
   }
-  // 伤官格：月令为伤官
+  // 伤官格
   if (monthGod === '伤官') {
+    const details = PATTERN_DETAILS['伤官格'];
     return {
       type: '正八格', name: '伤官格',
-      description: '月令为伤官，伤官为用，主人才华横溢但易有叛逆',
+      description: `月令伤官，伤官为用。伤官主人才华横溢、敢于创新，但需印制伤官方能大展才华。`,
       mainGod: '伤官',
       subGod: '食神',
+      formation: details.formation,
+      characteristics: details.characteristics,
+      strengths: details.strengths.join('、'),
+      weaknesses: details.weaknesses.join('、'),
+      suitableCareer: details.suitableCareer,
+      avoidCareer: details.avoidCareer,
+      luckTips: details.luckTips
     };
   }
-  // 官杀格：月令为正官或七杀
+  // 官杀格
   if (['正官', '七杀'].includes(monthGod)) {
+    const details = PATTERN_DETAILS['官杀格'];
+    const godName = monthGod === '正官' ? '正官' : '七杀';
     return {
       type: '正八格', name: '官杀格',
-      description: '月令为官杀，官杀为用，主人事业心强、有管理能力',
+      description: `月令${godName}，官杀为用。官杀主事业、名利、地位，利于仕途发展或管理职位。`,
       mainGod: '官杀',
       subGod: monthGod === '正官' ? '七杀' : '正官',
+      formation: details.formation,
+      characteristics: details.characteristics,
+      strengths: details.strengths.join('、'),
+      weaknesses: details.weaknesses.join('、'),
+      suitableCareer: details.suitableCareer,
+      avoidCareer: details.avoidCareer,
+      luckTips: details.luckTips
     };
   }
-  // 财格：月令为正财或偏财
+  // 财格
   if (['正财', '偏财'].includes(monthGod)) {
+    const details = PATTERN_DETAILS['财格'];
+    const godName = monthGod === '正财' ? '正财' : '偏财';
     return {
       type: '正八格', name: '财格',
-      description: '月令为财星，财星为用，主人财运佳、善于理财',
+      description: `月令${godName}，财星为用。财星主财运、物质，主人善于理财、精明能干。`,
       mainGod: '财星',
       subGod: monthGod === '正财' ? '偏财' : '正财',
+      formation: details.formation,
+      characteristics: details.characteristics,
+      strengths: details.strengths.join('、'),
+      weaknesses: details.weaknesses.join('、'),
+      suitableCareer: details.suitableCareer,
+      avoidCareer: details.avoidCareer,
+      luckTips: details.luckTips
     };
   }
-  // 比劫格：月令为比肩或劫财
+  // 比劫格
   if (['比肩', '劫财'].includes(monthGod)) {
+    const details = PATTERN_DETAILS['比劫格'];
     return {
       type: '正八格', name: '比劫格',
-      description: '月令为比劫，比劫为用，主人独立性强、竞争意识强',
+      description: `月令${monthGod}，比劫为用。比劫主竞争、朋友、自身，利于创业、竞争、求财。`,
       mainGod: '比劫',
+      formation: details.formation,
+      characteristics: details.characteristics,
+      strengths: details.strengths.join('、'),
+      weaknesses: details.weaknesses.join('、'),
+      suitableCareer: details.suitableCareer,
+      avoidCareer: details.avoidCareer,
+      luckTips: details.luckTips
     };
   }
 
+  const details = PATTERN_DETAILS['普通格'];
   return {
     type: '正八格', name: '普通格',
-    description: '八字格局不明显，以中和平衡为贵',
+    description: '八字格局不明显，以中和平衡为贵。命局平和，无特殊格局限制。',
     mainGod: '日主',
+    formation: details.formation,
+    characteristics: details.characteristics,
+    strengths: details.strengths.join('、'),
+    weaknesses: details.weaknesses.join('、'),
+    suitableCareer: details.suitableCareer,
+    avoidCareer: details.avoidCareer,
+    luckTips: details.luckTips
   };
 }
 

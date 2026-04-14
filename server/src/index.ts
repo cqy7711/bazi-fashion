@@ -273,6 +273,14 @@ app.get('/api/users/:userId/five-elements-analysis', (req, res) => {
         name: pattern.name,
         description: pattern.description,
         mainGod: pattern.mainGod,
+        subGod: pattern.subGod,
+        formation: pattern.formation,
+        characteristics: pattern.characteristics,
+        strengths: pattern.strengths,
+        weaknesses: pattern.weaknesses,
+        suitableCareer: pattern.suitableCareer,
+        avoidCareer: pattern.avoidCareer,
+        luckTips: pattern.luckTips,
       },
     });
   } catch (e: any) {

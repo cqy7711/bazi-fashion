@@ -9,6 +9,11 @@ export interface FiveElementsAnalysis {
   water: number;
 }
 
+export interface Pillar {
+  stem: string;
+  branch: string;
+}
+
 export interface BaziResult {
   yearStem: string; yearBranch: string;
   monthStem: string; monthBranch: string;
@@ -18,6 +23,11 @@ export interface BaziResult {
   dayMasterElement: string;
   shiShen: { year: string; month: string; day: string; hour: string };
   trueSolarTime?: string;
+  // 兼容对象访问方式
+  yearPillar?: Pillar;
+  monthPillar?: Pillar;
+  dayPillar?: Pillar;
+  hourPillar?: Pillar;
 }
 
 export interface UserBirthInfoListItem {
