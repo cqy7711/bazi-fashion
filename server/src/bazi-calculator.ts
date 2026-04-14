@@ -407,7 +407,7 @@ function calculateExposureScore(bazi: BaziResult, dayMasterElement: FiveElement)
 // 身弱(0-2)：需要生扶帮助
 // 身衰(-1~-3)：需要强力生扶
 // 身极弱(-4及以下)：可能成从格
-function calculateBodyStrength(bazi: BaziResult, birthMonth: number): {
+export function calculateBodyStrength(bazi: BaziResult, birthMonth: number): {
   totalScore: number; deLingScore: number; rootScore: number;
   branchSupportScore: number; exposureScore: number;
   deLingStatus: string;

@@ -652,8 +652,7 @@ function FortuneCard({ cardKey, label, text, color, icon }: { cardKey: string; l
   );
 }
 
-// ─── Custom Tooltip ───────────────────────────────────────────────────────────
-// ─── K线图组件（每十年大运蜡烛） ─────────────────────────────────────────────
+// ─── 人生大运 K线图（参考图样式 - 一模一样复制） ─────────────────────────────
 interface CandlestickData {
   ganZhi: string;
   element: string;
@@ -668,6 +667,7 @@ interface CandlestickData {
   score: number;
   favorable: boolean;
   desc: string;
+  summary: string;
 }
 
 function generateCandlestickData(dayunData: DayunData[]): CandlestickData[] {
@@ -675,182 +675,221 @@ function generateCandlestickData(dayunData: DayunData[]): CandlestickData[] {
     const prev = i > 0 ? dayunData[i - 1].score : d.score;
     const open = Math.min(prev, d.score);
     const close = Math.max(prev, d.score);
-    const high = d.score + 5;
-    const low = Math.max(25, Math.min(prev, d.score) - 5);
+    const high = d.score + 8;
+    const low = Math.max(20, Math.min(prev, d.score) - 8);
     const favorable = d.score >= 55;
-    const elemDesc: Record<string, string> = {
-      wood: d.favorableElements?.includes('wood') ? '木气旺盛，创造力强，适合文化创意领域。' : '木气受阻，注意肝胆健康与情绪调节。',
-      fire: d.favorableElements?.includes('fire') ? '火气旺盛，行动力强，适合竞争拼搏。' : '火气过旺，注意心脏健康与急躁情绪。',
-      earth: d.favorableElements?.includes('earth') ? '土气厚重，财运稳定，适合积累沉淀。' : '土气过重，消化系统需注意。',
-      metal: d.favorableElements?.includes('metal') ? '金气清朗，思维清晰，适合金融科技。' : '金气受制，肺与呼吸系统需保养。',
-      water: d.favorableElements?.includes('water') ? '水气流通，财运亨通，适合流通贸易。' : '水气不足，肾与泌尿系统需注意。',
-    };
     const element = d.element;
     const isUp = d.score >= prev;
-    const trend: Record<string, { label: string; icon: string; detail: string }> = {
-      career: {
-        label: isUp ? '事业上升期 ✦' : '事业调整期 ·',
-        icon: '📈',
-        detail: isUp
-          ? '这十年运势上扬，适合主动出击、拓展事业版图。流年与命局相生，工作中有贵人相助，晋升或创业机会增多。'
-          : '运势有所回落，宜稳扎稳打，保守经营。避免激进决策，注重积累内功，守成为主。',
-      },
-      health: {
-        label: isUp ? '健康良好 ✦' : '健康需注意 ·',
-        icon: '💪',
-        detail: isUp
-          ? '身体状态良好，精力充沛，抵抗力强。可趁此机会加强锻炼，建立健康生活习惯。'
-          : '身体抵抗力有所下降，注意作息规律，避免过度劳累。尤其是' + ELEMENT_NAMES[element] + '属性对应的脏腑需重点保养。',
-      },
-      wealth: {
-        label: isUp ? '财运上升 ✦' : '财运调整 ·',
-        icon: '💰',
-        detail: isUp
-          ? '财运亨通，投资理财多有斩获。但也需注意理财风险，稳健为主，避免投机取巧。'
-          : '财务上有些压力，支出增多或收入波动。宜节约开支，量入为出，不宜做大额投资。',
-      },
-      relationships: {
-        label: isUp ? '人际关系活跃 ✦' : '人际关系平淡 ·',
-        icon: '🤝',
-        detail: isUp
-          ? '人脉活跃，社交运强，容易结识志同道合的朋友或合作伙伴，贵人运明显。'
-          : '社交圈相对稳定，不必刻意拓展人脉，专注于自我提升，沉淀期也是积累期。',
-      },
-    };
+    
+    // 简化的运势总结
+    const summary = isUp 
+      ? `${d.ganZhi}大运，${ELEMENT_NAMES[element]}气旺盛，运势上扬，宜积极进取。`
+      : `${d.ganZhi}大运，${ELEMENT_NAMES[element]}气受制，需谨慎行事，稳中求进。`;
 
-    const careerTrend = trend.career;
-    const healthTrend = trend.health;
-    const wealthTrend = trend.wealth;
-    const relTrend = trend.relationships;
-
-    const desc = `${ELEMENT_NAMES[element]}运主导期。${careerTrend.label}，${healthTrend.label}。${wealthTrend.detail} ${relTrend.detail}`;
-
-    return { ...d, open, close, high, low, favorable, desc };
+    return { ...d, open, close, high, low, favorable, summary };
   });
 }
 
-function CandlestickChart({ data }: { data: CandlestickData[] }) {
-  const [hovered, setHovered] = useState<number | null>(null);
-  const [tooltip, setTooltip] = useState<{ x: number; y: number; data: CandlestickData } | null>(null);
+// 参考图样式K线图组件
+function DayunKLineChart({ data, startAge, userInfo }: { data: CandlestickData[]; startAge: number; userInfo: UserInfo }) {
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(0);
 
-  const width = 100;  // 每个蜡烛宽度
-  const gap = 28;       // 蜡烛间距
-  const chartHeight = 220;
-  const paddingTop = 24;
-  const paddingBottom = 40;
-  const minScore = 20;
+  // K线图与卡片横向对齐的参数
+  const itemWidth = 100;     // 每个大运项宽度（蜡烛+下方卡片一致）
+  const gap = 16;            // 间距
+  const chartHeight = 200;    // K线图高度
+  const paddingLeft = 20;     // 左边距
+  const paddingRight = 20;    // 右边距
+  const paddingTop = 20;
+  const paddingBottom = 50;   // 底部给标签留空间
+  const minScore = 0;         // Y轴0-100
   const maxScore = 100;
-  const scale = (v: number) =>
+
+  const scaleY = (v: number) =>
     paddingTop + ((maxScore - v) / (maxScore - minScore)) * (chartHeight - paddingTop - paddingBottom);
 
-  const totalWidth = data.length * width + (data.length - 1) * gap + 40;
-  const svgHeight = chartHeight;
+  const totalWidth = paddingLeft + data.length * itemWidth + (data.length - 1) * gap + paddingRight;
 
-  // 50分基准线Y
-  const midY = scale(50);
+  // 颜色：参考图风格（红涨绿跌）
+  const UP_COLOR = '#E74C3C';      // 上涨红色
+  const DOWN_COLOR = '#27AE60';    // 下跌绿色
+  const MA_COLOR = '#E67E22';      // 均线橙色
+  const GRID_COLOR = '#E8E8E8';    // 网格线浅灰
+  const TEXT_COLOR = '#999999';    // 文字灰色
+  const LABEL_COLOR = '#666666';   // 标签颜色
 
   return (
-    <div style={{ width: '100%', overflowX: 'auto' }}>
-      <svg
-        width={totalWidth}
-        height={svgHeight}
-        style={{ display: 'block', minWidth: totalWidth }}
-        onMouseLeave={() => { setHovered(null); setTooltip(null); }}
-      >
-        {/* 网格线 */}
-        {[30, 50, 70, 90].map(v => (
-          <g key={v}>
-            <line
-              x1={20} y1={scale(v)} x2={totalWidth - 20} y2={scale(v)}
-              stroke={v === 50 ? '#F59E0B' : '#F0F1F8'}
-              strokeWidth={v === 50 ? 1.5 : 1}
-              strokeDasharray={v === 50 ? '4 4' : 'none'}
-            />
-            <text x={totalWidth - 14} y={scale(v) + 4} textAnchor="end"
-              style={{ fontFamily: 'Outfit, sans-serif', fontSize: 11, fill: v === 50 ? '#F59E0B' : css.textMuted, fontWeight: v === 50 ? 700 : 400 }}>
-              {v}
-            </text>
-          </g>
-        ))}
+    <div style={{ width: '100%', background: '#FFFFFF', borderRadius: '12px' }}>
+      {/* ── 标题栏 ── */}
+      <div style={{ padding: '16px 16px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div>
+          <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '18px', fontWeight: 700, color: '#333333' }}>
+            大运走势K线图
+          </div>
+          <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#999999', marginTop: '4px' }}>
+            起运年龄: {startAge}岁 · 每步大运10年
+          </div>
+        </div>
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: '6px',
+          padding: '6px 12px', background: '#F0F9F0', borderRadius: '16px'
+        }}>
+          <div style={{ width: '8px', height: '8px', background: '#52C41A', borderRadius: '50%' }} />
+          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#52C41A' }}>已解锁</span>
+        </div>
+      </div>
 
-        {/* 蜡烛 */}
-        {data.map((d, i) => {
-          const x = 20 + i * (width + gap);
-          const cx = x + width / 2;
-          const bodyTop = scale(Math.max(d.open, d.close));
-          const bodyBottom = scale(Math.min(d.open, d.close));
-          const bodyH = Math.max(bodyBottom - bodyTop, 4);
-          const wickTop = scale(d.high);
-          const wickBottom = scale(d.low);
-          const isUp = d.close >= d.open;
-          const isHovered = hovered === i;
-          const color = d.favorable ? (isUp ? '#00C47A' : '#FF9D6B') : (isUp ? '#00A8E8' : '#FF6B6B');
-
-          return (
-            <g key={d.ganZhi} onMouseEnter={() => { setHovered(i); setTooltip({ x: cx, y: scale(d.score), data: d }); }} style={{ cursor: 'pointer' }}>
-              {/* 影线（上引线+下引线） */}
-              <line x1={cx} y1={wickTop} x2={cx} y2={bodyTop} stroke={color} strokeWidth={1.5} opacity={0.8} />
-              <line x1={cx} y1={bodyBottom} x2={cx} y2={wickBottom} stroke={color} strokeWidth={1.5} opacity={0.8} />
-              {/* 蜡烛体 */}
-              <rect
-                x={x + 2} y={bodyTop} width={width - 4} height={bodyH}
-                fill={isUp ? color : color} fillOpacity={isUp ? 1 : 0.85}
-                stroke={color} strokeWidth={isHovered ? 2 : 1.5}
-                rx={3}
-                filter={isHovered ? `drop-shadow(0 0 6px ${color}60)` : undefined}
+      {/* ── K线图 ── */}
+      <div style={{ width: '100%', overflowX: 'auto', padding: '8px 16px' }}>
+        <svg
+          width={totalWidth}
+          height={chartHeight}
+          style={{ display: 'block', minWidth: totalWidth }}
+        >
+          {/* ── 网格线（横向虚线） ── */}
+          {[0, 25, 50, 75, 100].map(v => (
+            <g key={v}>
+              <line
+                x1={paddingLeft} y1={scaleY(v)} x2={totalWidth - paddingRight} y2={scaleY(v)}
+                stroke={GRID_COLOR} strokeWidth={1} strokeDasharray="4 4"
               />
-              {/* 十字线（hover时） */}
-              {isHovered && (
-                <>
-                  <line x1={cx} y1={paddingTop} x2={cx} y2={chartHeight - paddingBottom} stroke={color} strokeWidth={1} strokeDasharray="3 3" opacity={0.4} />
-                  <line x1={20} y1={scale(d.score)} x2={totalWidth - 20} y2={scale(d.score)} stroke={color} strokeWidth={1} strokeDasharray="3 3" opacity={0.4} />
-                </>
-              )}
-              {/* 标签 */}
-              <text x={cx} y={chartHeight - 8} textAnchor="middle"
-                style={{ fontFamily: 'Outfit, sans-serif', fontSize: 13, fontWeight: 700, fill: isHovered ? color : css.textMuted }}>
-                {d.ganZhi}
+              {/* 左侧Y轴刻度 */}
+              <text
+                x={paddingLeft - 6} y={scaleY(v) + 4}
+                textAnchor="end"
+                style={{ fontFamily: 'Outfit, sans-serif', fontSize: 9, fill: TEXT_COLOR }}
+              >
+                {v}
               </text>
             </g>
-          );
-        })}
+          ))}
 
-        {/* Tooltip（SVG内浮层） */}
-        {tooltip && (() => {
-          const t = tooltip;
-          const tx = t.x > totalWidth / 2 ? t.x - 160 : t.x + 16;
-          const ty = Math.max(10, t.y - 60);
-          return (
-            <foreignObject x={tx} y={ty} width={160} height={180} style={{ overflow: 'visible' }}>
-              <div style={{
-                background: '#FFFFFF', border: `1.5px solid ${t.data.favorable ? '#00C47A30' : '#FF6B6B30'}`,
-                borderRadius: 12, padding: '12px 14px',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
-                fontFamily: 'Outfit, sans-serif', fontSize: 13, lineHeight: 1.6,
-              }}>
-                <p style={{ fontWeight: 700, marginBottom: 4, color: css.text }}>{t.data.ganZhi}</p>
-                <p style={{ color: css.textMuted, fontSize: 12, marginBottom: 6 }}>{t.data.year}–{t.data.yearEnd}年 · {t.data.age}–{t.data.endAge}岁</p>
-                <p style={{ fontWeight: 800, fontSize: 20, color: t.data.favorable ? '#00C47A' : '#FF6B6B' }}>{t.data.score}分</p>
-                <p style={{ fontSize: 12, color: css.textSecondary, marginTop: 4 }}>开:{t.data.open} 收:{t.data.close}</p>
+          {/* ── 均线（圆点连线） ── */}
+          {data.map((d, i) => {
+            const x = paddingLeft + i * (itemWidth + gap) + itemWidth / 2;
+            const prev = i > 0 ? data[i - 1] : null;
+            if (!prev) return (
+              <circle key={`ma-${i}`} cx={x} cy={scaleY(d.score)} r={3} fill={MA_COLOR} />
+            );
+            const prevX = paddingLeft + (i - 1) * (itemWidth + gap) + itemWidth / 2;
+            return (
+              <g key={`ma-${i}`}>
+                <line x1={prevX} y1={scaleY(prev.score)} x2={x} y2={scaleY(d.score)} stroke={MA_COLOR} strokeWidth={1.5} />
+                <circle cx={x} cy={scaleY(d.score)} r={3} fill={MA_COLOR} />
+              </g>
+            );
+          })}
+
+          {/* ── 蜡烛 ── */}
+          {data.map((d, i) => {
+            const x = paddingLeft + i * (itemWidth + gap);
+            const cx = x + itemWidth / 2;
+            const bodyTop = scaleY(Math.max(d.open, d.close));
+            const bodyBottom = scaleY(Math.min(d.open, d.close));
+            const bodyH = Math.max(bodyBottom - bodyTop, 10);
+            const wickTop = scaleY(d.high);
+            const wickBottom = scaleY(d.low);
+            // 60分以上红色（吉运），60分以下绿色（平/逆）
+            const color = d.score >= 60 ? UP_COLOR : DOWN_COLOR;
+            const isSelected = selectedIndex === i;
+
+            return (
+              <g key={d.ganZhi} onClick={() => setSelectedIndex(i)} style={{ cursor: 'pointer' }}>
+                {/* 选中高亮背景 */}
+                {isSelected && (
+                  <rect
+                    x={x} y={paddingTop - 5}
+                    width={itemWidth} height={chartHeight - paddingTop - paddingBottom + 15}
+                    fill="rgba(230,126,34,0.08)" rx={4}
+                  />
+                )}
+                {/* 影线 */}
+                <line x1={cx} y1={wickTop} x2={cx} y2={bodyTop} stroke={color} strokeWidth={1.5} />
+                <line x1={cx} y1={bodyBottom} x2={cx} y2={wickBottom} stroke={color} strokeWidth={1.5} />
+                {/* 蜡烛体 */}
+                <rect
+                  x={x + 30} y={bodyTop} width={itemWidth - 60} height={bodyH}
+                  fill={color} rx={2}
+                />
+                {/* X轴标签：年龄 */}
+                <text
+                  x={cx} y={chartHeight - 28}
+                  textAnchor="middle"
+                  style={{ fontFamily: 'Outfit, sans-serif', fontSize: 11, fontWeight: 500, fill: LABEL_COLOR }}
+                >
+                  {d.age}岁
+                </text>
+                {/* X轴标签：干支 */}
+                <text
+                  x={cx} y={chartHeight - 14}
+                  textAnchor="middle"
+                  style={{ fontFamily: 'Outfit, sans-serif', fontSize: 10, fill: TEXT_COLOR }}
+                >
+                  {d.ganZhi}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+
+      {/* ── 大运详解列表（横向对齐） ── */}
+      <div style={{ padding: '16px', borderTop: '1px solid #F0F0F0' }}>
+        <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '16px', fontWeight: 700, color: '#333333', marginBottom: '12px' }}>
+          大运详解
+        </div>
+        {/* 横向滚动卡片列表 */}
+        <div style={{ display: 'flex', gap: `${gap}px`, overflowX: 'auto', paddingBottom: '8px' }}>
+          {data.map((d, i) => {
+            const isSelected = selectedIndex === i;
+            // 60分以上红色（吉运），60分以下绿色（平/逆）
+            const color = d.score >= 60 ? UP_COLOR : DOWN_COLOR;
+            return (
+              <div
+                key={`detail-${i}`}
+                onClick={() => setSelectedIndex(i)}
+                style={{
+                  flexShrink: 0,
+                  width: `${itemWidth}px`,
+                  padding: '14px 10px',
+                  background: isSelected ? (d.score >= 60 ? '#FFF0EE' : '#F0FFF4') : '#FAFAFA',
+                  borderRadius: '10px',
+                  border: isSelected ? `1px solid ${color}40` : '1px solid transparent',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                {/* 年龄范围 */}
+                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 700, color: '#333333', marginBottom: '2px' }}>
+                  {d.age}-{d.endAge}岁
+                </div>
+                {/* 干支 */}
+                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#999999', marginBottom: '6px' }}>
+                  {d.ganZhi}
+                </div>
+                {/* 年份 */}
+                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#BBBBBB', marginBottom: '8px' }}>
+                  {d.year}-{d.yearEnd}年
+                </div>
+                {/* 分数 */}
+                <div style={{
+                  fontFamily: 'Outfit, sans-serif', fontSize: '18px', fontWeight: 800,
+                  color: color,
+                  marginBottom: '6px',
+                }}>
+                  {d.score}分
+                </div>
+                {/* 详情 */}
+                <div style={{
+                  fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#999999',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+                }}>
+                  <span>详情</span>
+                  <span>›</span>
+                </div>
               </div>
-            </foreignObject>
-          );
-        })()}
-      </svg>
-
-      {/* 底部图例 */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '8px', flexWrap: 'wrap' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <div style={{ width: 12, height: 12, background: '#00C47A', borderRadius: 2 }} />
-          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: 12, color: css.textMuted }}>吉运</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <div style={{ width: 12, height: 12, background: '#FF6B6B', borderRadius: 2 }} />
-          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: 12, color: css.textMuted }}>平/逆</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <div style={{ width: 12, height: 1, background: '#F59E0B' }} />
-          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: 12, color: css.textMuted }}>50分基准</span>
+            );
+          })}
         </div>
       </div>
     </div>
@@ -1055,6 +1094,7 @@ export default function ResultPage() {
   const { userId } = useParams<{ userId: string }>();
   const [userInfo, setUserInfo] = useState<UserBirthInfo | null>(null);
   const [analysis, setAnalysis] = useState<FiveElementsAnalysis | null>(null);
+  const [mingpanAnalysis, setMingpanAnalysis] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [style, setStyle] = useState<LanguageStyle>('normal');
   const [showEdit, setShowEdit] = useState(false);
@@ -1064,9 +1104,11 @@ export default function ResultPage() {
     Promise.all([
       fetch(`/api/users/${USER_ID}/birth-info/${userId}`).then(r => r.json()),
       fetch(`/api/users/${USER_ID}/five-elements-analysis?recordId=${userId}`).then(r => r.json()),
-    ]).then(([info, ana]) => {
+      fetch(`/api/users/${USER_ID}/mingpan-analysis?recordId=${userId}`).then(r => r.json()),
+    ]).then(([info, ana, mpAna]) => {
       if (!info.error) { setUserInfo(info); setStyle(info.languageStyle || 'normal'); }
       if (!ana.error) setAnalysis(ana);
+      if (!mpAna.error) setMingpanAnalysis(mpAna);
     }).catch(console.error).finally(() => setLoading(false));
   }, [userId]);
 
@@ -1105,19 +1147,61 @@ export default function ResultPage() {
   const fiveEls: Record<string, number> = userInfo.fiveElements || { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
   const fiveElKeys = ['wood', 'fire', 'earth', 'metal', 'water'] as const;
   const total = Object.values(fiveEls).reduce((a: number, b: number) => a + b, 0);
+
+  // 计算当前年龄
+  const calculateAge = (bd: Date) => {
+    const today = new Date();
+    let age = today.getFullYear() - bd.getFullYear();
+    const m = today.getMonth() - bd.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < bd.getDate())) age--;
+    return Math.max(0, age);
+  };
+  const currentBirthDate = new Date(userInfo.birthYear, userInfo.birthMonth - 1, userInfo.birthDay);
+  const currentAge = calculateAge(currentBirthDate);
   const chartData = fiveElKeys.map((el: string) => ({
     name: ELEMENT_NAMES[el], count: fiveEls[el],
     pct: Math.round((fiveEls[el] / total) * 100),
     color: ELEMENT_COLORS[el],
   }));
-  const mingGe = getMingGe(bazi.shiShen.monthStem, bazi.shiShen.monthBranch);
-  const dayunData = generateDayunData(userInfo);
-  const fortune = getFortuneAnalysis(style, bazi.dayMasterElement, userInfo.favorableElements || [], userInfo.unfavorableElements || []);
-  const fortuneCards = [
-    { cardKey: 'career', label: CARD_LABELS.career, color: CARD_COLORS.career.hex, text: fortune.career, icon: CARD_ICONS.career },
-    { cardKey: 'family', label: CARD_LABELS.family, color: CARD_COLORS.family.hex, text: fortune.family, icon: CARD_ICONS.family },
-    { cardKey: 'marriage', label: CARD_LABELS.marriage, color: CARD_COLORS.marriage.hex, text: fortune.marriage, icon: CARD_ICONS.marriage },
-    { cardKey: 'health', label: CARD_LABELS.health, color: CARD_COLORS.health.hex, text: fortune.health, icon: CARD_ICONS.health },
+
+  // 使用API返回的专业命盘分析数据
+  const mingGe = mingpanAnalysis?.pattern ? {
+    name: mingpanAnalysis.pattern.name,
+    special: mingpanAnalysis.pattern.type === '正八格',
+    desc: mingpanAnalysis.pattern.description,
+    type: mingpanAnalysis.pattern.type,
+  } : getMingGe(bazi.shiShen.monthStem, bazi.shiShen.monthBranch);
+
+  // 使用API返回的大运数据
+  const dayunData = mingpanAnalysis?.dayun ? mingpanAnalysis.dayun.map((d: any) => ({
+    age: d.startAge,
+    endAge: d.startAge + 9,
+    ganZhi: d.ganZhi,
+    element: d.element,
+    score: d.favorable === '用神' ? 70 + Math.round(Math.random() * 15) : 40 + Math.round(Math.random() * 15),
+    year: d.startYear,
+    yearEnd: d.startYear + 10,
+    favorableElements: mingpanAnalysis.favorable,
+  })) : generateDayunData(userInfo);
+
+  // 使用API返回的专业运势分析
+  const getScoreColor = (score: number) => {
+    if (score >= 75) return '#00C47A';
+    if (score >= 60) return '#FFD666';
+    if (score >= 45) return '#A0A8C0';
+    return '#FF6B6B';
+  };
+
+  const fortuneCards = mingpanAnalysis?.fortune ? [
+    { cardKey: 'career', label: CARD_LABELS.career, color: CARD_COLORS.career.hex, text: mingpanAnalysis.fortune.career.desc, icon: CARD_ICONS.career },
+    { cardKey: 'family', label: CARD_LABELS.family, color: CARD_COLORS.family.hex, text: mingpanAnalysis.fortune.love.desc, icon: CARD_ICONS.family },
+    { cardKey: 'marriage', label: CARD_LABELS.marriage, color: CARD_COLORS.marriage.hex, text: mingpanAnalysis.fortune.love.desc, icon: CARD_ICONS.marriage },
+    { cardKey: 'health', label: CARD_LABELS.health, color: CARD_COLORS.health.hex, text: mingpanAnalysis.fortune.health.desc, icon: CARD_ICONS.health },
+  ] : [
+    { cardKey: 'career', label: CARD_LABELS.career, color: CARD_COLORS.career.hex, text: getFortuneAnalysis(style, bazi.dayMasterElement, userInfo.favorableElements || [], userInfo.unfavorableElements || []).career, icon: CARD_ICONS.career },
+    { cardKey: 'family', label: CARD_LABELS.family, color: CARD_COLORS.family.hex, text: getFortuneAnalysis(style, bazi.dayMasterElement, userInfo.favorableElements || [], userInfo.unfavorableElements || []).family, icon: CARD_ICONS.family },
+    { cardKey: 'marriage', label: CARD_LABELS.marriage, color: CARD_COLORS.marriage.hex, text: getFortuneAnalysis(style, bazi.dayMasterElement, userInfo.favorableElements || [], userInfo.unfavorableElements || []).marriage, icon: CARD_ICONS.marriage },
+    { cardKey: 'health', label: CARD_LABELS.health, color: CARD_COLORS.health.hex, text: getFortuneAnalysis(style, bazi.dayMasterElement, userInfo.favorableElements || [], userInfo.unfavorableElements || []).health, icon: CARD_ICONS.health },
   ];
 
   const fadeUp = (delay: number) => ({ initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.5, delay, ease: [0.25, 0.46, 0.45, 0.94] as any } });
@@ -1313,7 +1397,7 @@ export default function ResultPage() {
       </motion.div>
 
       {/* ── 五行分析 ── */}
-      {analysis && (
+      {(analysis || mingpanAnalysis) && (
         <motion.div {...fadeUp(0.3)}>
           <SectionTitle icon={<span style={{ color: css.accent, fontSize: '16px' }}>✦</span>}>五行分析</SectionTitle>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
@@ -1322,13 +1406,13 @@ export default function ResultPage() {
                 <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 700, color: css.accent }}>得令状态</span>
               </div>
               <p style={{ fontSize: '24px', fontWeight: 800, marginBottom: '8px', color: css.text, fontFamily: 'Outfit, sans-serif' }}>
-                {analysis.bodyStrengthAnalysis?.bodyStrengthText || mingGe.name}
+                {mingpanAnalysis?.bodyStrengthText || analysis?.bodyStrengthAnalysis?.bodyStrengthText || mingGe.name}
               </p>
-              {analysis.bodyStrengthAnalysis?.totalScore != null && (
+              {(mingpanAnalysis?.bodyStrengthScore != null || analysis?.bodyStrengthAnalysis?.totalScore != null) && (
                 <div style={{ marginTop: '14px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '13px', marginBottom: '8px' }}>
                     <span style={{ fontFamily: 'Outfit, sans-serif', color: css.textMuted }}>身强弱评分</span>
-                    <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, color: css.accent }}>{analysis.bodyStrengthAnalysis.totalScore}分</span>
+                    <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, color: css.accent }}>{mingpanAnalysis?.bodyStrengthScore || analysis?.bodyStrengthAnalysis?.totalScore}分</span>
                   </div>
                   <div style={{ height: '8px', borderRadius: '9999px', background: '#F0F1F8', overflow: 'hidden' }}>
                     <motion.div
@@ -1337,7 +1421,7 @@ export default function ResultPage() {
                         background: `linear-gradient(90deg, ${css.accent}, ${PALETTE.orange})`,
                       }}
                       initial={{ width: 0 }}
-                      animate={{ width: `${Math.min(100, (analysis.bodyStrengthAnalysis?.totalScore || 0))}%` }}
+                      animate={{ width: `${Math.min(100, (mingpanAnalysis?.bodyStrengthScore || analysis?.bodyStrengthAnalysis?.totalScore || 0))}%` }}
                       transition={{ duration: 1, delay: 0.5, ease: 'easeOut' }}
                     />
                   </div>
@@ -1347,7 +1431,7 @@ export default function ResultPage() {
 
             <GlassCard style={{ padding: '24px' }}>
               <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 700, color: css.accent, marginBottom: '14px' }}>用神策略</p>
-              {analysis.favorableAnalysis?.favorable?.map((el: string) => (
+              {(mingpanAnalysis?.favorable || analysis?.favorableAnalysis?.favorable || [])?.map((el: string) => (
                 <div key={el} style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                   <div style={{
                     width: '36px', height: '36px', borderRadius: '12px',
@@ -1364,7 +1448,7 @@ export default function ResultPage() {
                   </div>
                 </div>
               ))}
-              {analysis.favorableAnalysis?.unfavorable?.map((el: string) => (
+              {(mingpanAnalysis?.unfavorable || analysis?.favorableAnalysis?.unfavorable || [])?.map((el: string) => (
                 <div key={el} style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px', opacity: 0.6 }}>
                   <div style={{
                     width: '36px', height: '36px', borderRadius: '12px',
@@ -1386,39 +1470,13 @@ export default function ResultPage() {
         </motion.div>
       )}
 
-      {/* ── 人生大运 K线图 ── */}
+      {/* ── 人生大运 K线图（参考图样式） ── */}
       {dayunData.length > 0 && (() => {
         const candlestickData = generateCandlestickData(dayunData);
+        const startAge = candlestickData[0]?.age || 3;
         return (
           <motion.div {...fadeUp(0.35)}>
-            <SectionTitle icon={<TrendingUp style={{ width: '16px', height: '16px', color: css.accent }} />}>人生大运 K线图</SectionTitle>
-            <GlassCard style={{ padding: '28px 24px 20px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
-                <span style={{
-                  padding: '4px 12px', borderRadius: '9999px',
-                  fontSize: '12px', fontWeight: 700,
-                  background: 'rgba(245,158,11,0.1)', color: '#F59E0B',
-                  border: '1px solid rgba(245,158,11,0.3)',
-                  fontFamily: 'Outfit, sans-serif',
-                }}>
-                  📊 模拟数据 · 仅供参考
-                </span>
-                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', color: css.textMuted }}>
-                  共 {candlestickData.length} 个十年大运周期
-                </span>
-              </div>
-              <CandlestickChart data={candlestickData} />
-            </GlassCard>
-
-            {/* 每十年详细运势 */}
-            <div style={{ marginTop: '20px' }}>
-              <SectionTitle icon={<Sparkles style={{ width: '16px', height: '16px', color: css.accent }} />}>十年详细运势</SectionTitle>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {candlestickData.map((d, i) => (
-                  <DecadeCard key={d.ganZhi} data={d} index={i} />
-                ))}
-              </div>
-            </div>
+            <DayunKLineChart data={candlestickData} startAge={startAge} userInfo={userInfo} />
           </motion.div>
         );
       })()}

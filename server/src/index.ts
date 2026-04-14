@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import { v4 as uuidv4 } from 'uuid';
 import db from './db.js';
-import { calculateBazi, calculateFiveElements, determineFavorableElements, calculateQiyunAge, calculateChangSheng, calculateShenSha, determineBaziPattern, calculateDayun, calculateDailyFortune, getCurrentDayGanZhi } from './bazi-calculator.js';
+import { calculateBazi, calculateFiveElements, determineFavorableElements, calculateQiyunAge, calculateChangSheng, calculateShenSha, determineBaziPattern, calculateDayun, calculateDailyFortune, getCurrentDayGanZhi, calculateBodyStrength } from './bazi-calculator.js';
 import { getOutfitRecommendation, getBraceletRecommendation, getWeatherInfo } from './recommendation.js';
 import { calculateTrueSolar } from './true-solar-time.js';
 import type { CreateUserBirthInfoRequest, UpdateUserBirthInfoRequest } from '../../shared/types.js';
@@ -331,6 +331,153 @@ app.get('/api/users/:userId/daily-fortune', (req, res) => {
     const dailyFortune = calculateDailyFortune(baziResult);
     
     res.json(dailyFortune);
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ========== 命盘综合分析API ==========
+app.get('/api/users/:userId/mingpan-analysis', (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { recordId } = req.query;
+    let row: any;
+    if (recordId) {
+      row = db.prepare(`SELECT * FROM user_birth_info WHERE id=? AND user_id=?`).get(recordId, userId);
+    } else {
+      row = db.prepare(`SELECT * FROM user_birth_info WHERE user_id=? ORDER BY created_at DESC LIMIT 1`).get(userId);
+    }
+    if (!row) return res.status(404).json({ error: '请先填写生辰信息' });
+
+    // 计算八字
+    const birthYear = Number(row.birth_year);
+    const birthMonth = Number(row.birth_month);
+    const birthDay = Number(row.birth_day);
+    const birthHour = row.birth_hour !== undefined ? Number(row.birth_hour) : 12;
+    const gender = row.gender === 'male' ? 'male' : 'female';
+
+    const bazi = calculateBazi(birthYear, birthMonth, birthDay, birthHour);
+    const fiveElements = calculateFiveElements(bazi);
+    const favorable = typeof row.favorable_elements === 'string' ? JSON.parse(row.favorable_elements) : row.favorable_elements;
+    const unfavorable = typeof row.unfavorable_elements === 'string' ? JSON.parse(row.unfavorable_elements) : row.unfavorable_elements;
+
+    // 计算身强弱
+    const bodyStrength = calculateBodyStrength(bazi, fiveElements);
+    const pattern = determineBaziPattern(bazi, bodyStrength);
+    const shensha = calculateShenSha(bazi);
+    const dayunList = calculateDayun(bazi, birthYear, birthMonth, gender);
+
+    // 四维运势分析（基于命理学原理）
+    const dmEl = bazi.dayMasterElement;
+    const dmName = { wood: '木', fire: '火', earth: '土', metal: '金', water: '水' }[dmEl] || '木';
+
+    // 计算各维度运势评分
+    const calcScore = (base: number, modifiers: number[]) => {
+      const score = base + modifiers.reduce((a, b) => a + b, 0);
+      return Math.max(25, Math.min(95, Math.round(score)));
+    };
+
+    // 事业运势：看官星、印星、财星是否得用
+    const careerBase = 50 + (favorable.includes('metal') ? 12 : 0) + (favorable.includes('water') ? 8 : 0);
+    const careerMod = bodyStrength.type === 'strong' ? 10 : bodyStrength.type === 'weak' ? -5 : 0;
+    const careerScore = calcScore(careerBase, [careerMod]);
+
+    // 财运：看财星是否得用
+    const wealthBase = 50 + (favorable.includes('metal') ? 10 : 0) + (favorable.includes('earth') ? 8 : 0);
+    const wealthMod = bodyStrength.type === 'strong' ? 8 : bodyStrength.type === 'weak' ? -8 : 0;
+    const wealthScore = calcScore(wealthBase, [wealthMod]);
+
+    // 感情运势：看食伤、财星
+    const loveBase = 50 + (favorable.includes('fire') ? 10 : 0) + (favorable.includes('water') ? 6 : 0);
+    const loveMod = shensha.taoHua !== '无' ? 8 : 0;
+    const loveScore = calcScore(loveBase, [loveMod]);
+
+    // 健康运势：看五行平衡
+    const maxEl = Math.max(...Object.values(fiveElements));
+    const minEl = Math.min(...Object.values(fiveElements));
+    const balance = maxEl - minEl;
+    const healthBase = 50 + (balance < 3 ? 15 : balance < 5 ? 8 : 0);
+    const healthScore = calcScore(healthBase, []);
+
+    // 生成运势描述
+    const getFortuneDesc = (el: string, dim: string) => {
+      const descs: Record<string, Record<string, string>> = {
+        wood: {
+          career: '木气生发，创造力强，适合文化创意、互联网、出版传媒、教育培训。忌投机取巧。',
+          wealth: '正财稳定，适合积累，不宜高风险投机。',
+          love: '木主仁，感情细腻浪漫，社交活跃期。',
+          health: '注意肝胆、神经系统、情绪调节。'
+        },
+        fire: {
+          career: '火气旺盛，竞争心强，适合销售、演讲、法律、政治、军警。',
+          wealth: '财来财去，偏财运旺，忌高风险投资。',
+          love: '火主礼，热情主动，姻缘易现。',
+          health: '注意心脏、血液循环、眼睛健康。'
+        },
+        earth: {
+          career: '土气厚重，稳扎稳打，适合建筑、地产、农业、管理、财务。',
+          wealth: '土主信，财运稳健积累，不宜冒险求财。',
+          love: '土主信，感情稳重务实，婚配多以相亲为主。',
+          health: '注意脾胃消化、饮食规律，皮肤易过敏。'
+        },
+        metal: {
+          career: '金气清朗，决策力强，适合金融、科技、法律、外交、管理。',
+          wealth: '金主义，财运清正，利正财，偏财有波动。',
+          love: '金主义，感情果断利落，注意避免冷落伴侣。',
+          health: '注意肺部呼吸系统、骨骼、牙齿健康。'
+        },
+        water: {
+          career: '水气流通，适应力强，适合贸易、物流、航海、媒体、咨询。',
+          wealth: '水主智，财运流通性强，利于贸易与流通行业。',
+          love: '水主智，感情多波折或晚婚居多，早年勿急。',
+          health: '注意肾脏泌尿系统、耳力、冬季防寒。'
+        }
+      };
+      return descs[el]?.[dim] || descs.wood[dim];
+    };
+
+    // 命格详解
+    const patternDetails: Record<string, { career: string; wealth: string; love: string; health: string }> = {
+      '正官格': { career: '官星得用，贵气自来。责任心强，适合从政、管理、法律类工作。', wealth: '财运平稳上升，正财佳，宜稳定发展。', love: '婚姻缘分较好，配偶可靠。', health: '注意肺部呼吸系统健康。' },
+      '七杀格': { career: '果断刚强，魄力惊人。敢于挑战，适合军警、外科医生、企业高管。', wealth: '财运起伏大，偏财机会多，忌贪心。', love: '感情多波折，需防桃花劫。', health: '注意肝胆、筋骨健康。' },
+      '正印格': { career: '慈爱善良，学识渊博。心地厚道，适合教育、研究、医护、宗教。', wealth: '财运平稳，不宜投机，细水长流。', love: '婚姻幸福，配偶体贴。', health: '注意脾胃健康。' },
+      '偏印格': { career: '思维独特，直觉敏锐。善于独立思考，适合策划、艺术创作、咨询。', wealth: '财运不稳定，需防意外破财。', love: '感情缘分较淡，晚婚居多。', health: '注意神经衰弱、失眠。' },
+      '食神格': { career: '温和仁慈，才华横溢。性格温和，适合艺术、文化、餐饮、音乐。', wealth: '食神生财，财运亨通。', love: '桃花运旺，感情丰富。', health: '注意消化系统健康。' },
+      '伤官格': { career: '聪明伶俐，创造力强。思维活跃，适合艺术、设计、演艺、创业。', wealth: '伤官生财，但需防财来财去。', love: '感情多变动，晚婚或两地分居。', health: '注意口舌是非、心火旺盛。' },
+      '正财格': { career: '勤俭持家，财运稳定。为人务实，适合财务、商业、服务业。', wealth: '正财稳定，积累型财运。', love: '婚姻稳定，配偶勤俭。', health: '注意泌尿系统健康。' },
+      '偏财格': { career: '善于理财，财运起伏。有商业头脑，适合金融、投资、销售、贸易。', wealth: '偏财运旺，适合投资理财。', love: '桃花运强，需防婚外情。', health: '注意肝脏健康。' },
+      '比肩格': { career: '独立自信，意志坚定。自我依靠，适合自主创业、专业技术、销售。', wealth: '财运平稳，合伙求财更佳。', love: '感情平淡，独立自主。', health: '注意筋骨健康。' },
+      '劫财格': { career: '敢闯敢拼，行动力强。善于竞争，适合销售、体育、创业、投资。', wealth: '财运起伏大，需防破财。', love: '感情多竞争，需防第三者。', health: '注意劫财夺财，脾胃虚弱。' },
+    };
+
+    const patternDetail = patternDetails[pattern.name] || { career: '命局平稳，适合各类工作。', wealth: '财运平稳。', love: '感情平稳。', health: '健康良好。' };
+
+    res.json({
+      // 四维运势
+      fortune: {
+        career: { score: careerScore, desc: getFortuneDesc(dmEl, 'career'), pattern: patternDetail.career },
+        wealth: { score: wealthScore, desc: getFortuneDesc(dmEl, 'wealth'), pattern: patternDetail.wealth },
+        love: { score: loveScore, desc: getFortuneDesc(dmEl, 'love'), pattern: patternDetail.love },
+        health: { score: healthScore, desc: getFortuneDesc(dmEl, 'health'), pattern: patternDetail.health },
+      },
+      // 命格详解
+      pattern: {
+        ...pattern,
+        details: patternDetail,
+      },
+      // 神煞
+      shensha,
+      // 大运
+      dayun: dayunList,
+      // 五行分析
+      fiveElements,
+      favorable,
+      unfavorable,
+      bodyStrength,
+      // 身强弱
+      bodyStrengthText: bodyStrength.type === 'strong' ? '身强' : bodyStrength.type === 'weak' ? '身弱' : '中性',
+      bodyStrengthScore: bodyStrength.score,
+    });
   } catch (e: any) {
     res.status(500).json({ error: e.message });
   }
