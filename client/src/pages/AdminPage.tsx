@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, Lock, Users, FileText, TrendingUp, Calendar, Trash2, Eye, ArrowLeft, LogOut, RefreshCw, Search, BarChart2, PieChart } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart as RePieChart, Pie, Cell, LabelList } from 'recharts';
-import type { UserBirthInfo } from '../../shared/types';
+import type { UserBirthInfo } from '../shared/types';
 
 const ELEMENT_NAMES: Record<string, string> = { wood: '木', fire: '火', earth: '土', metal: '金', water: '水' };
 const ELEMENT_COLORS: Record<string, string> = { wood: '#6B8E6B', fire: '#B85C50', earth: '#C9A86C', metal: '#A89B8C', water: '#5A7A8C' };
@@ -26,7 +26,7 @@ function StatCard({ icon, label, value, sub }: { icon: React.ReactNode; label: s
 }
 
 interface AdminStats { totalRecords: number; todayRecords: number; genderStats: Record<string, number>; elementStats: Record<string, number>; recentRecords: { name: string; birthYear: number; dayMaster: string; createdAt: string }[]; }
-interface Record { id: string; userId: string; name: string; birthYear: number; birthMonth: number; birthDay: number; birthHour: number; gender: string; calendarType: string; languageStyle: string; baziResult: any; fiveElements: any; favorableElements: string[]; unfavorableElements: string[]; createdAt: string; }
+interface BaziRecord { id: string; userId: string; name: string; birthYear: number; birthMonth: number; birthDay: number; birthHour: number; gender: string; calendarType: string; languageStyle: string; baziResult: any; fiveElements: any; favorableElements: string[]; unfavorableElements: string[]; createdAt: string; }
 
 export default function AdminPage() {
   const [token, setToken] = useState<string | null>(localStorage.getItem('admin-token'));
@@ -35,12 +35,12 @@ export default function AdminPage() {
   const [loginError, setLoginError] = useState('');
 
   const [stats, setStats] = useState<AdminStats | null>(null);
-  const [records, setRecords] = useState<Record[]>([]);
+  const [records, setRecords] = useState<BaziRecord[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
-  const [selectedRecord, setSelectedRecord] = useState<Record | null>(null);
+  const [selectedRecord, setSelectedRecord] = useState<BaziRecord | null>(null);
   const LIMIT = 15;
 
   useEffect(() => { if (token) loadStats(); }, [token]);
@@ -83,7 +83,8 @@ export default function AdminPage() {
     loadRecords(1, search);
   }
 
-  async function handleDelete(id: string, name: string) {
+  async function handleDelete(e: React.MouseEvent, id: string, name: string) {
+    e.stopPropagation();
     if (!confirm(`确认删除「${name}」的记录？此操作不可撤销。`)) return;
     await fetch(`/api/admin/records/${id}`, { method: 'DELETE' });
     loadRecords(page, search);
@@ -255,7 +256,7 @@ export default function AdminPage() {
                               <button onClick={() => setSelectedRecord(r)} className="p-1.5 rounded-lg hover:bg-primary/10 text-primary transition-colors" title="查看详情">
                                 <Eye className="w-3.5 h-3.5" />
                               </button>
-                              <button onClick={() => handleDelete(r.id, r.name)} className="p-1.5 rounded-lg hover:bg-red-50 text-red-400 hover:text-red-500 transition-colors" title="删除">
+                              <button onClick={(e) => handleDelete(e, r.id, r.name)} className="p-1.5 rounded-lg hover:bg-red-50 text-red-400 hover:text-red-500 transition-colors" title="删除">
                                 <Trash2 className="w-3.5 h-3.5" />
                               </button>
                             </div>
@@ -422,12 +423,13 @@ export default function AdminPage() {
                     <div>
                       <p className="text-xs font-semibold text-muted-foreground mb-2">十神</p>
                       <div className="grid grid-cols-4 gap-2">
-                        {Object.entries(selectedRecord.baziResult.shiShen || {}).map(([key, god]: [string, string]) => {
-                          const c = { '比肩': '#6B8E6B', '劫财': '#6B8E6B', '食神': '#B85C50', '伤官': '#B85C50', '偏财': '#C9A86C', '正财': '#C9A86C', '七杀': '#B85C50', '正官': '#B85C50', '偏印': '#5A7A8C', '正印': '#5A7A8C' }[god] || '#888';
+                        {Object.entries(selectedRecord.baziResult.shiShen || {}).map(([key, god]) => {
+                          const godStr = String(god);
+                          const c = { '比肩': '#6B8E6B', '劫财': '#6B8E6B', '食神': '#B85C50', '伤官': '#B85C50', '偏财': '#C9A86C', '正财': '#C9A86C', '七杀': '#B85C50', '正官': '#B85C50', '偏印': '#5A7A8C', '正印': '#5A7A8C' }[godStr] || '#888';
                           return (
                             <div key={key} className="text-center p-2 bg-secondary/20 rounded-xl">
                               <p className="text-[9px] text-muted-foreground">{key}</p>
-                              <span className="text-xs font-bold" style={{ color: c }}>{god}</span>
+                              <span className="text-xs font-bold" style={{ color: c }}>{godStr}</span>
                             </div>
                           );
                         })}

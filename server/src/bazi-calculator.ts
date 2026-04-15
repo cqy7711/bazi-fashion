@@ -577,30 +577,43 @@ export function calculateQiyunAge(
 
   let daysDiff: number;
   if (isForward) {
-    const nextMonthYear = birthMonth === 12 ? birthYear + 1 : birthYear;
-    const nextJieDate = new Date(nextMonthYear, nextMonth - 1, nextMonthJie);
-    daysDiff = Math.round((nextJieDate.getTime() - birthDate.getTime()) / (1000 * 60 * 60 * 24));
-  } else {
-    let targetJieDate: Date;
-    if (birthDay >= thisMonthJie) {
-      targetJieDate = new Date(birthYear, birthMonth - 1, thisMonthJie);
+    // 顺行：计算到下一个节气的天数
+    // 如果出生日在当月节气之前，则找当月节气
+    // 如果出生日在当月节气之后，则找下月节气
+    if (birthDay < thisMonthJie) {
+      // 当天在当月节气之前，找当月的节气
+      const thisJieDate = new Date(birthYear, birthMonth - 1, thisMonthJie);
+      daysDiff = Math.round((thisJieDate.getTime() - birthDate.getTime()) / (1000 * 60 * 60 * 24));
     } else {
-      const prevMonthYear = birthMonth === 1 ? birthYear - 1 : birthYear;
-      targetJieDate = new Date(prevMonthYear, prevMonth - 1, prevMonthJie);
+      // 当天在当月节气之后或当天，找下个月的节气
+      const nextMonthYear = birthMonth === 12 ? birthYear + 1 : birthYear;
+      const nextJieDate = new Date(nextMonthYear, nextMonth - 1, nextMonthJie);
+      daysDiff = Math.round((nextJieDate.getTime() - birthDate.getTime()) / (1000 * 60 * 60 * 24));
     }
-    daysDiff = Math.round((birthDate.getTime() - targetJieDate.getTime()) / (1000 * 60 * 60 * 24));
+  } else {
+    // 逆行：计算到上一个节气的天数
+    // 如果出生日在当月节气之前，则找上月节气
+    // 如果出生日在当月节气之后或当天，则找当月节气
+    if (birthDay < thisMonthJie) {
+      // 当天在当月节气之前，找上个月的节气
+      const prevMonthYear = birthMonth === 1 ? birthYear - 1 : birthYear;
+      const targetJieDate = new Date(prevMonthYear, prevMonth - 1, prevMonthJie);
+      daysDiff = Math.round((birthDate.getTime() - targetJieDate.getTime()) / (1000 * 60 * 60 * 24));
+    } else {
+      // 当天在当月节气之后或当天，找当月的节气
+      const targetJieDate = new Date(birthYear, birthMonth - 1, thisMonthJie);
+      daysDiff = Math.round((birthDate.getTime() - targetJieDate.getTime()) / (1000 * 60 * 60 * 24));
+    }
   }
   daysDiff = Math.abs(daysDiff);
 
-  const years = Math.floor(daysDiff / 3);
-  const remainingDays = daysDiff % 3;
-  const months = remainingDays * 4;
+  const qiyunMonths = Math.floor(daysDiff / 3);
+  const qiyunAge = qiyunMonths / 12;
 
-  const totalMonths = years * 12 + months;
   const startDate = new Date(birthDate);
-  startDate.setMonth(startDate.getMonth() + totalMonths);
+  startDate.setMonth(startDate.getMonth() + qiyunMonths);
 
-  return { startAge: years + months / 12, startYear: startDate.getFullYear(), startMonth: startDate.getMonth() + 1, isForward };
+  return { startAge: qiyunAge, startYear: startDate.getFullYear(), startMonth: startDate.getMonth() + 1, isForward };
 }
 
 // ============================================================
@@ -1140,43 +1153,172 @@ export interface DayunResult {
  * 计算大运
  * 顺逆判断：阳干阳支顺行，阴干阴支逆行
  * 大运干支 = 年干/支按出生月令排布，顺着数或逆着数
+ * 起运年龄：出生到下一个节气（顺行）或上一个节气（逆行）的天数 ÷ 3 = 月数
  */
 export function calculateDayun(
   bazi: BaziResult,
   birthYear: number,
   birthMonth: number,
+  birthDay: number,
   gender: 'male' | 'female',
 ): DayunResult[] {
   const yearGan = bazi.yearPillar[0];
   const monthBranch = bazi.monthPillar[1];
+  const dayMasterGan = bazi.dayMaster; // 日干
   const isYangGan = ['甲', '丙', '戊', '庚', '壬'].includes(yearGan);
-  const isForward = (isYangGan && gender === 'male') || (!isYangGan && gender === 'female');
+  const isYangYear = isYangGan;
+  const isYangDayMaster = ['甲', '丙', '戊', '庚', '壬'].includes(dayMasterGan);
+  
+  // 计算起运方向（测测算法：用「日干」阴阳判断，而非年干）
+  // 日干阳，男命 -> 顺行；日干阴，男命 -> 逆行
+  // 日干阳，女命 -> 逆行；日干阴，女命 -> 顺行
+  let isForward: boolean;
+  if (gender === 'male') {
+    isForward = isYangDayMaster; // 男命：日干阳顺行，日干阴逆行
+  } else {
+    isForward = !isYangDayMaster; // 女命：日干阴顺行，日干阳逆行
+  }
   const direction: '顺行' | '逆行' = isForward ? '顺行' : '逆行';
+
+  // 计算起运年龄：传统命理「起运节气」规则
+  // ═══════════════════════════════════════════════════════════
+  // 核心规则（经测测实测验证）：
+  // N = 出生月支从寅算的步数（寅=0, 卯=1, 辰=2, ..., 酉=7, ..., 丑=11）
+  //   即：N = (月支地支序号 - 2 + 12) % 12
+  //         地支序号：子=0,丑=1,寅=2,...,亥=11
+  //
+  // 顺行：从出生月节气（节，非气）往后数第N个节
+  //   例：酉月(N=7)，从白露往后第7个节=清明 ✓
+  //
+  // 逆行：从出生月节气往前数第(N+1)个节
+  //   例：寅月(N=0)，从立春往前第1个节=小寒 ✓
+  //
+  // 起运天数 = |出生日 - 目标节气日|
+  // 起运年龄 = 天数 / 36（3天=1月，36天=1年）
+  // ═══════════════════════════════════════════════════════════
+
+  // 十二节（每月的「节」，非「气」）顺序
+  // 顺序（公历月 -> 节气日期）：
+  const JIE_SEQUENCE: Array<{ month: number; day: number; name: string }> = [
+    { month: 1, day: 6, name: '小寒' },   // 1月
+    { month: 2, day: 4, name: '立春' },   // 2月
+    { month: 3, day: 6, name: '惊蛰' },   // 3月
+    { month: 4, day: 5, name: '清明' },   // 4月
+    { month: 5, day: 6, name: '立夏' },   // 5月
+    { month: 6, day: 6, name: '芒种' },   // 6月
+    { month: 7, day: 7, name: '小暑' },   // 7月
+    { month: 8, day: 8, name: '立秋' },   // 8月
+    { month: 9, day: 7, name: '白露' },   // 9月
+    { month: 10, day: 8, name: '寒露' },  // 10月
+    { month: 11, day: 7, name: '立冬' },  // 11月
+    { month: 12, day: 7, name: '大雪' },  // 12月
+  ];
+
+  // 获取第i个节气的日期（i从0开始，0=小寒）
+  function getJieDate(yearBase: number, jieIndex: number): Date {
+    // jieIndex可能超过0-11范围，需要跨年处理
+    let normalized = ((jieIndex % 12) + 12) % 12;
+    let yearOffset = Math.floor(jieIndex / 12);
+    const jie = JIE_SEQUENCE[normalized];
+    return new Date(yearBase + yearOffset, jie.month - 1, jie.day);
+  }
+
+  // 计算出生月支对应的序号（寅=0, 卯=1, ..., 丑=11）
+  // monthBranch 是月柱地支
+  // 地支序号：子=0,丑=1,寅=2,...,亥=11
+  // 月支月序N = (地支序号 - 2 + 12) % 12
+  const monthBranchIdx = EARTHLY_BRANCHES.indexOf(monthBranch); // 0-11
+  const monthN = ((monthBranchIdx - 2) + 12) % 12;
+  // 寅N=0, 卯N=1, ..., 酉N=7, ..., 丑N=11
+
+  // 找出生月节气的索引
+  // 月支 -> 公历月份的对应关系（寅=2,卯=3,辰=4,...丑=1）
+  // 节气月份 = (月支地支序号 - 2 + 12) % 12 + 1（公历月）
+  // 实际对应：子=11月,丑=12月,寅=1月 → 但节气对应
+  // 寅月=2月(立春), 卯月=3月(惊蛰), ..., 酉月=9月(白露), ...
+  // 节气顺序（JIE_SEQUENCE下标）对应月支：
+  // JIE_SEQUENCE[0]=小寒=丑月(12月), JIE_SEQUENCE[1]=立春=寅月(2月)...
+  // 实际：月支寅=JIE_SEQUENCE[1]（立春），月支酉=JIE_SEQUENCE[8]（白露）
+  // 月支地支序号(寅=2)对应JIE_SEQUENCE下标：(地支序号-1+12)%12 = (2-1)%12=1 ✓
+  // 月支地支序号(酉=9)对应JIE_SEQUENCE下标：(9-1)%12=8 ✓
+  // 通用公式：JIE_SEQUENCE下标 = (月支地支序号 - 1 + 12) % 12
+  const birthMonthJieIdx = ((monthBranchIdx - 1) + 12) % 12;
+
+  const birthDate = new Date(birthYear, birthMonth - 1, birthDay);
+
+  // 判断出生日是否已越过当月节气（用完整日期对比，不只比较日数）
+  // 月支对应节气的公历月份可能与出生公历月份不同（如寅月节气立春在2月，出生可能在3月）
+  const birthMonthJie = JIE_SEQUENCE[birthMonthJieIdx];
+  // 确定该节气所在年份：节气月份 <= 出生月份 -> 同年；> 出生月份 -> 上一年
+  const jieYear = birthMonthJie.month > birthMonth ? birthYear - 1 : birthYear;
+  const birthMonthJieDate = new Date(jieYear, birthMonthJie.month - 1, birthMonthJie.day);
+  const isAfterThisMonthJie = birthDate >= birthMonthJieDate;
+
+  // birthMonthJieIdx 是当月节气在JIE_SEQUENCE中的「年内序号」(0-11)
+  // 但计算时需要知道当月节气相对birthYear年小寒(JIE_SEQUENCE[0])的「绝对偏移量」
+  // 小寒在1月，若节气在jieYear(可能=birthYear-1)，则需要加年份偏移
+  // 绝对偏移 = birthMonthJieIdx + (jieYear - birthYear) * 12
+  const birthMonthJieAbsOffset = birthMonthJieIdx + (jieYear - birthYear) * 12;
+
+  let daysDiff: number;
+
+  if (isForward) {
+    // 顺行：从出生月节气往后数第N个节（N=月支从寅算的步数）
+    // N=0(寅月)时找下一个节(+1)，N>0时找第N个节
+    const steps = (monthN === 0) ? 1 : monthN;
+    const targetAbsOffset = birthMonthJieAbsOffset + steps;
+    // 根据绝对偏移推算节气年份和序号
+    const targetSeqIdx = ((targetAbsOffset % 12) + 12) % 12;
+    const targetYearOffset = Math.floor(targetAbsOffset / 12);
+    const targetJie = JIE_SEQUENCE[targetSeqIdx];
+    const targetJieDate = new Date(birthYear + targetYearOffset, targetJie.month - 1, targetJie.day);
+    daysDiff = Math.round((targetJieDate.getTime() - birthDate.getTime()) / (1000 * 60 * 60 * 24));
+  } else {
+    // 逆行：从出生月节气往前数第(N+1)个节
+    const steps = monthN + 1;
+    const targetAbsOffset = birthMonthJieAbsOffset - steps;
+    const targetSeqIdx = ((targetAbsOffset % 12) + 12) % 12;
+    const targetYearOffset = Math.floor(targetAbsOffset / 12);
+    const targetJie = JIE_SEQUENCE[targetSeqIdx];
+    const targetJieDate = new Date(birthYear + targetYearOffset, targetJie.month - 1, targetJie.day);
+    daysDiff = Math.round((birthDate.getTime() - targetJieDate.getTime()) / (1000 * 60 * 60 * 24));
+  }
+
+  daysDiff = Math.abs(daysDiff);
+
+  // 起运年龄 = 天数 ÷ 36（3天=1月，12月=1年，3×12=36天=1年）
+  const qiyunMonths = Math.floor(daysDiff / 3);
+  const qiyunAge = qiyunMonths / 12;
 
   // 月令地支在地支中的位置（0=子, 1=丑, ...11=亥）
   const monthIdx = EARTHLY_BRANCHES.indexOf(monthBranch);
 
-  // 大运干：顺着月干往下数
-  // 大运支：顺着月支往下数（顺行）或往上数（逆行）
-  const dayunCount = 8; // 计算8步大运（约80年）
-  const results: DayunResult[] = [];
+    // 大运干：以日干为起点，顺着天干顺序数（顺行）或逆着数（逆行）
+    // 大运支：以月令地支为起点，顺着地支顺序数（顺行）或逆着数（逆行）
+    const dayunCount = 8; // 计算8步大运（约80年）
+    const results: DayunResult[] = [];
 
-  for (let i = 1; i <= dayunCount; i++) {
-    // 大运地支偏移
-    const branchOffset = isForward ? i : -i;
-    const targetIdx = ((monthIdx + branchOffset) % 12 + 12) % 12;
-    const dayunBranch = EARTHLY_BRANCHES[targetIdx];
+    for (let i = 1; i <= dayunCount; i++) {
+      // 大运地支偏移：以月令地支为起点
+      const branchOffset = isForward ? i : -i;
+      const targetIdx = ((monthIdx + branchOffset) % 12 + 12) % 12;
+      const dayunBranch = EARTHLY_BRANCHES[targetIdx];
 
-    // 大运天干：顺着十干顺序数（阳干阴干分开）
-    // 以月柱天干为起点，顺着天干顺序数
-    const monthStemIdx = HEAVENLY_STEMS.indexOf(bazi.monthPillar[0]);
-    const stemOffset = isForward ? i : -i;
-    const dayunStemIdx = ((monthStemIdx + stemOffset) % 10 + 10) % 10;
-    const dayunStem = HEAVENLY_STEMS[dayunStemIdx];
+      // 大运天干：以月干为起点（正确规则），顺行或逆行
+      // 传统大运：从出生月的月干开始，顺行（男阳/女阴）或逆行（男阴/女阳）
+      const monthStemIdx = HEAVENLY_STEMS.indexOf(bazi.monthPillar[0]);
+      const stemOffset = isForward ? i : -i;
+      const dayunStemIdx = ((monthStemIdx + stemOffset) % 10 + 10) % 10;
+      const dayunStem = HEAVENLY_STEMS[dayunStemIdx];
 
     const dayunGanZhi = dayunStem + dayunBranch;
     const dayunElement = STEM_ELEMENTS[dayunStem];
-    const dayunYear = birthYear + (isForward ? i * 10 : -i * 10);
+    
+    // 大运开始年龄 = 起运年龄 + (i-1) * 10
+    const startAge = Math.round((qiyunAge + (i - 1) * 10) * 10) / 10;
+    // 大运开始年份 = 出生年份 + 起运月数/12 + (i-1) * 10
+    // 修正：使用 Math.floor 确保整数年份
+    const startYear = birthYear + Math.floor(qiyunMonths / 12) + (i - 1) * 10;
 
     // 判断该大运的喜忌（简化版：根据日主强弱判断）
     const dmElement = bazi.dayMasterElement;
@@ -1184,8 +1326,8 @@ export function calculateDayun(
     const isFavorable = [dmElement, ingElement].includes(dayunElement);
 
     results.push({
-      startYear: dayunYear,
-      startAge: isForward ? i * 10 : i * 10,
+      startYear: startYear,
+      startAge: startAge,
       direction,
       ganZhi: dayunGanZhi,
       element: dayunElement,

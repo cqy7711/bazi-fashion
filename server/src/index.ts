@@ -304,11 +304,12 @@ app.get('/api/users/:userId/dayun', (req, res) => {
     const baziResult = typeof row.bazi_result === 'string' ? JSON.parse(row.bazi_result) : row.bazi_result;
     const gender = row.gender === 'male' ? 'male' : 'female';
 
-    const dayunList = calculateDayun(baziResult, row.birth_year, row.birth_month, gender);
+    const dayunList = calculateDayun(baziResult, row.birth_year, row.birth_month, row.birth_day, gender);
 
     res.json({
       birthYear: row.birth_year,
       birthMonth: row.birth_month,
+      birthDay: row.birth_day,
       gender,
       dayunCount: dayunList.length,
       dayun: dayunList,
@@ -373,7 +374,7 @@ app.get('/api/users/:userId/mingpan-analysis', (req, res) => {
     const bodyStrength = calculateBodyStrength(bazi, fiveElements);
     const pattern = determineBaziPattern(bazi, bodyStrength);
     const shensha = calculateShenSha(bazi);
-    const dayunList = calculateDayun(bazi, birthYear, birthMonth, gender);
+    const dayunList = calculateDayun(bazi, birthYear, birthMonth, birthDay, gender);
 
     // 四维运势分析（基于命理学原理）
     const dmEl = bazi.dayMasterElement;
@@ -697,6 +698,167 @@ function mapRow(row: any) {
     unfavorableElements: row.unfavorable_elements ? (typeof row.unfavorable_elements === 'string' ? JSON.parse(row.unfavorable_elements) : row.unfavorable_elements) : undefined,
   };
 }
+
+// ========== DeepSeek AI 命理对话 API ==========
+
+// DeepSeek API 配置
+const DEEPSEEK_API_URL = 'https://api.deepseek.com/v1/chat/completions';
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || '';
+
+// 命理学系统提示词
+const MINGLI_SYSTEM_PROMPT = `你是专业的八字命理师，精通中国传统命理学。你需要根据用户的八字信息，用专业且易懂的方式解答问题。
+
+八字命理核心知识：
+1. 天干地支：天干有甲乙丙丁戊己庚辛壬癸，地支有子丑寅卯辰巳午未申酉戌亥
+2. 五行相生：木生火、火生土、土生金、金生水、水生木
+3. 五行相克：木克土、土克水、水克火、火克金、金克木
+4. 日主：出生日的天干代表自己，日主强弱决定用神选取
+5. 用神：八字中最需要补充的五行，调候命局
+
+请基于八字分析：
+- 日主强弱分析
+- 用神选取依据
+- 格局判断
+- 大运走势
+- 流年影响
+
+回答要：
+1. 专业但通俗易懂
+2. 结合八字具体分析
+3. 给出实用的建议
+4. 语言简洁有条理`;
+
+// 获取用户八字信息
+function getUserBaziInfo(userId: string, recordId?: string) {
+  let query = `SELECT * FROM user_birth_info WHERE user_id = ?`;
+  let params: any[] = [userId];
+  
+  if (recordId) {
+    query += ` AND id = ?`;
+    params.push(recordId);
+  }
+  
+  query += ` ORDER BY created_at DESC LIMIT 1`;
+  
+  const row = db.prepare(query).get(...params) as any;
+  if (!row) return null;
+  
+  const baziResult = row.bazi_result ? (typeof row.bazi_result === 'string' ? JSON.parse(row.bazi_result) : row.bazi_result) : null;
+  const fiveElements = row.five_elements ? (typeof row.five_elements === 'string' ? JSON.parse(row.five_elements) : row.five_elements) : null;
+  const favorableElements = row.favorable_elements ? (typeof row.favorable_elements === 'string' ? JSON.parse(row.favorable_elements) : row.favorable_elements) : null;
+  const unfavorableElements = row.unfavorable_elements ? (typeof row.unfavorable_elements === 'string' ? JSON.parse(row.unfavorable_elements) : row.unfavorable_elements) : null;
+  
+  return {
+    name: row.name,
+    birthDate: `${row.birth_year}年${row.birth_month}月${row.birth_day}日${row.birth_hour}时`,
+    gender: row.gender === 'male' ? '男' : '女',
+    bazi: baziResult ? {
+      yearPillar: baziResult.yearPillar,
+      monthPillar: baziResult.monthPillar,
+      dayPillar: baziResult.dayPillar,
+      hourPillar: baziResult.hourPillar,
+      dayMaster: baziResult.dayMaster,
+    } : null,
+    fiveElements,
+    favorableElements,
+    unfavorableElements,
+    bodyStrength: row.body_strength || null,
+  };
+}
+
+// AI 对话路由
+app.post('/api/ai/chat', async (req, res) => {
+  try {
+    const { userId = DEFAULT_USER_ID, recordId, messages } = req.body;
+    
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({ error: '缺少对话内容' });
+    }
+    
+    // 获取用户八字信息
+    const userBazi = getUserBaziInfo(userId, recordId);
+    
+    if (!userBazi) {
+      return res.status(400).json({ error: '未找到八字信息，请先录入生辰' });
+    }
+    
+    // 构建用户信息摘要
+    const userSummary = userBazi.bazi ? `
+用户基本信息：
+- 姓名：${userBazi.name}
+- 出生时间：${userBazi.birthDate}（${userBazi.gender}）
+- 四柱：${userBazi.bazi.yearPillar} ${userBazi.bazi.monthPillar} ${userBazi.bazi.dayPillar} ${userBazi.bazi.hourPillar}
+- 日主：${userBazi.bazi.dayMaster}
+- 五行得分：${JSON.stringify(userBazi.fiveElements)}
+- 喜用五行：${userBazi.favorableElements?.join('、')}
+- 忌讳五行：${userBazi.unfavorableElements?.join('、')}
+- 身强身弱：${userBazi.bodyStrength || '待分析'}
+` : '';
+    
+    // 构建 DeepSeek API 请求
+    const deepseekMessages = [
+      { role: 'system', content: MINGLI_SYSTEM_PROMPT + userSummary },
+      ...messages.map((m: any) => ({
+        role: m.role === 'user' ? 'user' : 'assistant',
+        content: m.content
+      }))
+    ];
+    
+    // 如果没有配置 API Key，返回错误提示
+    if (!DEEPSEEK_API_KEY) {
+      return res.status(503).json({ 
+        error: '未配置 DeepSeek API Key',
+        message: '请在环境变量中设置 DEEPSEEK_API_KEY'
+      });
+    }
+    
+    const response = await fetch(DEEPSEEK_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${DEEPSEEK_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'deepseek-chat',
+        messages: deepseekMessages,
+        temperature: 0.7,
+        max_tokens: 2000
+      })
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('DeepSeek API 错误:', errorData);
+      return res.status(response.status).json({ 
+        error: 'AI 服务调用失败',
+        details: errorData.error?.message || '未知错误'
+      });
+    }
+    
+    const data = await response.json();
+    const assistantMessage = data.choices?.[0]?.message?.content || '抱歉，AI 暂时无法回复，请稍后再试。';
+    
+    res.json({
+      success: true,
+      message: assistantMessage,
+      usage: data.usage
+    });
+    
+  } catch (e: any) {
+    console.error('AI 对话错误:', e);
+    res.status(500).json({ error: e.message || '服务器错误' });
+  }
+});
+
+// 获取支持的 AI 模型列表
+app.get('/api/ai/models', (req, res) => {
+  res.json({
+    available: !!DEEPSEEK_API_KEY,
+    models: [
+      { id: 'deepseek-chat', name: 'DeepSeek Chat', description: '通用对话模型，适合命理分析' },
+    ]
+  });
+});
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

@@ -631,9 +631,9 @@ function generateDayunData(userInfo: UserBirthInfo): DayunData[] {
   const branches = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
   const stemEls: Record<string, string> = { '甲': 'wood', '乙': 'wood', '丙': 'fire', '丁': 'fire', '戊': 'earth', '己': 'earth', '庚': 'metal', '辛': 'metal', '壬': 'water', '癸': 'water' };
   // 从字符串中提取天干地支
-  const yearStem = bazi.yearPillar ? bazi.yearPillar[0] : '甲';
-  const monthStem = bazi.monthPillar ? bazi.monthPillar[0] : '甲';
-  const monthBranch = bazi.monthPillar ? bazi.monthPillar[1] : '子';
+  const yearStem = bazi.yearPillar ? bazi.yearPillar.stem : '甲';
+  const monthStem = bazi.monthPillar ? bazi.monthPillar.stem : '甲';
+  const monthBranch = bazi.monthPillar ? bazi.monthPillar.branch : '子';
   const isYangYear = ['甲', '丙', '戊', '庚', '壬'].includes(yearStem);
   const isForward = (isYangYear && userInfo.gender === 'male') || (!isYangYear && userInfo.gender === 'female');
   const JIE: Record<number, number> = { 1: 6, 2: 4, 3: 6, 4: 5, 5: 6, 6: 6, 7: 7, 8: 8, 9: 8, 10: 8, 11: 7, 12: 7 };
@@ -2298,7 +2298,7 @@ export default function ResultPage() {
 
           {/* 适合/不适合职业 */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
-            {mingGe.suitableCareer?.length > 0 && (
+            {mingGe && mingGe.suitableCareer && mingGe.suitableCareer.length > 0 && (
               <div style={{ padding: '14px', background: '#F0F9FF', borderRadius: '12px', border: '1px solid #BAE6FD' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
                   <span style={{ fontSize: '14px' }}>✅</span>
@@ -2317,7 +2317,7 @@ export default function ResultPage() {
                 </div>
               </div>
             )}
-            {mingGe.avoidCareer?.length > 0 && (
+            {mingGe && mingGe.avoidCareer && mingGe.avoidCareer.length > 0 && (
               <div style={{ padding: '14px', background: '#FFFBEB', borderRadius: '12px', border: '1px solid #FDE68A' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
                   <span style={{ fontSize: '14px' }}>❌</span>

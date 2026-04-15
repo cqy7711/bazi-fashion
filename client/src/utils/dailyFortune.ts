@@ -45,7 +45,7 @@ export function getScoreColor(score: number): string {
 
 export function deriveDailyFortune(userInfo: UserBirthInfo): DailyFortune {
   const bazi = userInfo.baziResult as any;
-  const fiveEls: Record<string, number> = (userInfo.fiveElements as Record<string, number>) || { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
+  const fiveEls: Record<string, number> = (userInfo.fiveElements as unknown as Record<string, number>) || { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
   const favorable = (userInfo.favorableElements || []) as string[];
   const unfavorable = (userInfo.unfavorableElements || []) as string[];
   const dm = (bazi?.dayMasterElement || 'earth') as string;

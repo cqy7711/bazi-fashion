@@ -1,9 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Loader2, MessageCircle, Sparkles, Trash2, BookOpen, Shirt, Gem, RefreshCw, ArrowLeft, Info } from 'lucide-react';
-import type { UserBirthInfo } from '../../shared/types';
+import { Send, Loader2, MessageCircle, Sparkles, Trash2, BookOpen, Shirt, Gem, RefreshCw, ArrowLeft, Info, ChevronDown, Users } from 'lucide-react';
+import type { UserBirthInfo } from '../shared/types';
 
 const USER_ID = 'user_default';
+
+// 用户列表项类型
+interface UserListItem {
+  id: string;
+  name: string;
+  birthYear: number;
+  birthMonth: number;
+  birthDay: number;
+  birthHour: number;
+  gender: string;
+}
 
 function cn(...c: (string | boolean | undefined)[]) { return c.filter(Boolean).join(' '); }
 
@@ -15,7 +26,7 @@ interface ChatMessage {
 }
 
 const QUICK_QUESTIONS = [
-  { icon: <BookOpen className="w-4 h-4" />, text: '我的八字命局解读', prompt: '请详细解读我的八字命局，包括性格特点、人生运势和建议。' },
+  { icon: <BookOpen className="w-4 h-4" />, text: '我的八字命局解读', prompt: '请详细分析我的八字命局，包括强弱判断、用神选取和格局分析。' },
   { icon: <Shirt className="w-4 h-4" />, text: '今日穿搭建议', prompt: '根据我的八字，今日穿什么颜色的衣服最好？' },
   { icon: <Gem className="w-4 h-4" />, text: '适合我的手串', prompt: '根据我的八字五行，什么材质的手串最适合我？' },
   { icon: <Sparkles className="w-4 h-4" />, text: '流年运势', prompt: '请分析我今年的流年运势，有哪些需要注意的事项？' },
@@ -27,6 +38,256 @@ const SUGGESTIONS_ABOUT: Record<string, string> = {
   earth: '您的八字喜土，代表稳重、包容、诚信。您适合从事建筑、农业、房地产、财务、法律等需要稳重踏实品质的工作。性格上您务实可靠，值得信赖。',
   metal: '您的八字喜金，代表清净、肃杀、决断。您适合从事金融、科技、医疗、金属加工、军事等需要决断力和逻辑思维的工作。性格上您理性果断，原则性强。',
   water: '您的八字喜水，代表智慧、流动、变通。您适合从事贸易、运输、航海、IT、咨询等需要灵活应变的工作。性格上您思维敏捷，善于观察，适合需要智慧的工作。',
+};
+
+// 命理学知识库常量 - 基于《八字分析方法讲解》和《命理学自学知识库》
+
+// 天干阴阳属性
+const YANG_STEMS = ['甲', '丙', '戊', '庚', '壬'];
+const YIN_STEMS = ['乙', '丁', '己', '辛', '癸'];
+
+// 天干五行对应
+const STEM_ELEMENT: Record<string, string> = {
+  '甲': '木', '乙': '木',
+  '丙': '火', '丁': '火',
+  '戊': '土', '己': '土',
+  '庚': '金', '辛': '金',
+  '壬': '水', '癸': '水',
+};
+
+// 地支藏干（人元）
+const BRANCH_HIDDEN_STEMS: Record<string, { stem: string; strength: '本气' | '中气' | '余气' }[]> = {
+  '子': [{ stem: '癸', strength: '本气' }],
+  '丑': [{ stem: '己', strength: '本气' }, { stem: '癸', strength: '中气' }, { stem: '辛', strength: '余气' }],
+  '寅': [{ stem: '甲', strength: '本气' }, { stem: '丙', strength: '中气' }, { stem: '戊', strength: '余气' }],
+  '卯': [{ stem: '乙', strength: '本气' }],
+  '辰': [{ stem: '戊', strength: '本气' }, { stem: '乙', strength: '中气' }, { stem: '癸', strength: '余气' }],
+  '巳': [{ stem: '丙', strength: '本气' }, { stem: '庚', strength: '中气' }, { stem: '戊', strength: '余气' }],
+  '午': [{ stem: '丁', strength: '本气' }, { stem: '己', strength: '中气' }],
+  '未': [{ stem: '己', strength: '本气' }, { stem: '丁', strength: '中气' }, { stem: '乙', strength: '余气' }],
+  '申': [{ stem: '庚', strength: '本气' }, { stem: '壬', strength: '中气' }, { stem: '戊', strength: '余气' }],
+  '酉': [{ stem: '辛', strength: '本气' }],
+  '戌': [{ stem: '戊', strength: '本气' }, { stem: '辛', strength: '中气' }, { stem: '丁', strength: '余气' }],
+  '亥': [{ stem: '壬', strength: '本气' }, { stem: '甲', strength: '中气' }],
+};
+
+// 五行旺衰状态（当令五行旺、被生者相、生他者休、克他者囚、被克者死）
+const ELEMENT_WANG_SHUAI: Record<string, Record<string, '旺' | '相' | '休' | '囚' | '死'>> = {
+  // 春季木旺
+  '寅': { '木': '旺', '火': '相', '水': '休', '金': '囚', '土': '死' },
+  '卯': { '木': '旺', '火': '相', '水': '休', '金': '囚', '土': '死' },
+  '辰': { '木': '相', '火': '旺', '土': '相', '金': '休', '水': '囚' },
+  // 夏季火旺
+  '巳': { '火': '旺', '土': '相', '木': '休', '水': '囚', '金': '死' },
+  '午': { '火': '旺', '土': '相', '木': '休', '水': '囚', '金': '死' },
+  '未': { '火': '相', '土': '旺', '金': '相', '木': '休', '水': '囚' },
+  // 秋季金旺
+  '申': { '金': '旺', '水': '相', '土': '休', '火': '囚', '木': '死' },
+  '酉': { '金': '旺', '水': '相', '土': '休', '火': '囚', '木': '死' },
+  '戌': { '金': '相', '水': '旺', '木': '相', '土': '休', '火': '囚' },
+  // 冬季水旺
+  '亥': { '水': '旺', '木': '相', '金': '休', '土': '囚', '火': '死' },
+  '子': { '水': '旺', '木': '相', '金': '休', '土': '囚', '火': '死' },
+  '丑': { '水': '相', '木': '旺', '火': '相', '金': '休', '土': '囚' },
+};
+
+// 五行相生相克
+const WUXING_PRODUCE: Record<string, string> = { '木': '火', '火': '土', '土': '金', '金': '水', '水': '木' };
+const WUXING_CONQUER: Record<string, string> = { '木': '土', '土': '水', '水': '火', '火': '金', '金': '木' };
+const WUXING_BY: Record<string, string> = { '木': '水', '水': '金', '金': '木', '火': '土' };
+
+// 十神计算
+const getShiShen = (stem: string, dayStem: string): string => {
+  const stemEl = STEM_ELEMENT[stem];
+  const dayEl = STEM_ELEMENT[dayStem];
+  if (!stemEl || !dayEl) return '';
+  
+  // 同我者
+  if (stemEl === dayEl) {
+    return YANG_STEMS.includes(stem) ? '比肩' : '劫财';
+  }
+  // 我生者
+  if (WUXING_PRODUCE[dayEl] === stemEl) {
+    return YANG_STEMS.includes(stem) ? '食神' : '伤官';
+  }
+  // 我克者
+  if (WUXING_CONQUER[dayEl] === stemEl) {
+    return YANG_STEMS.includes(stem) ? '偏财' : '正财';
+  }
+  // 克我者
+  if (WUXING_CONQUER[stemEl] === dayEl) {
+    return YANG_STEMS.includes(stem) ? '七杀' : '正官';
+  }
+  // 生我者
+  if (WUXING_PRODUCE[stemEl] === dayEl) {
+    return YANG_STEMS.includes(stem) ? '偏印' : '正印';
+  }
+  return '';
+};
+
+// 计算八字旺衰评分（基于《八字分析方法讲解》强弱量化评分系统）
+const calculateStrengthScore = (bazi: any): { score: number; status: string; details: string } => {
+  const monthBranch = bazi.monthPillar[1];
+  const dayStem = bazi.dayPillar[0];
+  const dayElement = STEM_ELEMENT[dayStem] || '';
+  
+  let score = 0;
+  const details: string[] = [];
+  
+  // 1. 得令评分（月令力量）
+  const monthStatus = ELEMENT_WANG_SHUAI[monthBranch]?.[dayElement] || '死';
+  const deLingScore = { '旺': 3, '相': 2, '休': 0, '囚': -2, '死': -3 }[monthStatus] || 0;
+  score += deLingScore;
+  details.push(`得令(${monthStatus}): ${deLingScore > 0 ? '+' : ''}${deLingScore}分`);
+  
+  // 2. 通根评分（日主在地支的根）
+  const pillars = [bazi.yearPillar, bazi.monthPillar, bazi.dayPillar, bazi.hourPillar];
+  pillars.forEach(p => {
+    if (p && p.length >= 2) {
+      const branch = p[1];
+      const hiddenStems = BRANCH_HIDDEN_STEMS[branch] || [];
+      hiddenStems.forEach(h => {
+        if (h.stem === dayStem) {
+          const rootScore = h.strength === '本气' ? 3 : h.strength === '中气' ? 2 : 1;
+          score += rootScore;
+          details.push(`通根(${h.strength}): +${rootScore}分`);
+        }
+      });
+    }
+  });
+  
+  // 3. 天干帮扶评分
+  const stemElements = pillars.map(p => p ? STEM_ELEMENT[p[0]] : '').filter(Boolean);
+  stemElements.forEach(el => {
+    if (el === dayElement) {
+      score += 2;
+      details.push('天干帮扶: +2分');
+    }
+    // 印星生身
+    if (WUXING_PRODUCE[el] === dayElement) {
+      score += 2;
+      details.push('印星生身: +2分');
+    }
+  });
+  
+  // 强弱分级
+  let status = '';
+  if (score >= 13) status = '身过旺（可能成专旺格）';
+  else if (score >= 10) status = '身强（需强力克泄耗）';
+  else if (score >= 6) status = '身旺（需适当克泄耗）';
+  else if (score >= 3) status = '中和（力量适中）';
+  else if (score >= 0) status = '身弱（需生扶帮助）';
+  else if (score >= -3) status = '身衰（需强力生扶）';
+  else status = '身极弱（可能成从格）';
+  
+  return { score, status, details: details.join('，') };
+};
+
+// 计算格局（基于《八字分析方法讲解》格局总论）
+const determinePattern = (bazi: any, strengthStatus: string): { pattern: string; description: string } => {
+  const monthStem = bazi.monthPillar[0];
+  const monthElement = STEM_ELEMENT[monthStem] || '';
+  const dayStem = bazi.dayPillar[0];
+  const dayElement = STEM_ELEMENT[dayStem] || '';
+  
+  // 月令为月支本气
+  const monthBranch = bazi.monthPillar[1];
+  const monthMainElement = STEM_ELEMENT[monthBranch[0]] || monthElement;
+  
+  const patterns: Record<string, { pattern: string; description: string }> = {
+    '财': { pattern: '财格', description: '月令财星，身旺财旺，富格，善于经营' },
+    '印': { pattern: '印格', description: '月令印星，身弱印生，贵格，有文化有地位' },
+    '食神': { pattern: '食神格', description: '月令食神，身旺食旺，才华横溢' },
+    '伤官': { pattern: '伤官格', description: '月令伤官，身旺伤旺，才华格，伤官见官为大忌' },
+    '官': { pattern: '正官格', description: '月令正官，身旺官旺，贵格，正直守法' },
+    '杀': { pattern: '七杀格', description: '月令七杀，权格，有魄力有权力' },
+  };
+  
+  // 检查是否为建禄或阳刃
+  if (['甲', '丙', '戊', '庚', '壬'].includes(dayStem) && monthBranch === '临官') {
+    return { pattern: '建禄格', description: '身旺格，独立自主' };
+  }
+  if (['甲', '丙', '戊', '庚', '壬'].includes(dayStem) && monthBranch === '帝旺') {
+    return { pattern: '阳刃格', description: '刚强勇猛，需制化' };
+  }
+  
+  // 根据月令本气判断格局
+  if (monthMainElement === '金') return patterns['财'];
+  if (monthMainElement === '水' && dayElement === '水') return patterns['印'];
+  if (monthMainElement === '火') return patterns['食神'];
+  if (['木', '土'].includes(monthMainElement)) return patterns['官'];
+  
+  return { pattern: '普通格局', description: '需结合用神综合判断' };
+};
+
+// 生成专业命理解读
+const generateProfessionalBaziAnalysis = (bazi: any, userInfo: any): string => {
+  const dayStem = bazi.dayPillar[0];
+  const dayBranch = bazi.dayPillar[1];
+  const monthStem = bazi.monthPillar[0];
+  const yearStem = bazi.yearPillar[0];
+  const hourStem = bazi.hourPillar[0];
+  
+  const dayElement = STEM_ELEMENT[dayStem] || '';
+  const monthElement = STEM_ELEMENT[monthStem] || '';
+  const yearElement = STEM_ELEMENT[yearStem] || '';
+  const hourElement = STEM_ELEMENT[hourStem] || '';
+  
+  // 计算十神分布
+  const stems = [yearStem, monthStem, dayStem, hourStem];
+  const shiShenCounts: Record<string, number> = {};
+  stems.forEach(s => {
+    const ss = getShiShen(s, dayStem);
+    if (ss) shiShenCounts[ss] = (shiShenCounts[ss] || 0) + 1;
+  });
+  
+  // 计算旺衰
+  const strength = calculateStrengthScore(bazi);
+  
+  // 判断格局
+  const pattern = determinePattern(bazi, strength.status);
+  
+  // 五行分布
+  const wuxingCounts = { 木: 0, 火: 0, 土: 0, 金: 0, 水: 0 };
+  stems.forEach(s => {
+    const el = STEM_ELEMENT[s];
+    if (el) wuxingCounts[el as keyof typeof wuxingCounts]++;
+  });
+  
+  const maxWuxing = Object.entries(wuxingCounts).sort((a, b) => b[1] - a[1])[0];
+  const minWuxing = Object.entries(wuxingCounts).sort((a, b) => a[1] - b[1])[0];
+  
+  return `
+【专业命盘分析】- 基于《八字分析方法讲解》和《命理学自学知识库》
+
+📌 四柱八字：
+年柱：${bazi.yearPillar}（${yearElement}行）
+月柱：${bazi.monthPillar}（${monthElement}行）
+日柱：${bazi.dayPillar}（${dayElement}行，主气${dayStem}）
+时柱：${bazi.hourPillar}（${hourElement}行）
+
+🔮 命局强弱分析：
+${strength.details}
+综合评分：${strength.score}分
+旺衰状态：${strength.status}
+
+💫 格局判断：
+${pattern.pattern}：${pattern.description}
+
+📊 五行分布：
+木:${wuxingCounts.木}个 | 火:${wuxingCounts.火}个 | 土:${wuxingCounts.土}个 | 金:${wuxingCounts.金}个 | 水:${wuxingCounts.水}个
+最旺：${maxWuxing[0]}行（${maxWuxing[1]}个）
+最弱：${minWuxing[0]}行（${minWuxing[1]}个）
+
+⚔️ 十神分布：
+${Object.entries(shiShenCounts).map(([ss, count]) => `${ss}:${count}个`).join(' | ')}
+
+💡 命理建议：
+根据《八字分析方法讲解》，您需要${strength.score >= 3 ? '克泄耗' : '生扶助'}日主。
+${strength.score >= 3 
+  ? '宜选择食伤、财星、官杀相关的行业和工作。' 
+  : '宜选择印星、比劫帮身的行业和工作。'}
+`;
 };
 
 function generateAIResponse(userInfo: UserBirthInfo | null, question: string): string {
@@ -43,23 +304,9 @@ function generateAIResponse(userInfo: UserBirthInfo | null, question: string): s
 
   const lowerQ = question.toLowerCase();
 
-  if (lowerQ.includes('命局') || lowerQ.includes('性格') || lowerQ.includes('解读')) {
-    return `【八字命局解读】
-
-📌 您的基本信息：
-四柱：${bazi.yearPillar} · ${bazi.monthPillar} · ${bazi.dayPillar} · ${bazi.hourPillar}
-日主：${bazi.dayMaster}（${dmName}行）
-喜用神：${fav.map(e => ({ wood: '木🪵', fire: '火🔥', earth: '土🏔', metal: '金⚪', water: '水🌊' }[e])).join('、')}
-
-💡 命局特点：
-您的日主为${bazi.dayMaster}，${dmName}行之人往往${dm === 'wood' ? '仁慈善良，有条理，善于计划和协调' : dm === 'fire' ? '热情开朗，善于表达，富有感染力' : dm === 'earth' ? '务实稳重，诚实守信，有责任心' : dm === 'metal' ? '刚毅果断，原则性强，善于决断' : '聪慧灵活，善于变通，适应力强'}。
-
-🏆 您的优势：
-• 喜用神为${dmName}，意味着您在与该五行相关的领域会更有优势
-${dm === 'wood' ? '• 适合从事需要条理和计划的工作' : dm === 'fire' ? '• 适合从事需要热情和表达力的工作' : dm === 'earth' ? '• 适合从事需要稳重和信誉的工作' : dm === 'metal' ? '• 适合从事需要决断力和逻辑的工作' : '• 适合从事需要智慧和灵活性的工作'}
-
-⚠️ 注意事项：
-忌神为${unfav.map(e => ({ wood: '木', fire: '火', earth: '土', metal: '金', water: '水' }[e])).join('、')}，在相关场合需特别注意调整心态。`;
+  if (lowerQ.includes('命局') || lowerQ.includes('性格') || lowerQ.includes('解读') || lowerQ.includes('详细') || lowerQ.includes('分析')) {
+    // 使用基于命理学知识库的专业分析
+    return generateProfessionalBaziAnalysis(bazi, userInfo);
   }
 
   if (lowerQ.includes('穿搭') || lowerQ.includes('颜色') || lowerQ.includes('衣服') || lowerQ.includes('今日')) {
@@ -79,7 +326,7 @@ ${c.map((color, i) => `${color}：${i === 0 ? '主色，可大面积穿着，增
 • 约会：${c[2]}点缀能增加神秘感和魅力
 
 ⚠️ 避免颜色：
-忌神${unav.map(e => ({ wood: '木', fire: '火', earth: '土', metal: '金', water: '水' }[e as any])).join('、')}对应的颜色不宜大面积使用，以免影响运势。`;
+忌神${unav.map(e => ({ wood: '木', fire: '火', earth: '土', metal: '金', water: '水' }[String(e)] || e)).join('、')}对应的颜色不宜大面积使用，以免影响运势。`;
   }
 
   if (lowerQ.includes('手串') || lowerQ.includes('首饰') || lowerQ.includes('饰品') || lowerQ.includes('珠宝')) {
@@ -144,7 +391,7 @@ ${SUGGESTIONS_ABOUT[dm]}
 
 📈 职场建议：
 • 在工作中多展现${dmName}行的特质（如：${dm === 'wood' ? '条理性、计划性、协调能力' : dm === 'fire' ? '热情、表达能力、感染力' : dm === 'earth' ? '稳重、诚信、责任心' : dm === 'metal' ? '决断力、原则性、逻辑思维' : '灵活性、适应性、洞察力'}）
-• 避免在工作中过多接触${unav.map(e => ({ wood: '火', fire: '水', earth: '木', metal: '火', water: '土' }[e as any])).join('、')}相关的元素`;
+• 避免在工作中过多接触${unav.map(e => ({ wood: '火', fire: '水', earth: '木', metal: '火', water: '土' }[String(e)] || e)).join('、')}相关的元素`;
   }
 
   if (lowerQ.includes('感情') || lowerQ.includes('婚姻') || lowerQ.includes('恋爱') || lowerQ.includes('桃花')) {
@@ -160,7 +407,7 @@ ${t}
 
 💡 感情建议：
 • ${dm === 'wood' ? '在感情中多表达自己的想法，不要过于压抑' : dm === 'fire' ? '学会控制情绪，给对方稳定的情感支持' : dm === 'earth' ? '适度放松控制欲，给彼此一些空间' : dm === 'metal' ? '不要太挑剔，学会欣赏对方的优点' : '增强安全感，过于敏感会影响感情'}
-• 避免与${unav.map(e => ({ wood: '金', fire: '水', earth: '木', metal: '火', water: '土' }[e as any])).join('、')}属性过强的人深度交往
+• 避免与${unav.map(e => ({ wood: '金', fire: '水', earth: '木', metal: '火', water: '土' }[String(e)] || e)).join('、')}属性过强的人深度交往
 • 佩戴喜用神手串可增强感情运势`;
   }
 
@@ -212,14 +459,17 @@ export default function AiChatPage() {
   const [loading, setLoading] = useState(false);
   const [userInfo, setUserInfo] = useState<UserBirthInfo | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [userList, setUserList] = useState<UserListItem[]>([]);
+  const [showUserDropdown, setShowUserDropdown] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
 
+  // 加载用户列表
   useEffect(() => {
-    // 加载用户列表，取最新记录
     fetch(`/api/users/${USER_ID}/birth-info`)
       .then(r => r.json())
       .then(data => {
         if (data.items?.length > 0) {
+          setUserList(data.items);
           const latest = data.items[0];
           setCurrentUserId(latest.id);
           fetch(`/api/users/${USER_ID}/birth-info/${latest.id}`)
@@ -228,14 +478,51 @@ export default function AiChatPage() {
         }
       })
       .catch(console.error);
+  }, []);
 
-    // 欢迎消息
-    setMessages([{
-      id: 'welcome',
-      role: 'assistant',
-      content: '🌟 欢迎来到八字AI助手！\n\n我是您的专属命理顾问，可以根据您的八字为您提供个性化的命理解读、穿搭建议、手串推荐等服务。\n\n请选择您感兴趣的话题，或直接向我提问！',
-      timestamp: new Date(),
-    }]);
+  // 切换用户
+  const switchUser = async (recordId: string) => {
+    if (recordId === currentUserId) {
+      setShowUserDropdown(false);
+      return;
+    }
+    setShowUserDropdown(false);
+    setLoading(true);
+    setUserInfo(null);
+    
+    try {
+      const info = await fetch(`/api/users/${USER_ID}/birth-info/${recordId}`).then(r => r.json());
+      if (!info.error) {
+        setUserInfo(info);
+        setCurrentUserId(recordId);
+        // 清空聊天记录
+        setMessages([{
+          id: 'user-switch-' + Date.now(),
+          role: 'assistant',
+          content: `🔄 已切换到 ${info.name} 的八字数据\n\n请选择您感兴趣的话题，或直接向我提问！`,
+          timestamp: new Date(),
+        }]);
+      }
+    } catch (err) {
+      console.error('切换用户失败:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 欢迎消息
+  const welcomeMsg: ChatMessage = {
+    id: 'welcome-' + Date.now(),
+    role: 'assistant',
+    content: '🌟 欢迎来到八字AI助手！\n\n我是您的专属命理顾问，可以根据您的八字为您提供个性化的命理解读、穿搭建议、手串推荐等服务。\n\n请选择您感兴趣的话题，或直接向我提问！',
+    timestamp: new Date(),
+  };
+
+  // 初始化欢迎消息
+  useEffect(() => {
+    if (messages.length === 0) {
+      setMessages([welcomeMsg]);
+    }
   }, []);
 
   useEffect(() => {
@@ -249,12 +536,42 @@ export default function AiChatPage() {
     setInput('');
     setLoading(true);
 
-    // 模拟AI思考延迟
-    await new Promise(r => setTimeout(r, 600 + Math.random() * 800));
+    try {
+      // 构建对话历史（排除欢迎消息）
+      const chatHistory = messages
+        .filter(m => !m.id.startsWith('welcome'))
+        .map(m => ({ role: m.role, content: m.content }));
+      chatHistory.push({ role: 'user', content: text });
 
-    const response = generateAIResponse(userInfo, text);
-    const aiMsg: ChatMessage = { id: (Date.now() + 1).toString(), role: 'assistant', content: response, timestamp: new Date() };
-    setMessages(prev => [...prev, aiMsg]);
+      // 调用后端 DeepSeek API
+      const res = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: USER_ID,
+          messages: chatHistory
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.success && data.message) {
+        const aiMsg: ChatMessage = { id: (Date.now() + 1).toString(), role: 'assistant', content: data.message, timestamp: new Date() };
+        setMessages(prev => [...prev, aiMsg]);
+      } else {
+        // API 不可用时使用本地回复作为 fallback
+        const fallback = generateAIResponse(userInfo, text);
+        const aiMsg: ChatMessage = { id: (Date.now() + 1).toString(), role: 'assistant', content: fallback, timestamp: new Date() };
+        setMessages(prev => [...prev, aiMsg]);
+      }
+    } catch (error) {
+      console.error('AI 对话请求失败:', error);
+      // 网络错误时使用本地回复
+      const fallback = generateAIResponse(userInfo, text);
+      const aiMsg: ChatMessage = { id: (Date.now() + 1).toString(), role: 'assistant', content: fallback, timestamp: new Date() };
+      setMessages(prev => [...prev, aiMsg]);
+    }
+
     setLoading(false);
   }
 
@@ -273,17 +590,58 @@ export default function AiChatPage() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      {/* 顶部信息栏 */}
+      {/* 顶部用户信息栏 - 支持切换 */}
       {userInfo && (
         <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
-          className="mb-4 px-4 py-2.5 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-100 flex items-center gap-3">
-          <Sparkles className="w-4 h-4 text-primary shrink-0" />
-          <div className="flex-1 min-w-0">
-            <p className="text-sm text-foreground font-medium truncate">
-              基于：{userInfo.name} · {userInfo.baziResult?.yearPillar}年{userInfo.baziResult?.monthPillar}月{userInfo.baziResult?.dayPillar}日{userInfo.baziResult?.hourPillar}时 · 日主{userInfo.baziResult?.dayMaster}
-            </p>
+          className="mb-4 px-4 py-2.5 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-100 relative">
+          <div className="flex items-center gap-3">
+            <Sparkles className="w-4 h-4 text-primary shrink-0" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-foreground font-medium truncate">
+                基于：{userInfo.name} · {userInfo.baziResult?.yearBranch}年{userInfo.baziResult?.monthBranch}月{userInfo.baziResult?.dayBranch}日{userInfo.baziResult?.hourBranch}时 · 日主{userInfo.baziResult?.dayMaster}
+              </p>
+            </div>
+            {/* 用户切换按钮 */}
+            {userList.length > 1 && (
+              <button 
+                onClick={() => setShowUserDropdown(!showUserDropdown)}
+                className="flex items-center gap-1 px-2 py-1 text-xs text-primary hover:bg-amber-100 rounded-lg transition-colors">
+                <Users className="w-3 h-3" />
+                <ChevronDown className={`w-3 h-3 transition-transform ${showUserDropdown ? 'rotate-180' : ''}`} />
+              </button>
+            )}
           </div>
-          <a href="/" className="text-xs text-primary hover:underline shrink-0">修改</a>
+          
+          {/* 用户下拉列表 */}
+          {showUserDropdown && userList.length > 1 && (
+            <motion.div 
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl border border-amber-100 shadow-lg z-50 overflow-hidden">
+              <div className="px-3 py-2 text-xs text-amber-600 font-medium border-b border-amber-100 bg-amber-50">
+                已录入用户 ({userList.length})
+              </div>
+              <div className="max-h-48 overflow-y-auto">
+                {userList.map((u) => (
+                  <button
+                    key={u.id}
+                    onClick={() => switchUser(u.id)}
+                    className={`w-full px-3 py-2.5 text-left flex items-center gap-3 hover:bg-amber-50 transition-colors ${u.id === currentUserId ? 'bg-amber-50' : ''}`}>
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${u.id === currentUserId ? 'bg-primary text-white' : 'bg-amber-100 text-amber-700'}`}>
+                      {u.name.charAt(0)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">{u.name}</p>
+                      <p className="text-xs text-muted-foreground">{u.birthYear}年{u.birthMonth}月{u.birthDay}日 {u.birthHour}时</p>
+                    </div>
+                    {u.id === currentUserId && (
+                      <span className="text-xs text-primary font-medium">当前</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
         </motion.div>
       )}
 
