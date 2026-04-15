@@ -1611,6 +1611,7 @@ export function getBraceletRecommendation(
         })(),
         // 手串推荐原理
         braceletPrinciple: `手串五行属性与命局喜忌神相配合：喜用神对应的五行手串可增强正面能量，忌神对应的五行手串需避免或谨慎使用。`,
+        summary: `身强宜泄，身弱宜补。手串五行与命局喜忌神配合使用，可调和五行能量，增强运势。`,
       },
     },
     

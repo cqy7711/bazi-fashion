@@ -29,7 +29,7 @@ interface ChatMessage {
 
 const QUICK_QUESTIONS = [
   { icon: <BookOpen className="w-4 h-4" />, text: '我的八字命局解读', prompt: '请详细分析我的八字命局，包括强弱判断、用神选取和格局分析。' },
-  { icon: <Shirt className="w-4 h-4" />, text: '今日穿搭建议', prompt: '根据我的八字，今日穿什么颜色的衣服最好？' },
+  { icon: <Shirt className="w-4 h-4" />, text: '今日色彩搭配建议', prompt: '根据我的八字，今日穿什么颜色的衣服最好？' },
   { icon: <Gem className="w-4 h-4" />, text: '适合我的手串', prompt: '根据我的八字五行，什么材质的手串最适合我？' },
   { icon: <Sparkles className="w-4 h-4" />, text: '流年运势', prompt: '请分析我今年的流年运势，有哪些需要注意的事项？' },
 ];
@@ -43,7 +43,7 @@ const SUGGESTIONS_ABOUT: Record<string, string> = {
 };
 
 // 解读风格定义
-export type ChatStyle = 'plain' | 'fairy' | 'game' | 'career';
+export type ChatStyle = 'plain' | 'fairy' | 'game' | 'career' | 'stock' | 'master';
 
 interface ChatStyleConfig {
   id: ChatStyle;
@@ -602,7 +602,7 @@ export default function AiChatPage() {
   const welcomeMsg: ChatMessage = {
     id: 'welcome-' + Date.now(),
     role: 'assistant',
-    content: '🌟 欢迎来到八字AI助手！\n\n我是您的专属命理顾问，可以根据您的八字为您提供个性化的命理解读、穿搭建议、手串推荐等服务。\n\n请选择您感兴趣的话题，或直接向我提问！',
+    content: '🌟 欢迎来到五行色彩搭配AI助手！\n\n我是您的专属命理顾问，可以根据您的八字为您提供个性化的命理解读、穿搭建议、手串推荐等服务。\n\n请选择您感兴趣的话题，或直接向我提问！',
     timestamp: new Date(),
   };
 

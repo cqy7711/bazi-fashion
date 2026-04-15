@@ -1065,7 +1065,7 @@ export default function HomePage() {
             <Sparkle style={{ width: '28px', height: '28px', color: '#FFFFFF' }} />
           </motion.div>
           <div style={{ flex: 1 }}>
-            <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '20px', fontWeight: 900, color: '#1A1A2E', letterSpacing: '-0.02em', marginBottom: '4px' }}>命理·时尚·运势</h2>
+            <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '20px', fontWeight: 900, color: '#1A1A2E', letterSpacing: '-0.02em', marginBottom: '4px' }}>五行色彩搭配</h2>
             <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', color: '#6B7280', display: 'flex', alignItems: 'center', gap: '4px' }}>
               根据生辰八字，智能推荐穿搭色彩与开运手串
               <Sparkles style={{ width: '14px', height: '14px', color: PALETTE.coral }} />
@@ -1864,7 +1864,7 @@ export default function HomePage() {
         {selectedRecord && previewInfo && previewInfo.baziResult && (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }} style={{ display: 'flex', flexDirection: 'row', gap: '12px', alignItems: 'stretch' }}>
 
-            {/* 今日穿搭建议卡片 */}
+            {/* 今日色彩搭配建议卡片 */}
             {outfitRec && (
             <div style={{
               flex: 1,

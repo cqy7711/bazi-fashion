@@ -1,5 +1,24 @@
 // 共享类型定义
+export type FiveElement = 'wood' | 'fire' | 'earth' | 'metal' | 'water';
 export type LanguageStyle = 'normal' | 'stock' | 'game' | 'fairytale' | 'fortune' | 'workplace';
+export type BodyStrengthType = 'strong' | 'weak' | 'neutral';
+export type BraceletScene = 'study' | 'work' | 'love' | 'wealth' | 'health' | 'social' | 'travel';
+
+export interface BraceletSceneInfo {
+  scene: BraceletScene;
+  name: string;
+  reason: string;
+}
+
+export interface BodyStrengthInfo {
+  type: BodyStrengthType;
+  strategy: {
+    primaryAdvice: string;
+    secondaryAdvice: string;
+    avoidAdvice: string;
+  };
+  description: string;
+}
 
 export interface FiveElementsAnalysis {
   wood: number;
@@ -51,6 +70,65 @@ export interface UserBirthInfo extends UserBirthInfoListItem {
   bodyStrengthScore?: number;
 }
 
+export interface BraceletItem {
+  name: string;
+  material: string;
+  color: string;
+  element: FiveElement;
+  effect: string;
+  image: string;
+  images?: string[];
+  whyRecommended?: string;
+  benefits?: string[];
+  usageTips?: string[];
+  knowledge?: string;
+  energyLevel?: string;
+  origin?: string;
+  suitableScenes?: BraceletSceneInfo[];
+  sceneAdvice?: string;
+}
+
+export interface BraceletRecommendation {
+  primaryBracelet: BraceletItem;
+  secondaryBracelets: BraceletItem[];
+  notes: string[];
+  matchingPrinciple?: string;
+  elementKnowledge?: { title: string; content: string };
+  userAnalysis?: string;
+  flowDay?: any;
+  bodyStrength?: BodyStrengthInfo;
+  xiYongAnalysis?: {
+    favorableAnalysis: {
+      count: number;
+      percentage: number;
+      elements: { element: FiveElement; name: string; percentage: number }[];
+    };
+    unfavorableAnalysis: {
+      count: number;
+      percentage: number;
+      elements: { element: FiveElement; name: string; percentage: number }[];
+    };
+    tiaohouElement?: FiveElement;
+    tiaohouAnalysis?: string;
+    strengthRelation?: {
+      bodyStrength: BodyStrengthType;
+      bodyStrengthName: string;
+      strategy: {
+        name: string;
+        description: string;
+        recommendedElement: FiveElement;
+        recommendedElementName: string;
+        avoidElement?: FiveElement | null;
+        avoidElementName?: string | null;
+      };
+      summary: string;
+      overallJudgment?: string;
+      braceletPrinciple?: string;
+    };
+  };
+  summary?: Record<string, any>;
+}
+
 export interface OutfitRecommendation {
   primaryColor: string;
   secondaryColor: string;
@@ -66,21 +144,4 @@ export interface OutfitRecommendation {
   outfitPlans?: Array<{ title: string; desc: string; items: string[]; color: string }>;
   todayFortune?: { goodThings: string[]; precautions: string[] };
   outfits?: Array<{ title: string; desc: string; items: string[]; color: string }>;
-}
-
-export interface BraceletRecommendation {
-  matchingPrinciple?: string;
-  primaryBracelet?: {
-    material: string;
-    style: string;
-    stones: string[];
-    occasions: string[];
-  };
-  recommendations?: Array<{
-    material: string;
-    style: string;
-    colorDesc: string;
-    stones: string[];
-    occasions: string[];
-  }>;
 }

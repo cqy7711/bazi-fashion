@@ -47,6 +47,27 @@ db.exec(`
     valid_until TEXT,
     created_at TEXT DEFAULT (datetime('now'))
   );
+
+  CREATE TABLE IF NOT EXISTS user_analytics (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    event_type TEXT NOT NULL,
+    event_data TEXT,
+    session_id TEXT,
+    duration INTEGER,
+    page TEXT,
+    created_at TEXT DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS user_sessions (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    start_time TEXT DEFAULT (datetime('now')),
+    end_time TEXT,
+    duration INTEGER,
+    device_info TEXT,
+    ip_address TEXT
+  );
 `);
 
 export default db;

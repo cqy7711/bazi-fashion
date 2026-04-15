@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, Lock, Users, FileText, TrendingUp, Calendar, Trash2, Eye, ArrowLeft, LogOut, RefreshCw, Search, BarChart2, PieChart } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart as RePieChart, Pie, Cell, LabelList } from 'recharts';
+import { Loader2, Lock, Users, FileText, TrendingUp, Calendar, Trash2, Eye, ArrowLeft, LogOut, RefreshCw, Search, BarChart2, PieChart, MousePointerClick, Clock, Activity, TrendingDown } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart as RePieChart, Pie, Cell, LabelList, LineChart, Line } from 'recharts';
 import type { UserBirthInfo } from '../shared/types';
 
 const ELEMENT_NAMES: Record<string, string> = { wood: '木', fire: '火', earth: '土', metal: '金', water: '水' };
@@ -27,6 +27,22 @@ function StatCard({ icon, label, value, sub }: { icon: React.ReactNode; label: s
 
 interface AdminStats { totalRecords: number; todayRecords: number; genderStats: Record<string, number>; elementStats: Record<string, number>; recentRecords: { name: string; birthYear: number; dayMaster: string; createdAt: string }[]; }
 interface BaziRecord { id: string; userId: string; name: string; birthYear: number; birthMonth: number; birthDay: number; birthHour: number; gender: string; calendarType: string; languageStyle: string; baziResult: any; fiveElements: any; favorableElements: string[]; unfavorableElements: string[]; createdAt: string; }
+interface AnalyticsData { summary: { totalSessions: number; totalEvents: number; activeUsers: number; avgDuration: number; }; eventStats: { type: string; count: number }[]; pageStats: { page: string; count: number }[]; dailyTrend: { date: string; count: number }[]; retention: { day: number; rate: number }[]; topEvents: { userId: string; eventType: string; eventData: any; createdAt: string }[]; }
+
+// 事件类型中文映射
+const EVENT_TYPE_NAMES: Record<string, string> = {
+  'page_view': '页面访问',
+  'click': '点击按钮',
+  'ai_chat': 'AI对话',
+  'style_select': '风格切换',
+  'outfit_view': '穿搭查看',
+  'bracelet_view': '手串查看',
+  'fortune_view': '运势查看',
+  'bazi_calc': '八字测算',
+  'dayun_view': '大运查看',
+  'session_start': '开始会话',
+  'session_end': '结束会话',
+};
 
 export default function AdminPage() {
   const [token, setToken] = useState<string | null>(localStorage.getItem('admin-token'));
@@ -41,9 +57,13 @@ export default function AdminPage() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<BaziRecord | null>(null);
+  const [activeTab, setActiveTab] = useState<'records' | 'analytics'>('records');
+  const [analyticsPeriod, setAnalyticsPeriod] = useState<'7d' | '30d' | 'all'>('7d');
+  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const LIMIT = 15;
 
   useEffect(() => { if (token) loadStats(); }, [token]);
+  useEffect(() => { if (token && activeTab === 'analytics') loadAnalytics(); }, [token, activeTab, analyticsPeriod]);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -64,6 +84,14 @@ export default function AdminPage() {
       setStats(await res.json());
       loadRecords(1, '');
     } catch { console.error('加载统计失败'); }
+  }
+
+  async function loadAnalytics() {
+    try {
+      const res = await fetch(`/api/admin/analytics?period=${analyticsPeriod}`);
+      const data = await res.json();
+      setAnalytics(data);
+    } catch { console.error('加载分析数据失败'); }
   }
 
   async function loadRecords(p: number, q: string) {
@@ -143,17 +171,183 @@ export default function AdminPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            {/* Tab切换 */}
+            <div className="flex bg-secondary/50 rounded-xl p-1">
+              <button onClick={() => setActiveTab('records')}
+                className={cn('px-3 py-1.5 rounded-lg text-sm font-medium transition-all', activeTab === 'records' ? 'bg-white shadow text-foreground' : 'text-muted-foreground hover:text-foreground')}>
+                用户记录
+              </button>
+              <button onClick={() => setActiveTab('analytics')}
+                className={cn('px-3 py-1.5 rounded-lg text-sm font-medium transition-all', activeTab === 'analytics' ? 'bg-white shadow text-foreground' : 'text-muted-foreground hover:text-foreground')}>
+                用户分析
+              </button>
+            </div>
             <button onClick={() => { loadStats(); loadRecords(page, search); }} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors">
-              <RefreshCw className="w-4 h-4" /> 刷新
+              <RefreshCw className="w-4 h-4" />
             </button>
             <button onClick={logout} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm text-red-500 hover:bg-red-50 transition-colors">
-              <LogOut className="w-4 h-4" /> 退出
+              <LogOut className="w-4 h-4" />
             </button>
           </div>
         </div>
       </header>
 
       <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+        {/* 用户分析页面 */}
+        {activeTab === 'analytics' && (
+          <div className="space-y-6">
+            {/* 时间范围选择 */}
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-bold text-foreground">用户行为分析</h2>
+              <div className="flex bg-secondary/50 rounded-xl p-1">
+                {[['7d', '近7天'], ['30d', '近30天'], ['all', '全部']].map(([val, label]) => (
+                  <button key={val} onClick={() => setAnalyticsPeriod(val as any)}
+                    className={cn('px-3 py-1.5 rounded-lg text-sm font-medium transition-all', analyticsPeriod === val ? 'bg-white shadow text-foreground' : 'text-muted-foreground hover:text-foreground')}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 概览卡片 */}
+            {analytics && (
+              <>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <StatCard icon={<Activity className="w-5 h-5" />} label="总会话数" value={analytics.summary.totalSessions} />
+                  <StatCard icon={<MousePointerClick className="w-5 h-5" />} label="总事件数" value={analytics.summary.totalEvents} />
+                  <StatCard icon={<Users className="w-5 h-5" />} label="活跃用户" value={analytics.summary.activeUsers} />
+                  <StatCard icon={<Clock className="w-5 h-5" />} label="平均时长" value={`${Math.floor(analytics.summary.avgDuration / 60)}分`} sub={`${analytics.summary.avgDuration % 60}秒`} />
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* 每日趋势 */}
+                  <div className="bg-white rounded-2xl border border-border p-5">
+                    <div className="flex items-center gap-2 mb-4">
+                      <TrendingUp className="w-4 h-4 text-primary" />
+                      <h3 className="text-sm font-bold text-foreground">每日事件趋势</h3>
+                    </div>
+                    <ResponsiveContainer width="100%" height={200}>
+                      <LineChart data={analytics.dailyTrend.map(d => ({ ...d, date: d.date.slice(5) }))}>
+                        <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#6B7280' }} axisLine={false} tickLine={false} />
+                        <YAxis tick={{ fontSize: 10, fill: '#9CA3AF' }} axisLine={false} tickLine={false} />
+                        <Tooltip formatter={(v: any) => [`${v}次`, '事件数']} contentStyle={{ borderRadius: 12, border: '1px solid #e5e7eb', fontSize: 12 }} />
+                        <Line type="monotone" dataKey="count" stroke="#FF6B9D" strokeWidth={2} dot={{ fill: '#FF6B9D', strokeWidth: 0, r: 4 }} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  {/* 功能使用排行 */}
+                  <div className="bg-white rounded-2xl border border-border p-5">
+                    <div className="flex items-center gap-2 mb-4">
+                      <MousePointerClick className="w-4 h-4 text-primary" />
+                      <h3 className="text-sm font-bold text-foreground">功能使用排行</h3>
+                    </div>
+                    <div className="space-y-2 max-h-[200px] overflow-y-auto">
+                      {analytics.eventStats.map((e, i) => (
+                        <div key={e.type} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                          <div className="flex items-center gap-2">
+                            <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">{i + 1}</span>
+                            <span className="text-sm text-foreground">{EVENT_TYPE_NAMES[e.type] || e.type}</span>
+                          </div>
+                          <span className="text-sm font-semibold text-primary">{e.count}次</span>
+                        </div>
+                      ))}
+                      {analytics.eventStats.length === 0 && (
+                        <p className="text-center text-muted-foreground text-sm py-8">暂无数据</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* 留存率 */}
+                  <div className="bg-white rounded-2xl border border-border p-5">
+                    <div className="flex items-center gap-2 mb-4">
+                      <TrendingDown className="w-4 h-4 text-primary" />
+                      <h3 className="text-sm font-bold text-foreground">用户留存率</h3>
+                    </div>
+                    <ResponsiveContainer width="100%" height={160}>
+                      <BarChart data={analytics.retention}>
+                        <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#6B7280' }} axisLine={false} tickLine={false} tickFormatter={v => `第${v}天`} />
+                        <YAxis tick={{ fontSize: 10, fill: '#9CA3AF' }} axisLine={false} tickLine={false} unit="%" />
+                        <Tooltip formatter={(v: any) => [`${v}%`, '留存率']} contentStyle={{ borderRadius: 12, border: '1px solid #e5e7eb', fontSize: 12 }} />
+                        <Bar dataKey="rate" radius={[4, 4, 4, 4]}>
+                          {analytics.retention.map((_, i) => <Cell key={i} fill={i === 0 ? '#FF6B9D' : i === 1 ? '#FFB347' : '#7BED9F'} />)}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  {/* 页面访问排行 */}
+                  <div className="bg-white rounded-2xl border border-border p-5">
+                    <div className="flex items-center gap-2 mb-4">
+                      <Activity className="w-4 h-4 text-primary" />
+                      <h3 className="text-sm font-bold text-foreground">页面访问排行</h3>
+                    </div>
+                    <div className="space-y-2 max-h-[160px] overflow-y-auto">
+                      {analytics.pageStats.map((p, i) => (
+                        <div key={p.page} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+                          <div className="flex items-center gap-2">
+                            <span className="w-6 h-6 rounded-full bg-blue-50 text-blue-600 text-xs font-bold flex items-center justify-center">{i + 1}</span>
+                            <span className="text-sm text-foreground">{p.page || '首页'}</span>
+                          </div>
+                          <span className="text-sm font-semibold text-blue-600">{p.count}次</span>
+                        </div>
+                      ))}
+                      {analytics.pageStats.length === 0 && (
+                        <p className="text-center text-muted-foreground text-sm py-8">暂无数据</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 最近事件 */}
+                <div className="bg-white rounded-2xl border border-border p-5">
+                  <h3 className="text-sm font-bold text-foreground mb-4">最近用户行为</h3>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-border bg-secondary/20">
+                          <th className="text-left px-4 py-2.5 text-xs font-semibold text-muted-foreground">用户</th>
+                          <th className="text-left px-4 py-2.5 text-xs font-semibold text-muted-foreground">事件</th>
+                          <th className="text-left px-4 py-2.5 text-xs font-semibold text-muted-foreground">详情</th>
+                          <th className="text-left px-4 py-2.5 text-xs font-semibold text-muted-foreground">时间</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {analytics.topEvents.map((e, i) => (
+                          <tr key={i} className="border-b border-border last:border-0 hover:bg-secondary/20 transition-colors">
+                            <td className="px-4 py-3 text-xs text-foreground">{e.userId.slice(0, 8)}...</td>
+                            <td className="px-4 py-3 text-xs">
+                              <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium">
+                                {EVENT_TYPE_NAMES[e.eventType] || e.eventType}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-xs text-muted-foreground">
+                              {e.eventData ? JSON.stringify(e.eventData).slice(0, 30) : '-'}
+                            </td>
+                            <td className="px-4 py-3 text-xs text-muted-foreground">
+                              {new Date(e.createdAt).toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
+                            </td>
+                          </tr>
+                        ))}
+                        {analytics.topEvents.length === 0 && (
+                          <tr>
+                            <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground text-sm">暂无数据</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* 用户记录页面 */}
+        {activeTab === 'records' && (
+          <>
         {/* 统计卡片 */}
         {stats && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -355,6 +549,8 @@ export default function AdminPage() {
             )}
           </div>
         </div>
+          </>
+        )}
       </div>
 
       {/* 详情弹窗 */}

@@ -188,6 +188,36 @@ export type BraceletRecommendation = {
   userAnalysis?: string;
   flowDay?: any;
   bodyStrength?: BodyStrengthInfo;
+  xiYongAnalysis?: {
+    favorableAnalysis: {
+      count: number;
+      percentage: number;
+      elements: { element: FiveElement; name: string; percentage: number }[];
+    };
+    unfavorableAnalysis: {
+      count: number;
+      percentage: number;
+      elements: { element: FiveElement; name: string; percentage: number }[];
+    };
+    tiaohouElement?: FiveElement;
+    tiaohouAnalysis?: string;
+    strengthRelation?: {
+      bodyStrength: BodyStrengthType;
+      bodyStrengthName: string;
+      strategy: {
+        name: string;
+        description: string;
+        recommendedElement: FiveElement;
+        recommendedElementName: string;
+        avoidElement?: FiveElement | null;
+        avoidElementName?: string | null;
+      };
+      summary: string;
+      overallJudgment?: string;
+      braceletPrinciple?: string;
+    };
+  };
+  summary?: Record<string, any>;
 };
 
 export type FiveElementsAnalysis = {

@@ -4,6 +4,9 @@ import HomePage from './pages/HomePage';
 import ResultPage from './pages/ResultPage';
 import AdminPage from './pages/AdminPage';
 import AiChatPage from './pages/AiChatPage';
+import { startSession, endSession, trackEvent, EventTypes } from './utils/analytics';
+import { useEffect } from 'react';
+
 const ACCENT = '#FF6B9D';
 const TINTS = {
   coral: '#FF6B9D',
@@ -14,7 +17,32 @@ const TINTS = {
   purple: '#9D6BFF',
 };
 
+// 会话时间追踪
+let sessionStartTime = Date.now();
+
 export default function App() {
+  useEffect(() => {
+    sessionStartTime = Date.now();
+    startSession();
+
+    trackEvent({
+      eventType: EventTypes.PAGE_VIEW,
+      page: window.location.hash.replace('#', '') || '/',
+    });
+
+    const handleBeforeUnload = () => {
+      const duration = Math.round((Date.now() - sessionStartTime) / 1000);
+      endSession(duration);
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      const duration = Math.round((Date.now() - sessionStartTime) / 1000);
+      endSession(duration);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
   return (
     <HashRouter>
       <div style={{ backgroundColor: '#FFFFFF', color: '#1A1A2E', minHeight: '100vh', position: 'relative', overflow: 'hidden' }}>
@@ -65,7 +93,6 @@ export default function App() {
               animate={{ opacity: 1, x: 0 }}
               style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none' }}
             >
-              {/* 渐变 Emoji Logo */}
               <div style={{
                 width: '40px', height: '40px', borderRadius: '12px',
                 background: 'linear-gradient(135deg, #FF6B9D, #FF9D6B)',
@@ -82,7 +109,7 @@ export default function App() {
                   color: '#1A1A2E', letterSpacing: '-0.02em',
                   lineHeight: 1.2,
                 }}>
-                  命理·时尚·运势
+                  五行色彩搭配
                 </h1>
                 <p style={{
                   fontFamily: 'Space Grotesk, sans-serif',
@@ -90,7 +117,7 @@ export default function App() {
                   color: '#A0A8C0', textTransform: 'uppercase',
                   marginTop: '1px',
                 }}>
-                  BAZI · FASHION · ASTRO
+                  WUXING · COLOR · FATE
                 </p>
               </div>
             </motion.div>
@@ -105,11 +132,8 @@ export default function App() {
                 { href: '/', label: '首页', icon: '🏠', color: ACCENT },
                 { href: '/#/ai-chat', label: 'AI 命理', icon: '🤖', color: TINTS.purple },
                 { href: '/#/admin', label: '管理', icon: '⚙️', color: TINTS.blue },
-                { href: 'https://studio.plasmic.app', label: '可视化编辑', icon: '🎨', color: '#9D6BFF', external: true },
-              ].map(({ href, label, icon, color, external }) => (
+              ].map(({ href, label, icon, color }) => (
                 <a key={href} href={href}
-                  target={external ? '_blank' : undefined}
-                  rel={external ? 'noopener noreferrer' : undefined}
                   style={{
                     padding: '8px 20px',
                     fontSize: '14px', fontFamily: 'Outfit, sans-serif',
@@ -171,7 +195,7 @@ export default function App() {
                 fontFamily: 'Outfit, sans-serif',
                 fontSize: '13px', color: '#8A92A8', fontWeight: 500,
               }}>
-                八字 · 穿搭 · 运势
+用色彩读懂你的五行命理
               </span>
             </div>
             <p style={{
