@@ -8,8 +8,9 @@
     "start": "node dist/server/src/index.js"
   },
   "dependencies": {
-    "cors": "^2.8.5",
     "better-sqlite3": "^11.7.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
     "express": "^4.21.0",
     "uuid": "^11.0.3"
   },

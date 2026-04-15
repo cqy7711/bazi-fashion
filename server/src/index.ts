@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import { v4 as uuidv4 } from 'uuid';
@@ -796,9 +797,34 @@ app.post('/api/ai/chat', async (req, res) => {
 ` : '';
     
     // 构建 DeepSeek API 请求
+    // 从最后一条用户消息中提取风格前缀（如果存在）
+    let chatStylePrompt = '';
+    const processedMessages = messages.map((m: any, idx: number) => {
+      if (m.role === 'user' && m.content) {
+        // 检查消息是否包含风格前缀标记
+        if (m.content.includes('请用最通俗易懂的大白话风格') || 
+            m.content.includes('请用童话故事的风格') ||
+            m.content.includes('请用游戏世界的风格') ||
+            m.content.includes('请用职场发展的视角')) {
+          // 提取风格前缀
+          const prefixEnd = m.content.indexOf('用户问题：');
+          if (prefixEnd > 0) {
+            chatStylePrompt = m.content.substring(0, prefixEnd);
+            return { role: 'user', content: m.content.substring(prefixEnd + 5) }; // "用户问题："之后
+          }
+        }
+      }
+      return { role: m.role === 'user' ? 'user' : 'assistant', content: m.content };
+    });
+    
+    // 将风格前缀加入系统提示
+    const styleSystemPrompt = chatStylePrompt 
+      ? MINGLI_SYSTEM_PROMPT + '\n\n【重要】用户的特殊要求：' + chatStylePrompt 
+      : MINGLI_SYSTEM_PROMPT;
+    
     const deepseekMessages = [
-      { role: 'system', content: MINGLI_SYSTEM_PROMPT + userSummary },
-      ...messages.map((m: any) => ({
+      { role: 'system', content: styleSystemPrompt + userSummary },
+      ...processedMessages.map((m: any) => ({
         role: m.role === 'user' ? 'user' : 'assistant',
         content: m.content
       }))

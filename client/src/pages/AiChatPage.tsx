@@ -23,6 +23,8 @@ interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
+  question?: string; // 原始问题（用于风格切换）
+  styleUsed?: ChatStyle; // 使用的解读风格
 }
 
 const QUICK_QUESTIONS = [
@@ -39,6 +41,83 @@ const SUGGESTIONS_ABOUT: Record<string, string> = {
   metal: '您的八字喜金，代表清净、肃杀、决断。您适合从事金融、科技、医疗、金属加工、军事等需要决断力和逻辑思维的工作。性格上您理性果断，原则性强。',
   water: '您的八字喜水，代表智慧、流动、变通。您适合从事贸易、运输、航海、IT、咨询等需要灵活应变的工作。性格上您思维敏捷，善于观察，适合需要智慧的工作。',
 };
+
+// 解读风格定义
+export type ChatStyle = 'plain' | 'fairy' | 'game' | 'career';
+
+interface ChatStyleConfig {
+  id: ChatStyle;
+  name: string;
+  icon: React.ReactNode;
+  color: string;
+  bgColor: string;
+  description: string;
+  maxUses: number;
+  promptPrefix: string;
+}
+
+const CHAT_STYLES: ChatStyleConfig[] = [
+  {
+    id: 'plain',
+    name: '大白话',
+    icon: '💬',
+    color: 'text-amber-600',
+    bgColor: 'bg-amber-50 border-amber-200',
+    description: '简单直白的大白话解读',
+    maxUses: 5,
+    promptPrefix: '请用最通俗易懂的大白话风格来解读八字命理，避免使用专业术语，让完全没有命理基础的人也能完全听懂。',
+  },
+  {
+    id: 'fairy',
+    name: '童话',
+    icon: '🌟',
+    color: 'text-pink-600',
+    bgColor: 'bg-pink-50 border-pink-200',
+    description: '童话故事风格解读',
+    maxUses: 1,
+    promptPrefix: '请用童话故事的风格来解读八字命理，把命理概念拟人化、故事化，像讲述一个奇妙的冒险故事一样有趣。',
+  },
+  {
+    id: 'game',
+    name: '游戏',
+    icon: '🎮',
+    color: 'text-purple-600',
+    bgColor: 'bg-purple-50 border-purple-200',
+    description: '游戏世界观解读',
+    maxUses: 1,
+    promptPrefix: '请用游戏世界的风格来解读八字命理，把八字比作游戏属性、装备、技能、大招等，用游戏玩家的视角来描述命运。',
+  },
+  {
+    id: 'career',
+    name: '职场',
+    icon: '💼',
+    color: 'text-blue-600',
+    bgColor: 'bg-blue-50 border-blue-200',
+    description: '职场发展解读',
+    maxUses: 1,
+    promptPrefix: '请用职场发展的视角来解读八字命理，把命理概念比作职场技能、工作表现、团队角色、职业规划等实用内容。',
+  },
+  {
+    id: 'stock',
+    name: '股民',
+    icon: '📈',
+    color: 'text-emerald-600',
+    bgColor: 'bg-emerald-50 border-emerald-200',
+    description: '股市投资风格解读',
+    maxUses: 1,
+    promptPrefix: '请用股市投资的风格来解读八字命理，把五行运势比作K线图、大盘走势、个股分析、技术指标、持仓策略、牛市熊市等股市术语。',
+  },
+  {
+    id: 'master',
+    name: '算命师',
+    icon: '🔮',
+    color: 'text-amber-600',
+    bgColor: 'bg-amber-50 border-amber-200',
+    description: '传统算命师解读',
+    maxUses: 1,
+    promptPrefix: '请用传统算命先生的风格来解读八字命理，用古风文言文腔调、神秘高深的氛围、略带玄学意味的口吻来解读命理。',
+  },
+];
 
 // 命理学知识库常量 - 基于《八字分析方法讲解》和《命理学自学知识库》
 
@@ -461,6 +540,15 @@ export default function AiChatPage() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [userList, setUserList] = useState<UserListItem[]>([]);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const [currentStyle, setCurrentStyle] = useState<ChatStyle>('plain');
+  const [styleUsageCount, setStyleUsageCount] = useState<Record<ChatStyle, number>>({
+    plain: 0,
+    fairy: 0,
+    game: 0,
+    career: 0,
+    stock: 0,
+    master: 0,
+  });
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // 加载用户列表
@@ -531,17 +619,54 @@ export default function AiChatPage() {
 
   async function sendMessage(text: string) {
     if (!text.trim() || loading) return;
+    
+    // 检查风格使用次数限制
+    const currentStyleConfig = CHAT_STYLES.find(s => s.id === currentStyle)!;
+    if (styleUsageCount[currentStyle] >= currentStyleConfig.maxUses) {
+      // 提示用户切换风格
+      const otherStyles = CHAT_STYLES.filter(s => s.id !== currentStyle && styleUsageCount[s.id] < s.maxUses);
+      if (otherStyles.length > 0) {
+        const nextStyle = otherStyles[0];
+        const aiMsg: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: `⚠️ ${currentStyleConfig.name}风格今日已用完（${currentStyleConfig.maxUses}次）\n\n建议切换到「${nextStyle.name}」风格继续体验！点击下方风格标签即可切换。`,
+          timestamp: new Date(),
+        };
+        setMessages(prev => [...prev, aiMsg]);
+        return;
+      } else {
+        const aiMsg: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: `⚠️ 所有解读风格今日次数已用完。\n\n• 大白话：${CHAT_STYLES[0].maxUses}次（已用${styleUsageCount.plain}次）\n• 童话/游戏/职场/股民/算命师：各1次\n\n请明天再来体验更多内容！🌙`,
+          timestamp: new Date(),
+        };
+        setMessages(prev => [...prev, aiMsg]);
+        return;
+      }
+    }
+    
     const userMsg: ChatMessage = { id: Date.now().toString(), role: 'user', content: text, timestamp: new Date() };
     setMessages(prev => [...prev, userMsg]);
     setInput('');
     setLoading(true);
+    
+    // 更新风格使用次数
+    setStyleUsageCount(prev => ({ ...prev, [currentStyle]: prev[currentStyle] + 1 }));
 
     try {
+      // 获取当前风格的前缀
+      const stylePrefix = currentStyleConfig.promptPrefix;
+      
       // 构建对话历史（排除欢迎消息）
       const chatHistory = messages
         .filter(m => !m.id.startsWith('welcome'))
         .map(m => ({ role: m.role, content: m.content }));
-      chatHistory.push({ role: 'user', content: text });
+      
+      // 将风格前缀和用户问题合并
+      const styledMessage = `${stylePrefix}\n\n用户问题：${text}`;
+      chatHistory.push({ role: 'user', content: styledMessage });
 
       // 调用后端 DeepSeek API
       const res = await fetch('/api/ai/chat', {
@@ -556,19 +681,122 @@ export default function AiChatPage() {
       const data = await res.json();
 
       if (data.success && data.message) {
-        const aiMsg: ChatMessage = { id: (Date.now() + 1).toString(), role: 'assistant', content: data.message, timestamp: new Date() };
+        // 保存原始问题和使用的风格
+        const aiMsg: ChatMessage = { 
+          id: (Date.now() + 1).toString(), 
+          role: 'assistant', 
+          content: data.message, 
+          timestamp: new Date(),
+          question: text,
+          styleUsed: currentStyle
+        };
         setMessages(prev => [...prev, aiMsg]);
       } else {
         // API 不可用时使用本地回复作为 fallback
         const fallback = generateAIResponse(userInfo, text);
-        const aiMsg: ChatMessage = { id: (Date.now() + 1).toString(), role: 'assistant', content: fallback, timestamp: new Date() };
+        const aiMsg: ChatMessage = { 
+          id: (Date.now() + 1).toString(), 
+          role: 'assistant', 
+          content: fallback, 
+          timestamp: new Date(),
+          question: text,
+          styleUsed: currentStyle
+        };
         setMessages(prev => [...prev, aiMsg]);
       }
     } catch (error) {
       console.error('AI 对话请求失败:', error);
       // 网络错误时使用本地回复
       const fallback = generateAIResponse(userInfo, text);
-      const aiMsg: ChatMessage = { id: (Date.now() + 1).toString(), role: 'assistant', content: fallback, timestamp: new Date() };
+      const aiMsg: ChatMessage = { 
+        id: (Date.now() + 1).toString(), 
+        role: 'assistant', 
+        content: fallback, 
+        timestamp: new Date(),
+        question: text,
+        styleUsed: currentStyle
+      };
+      setMessages(prev => [...prev, aiMsg]);
+    }
+
+    setLoading(false);
+  }
+
+  // 重新解读：用新风格回答之前的问题
+  async function reInterpret(messageId: string, newStyle: ChatStyle) {
+    const targetMsg = messages.find(m => m.id === messageId);
+    if (!targetMsg || !targetMsg.question) return;
+    
+    const question = targetMsg.question;
+    const styleConfig = CHAT_STYLES.find(s => s.id === newStyle)!;
+    
+    // 检查风格使用次数
+    if (styleUsageCount[newStyle] >= styleConfig.maxUses) {
+      return;
+    }
+    
+    setLoading(true);
+    
+    // 更新风格使用次数
+    setStyleUsageCount(prev => ({ ...prev, [newStyle]: prev[newStyle] + 1 }));
+
+    try {
+      const stylePrefix = styleConfig.promptPrefix;
+      
+      // 构建对话历史（排除欢迎消息和当前消息）
+      const chatHistory = messages
+        .filter(m => !m.id.startsWith('welcome') && m.id !== messageId)
+        .map(m => ({ role: m.role, content: m.content }));
+      
+      // 将风格前缀和用户问题合并
+      const styledMessage = `${stylePrefix}\n\n用户问题：${question}`;
+      chatHistory.push({ role: 'user', content: styledMessage });
+
+      // 调用后端 DeepSeek API
+      const res = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: USER_ID,
+          messages: chatHistory
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.success && data.message) {
+        const aiMsg: ChatMessage = { 
+          id: (Date.now() + 1).toString(), 
+          role: 'assistant', 
+          content: data.message, 
+          timestamp: new Date(),
+          question: question,
+          styleUsed: newStyle
+        };
+        setMessages(prev => [...prev, aiMsg]);
+      } else {
+        const fallback = generateAIResponse(userInfo, question);
+        const aiMsg: ChatMessage = { 
+          id: (Date.now() + 1).toString(), 
+          role: 'assistant', 
+          content: fallback, 
+          timestamp: new Date(),
+          question: question,
+          styleUsed: newStyle
+        };
+        setMessages(prev => [...prev, aiMsg]);
+      }
+    } catch (error) {
+      console.error('重新解读失败:', error);
+      const fallback = generateAIResponse(userInfo, question);
+      const aiMsg: ChatMessage = { 
+        id: (Date.now() + 1).toString(), 
+        role: 'assistant', 
+        content: fallback, 
+        timestamp: new Date(),
+        question: question,
+        styleUsed: newStyle
+      };
       setMessages(prev => [...prev, aiMsg]);
     }
 
@@ -583,9 +811,11 @@ export default function AiChatPage() {
     setMessages([{
       id: 'welcome-' + Date.now(),
       role: 'assistant',
-      content: '🌟 聊天已清空！请选择您感兴趣的话题，或直接向我提问。',
+      content: '🌟 聊天已清空！请选择您感兴趣的话题，或直接向我提问。\n\n💡 提示：切换不同解读风格可以获得更有趣的体验！',
       timestamp: new Date(),
     }]);
+    // 重置风格使用次数
+    setStyleUsageCount({ plain: 0, fairy: 0, game: 0, career: 0, stock: 0, master: 0 });
   }
 
   return (
@@ -675,26 +905,65 @@ export default function AiChatPage() {
 
       {/* 聊天记录 */}
       <div className="space-y-3 mb-4 max-h-[55vh] overflow-y-auto pr-1">
-        {messages.map(msg => (
-          <motion.div key={msg.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-            className={cn('flex gap-2.5', msg.role === 'user' && 'flex-row-reverse')}>
-            <div className={cn('w-8 h-8 rounded-xl flex items-center justify-center shrink-0 text-sm font-black',
-              msg.role === 'user' ? 'bg-primary text-white' : 'bg-secondary border border-border text-foreground')}>
-              {msg.role === 'user' ? '我' : '☯'}
-            </div>
-            <div className={cn('flex-1 max-w-[80%]', msg.role === 'user' && 'text-right')}>
-              <div className={cn('inline-block px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap text-left',
-                msg.role === 'user'
-                  ? 'bg-primary text-white rounded-tr-sm'
-                  : 'bg-white border border-border rounded-tl-sm shadow-sm')}>
-                {msg.content}
+        {messages.map(msg => {
+          const currentStyleConfig = CHAT_STYLES.find(s => s.id === msg.styleUsed);
+          const otherStyles = CHAT_STYLES.filter(s => s.id !== msg.styleUsed && styleUsageCount[s.id] < s.maxUses);
+          
+          return (
+            <motion.div key={msg.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+              className={cn('flex gap-2.5', msg.role === 'user' && 'flex-row-reverse')}>
+              <div className={cn('w-8 h-8 rounded-xl flex items-center justify-center shrink-0 text-sm font-black',
+                msg.role === 'user' ? 'bg-primary text-white' : 'bg-secondary border border-border text-foreground')}>
+                {msg.role === 'user' ? '我' : '☯'}
               </div>
-              <p className="text-[10px] text-muted-foreground mt-1 px-1">
-                {msg.timestamp.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
-              </p>
-            </div>
-          </motion.div>
-        ))}
+              <div className={cn('flex-1 max-w-[80%]', msg.role === 'user' && 'text-right')}>
+                <div className={cn('inline-block px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap text-left',
+                  msg.role === 'user'
+                    ? 'bg-primary text-white rounded-tr-sm'
+                    : 'bg-white border border-border rounded-tl-sm shadow-sm')}>
+                  {msg.content}
+                </div>
+                
+                {/* AI回复底部：显示风格标签 + 切换按钮 */}
+                {msg.role === 'assistant' && msg.styleUsed && (
+                  <div className="flex items-center justify-between mt-1.5 px-1">
+                    <div className="flex items-center gap-2">
+                      {/* 当前风格标签 */}
+                      <span className={cn('text-[10px] px-1.5 py-0.5 rounded', currentStyleConfig?.bgColor, currentStyleConfig?.color)}>
+                        {currentStyleConfig?.icon} {currentStyleConfig?.name}
+                      </span>
+                    </div>
+                    
+                    {/* 切换风格按钮 */}
+                    {otherStyles.length > 0 && (
+                      <div className="flex items-center gap-1">
+                        <span className="text-[10px] text-muted-foreground/60">换风格：</span>
+                        {otherStyles.slice(0, 2).map(s => (
+                          <button
+                            key={s.id}
+                            onClick={() => reInterpret(msg.id, s.id)}
+                            disabled={loading}
+                            className={cn(
+                              'text-[10px] px-1.5 py-0.5 rounded border transition-all',
+                              s.bgColor, s.color,
+                              loading && 'opacity-50 cursor-not-allowed'
+                            )}
+                          >
+                            {s.icon} {s.name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                <p className="text-[10px] text-muted-foreground mt-1 px-1">
+                  {msg.timestamp.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
+                </p>
+              </div>
+            </motion.div>
+          );
+        })}
 
         {loading && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-2.5">
@@ -712,6 +981,38 @@ export default function AiChatPage() {
         <div ref={bottomRef} />
       </div>
 
+      {/* 解读风格选择 */}
+      <div className="mb-3 px-1">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-xs text-muted-foreground font-medium">解读风格</p>
+          <p className="text-[10px] text-muted-foreground/60">
+            {CHAT_STYLES.map(s => `${s.name}${styleUsageCount[s.id]}/${s.maxUses}`).join(' · ')}
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {CHAT_STYLES.map(style => {
+            const isActive = currentStyle === style.id;
+            const isDisabled = styleUsageCount[style.id] >= style.maxUses;
+            return (
+              <button
+                key={style.id}
+                onClick={() => !isDisabled && setCurrentStyle(style.id)}
+                disabled={isDisabled}
+                className={cn(
+                  'px-3 py-1.5 rounded-lg border text-xs font-medium transition-all flex items-center gap-1.5',
+                  isActive ? `${style.bgColor} ${style.color} border-current shadow-sm` : 'bg-white border-border text-muted-foreground hover:border-primary/50',
+                  isDisabled && 'opacity-40 cursor-not-allowed'
+                )}
+              >
+                <span>{style.icon}</span>
+                <span>{style.name}</span>
+                {isDisabled && <span className="text-[10px]">✕</span>}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* 输入框 */}
       <div className="bg-white rounded-2xl border border-border p-3 flex gap-2 items-end shadow-sm">
         {messages.length > 1 && (
@@ -723,7 +1024,7 @@ export default function AiChatPage() {
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(input); } }}
-          placeholder="输入您的问题，按 Enter 发送..."
+          placeholder={`以${CHAT_STYLES.find(s => s.id === currentStyle)?.name || ''}风格提问...`}
           rows={1}
           className="flex-1 resize-none text-sm bg-transparent focus:outline-none max-h-32 placeholder:text-muted-foreground/60"
         />
