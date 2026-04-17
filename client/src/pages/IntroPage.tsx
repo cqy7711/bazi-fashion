@@ -1,40 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Palette, Gem, Shirt, Star, ArrowRight, Play, Moon, Sun, Wind } from 'lucide-react';
+import { Sparkles, Palette, Gem, Shirt, Star, ArrowRight, Compass, Sparkle } from 'lucide-react';
+import { COLOR_TOKENS, SHADOW_TOKENS, RADIUS_TOKENS, MOTION_TOKENS } from '../theme/designTokens';
 
 // 渐变色配置
 const GRADIENT = {
-  primary: 'linear-gradient(135deg, #FF6B9D 0%, #FF9D6B 50%, #FFD666 100%)',
-  purple: 'linear-gradient(135deg, #9D6BFF 0%, #6BD4FF 100%)',
-  dark: 'linear-gradient(135deg, #1A1A2E 0%, #2D2D44 100%)',
+  primary: `linear-gradient(135deg, ${COLOR_TOKENS.brand.coral} 0%, ${COLOR_TOKENS.brand.orange} 50%, ${COLOR_TOKENS.brand.yellow} 100%)`,
+  purple: `linear-gradient(135deg, ${COLOR_TOKENS.brand.purple} 0%, ${COLOR_TOKENS.brand.blue} 100%)`,
+  dark: 'linear-gradient(145deg, #1A1A2E 0%, #2F234E 48%, #1D2D49 100%)',
 };
 
 const FEATURES = [
   {
     icon: <Sparkles size={28} />,
-    title: '八字命盘分析',
-    desc: '输入生辰八字，精准解读你的五行属性与命格特质',
-    color: '#FF6B9D',
-    bg: 'rgba(255,107,157,0.1)',
+    title: '命盘深度解析',
+    desc: '录入生辰后自动生成命盘，快速识别日主与五行强弱',
+    color: '#FF7A5C',
+    bg: 'rgba(255,122,92,0.1)',
   },
   {
     icon: <Palette size={28} />,
-    title: '今日色彩搭配',
-    desc: '根据流日五行，智能推荐最适合你的穿搭配色方案',
+    title: '每日色彩策略',
+    desc: '结合流日与天气给出场景配色，支持通勤/约会/聚会切换',
     color: '#FF9D6B',
     bg: 'rgba(255,157,107,0.1)',
   },
   {
     icon: <Gem size={28} />,
-    title: '开运手串推荐',
-    desc: '结合命理与五行，为你精选旺运增势的珠宝手串',
+    title: '开运手串建议',
+    desc: '按当日能量给出主推荐与次推荐，附功效与场景建议',
     color: '#9D6BFF',
     bg: 'rgba(157,107,255,0.1)',
   },
   {
     icon: <Shirt size={28} />,
-    title: '场景穿搭灵感',
-    desc: '职场、日常、聚会、节日，4大场景全方位覆盖',
+    title: 'AI 命理问答',
+    desc: '支持自然语言追问，获得更细的事业、感情、健康建议',
     color: '#6BD4FF',
     bg: 'rgba(107,212,255,0.1)',
   },
@@ -48,9 +49,15 @@ const FIVE_ELEMENTS = [
   { name: '水', color: '#42A5F5', desc: '灵动智慧', bg: 'rgba(66,165,245,0.2)' },
 ];
 
-export default function IntroPage({ onEnter }: { onEnter: () => void }) {
+type VisualMode = 'vivid' | 'premium';
+
+export default function IntroPage({ onEnter, visualMode = 'vivid' }: { onEnter: () => void; visualMode?: VisualMode }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showContent, setShowContent] = useState(false);
+  const introGradient =
+    visualMode === 'premium'
+      ? 'radial-gradient(circle at 18% 16%, rgba(92,99,255,0.22) 0%, transparent 45%), radial-gradient(circle at 80% 84%, rgba(157,107,255,0.2) 0%, transparent 45%), radial-gradient(circle at 72% 24%, rgba(107,212,255,0.2) 0%, transparent 36%)'
+      : 'radial-gradient(circle at 18% 16%, rgba(255,122,92,0.2) 0%, transparent 45%), radial-gradient(circle at 80% 84%, rgba(157,107,255,0.2) 0%, transparent 45%), radial-gradient(circle at 72% 24%, rgba(107,212,255,0.18) 0%, transparent 36%)';
 
   useEffect(() => {
     // 延迟显示内容
@@ -76,7 +83,7 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
       {/* 背景装饰 */}
       <div style={{
         position: 'fixed', inset: 0,
-        background: 'radial-gradient(circle at 20% 20%, rgba(255,107,157,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(157,107,255,0.15) 0%, transparent 50%)',
+        background: introGradient,
         pointerEvents: 'none',
       }} />
 
@@ -100,12 +107,12 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
               style={{
                 width: '80px', height: '80px',
                 background: GRADIENT.primary,
-                borderRadius: '24px',
+                borderRadius: RADIUS_TOKENS.xl,
                 margin: '0 auto 20px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 8px 32px rgba(255,107,157,0.4)',
+                boxShadow: SHADOW_TOKENS.glowStrong,
               }}
             >
               <Sparkles size={40} color="#FFFFFF" />
@@ -195,7 +202,7 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                       style={{
                         width: '56px', height: '72px',
                         background: el.bg,
-                        borderRadius: '16px',
+                        borderRadius: RADIUS_TOKENS.lg,
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
@@ -218,23 +225,26 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.8 }}
                   style={{
-                    background: 'rgba(255,255,255,0.05)',
+                    background: 'linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.04))',
                     borderRadius: '20px',
                     padding: '24px',
-                    border: '1px solid rgba(255,255,255,0.1)',
+                    border: '1px solid rgba(255,255,255,0.18)',
+                    backdropFilter: 'blur(10px)',
+                    WebkitBackdropFilter: 'blur(10px)',
+                    boxShadow: '0 18px 36px rgba(0,0,0,0.2)',
                   }}
                 >
                   <h3 style={{
                     fontSize: '18px', fontWeight: 700, marginBottom: '12px',
                     fontFamily: 'Outfit, sans-serif',
                   }}>
-                    什么是五行色彩？
+                    为什么先看这页？
                   </h3>
                   <p style={{
                     fontSize: '14px', lineHeight: 1.7, color: 'rgba(255,255,255,0.7)',
                     fontFamily: 'Outfit, sans-serif',
                   }}>
-                    根据中国传统命理学的五行理论，结合你的生辰八字，分析你的五行属性，<span style={{ color: '#FF6B9D' }}>为你量身定制</span>最适合的穿搭色彩与风格。
+                    我们会把八字信息转成每天可执行的穿搭与饰品建议，目标不是玄学堆叠，而是让你<span style={{ color: '#FF7A5C' }}>每天知道该怎么搭、为什么这么搭</span>。
                   </p>
                 </motion.div>
               </div>
@@ -264,13 +274,16 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.3 + i * 0.1 }}
                       style={{
-                        background: feature.bg,
-                        borderRadius: '16px',
+                        background: `linear-gradient(145deg, ${feature.bg}, rgba(255,255,255,0.04))`,
+                        borderRadius: RADIUS_TOKENS.lg,
                         padding: '16px',
                         border: `1px solid ${feature.color}30`,
                         display: 'flex',
                         alignItems: 'flex-start',
                         gap: '14px',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)',
+                        boxShadow: `0 10px 20px ${feature.color}22`,
                       }}
                     >
                       <div style={{
@@ -302,6 +315,26 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                     </motion.div>
                   ))}
                 </div>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.75 }}
+                  style={{
+                    marginTop: '14px',
+                    padding: '12px 14px',
+                    borderRadius: '14px',
+                    background: 'linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06))',
+                    border: '1px solid rgba(255,255,255,0.22)',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                    <Compass size={14} color="#6BD4FF" />
+                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 700, color: '#DCE8FF' }}>定位联动</span>
+                  </div>
+                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', lineHeight: 1.5, color: 'rgba(255,255,255,0.65)', margin: 0 }}>
+                    支持自动定位与手动选城，天气和流日会实时影响今日推荐结果。
+                  </p>
+                </motion.div>
               </div>
             )}
 
@@ -322,7 +355,7 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    boxShadow: '0 12px 48px rgba(255,107,157,0.4)',
+                    boxShadow: SHADOW_TOKENS.glowStrong,
                   }}
                 >
                   <Sparkles size={56} color="#FFFFFF" />
@@ -356,39 +389,43 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                   立即体验专属你的开运穿搭指南
                 </motion.p>
 
-                {/* 装饰性数字 */}
-                <div style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  gap: '32px',
-                  marginTop: '24px',
-                }}>
+                <div style={{ display: 'grid', gap: '10px', marginTop: '20px', textAlign: 'left' }}>
                   {[
-                    { num: '50+', label: '五行配色' },
-                    { num: '4', label: '穿搭场景' },
-                    { num: '∞', label: '每日更新' },
+                    { step: '01', title: '录入生辰信息', desc: '姓名、出生时间、出生地（省市）' },
+                    { step: '02', title: '生成命盘与运势', desc: '自动完成五行分析与日运评分' },
+                    { step: '03', title: '查看穿搭与手串建议', desc: '拿到可直接执行的今日方案' },
                   ].map((item, i) => (
                     <motion.div
-                      key={item.label}
-                      initial={{ opacity: 0, y: 20 }}
+                      key={item.step}
+                      initial={{ opacity: 0, y: 16 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.6 + i * 0.1 }}
-                      style={{ textAlign: 'center' }}
+                      transition={{ delay: 0.55 + i * 0.08 }}
+                      style={{
+                        padding: '10px 12px',
+                        borderRadius: '12px',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        background: 'linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05))',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                      }}
                     >
-                      <div style={{
-                        fontSize: '28px', fontWeight: 800,
-                        background: GRADIENT.primary,
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
+                      <span style={{
+                        width: '30px',
+                        height: '30px',
+                        borderRadius: '999px',
+                        background: 'rgba(255,255,255,0.16)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                         fontFamily: 'Outfit, sans-serif',
-                      }}>
-                        {item.num}
-                      </div>
-                      <div style={{
-                        fontSize: '11px', color: 'rgba(255,255,255,0.5)',
-                        fontFamily: 'Outfit, sans-serif',
-                      }}>
-                        {item.label}
+                        fontSize: '11px',
+                        fontWeight: 800,
+                        color: '#FFD9EA',
+                      }}>{item.step}</span>
+                      <div>
+                        <p style={{ margin: 0, fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 700, color: '#FFFFFF' }}>{item.title}</p>
+                        <p style={{ margin: '2px 0 0', fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: 'rgba(255,255,255,0.65)' }}>{item.desc}</p>
                       </div>
                     </motion.div>
                   ))}
@@ -441,14 +478,14 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
             {/* 主按钮 */}
             <motion.button
               onClick={goNext}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              whileHover={{ y: -2, scale: 1.02 }}
+              whileTap={{ y: 0, scale: 0.97 }}
               style={{
                 width: '100%',
                 padding: '16px',
                 background: GRADIENT.primary,
                 border: 'none',
-                borderRadius: '16px',
+                borderRadius: RADIUS_TOKENS.lg,
                 color: '#FFFFFF',
                 fontSize: '16px',
                 fontWeight: 700,
@@ -458,7 +495,8 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                 justifyContent: 'center',
                 gap: '8px',
                 fontFamily: 'Outfit, sans-serif',
-                boxShadow: '0 8px 24px rgba(255,107,157,0.4)',
+                boxShadow: '0 14px 28px rgba(255,122,92,0.38)',
+                transition: MOTION_TOKENS.uiEase,
               }}
             >
               {currentSlide === 2 ? (
@@ -487,13 +525,16 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
               top: '24px',
               right: '24px',
               padding: '8px 16px',
-              background: 'rgba(255,255,255,0.1)',
-              border: '1px solid rgba(255,255,255,0.2)',
+              background: 'linear-gradient(145deg, rgba(255,255,255,0.16), rgba(255,255,255,0.08))',
+              border: '1px solid rgba(255,255,255,0.28)',
               borderRadius: '20px',
               color: 'rgba(255,255,255,0.6)',
               fontSize: '12px',
               cursor: 'pointer',
               fontFamily: 'Outfit, sans-serif',
+              boxShadow: '0 10px 20px rgba(16,12,38,0.26)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
             }}
           >
             跳过

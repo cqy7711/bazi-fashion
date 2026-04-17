@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { COLOR_TOKENS } from '../theme/designTokens';
 import { 
   Loader2, Plus, X, Star, Sparkle, Sparkles, Edit3,
   Shirt, Gem, Briefcase, PartyPopper, Gift,
@@ -10,26 +11,26 @@ import type { UserBirthInfoListItem, UserBirthInfo, OutfitRecommendation, Bracel
 
 // ── 多巴胺配色系统 ──
 const PALETTE = {
-  coral: '#FF6B9D',
+  coral: COLOR_TOKENS.brand.coral,
   coralLight: 'rgba(255,107,157,0.12)',
-  amber: '#FF9D6B',
+  amber: COLOR_TOKENS.brand.orange,
   amberLight: 'rgba(255,157,107,0.12)',
-  sunflower: '#FFD93D',
+  sunflower: COLOR_TOKENS.brand.yellow,
   mint: '#6BCB77',
   mintLight: 'rgba(107,203,119,0.12)',
-  sky: '#4D96FF',
+  sky: COLOR_TOKENS.brand.blue,
   skyLight: 'rgba(77,150,255,0.12)',
-  purple: '#9B59B6',
+  purple: COLOR_TOKENS.brand.purple,
   purpleLight: 'rgba(155,89,182,0.12)',
 };
 
 // 渐变色配置
 const GRADIENTS = {
-  coral: 'linear-gradient(135deg, #FF6B9D 0%, #FF9D6B 100%)',
-  amber: 'linear-gradient(135deg, #FF9D6B 0%, #FFD93D 100%)',
-  mint: 'linear-gradient(135deg, #6BCB77 0%, #4D96FF 100%)',
-  purple: 'linear-gradient(135deg, #9B59B6 0%, #FF6B9D 100%)',
-  sky: 'linear-gradient(135deg, #4D96FF 0%, #6BCB77 100%)',
+  coral: `linear-gradient(135deg, ${COLOR_TOKENS.brand.coral} 0%, ${COLOR_TOKENS.brand.orange} 100%)`,
+  amber: `linear-gradient(135deg, ${COLOR_TOKENS.brand.orange} 0%, ${COLOR_TOKENS.brand.yellow} 100%)`,
+  mint: `linear-gradient(135deg, #6BCB77 0%, ${COLOR_TOKENS.brand.blue} 100%)`,
+  purple: `linear-gradient(135deg, ${COLOR_TOKENS.brand.purple} 0%, ${COLOR_TOKENS.brand.coral} 100%)`,
+  sky: `linear-gradient(135deg, ${COLOR_TOKENS.brand.blue} 0%, #6BCB77 100%)`,
 };
 
 const USER_ID = 'user_default';

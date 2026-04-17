@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, ArrowLeft, TrendingUp, Users, Heart, Activity, Sparkles, Edit2, X, ChevronDown, Home, Apple } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, ReferenceLine, Cell } from 'recharts';
 import type { UserBirthInfo, FiveElementsAnalysis, LanguageStyle } from '../shared/types';
+import { COLOR_TOKENS, SHADOW_TOKENS, RADIUS_TOKENS } from '../theme/designTokens';
 
 const ELEMENT_NAMES: Record<string, string> = { wood: '木', fire: '火', earth: '土', metal: '金', water: '水' };
 const ELEMENT_COLORS: Record<string, string> = {
@@ -17,13 +18,13 @@ const ELEMENT_BG: Record<string, string> = {
 const USER_ID = 'user_default';
 
 const PALETTE = {
-  coral: '#FF6B9D', coralLight: 'rgba(255,107,157,0.1)',
-  orange: '#FF9D6B', orangeLight: 'rgba(255,157,107,0.1)',
-  yellow: '#FFD666', yellowLight: 'rgba(255,214,102,0.12)',
+  coral: COLOR_TOKENS.brand.coral, coralLight: 'rgba(255,107,157,0.1)',
+  orange: COLOR_TOKENS.brand.orange, orangeLight: 'rgba(255,157,107,0.1)',
+  yellow: COLOR_TOKENS.brand.yellow, yellowLight: 'rgba(255,214,102,0.12)',
   green: '#22C55E', greenLight: 'rgba(34,197,94,0.1)',
-  blue: '#6BD4FF', blueLight: 'rgba(107,212,255,0.1)',
-  purple: '#9D6BFF', purpleLight: 'rgba(157,107,255,0.1)',
-  text: '#1A1A2E', textSecondary: '#6B7280', textMuted: '#A0A8C0',
+  blue: COLOR_TOKENS.brand.blue, blueLight: 'rgba(107,212,255,0.1)',
+  purple: COLOR_TOKENS.brand.purple, purpleLight: 'rgba(157,107,255,0.1)',
+  text: COLOR_TOKENS.text.primary, textSecondary: '#6B7280', textMuted: COLOR_TOKENS.text.muted,
   border: '#F0F1F8', cardBg: '#FFFFFF',
 };
 
@@ -405,20 +406,20 @@ const css = {
   bg: '#FFFFFF',
   cardBg: '#FFFFFF',
   border: '#F0F1F8',
-  text: '#1A1A2E',
+  text: COLOR_TOKENS.text.primary,
   textSecondary: '#6B7280',
-  textMuted: '#A0A8C0',
-  accent: '#FF6B9D',
+  textMuted: COLOR_TOKENS.text.muted,
+  accent: COLOR_TOKENS.brand.coral,
   accentDim: 'rgba(255,107,157,0.1)',
   accentBorder: 'rgba(255,107,157,0.3)',
 };
 
 function cardStyle(extra?: React.CSSProperties): React.CSSProperties {
   return {
-    background: '#FFFFFF',
-    borderRadius: '20px',
-    border: '1px solid #F0F1F8',
-    boxShadow: '0 2px 16px rgba(0,0,0,0.06)',
+    background: `linear-gradient(145deg, ${css.accent}0A, ${PALETTE.orange}08 48%, #FFFFFF)`,
+    borderRadius: RADIUS_TOKENS.lg,
+    border: `1px solid ${css.accent}20`,
+    boxShadow: `0 12px 24px ${css.accent}16`,
     ...(extra || {}),
   };
 }
@@ -842,7 +843,7 @@ function FortuneCard({ cardKey, label, text, color, icon, dayMaster, dayElement,
         borderRadius: '20px',
         background: CARD_COLORS[cardKey]?.grad || PALETTE.coralLight,
         border: `1.5px solid ${(CARD_COLORS[cardKey]?.hex || css.accent) + '25'}`,
-        boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+        boxShadow: `0 12px 24px ${(CARD_COLORS[cardKey]?.hex || css.accent)}22`,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px' }}>
           <div style={{
@@ -868,7 +869,7 @@ function FortuneCard({ cardKey, label, text, color, icon, dayMaster, dayElement,
               padding: '10px 18px',
               borderRadius: '12px',
               border: `1.5px solid ${CARD_COLORS[cardKey]?.hex || css.accent}40`,
-              background: '#FFFFFF',
+              background: `linear-gradient(135deg, ${(CARD_COLORS[cardKey]?.hex || css.accent)}14, #FFFFFF)`,
               color: CARD_COLORS[cardKey]?.hex || css.accent,
               fontFamily: 'Outfit, sans-serif',
               fontSize: '13px',
@@ -1066,7 +1067,7 @@ function DayunKLineChart({ data, startAge, userInfo }: { data: CandlestickData[]
   const LABEL_COLOR = '#666666';   // 标签颜色
 
   return (
-    <div style={{ width: '100%', background: '#FFFFFF', borderRadius: '12px' }}>
+    <div style={{ width: '100%', background: `linear-gradient(145deg, ${css.accent}0A, ${PALETTE.orange}08 48%, #FFFFFF)`, borderRadius: '12px', border: `1px solid ${css.accent}1F`, boxShadow: `0 10px 20px ${css.accent}18` }}>
       {/* ── 标题栏 ── */}
       <div style={{ padding: '16px 16px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
@@ -1079,7 +1080,7 @@ function DayunKLineChart({ data, startAge, userInfo }: { data: CandlestickData[]
         </div>
         <div style={{
           display: 'flex', alignItems: 'center', gap: '6px',
-          padding: '6px 12px', background: '#F0F9F0', borderRadius: '16px'
+          padding: '6px 12px', background: 'linear-gradient(135deg, #ECFDF5, #F0F9FF)', borderRadius: '16px', border: '1px solid #A7F3D0'
         }}>
           <div style={{ width: '8px', height: '8px', background: '#52C41A', borderRadius: '50%' }} />
           <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#52C41A' }}>已解锁</span>
@@ -1718,7 +1719,16 @@ function DayunTooltip({ active, payload }: any) {
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
-export default function ResultPage() {
+export default function ResultPage({ visualMode = 'vivid' }: { visualMode?: 'vivid' | 'premium' }) {
+  const isPremium = visualMode === 'premium';
+  const isVivid = visualMode === 'vivid';
+  const toneAccent = isPremium ? css.accent : '#5B5CFF';
+  const toneAux = isPremium ? PALETTE.orange : '#2CCBFF';
+  const toneBorder = isPremium ? `${css.accent}22` : 'rgba(91,92,255,0.2)';
+  const toneShadow = isPremium ? `${css.accent}1A` : 'rgba(76,90,176,0.14)';
+  const sectionIds = ['sec-bazi', 'sec-mingge', 'sec-fortune', 'sec-elements', 'sec-dayun'] as const;
+  const [activeSection, setActiveSection] = useState<string>('sec-bazi');
+  const [readingProgress, setReadingProgress] = useState(0);
   const { userId } = useParams<{ userId: string }>();
   const [userInfo, setUserInfo] = useState<UserBirthInfo | null>(null);
   const [analysis, setAnalysis] = useState<any>(null);
@@ -1899,27 +1909,50 @@ export default function ResultPage() {
   ];
 
   const fadeUp = (delay: number) => ({ initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.5, delay, ease: [0.25, 0.46, 0.45, 0.94] as any } });
+  const jumpToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  useEffect(() => {
+    const onScroll = () => {
+      let current: string = sectionIds[0];
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= 140) current = id;
+      }
+      setActiveSection(current);
+      const doc = document.documentElement;
+      const total = doc.scrollHeight - window.innerHeight;
+      const progress = total > 0 ? Math.min(100, Math.max(0, (window.scrollY / total) * 100)) : 0;
+      setReadingProgress(progress);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px', paddingBottom: '48px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: isPremium ? '24px' : '28px', paddingBottom: '48px', paddingTop: isPremium ? '4px' : 0 }}>
 
       {/* ── Header ── */}
-      <motion.div {...fadeUp(0)} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <motion.div {...fadeUp(0)} style={{ display: 'flex', alignItems: 'center', gap: '12px', position: isPremium ? 'sticky' : 'static', top: isPremium ? 8 : undefined, zIndex: isPremium ? 20 : undefined }}>
         <Link to="/" style={{
           display: 'flex', alignItems: 'center', gap: '8px',
           padding: '10px 20px', borderRadius: '16px',
           fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 600,
-          background: '#FFFFFF', color: css.textSecondary,
-          border: '1.5px solid #F0F1F8',
+          background: `linear-gradient(135deg, ${css.accent}12, ${PALETTE.orange}10, #FFFFFF)`, color: css.textSecondary,
+          border: `1.5px solid ${css.accent}25`,
           textDecoration: 'none',
           transition: 'all 0.2s ease',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
+          boxShadow: `0 8px 16px ${css.accent}20`,
         }}>
           <ArrowLeft style={{ width: '16px', height: '16px' }} /> 返回
         </Link>
         <div style={{ flex: 1 }} />
         {/* 用户切换卡片 */}
-        <div style={{ ...cardStyle(), padding: '14px 20px', position: 'relative' }}>
+        <div style={{ ...cardStyle({ background: isVivid ? 'linear-gradient(145deg, rgba(91,92,255,0.1), rgba(44,203,255,0.08) 45%, #FFFFFF)' : `linear-gradient(145deg, ${css.accent}0D, ${PALETTE.orange}0A 45%, #FFFFFF)` }), padding: '14px 20px', position: 'relative', border: `1px solid ${toneBorder}`, boxShadow: `0 14px 28px ${toneShadow}` }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <div style={{
               width: '44px', height: '44px', borderRadius: '14px',
@@ -1940,7 +1973,7 @@ export default function ResultPage() {
                     whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                     style={{
                       padding: '4px 10px', borderRadius: '8px',
-                      background: '#F5F5F5', border: 'none',
+                      background: `linear-gradient(135deg, ${css.accent}12, ${PALETTE.orange}10, #FFFFFF)`, border: `1px solid ${css.accent}20`,
                       cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px',
                       fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600,
                       color: css.textSecondary,
@@ -1971,11 +2004,11 @@ export default function ResultPage() {
           {showUserDropdown && userList.length > 1 && (
             <div style={{
               position: 'absolute', top: '100%', right: 0, marginTop: '8px',
-              background: '#FFFFFF', borderRadius: '12px', border: '1px solid #F0F1F8',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.1)', overflow: 'hidden', zIndex: 100,
+              background: isVivid ? 'linear-gradient(145deg, rgba(91,92,255,0.09), rgba(44,203,255,0.08) 50%, #FFFFFF)' : `linear-gradient(145deg, ${css.accent}0D, ${PALETTE.orange}0A 50%, #FFFFFF)`, borderRadius: '12px', border: `1px solid ${isVivid ? 'rgba(91,92,255,0.2)' : `${css.accent}20`}`,
+              boxShadow: isVivid ? '0 10px 22px rgba(76,90,176,0.16)' : `0 10px 20px ${css.accent}26`, overflow: 'hidden', zIndex: 100,
               minWidth: '240px',
             }}>
-              <div style={{ padding: '10px 14px', borderBottom: '1px solid #F0F1F8', background: '#FAFAFA' }}>
+              <div style={{ padding: '10px 14px', borderBottom: `1px solid ${css.accent}1F`, background: `linear-gradient(135deg, ${css.accent}0E, #FFFFFF)` }}>
                 <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: css.textMuted, fontWeight: 600 }}>
                   已录入用户 ({userList.length})
                 </span>
@@ -2028,6 +2061,101 @@ export default function ResultPage() {
         </div>
       </motion.div>
 
+      {isPremium && (
+        <motion.div {...fadeUp(0.01)}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+            gap: '12px',
+            padding: '12px',
+            borderRadius: '20px',
+            background: isPremium
+              ? 'linear-gradient(145deg, rgba(94,92,230,0.14), rgba(10,132,255,0.1), rgba(255,255,255,0.95))'
+              : 'linear-gradient(145deg, rgba(91,92,255,0.12), rgba(44,203,255,0.1), rgba(255,255,255,0.95))',
+            border: isPremium ? '1.5px solid rgba(94,92,230,0.24)' : '1.5px solid rgba(91,92,255,0.2)',
+            boxShadow: isPremium ? '0 14px 28px rgba(76,90,176,0.16)' : '0 14px 26px rgba(76,90,176,0.14)',
+          }}>
+            {[
+              { k: '日主', v: `${bazi.dayMaster}${bazi.dayMasterElement}` },
+              { k: '格局', v: mingGe.name || '--' },
+              { k: '身强弱', v: mingpanAnalysis?.bodyStrengthText || '分析中' },
+              { k: '喜用神', v: (userInfo.favorableElements || []).join(' / ') || '--' },
+            ].map((item) => (
+              <div key={item.k} style={{ minHeight: '54px', padding: '9px 12px', borderRadius: '13px', background: '#FFFFFF', border: isPremium ? '1.5px solid rgba(10,132,255,0.18)' : '1.5px solid rgba(91,92,255,0.16)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <p style={{ margin: 0, fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#8B92B4', fontWeight: 700 }}>{item.k}</p>
+                <p style={{ margin: '3px 0 0', fontFamily: 'Outfit, sans-serif', fontSize: '14px', color: css.text, fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.v}</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
+      {isPremium && (
+        <motion.div {...fadeUp(0.015)}>
+          <div style={{
+            display: 'flex',
+            gap: '8px',
+            flexWrap: 'wrap',
+            padding: '8px',
+            borderRadius: '14px',
+            background: isPremium ? 'rgba(247,250,255,0.84)' : 'rgba(248,251,255,0.86)',
+            border: isPremium ? '1.5px solid rgba(94,92,230,0.2)' : '1.5px solid rgba(91,92,255,0.16)',
+          }}>
+            {[
+              { id: 'sec-bazi', label: '四柱八字' },
+              { id: 'sec-mingge', label: '命格详解' },
+              { id: 'sec-fortune', label: '四维运势' },
+              { id: 'sec-elements', label: '五行分析' },
+              { id: 'sec-dayun', label: '人生大运' },
+            ].map((item) => (
+              <button
+                key={item.id}
+                onClick={() => jumpToSection(item.id)}
+                style={{
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: '6px 12px',
+                  borderRadius: '999px',
+                  fontFamily: 'Outfit, sans-serif',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  color: activeSection === item.id ? '#FFFFFF' : toneAccent,
+                  background: activeSection === item.id
+                    ? `linear-gradient(135deg, ${toneAccent}, ${toneAux})`
+                    : `linear-gradient(135deg, ${toneAccent}12, ${toneAux}10)`,
+                  boxShadow: activeSection === item.id
+                    ? `0 10px 16px ${toneAccent}3A`
+                    : `0 8px 14px ${toneAccent}22`,
+                }}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+          <div style={{
+            marginTop: '8px',
+            padding: '8px 10px',
+            borderRadius: '12px',
+            background: 'rgba(255,255,255,0.74)',
+            border: `1px solid ${toneAccent}1F`,
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#8B92B4', fontWeight: 700 }}>阅读进度</span>
+              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: toneAccent, fontWeight: 800 }}>{Math.round(readingProgress)}%</span>
+            </div>
+            <div style={{ width: '100%', height: '7px', borderRadius: '999px', background: `${toneAccent}1C`, overflow: 'hidden' }}>
+              <div style={{
+                width: `${readingProgress}%`,
+                height: '100%',
+                borderRadius: '999px',
+                background: `linear-gradient(90deg, ${toneAccent}, ${toneAux})`,
+                boxShadow: `0 4px 10px ${toneAccent}35`,
+                transition: 'width 0.2s ease',
+              }} />
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* 编辑弹窗 */}
       {showEdit && userInfo && (
         <EditUserModal
@@ -2043,10 +2171,10 @@ export default function ResultPage() {
       {/* ── 解读风格（全局生效） ── */}
       <motion.div {...fadeUp(0.02)}>
         <div style={{
-          background: '#FFFFFF',
+          background: `linear-gradient(140deg, ${css.accent}0D, ${PALETTE.orange}08 42%, #FFFFFF)`,
           borderRadius: '20px',
-          border: '1px solid #F0F1F8',
-          boxShadow: '0 2px 16px rgba(0,0,0,0.06)',
+          border: `1px solid ${css.accent}22`,
+          boxShadow: `0 12px 24px ${css.accent}1A`,
           padding: '20px 24px',
           marginBottom: '16px',
         }}>
@@ -2079,9 +2207,9 @@ export default function ResultPage() {
       </motion.div>
 
       {/* ── 四柱八字 ── */}
-      <motion.div {...fadeUp(0.05)}>
+      <motion.div {...fadeUp(0.05)} id="sec-bazi">
         <SectionTitle icon={<span style={{ color: css.accent, fontSize: '16px' }}>☯</span>}>四柱八字</SectionTitle>
-        <GlassCard style={{ padding: '28px' }}>
+        <GlassCard style={{ padding: '28px', background: `linear-gradient(145deg, ${css.accent}0A, ${PALETTE.orange}08 48%, #FFFFFF)`, border: `1px solid ${css.accent}20`, boxShadow: `0 14px 30px ${css.accent}16` }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '20px' }}>
             <PillarCell label="年柱" pillar={bazi.yearPillar} shiShen={bazi.shiShen?.yearStem || bazi.shiShen?.year || '比肩'} />
             <PillarCell label="月柱" pillar={bazi.monthPillar} shiShen={bazi.shiShen?.monthStem || bazi.shiShen?.month || '正印'} />
@@ -2094,12 +2222,12 @@ export default function ResultPage() {
             <ElementBadge el={bazi.dayMasterElement} />
           </div>
           {/* 日主命格解释 */}
-          <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #F0F1F8' }}>
+          <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: `1px solid ${css.accent}20` }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
               <div style={{ width: '20px', height: '2px', background: css.accent, borderRadius: '1px' }} />
               <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: css.accent }}>日主解析</span>
             </div>
-            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', lineHeight: 1.8, color: css.textSecondary, margin: 0 }}>
+            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', lineHeight: 1.8, color: css.textSecondary, margin: 0, padding: '12px 14px', background: `linear-gradient(135deg, ${css.accent}10, ${PALETTE.orange}0D, #FFFFFF)`, borderRadius: '12px', border: `1px solid ${css.accent}20` }}>
               <span style={{ fontWeight: 700, color: css.accent }}>{bazi.dayMaster}</span> 日主，出生于 
               <span style={{ fontWeight: 600 }}>{bazi.hourPillar}</span> 时辰，命带 
               <span style={{ fontWeight: 600 }}>{bazi.shiShen?.dayBranch || '正印'}</span> 护卫。
@@ -2140,9 +2268,9 @@ export default function ResultPage() {
               transition={{ duration: 0.3 }}
               style={{ overflow: 'hidden' }}
             >
-              <GlassCard style={{ padding: '24px', background: '#FFFFFF', border: '1px solid #F0F1F8' }}>
+              <GlassCard style={{ padding: '24px', background: `linear-gradient(145deg, ${css.accent}0A, ${PALETTE.orange}08 48%, #FFFFFF)`, border: `1px solid ${css.accent}20` }}>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
-                  <div style={{ padding: '16px', background: '#F8F9FF', borderRadius: '12px' }}>
+                  <div style={{ padding: '16px', background: `linear-gradient(135deg, ${PALETTE.blue}10, #FFFFFF)`, borderRadius: '12px', border: `1px solid ${PALETTE.blue}1F` }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                       <span style={{ fontSize: '20px' }}>🌿</span>
                       <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 700, color: css.text }}>年柱</span>
@@ -2151,7 +2279,7 @@ export default function ResultPage() {
                       <strong>{bazi.yearPillar}</strong> — 代表祖辈根基、童年环境、少年运势，影响先天禀赋与家庭背景。
                     </p>
                   </div>
-                  <div style={{ padding: '16px', background: '#F8F9FF', borderRadius: '12px' }}>
+                  <div style={{ padding: '16px', background: `linear-gradient(135deg, ${PALETTE.green}10, #FFFFFF)`, borderRadius: '12px', border: `1px solid ${PALETTE.green}1F` }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                       <span style={{ fontSize: '20px' }}>🌱</span>
                       <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 700, color: css.text }}>月柱</span>
@@ -2169,7 +2297,7 @@ export default function ResultPage() {
                       <strong>{bazi.dayPillar}</strong> — 日主之柱，代表本人性格、本质能力与婚姻宫，是命盘核心。
                     </p>
                   </div>
-                  <div style={{ padding: '16px', background: '#F8F9FF', borderRadius: '12px' }}>
+                  <div style={{ padding: '16px', background: `linear-gradient(135deg, ${PALETTE.purple}10, #FFFFFF)`, borderRadius: '12px', border: `1px solid ${PALETTE.purple}1F` }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                       <span style={{ fontSize: '20px' }}>🌙</span>
                       <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 700, color: css.text }}>时柱</span>
@@ -2180,7 +2308,7 @@ export default function ResultPage() {
                   </div>
                 </div>
                 {/* 天干地支说明 */}
-                <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #F0F1F8' }}>
+                <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: `1px solid ${css.accent}20` }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                     <div style={{ width: '16px', height: '2px', background: PALETTE.orange, borderRadius: '1px' }} />
                     <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 700, color: PALETTE.orange }}>十天干 · 十二地支</span>
@@ -2197,9 +2325,9 @@ export default function ResultPage() {
       </motion.div>
 
       {/* ── 命格详解 ── */}
-      <motion.div {...fadeUp(0.15)}>
+      <motion.div {...fadeUp(0.15)} id="sec-mingge">
         <SectionTitle icon={<Sparkles style={{ width: '16px', height: '16px', color: css.accent }} />}>命格详解</SectionTitle>
-        <GlassCard style={{ padding: '24px', background: '#FFFFFF', border: '1px solid #F0F1F8' }}>
+        <GlassCard style={{ padding: '24px', background: `linear-gradient(145deg, ${css.accent}0A, ${PALETTE.orange}08 48%, #FFFFFF)`, border: `1px solid ${css.accent}20`, boxShadow: `0 12px 26px ${css.accent}18` }}>
           {/* 头部：格局名称 */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
             <motion.div
@@ -2234,7 +2362,8 @@ export default function ResultPage() {
                 <span style={{
                   padding: '4px 10px', borderRadius: '8px',
                   fontSize: '11px', fontWeight: 600,
-                  background: '#F5F5F5', color: css.textSecondary,
+                  background: `linear-gradient(135deg, ${css.accent}12, ${PALETTE.orange}10)`, color: css.textSecondary,
+                  border: `1px solid ${css.accent}20`,
                   fontFamily: 'Outfit, sans-serif',
                 }}>
                   {mingGe.type}
@@ -2246,7 +2375,7 @@ export default function ResultPage() {
 
           {/* 成格条件 */}
           {mingGe.formation && (
-            <div style={{ padding: '16px', background: '#FAFAFA', borderRadius: '12px', marginBottom: '16px' }}>
+            <div style={{ padding: '16px', background: `linear-gradient(135deg, ${css.accent}0C, #FFFFFF)`, borderRadius: '12px', marginBottom: '16px', border: `1px solid ${css.accent}20` }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                 <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: css.accent }} />
                 <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: css.text }}>成格条件</span>
@@ -2259,7 +2388,7 @@ export default function ResultPage() {
 
           {/* 格局特点 */}
           {mingGe.characteristics && (
-            <div style={{ padding: '16px', background: '#FAFAFA', borderRadius: '12px', marginBottom: '16px' }}>
+            <div style={{ padding: '16px', background: `linear-gradient(135deg, ${PALETTE.orange}0C, #FFFFFF)`, borderRadius: '12px', marginBottom: '16px', border: `1px solid ${PALETTE.orange}24` }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                 <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: PALETTE.orange }} />
                 <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: css.text }}>格局特点</span>
@@ -2354,7 +2483,7 @@ export default function ResultPage() {
       </motion.div>
 
       {/* ── 四维运势 ── */}
-      <motion.div {...fadeUp(0.2)}>
+      <motion.div {...fadeUp(0.2)} id="sec-fortune">
         <SectionTitle icon={<TrendingUp style={{ width: '16px', height: '16px', color: css.accent }} />}>四维运势分析</SectionTitle>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
           {fortuneCards.map(card => (
@@ -2376,11 +2505,11 @@ export default function ResultPage() {
 
       {/* ── 五行分析 ── */}
       {(analysis || mingpanAnalysis) && (
-        <motion.div {...fadeUp(0.3)}>
+        <motion.div {...fadeUp(0.3)} id="sec-elements">
           <SectionTitle icon={<span style={{ color: css.accent, fontSize: '16px' }}>✦</span>}>五行分析</SectionTitle>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
             {/* 十神占比（最左边新增） */}
-            <GlassCard style={{ padding: '20px' }}>
+            <GlassCard style={{ padding: '20px', background: `linear-gradient(145deg, ${css.accent}0A, #FFFFFF)`, border: `1px solid ${css.accent}20` }}>
               <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: css.accent, marginBottom: '16px' }}>十神分布</p>
               {(() => {
                 // 获取日柱天干作为日主
@@ -2550,7 +2679,7 @@ export default function ResultPage() {
               })()}
             </GlassCard>
 
-            <GlassCard style={{ padding: '24px' }}>
+            <GlassCard style={{ padding: '24px', background: `linear-gradient(145deg, ${PALETTE.blue}0A, #FFFFFF)`, border: `1px solid ${PALETTE.blue}20` }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
                 <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 700, color: css.accent }}>得令状态</span>
               </div>
@@ -2594,7 +2723,7 @@ export default function ResultPage() {
               </div>
             </GlassCard>
 
-            <GlassCard style={{ padding: '24px' }}>
+            <GlassCard style={{ padding: '24px', background: `linear-gradient(145deg, ${PALETTE.orange}0A, #FFFFFF)`, border: `1px solid ${PALETTE.orange}20` }}>
               <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 700, color: css.accent, marginBottom: '14px' }}>用神策略</p>
               {(() => {
                 // 获取日主信息用于测算说明
@@ -2671,12 +2800,12 @@ export default function ResultPage() {
                     })}
                     {(mingpanAnalysis?.unfavorable || analysis?.favorableAnalysis?.unfavorable || [])?.map((el: string) => {
                       return (
-                        <div key={el} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '12px', padding: '10px', background: '#F5F5F5', borderRadius: '10px', border: '1px solid #E5E5E5' }}>
+                        <div key={el} style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', marginBottom: '12px', padding: '10px', background: `linear-gradient(135deg, ${PALETTE.coral}08, #FFFFFF)`, borderRadius: '10px', border: `1px solid ${PALETTE.coral}20` }}>
                           <div style={{
                             width: '36px', height: '36px', borderRadius: '12px',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             fontSize: '14px', fontWeight: 700,
-                            background: '#E8E8E8', color: css.textMuted,
+                            background: `${PALETTE.coral}18`, color: PALETTE.coral,
                             fontFamily: 'Outfit, sans-serif',
                           }}>
                             ✕
@@ -2706,7 +2835,7 @@ export default function ResultPage() {
         const candlestickData = generateCandlestickData(dayunData);
         const startAge = candlestickData[0]?.age || 3;
         return (
-          <motion.div {...fadeUp(0.35)}>
+          <motion.div {...fadeUp(0.35)} id="sec-dayun">
             <DayunKLineChart data={candlestickData} startAge={startAge} userInfo={userInfo} />
           </motion.div>
         );

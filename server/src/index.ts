@@ -24,7 +24,7 @@ app.get('/api/users/:userId/birth-info', (req, res) => {
     const { userId } = req.params;
     const rows = db.prepare(`
       SELECT id, name, birth_year, birth_month, birth_day, birth_hour,
-             gender, calendar_type, language_style
+             gender, calendar_type, language_style, birth_location
       FROM user_birth_info WHERE user_id = ? ORDER BY created_at DESC
     `).all(userId) as any[];
 
@@ -33,6 +33,7 @@ app.get('/api/users/:userId/birth-info', (req, res) => {
         id: r.id, name: r.name, birthYear: r.birth_year, birthMonth: r.birth_month,
         birthDay: r.birth_day, birthHour: r.birth_hour, gender: r.gender,
         calendarType: r.calendar_type, languageStyle: r.language_style,
+        birthLocation: r.birth_location,
       })),
       currentId: rows[0]?.id || null,
     });
