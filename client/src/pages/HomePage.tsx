@@ -1062,7 +1062,16 @@ export default function HomePage() {
           background: `linear-gradient(135deg, ${PALETTE.coralLight} 0%, ${PALETTE.orangeLight} 50%, ${PALETTE.yellowLight} 100%)`,
           opacity: 0.65,
         }} />
-        <div style={{ position: 'relative', padding: '24px 32px', display: 'flex', alignItems: 'center', gap: '20px' }}>
+        <div style={{
+          position: 'relative',
+          padding: '24px 32px',
+          display: 'flex',
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start',
+          flexWrap: 'wrap',
+          gap: '20px',
+          height: '200px',
+        }}>
           <motion.div animate={{ rotate: [0, 6, -4, 0] }} transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
             style={{
               width: '52px', height: '52px', flexShrink: 0, borderRadius: '16px',
