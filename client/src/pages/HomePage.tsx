@@ -927,6 +927,14 @@ export default function HomePage() {
     setSelectedId(id);
     setActiveTab(null);  // 默认不展开推荐内容
     await fetchRecommendations(id);
+
+    // 移动端：自动滚动到命盘信息区域
+    const mingpanElement = document.getElementById('mingpan-section');
+    if (mingpanElement && window.innerWidth < 768) {
+      setTimeout(() => {
+        mingpanElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
+    }
   }
 
   async function fetchRecommendations(id: string, cityOverride?: string) {
@@ -1345,12 +1353,12 @@ export default function HomePage() {
 
         {/* ​—​ 第二行：用户详情 + 命盘信息 + 今日运势（选中用户时显示） —​ */}
         {selectedRecord && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.08 }} style={{ display: 'flex', flexDirection: 'row', gap: '12px', marginBottom: '16px', alignItems: 'stretch' }}>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.08 }} style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px', alignItems: 'stretch' }} className="md:flex-row">
 
 
           {/* 命盘信息卡片 */}
           {selectedRecord && previewInfo && previewInfo.baziResult ? (
-            <div style={{
+            <div id="mingpan-section" style={{
               flex: 1,
               background: '#FFFFFF', borderRadius: '24px', padding: '20px',
               boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8',
@@ -1412,249 +1420,96 @@ export default function HomePage() {
                     <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#6B7280', lineHeight: 1.6, marginBottom: '8px' }}>
                       {elementDesc[dmEl]}
                     </p>
-                    <div style={{
-                      padding: '8px 10px', borderRadius: '8px',
-                      background: `${elementColors[dmEl]}10`,
-                      border: `1px solid ${elementColors[dmEl]}15`,
-                    }}>
-                      <p style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 600, color: elementColors[dmEl], marginBottom: '4px' }}>命格分析</p>
-                      <p style={{ fontFamily: 'Outfit', fontSize: '10px', color: '#6B7280', lineHeight: 1.6 }}>
-                        {(() => {
-                          const shengKeDesc: Record<string, string> = {
-                            wood:  '木气旺盛，创造力强，木生火以泄秀气，水生木以滋养根基；木克土以制财源，金克木需防官杀。',
-                            fire:  '火势炎上，热情奔放，火生土以聚财库，木生火以助光明；火克金而炼真金，水克火须防克制。',
-                            earth: '土厚载德，稳重守信，土生金以养财源，火生土以助其旺；土克水以制财星，木克土需护根基。',
-                            metal: '金气刚强，坚毅果敢，金生水以流通智慧，土生金以助其威；金克木以掌权柄，火克金需防熔化。',
-                            water: '水智灵动，善变通达，水生木以发荣华，金生水以充源头；水克火以显威严，土克水须防壅塞。',
-                          };
-                          return shengKeDesc[dmEl] || mingGeDesc[dmEl];
-                        })()}
-                      </p>
-                    </div>
+
                   </div>
                 );
               })()}
 
-              {/* 五行占比 - 圆形相生相克图 */}
+              {/* 五行分布 - 横向进度条 */}
               {previewInfo.fiveElements && (
                 (() => {
                   const fe = previewInfo.fiveElements;
-                  const total = (fe.wood || 0) + (fe.fire || 0) + (fe.earth || 0) + (fe.metal || 0) + (fe.water || 0);
-                  const elementNames: Record<string, string> = { wood: '木', fire: '火', earth: '土', metal: '金', water: '水' };
-
-                  // 五行配置: 圆形布局参数
-                  // 上:火 右上:土 右下:金 左下:水 左上:木
                   const elements = [
-                    { key: 'fire', name: '火', color: '#FF6B6B', angle: -90, label: '食神' },
-                    { key: 'earth', name: '土', color: '#D4A000', angle: -18, label: '偏财' },
-                    { key: 'metal', name: '金', color: '#D4A017', angle: 54, label: '七杀' },
-                    { key: 'water', name: '水', color: '#00A8E8', angle: 126, label: '正印' },
-                    { key: 'wood', name: '木', color: '#4CAF50', angle: 198, label: '比肩' },
+                    { key: 'wood',  name: '木', color: '#4CAF50' },
+                    { key: 'fire',  name: '火', color: '#FF5252' },
+                    { key: 'earth', name: '土', color: '#FFC107' },
+                    { key: 'metal', name: '金', color: '#90A4AE' },
+                    { key: 'water', name: '水', color: '#42A5F5' },
                   ];
-                  const R = 72; // 圆形半径(元素圆心到中心距离)
-                  const CX = 130, CY = 120; // SVG中心点
-
-                  // 计算元素位置
-                  function pos(angle: number, r: number): [number, number] {
-                    return [CX + r * Math.cos((angle * Math.PI) / 180),
-                            CY + r * Math.sin((angle * Math.PI) / 180)];
+                  const vals = elements.map(el => (fe[el.key as keyof typeof fe] as number) || 0);
+                  const total = vals.reduce((a, b) => a + b, 0) || 1;
+                  const pcts = vals.map(v => Math.round((v / total) * 100));
+                  // 确保合计=100（调整最大项误差）
+                  const diff = 100 - pcts.reduce((a, b) => a + b, 0);
+                  if (diff !== 0) {
+                    const maxIdx = pcts.indexOf(Math.max(...pcts));
+                    pcts[maxIdx] += diff;
                   }
-
-                  // 相生关系(顺时针箭头): 木→火→土→金→水→木
-                  const shengPairs: [number, number][] = [[198,-90], [-90,-18], [-18,54], [54,126], [126,198]];
-                  // 相克关系(交叉箭头): 木→土, 土→水, 水→火, 火→金, 金→木
-                  const kePairs: [number, number][] = [[198,-18], [-18,126], [126,-90], [-90,54], [54,198]];
-
-                  // 箭头路径生成
-                  function arrowPath(fromAngle: number, toAngle: number, isSheng: boolean): string {
-                    const r1 = 30; // 起点到中心距离
-                    const r2 = 32; // 终点到中心距离(稍远一点)
-                    const [x1, y1] = pos(fromAngle, r1);
-                    const [x2, y2] = pos(toAngle, r2);
-                    // 控制点向中心弯曲
-                    const midR = isSheng ? 20 : 35;
-                    const mx = (x1 + x2) / 2;
-                    const my = (y1 + y2) / 2;
-                    return `M ${x1},${y1} Q ${mx},${my} ${x2},${y2}`;
-                  }
-
-                  // 找出日主元素索引
-                  const dmEl = previewInfo.baziResult?.dayMaster?.toLowerCase() || 'unknown';
-                  const dmIndex = elements.findIndex(e => e.key === dmEl);
-                  const dmAngle = dmIndex >= 0 ? elements[dmIndex].angle : null;
-
+                  const elementNames: Record<string, string> = { wood: '木', fire: '火', earth: '土', metal: '金', water: '水' };
                   return (
-                    <div style={{ marginBottom: '14px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      {/* SVG 圆形图 */}
-                      <svg width="260" height="240" viewBox="0 0 260 240" style={{ overflow: 'visible' }}>
-                        {/* ===== 相生弧线箭头(外圈，棕色) ===== */}
-                        {shengPairs.map(([fromA, toA], i) => {
-                          const fromEl = elements.find(e => e.angle === fromA)!;
-                          const toEl = elements.find(e => e.angle === toA)!;
-                          // 弧线路径：从元素外侧出发，沿外圈弯曲
-                          const fr = 36, tr = 38; // 半径偏移
-                          const [fx, fy] = pos(fromA, fr);
-                          const [tx, ty] = pos(toA, tr);
-                          // 用弧线连接
-                          const startRad = (fromA * Math.PI) / 180;
-                          const endRad = (toA * Math.PI) / 180;
-                          const arcR = 78; // 弧线半径(略大于R)
-                          const ax1 = CX + arcR * Math.cos(startRad);
-                          const ay1 = CY + arcR * Math.sin(startRad);
-                          const ax2 = CX + arcR * Math.cos(endRad);
-                          const ay2 = CY + arcR * Math.sin(endRad);
-                          // 判断是否跨象限(短弧 vs 长弧)
-                          let diff = toA - fromA;
-                          if (diff > 180) diff -= 360;
-                          if (diff < -180) diff += 360;
-                          const largeArc = Math.abs(diff) > 180 ? 1 : 0;
-                          const sweep = diff > 0 ? 1 : 0;
-
-                          // 箭头终点方向
-                          const endTangent = ((toA + (diff > 0 ? 85 : -85)) * Math.PI) / 180;
-                          return (
-                            <g key={`s${i}`}>
-                              <path d={`M ${fx},${fy} A ${arcR},${arcR} 0 ${largeArc},${sweep} ${ax2},${ay2}`}
-                                fill="none"
-                                stroke="#D4C8BA"
-                                strokeWidth="1.1"
-                                strokeOpacity={0.12}
-                                markerEnd="url(#arrowSheng)" />
-                              <text x={pos(toA, 52)[0]} y={pos(toA, 52)[1]}
-                                textAnchor="middle"
-                                dominantBaseline="middle"
-                                style={{ fontSize: '10px', fill: '#D0C4B6', fontFamily: 'Outfit', fontWeight: 500 }}
-                              >生</text>
-                            </g>
-                          );
-                        })}
-
-                        {/* ===== 相克直线箭头(内圈，灰色) ===== */}
-                        {kePairs.map(([fromA, toA], i) => {
-                          const fr = 26, tr = 28;
-                          const [fx, fy] = pos(fromA, fr);
-                          const [tx, ty] = pos(toA, tr);
-                          return (
-                            <g key={`k${i}`}>
-                              <path d={`M ${fx},${fy} L ${tx},${ty}`}
-                                fill="none"
-                                stroke="#C8BCAE"
-                                strokeWidth="0.9"
-                                strokeOpacity={0.10}
-                                strokeDasharray="4,3"
-                                markerEnd="url(#arrowKe)" />
-                              <text x={(fx + tx) / 2} y={(fy + ty) / 2}
-                                textAnchor="middle"
-                                dominantBaseline="middle"
-                                style={{ fontSize: '9px', fill: '#CCC2B6', fontFamily: 'Outfit', fontWeight: 400 }}
-                              >克</text>
-                            </g>
-                          );
-                        })}
-
-                        {/* 箭头定义 */}
-                        <defs>
-                          <marker id="arrowSheng" markerWidth="7" markerHeight="7" refX="5" refY="3.5" orient="auto">
-                            <path d="M0,0 L7,3.5 L0,7 Z" fill="#D4C8BA" opacity={0.14} />
-                          </marker>
-                          <marker id="arrowKe" markerWidth="6" markerHeight="6" refX="4.5" refY="3" orient="auto">
-                            <path d="M0,0 L6,3 L0,6 Z" fill="#C8BCAE" opacity={0.11} />
-                          </marker>
-                        </defs>
-
-                        {/* ===== 五行元素圆圈 ===== */}
-                        {elements.map(el => {
-                          const val = fe[el.key as keyof typeof fe] || 0;
-                          const pct = total > 0 ? Math.round((val / total) * 100) : 0;
-                          const [cx, cy] = pos(el.angle, R);
-                          const isDayMaster = el.key === dmEl;
-                          const circleSize = isDayMaster ? 42 : 38;
-                          const fontSize = isDayMaster ? 16 : 15;
-                          const pctSize = isDayMaster ? 11 : 10;
-                          return (
-                            <g key={el.key}>
-                              {/* 外部十神标签 */}
-                              <text x={pos(el.angle, R + 48)[0]} y={pos(el.angle, R + 48)[1]}
-                                textAnchor={el.angle >= -90 && el.angle <= 90 ? 'start' : 'end'}
-                                dominantBaseline="middle"
-                                style={{
-                                  fontSize: '12px',
-                                  fill: el.color,
-                                  fontFamily: 'Outfit',
-                                  fontWeight: 700,
-                                }}
-                              >{el.label}</text>
-
-                              {/* 元素圆圈 */}
-                              <circle cx={cx} cy={cy} r={circleSize}
-                                fill={`${el.color}14`}
-                                stroke={el.color}
-                                strokeWidth={isDayMaster ? 2.2 : 1.5}
-                                strokeOpacity={isDayMaster ? 1 : 0.7}
-                              />
-
-                              {/* 元素名称 */}
-                              <text x={cx} y={cy - (pct > 0 ? 4 : 1)}
-                                textAnchor="middle"
-                                dominantBaseline="central"
-                                style={{
-                                  fontSize: `${fontSize}px`,
-                                  fill: el.color,
-                                  fontFamily: 'Outfit',
-                                  fontWeight: 800,
-                                }}
-                              >{el.name}</text>
-
-                              {/* 百分比 */}
-                              {pct > 0 && (
-                                <text x={cx} y={cy + 13}
-                                  textAnchor="middle"
-                                  dominantBaseline="central"
-                                  style={{
-                                    fontSize: `${pctSize}px`,
-                                    fill: el.color,
-                                    fontFamily: 'Outfit',
-                                    fontWeight: 700,
-                                    opacity: 0.85,
-                                  }}
-                                >{pct}%</text>
-                              )}
-
-                              {/* 日主标记 */}
-                              {isDayMaster && (
-                                <>
-                                  <rect x={cx - 16} y={cy + 22} width={32} height={15} rx={7.5}
-                                    fill={el.color} opacity={0.88} />
-                                  <text x={cx} y={cy + 29.5}
-                                    textAnchor="middle"
-                                    dominantBaseline="central"
-                                    style={{
-                                      fontSize: '10px',
-                                      fill: '#fff',
-                                      fontFamily: 'Outfit',
-                                      fontWeight: 800,
-                                    }}
-                                  >日主</text>
-                                </>
-                              )}
-                            </g>
-                          );
-                        })}
-                      </svg>
-
-                      {/* 喜用神标签 */}
+                    <div style={{ marginBottom: '10px' }}>
+                      {/* 标题行 */}
                       <div style={{
-                        marginTop: '8px', padding: '6px 20px', borderRadius: '20px',
-                        background: `${PALETTE.coral}10`, border: `1px solid ${PALETTE.coral}25`,
+                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                        marginBottom: '8px',
                       }}>
-                        <span style={{
-                          fontFamily: 'Outfit', fontSize: '13px', fontWeight: 700,
-                          color: '#5D4037',
-                        }}>
-                          【喜用{previewInfo.favorableElements?.map(
-                            (e: string) => elementNames[e] || e).join('、')}】
+                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#333' }}>
+                          五行分布
+                        </span>
+                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#888' }}>
+                          {elements.map((el, i) => `${el.name}:${vals[i]}`).join(' ')}
                         </span>
                       </div>
+
+                      {/* 横向分段进度条 */}
+                      <div style={{
+                        display: 'flex', width: '100%', height: '10px',
+                        borderRadius: '5px', overflow: 'hidden', gap: '1px',
+                      }}>
+                        {elements.map((el, i) => pcts[i] > 0 && (
+                          <div key={el.key} style={{
+                            width: `${pcts[i]}%`,
+                            background: el.color,
+                            borderRadius: i === 0 ? '5px 0 0 5px' : i === elements.length - 1 ? '0 5px 5px 0' : '0',
+                            transition: 'width 0.6s ease',
+                          }} />
+                        ))}
+                      </div>
+
+                      {/* 图例 */}
+                      <div style={{
+                        display: 'flex', gap: '12px', marginTop: '8px', flexWrap: 'wrap',
+                      }}>
+                        {elements.map((el, i) => (
+                          <div key={el.key} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <div style={{
+                              width: '8px', height: '8px', borderRadius: '50%',
+                              background: el.color, flexShrink: 0,
+                            }} />
+                            <span style={{
+                              fontFamily: 'Outfit, sans-serif', fontSize: '12px',
+                              color: '#555', fontWeight: 500,
+                            }}>{el.name}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* 喜用神标签 */}
+                      {(previewInfo.favorableElements || [])?.length > 0 && (
+                        <div style={{
+                          marginTop: '8px', padding: '4px 12px', borderRadius: '12px',
+                          background: `${PALETTE.coral}10`, border: `1px solid ${PALETTE.coral}25`,
+                          display: 'inline-block',
+                        }}>
+                          <span style={{
+                            fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700,
+                            color: '#5D4037',
+                          }}>
+                            喜用：{previewInfo.favorableElements?.map(
+                              (e: string) => elementNames[e] || e).join(' · ')}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   );
                 })()
@@ -1868,71 +1723,76 @@ export default function HomePage() {
             {outfitRec && (
             <div style={{
               flex: 1,
-              background: '#FFFFFF', borderRadius: '24px', padding: '20px',
-              boxShadow: '0 2px 16px rgba(0,0,0,0.05)', border: '1px solid #F0F1F8',
+              background: 'linear-gradient(135deg, #FFF8F6 0%, #FFF 100%)',
+              borderRadius: '20px', padding: '16px',
+              boxShadow: '0 4px 20px rgba(255,107,157,0.08)',
+              border: '1px solid rgba(255,107,157,0.12)',
               display: 'flex', flexDirection: 'column',
             }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                   <div style={{
-                    width: '32px', height: '32px', borderRadius: '10px', flexShrink: 0,
+                    width: '36px', height: '36px', borderRadius: '12px', flexShrink: 0,
                     background: `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange})`,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    boxShadow: `0 3px 10px rgba(255,107,157,0.3)`,
+                    boxShadow: `0 4px 12px rgba(255,107,157,0.35)`,
                   }}>
-                    <Shirt style={{ width: '16px', height: '16px', color: '#FFFFFF' }} />
+                    <Palette style={{ width: '18px', height: '18px', color: '#FFFFFF' }} />
                   </div>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 800, color: '#1A1A2E' }}>今日色彩搭配</span>
+                  <div>
+                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 800, color: '#1A1A2E' }}>今日色彩</span>
+                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#A0A8C0', marginLeft: '6px' }}>每日更新</span>
+                  </div>
                   <motion.button
                     onClick={() => setActiveTab(activeTab === 'outfit' ? null : 'outfit')}
                     whileHover={{ y: -1 }}
                     whileTap={{ scale: 0.98 }}
                     style={{
-                      marginLeft: 'auto', padding: '6px 14px', borderRadius: '9999px',
-                      background: activeTab === 'outfit' ? `${PALETTE.coral}15` : `${PALETTE.coral}08`,
-                      border: `1.5px solid ${activeTab === 'outfit' ? PALETTE.coral : `${PALETTE.coral}30`}`,
-                      cursor: 'pointer', fontFamily: 'Outfit, sans-serif', fontSize: '12px',
-                      fontWeight: 600, color: PALETTE.coral, transition: 'all 0.2s',
+                      marginLeft: 'auto', padding: '5px 12px', borderRadius: '20px',
+                      background: activeTab === 'outfit' ? `${PALETTE.coral}` : 'rgba(255,107,157,0.08)',
+                      border: `1.5px solid ${activeTab === 'outfit' ? PALETTE.coral : 'rgba(255,107,157,0.2)'}`,
+                      cursor: 'pointer', fontFamily: 'Outfit, sans-serif', fontSize: '11px',
+                      fontWeight: 600, color: activeTab === 'outfit' ? '#FFF' : PALETTE.coral, transition: 'all 0.2s',
                     }}
                   >
                     {activeTab === 'outfit' ? '收起' : '查看详情'}
-                    {activeTab === 'outfit' ? <ChevronUp style={{ width: '14px', height: '14px', marginLeft: '4px', display: 'inline' }} /> : <ChevronDown style={{ width: '14px', height: '14px', marginLeft: '4px', display: 'inline' }} />}
+                    {activeTab === 'outfit' ? <ChevronUp style={{ width: '12px', height: '12px', marginLeft: '4px', display: 'inline' }} /> : <ChevronDown style={{ width: '12px', height: '12px', marginLeft: '4px', display: 'inline' }} />}
                   </motion.button>
                 </div>
 
                 {/* 场景快速预览 - 2x2 网格 */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                   {(() => {
                     const scenes = (outfitRec as any).sceneRecommendations || [];
                     const elementColors: Record<string, string> = {
-                      wood: '#4ADE80', fire: '#FF6B6B', earth: '#D4A000', metal: '#94A3B8', water: '#00A8E8',
+                      wood: '#4CAF50', fire: '#FF5252', earth: '#FFC107', metal: '#78909C', water: '#42A5F5',
                     };
                     const elementNames: Record<string, string> = {
                       wood: '木', fire: '火', earth: '土', metal: '金', water: '水',
                     };
-                    // 颜色关键词到颜色值的映射
                     const colorMap: Record<string, { bg: string; text: string }> = {
                       '深蓝': { bg: '#1E3A5F', text: '#FFFFFF' },
                       '白色': { bg: '#F5F5F5', text: '#333333' },
                       '灰色': { bg: '#6B7280', text: '#FFFFFF' },
                       '黑色': { bg: '#1F2937', text: '#FFFFFF' },
-                      '墨绿': { bg: '#0D3328', text: '#FFFFFF' },
-                      '浅蓝': { bg: '#87CEEB', text: '#1F2937' },
-                      '卡其': { bg: '#C3B091', text: '#333333' },
-                      '酒红': { bg: '#722F37', text: '#FFFFFF' },
-                      '金色': { bg: '#D4AF37', text: '#333333' },
-                      '银色': { bg: '#C0C0C0', text: '#333333' },
-                      '红色': { bg: '#DC2626', text: '#FFFFFF' },
+                      '墨绿': { bg: '#14532D', text: '#FFFFFF' },
+                      '浅蓝': { bg: '#7DD3FC', text: '#0C4A6E' },
+                      '卡其': { bg: '#C4A77D', text: '#422006' },
+                      '酒红': { bg: '#7F1D1D', text: '#FFFFFF' },
+                      '金色': { bg: '#CA8A04', text: '#FFFFFF' },
+                      '银色': { bg: '#9CA3AF', text: '#1F2937' },
+                      '红色': { bg: '#EF4444', text: '#FFFFFF' },
                       '绿色': { bg: '#16A34A', text: '#FFFFFF' },
-                      '棕色': { bg: '#8B4513', text: '#FFFFFF' },
+                      '棕色': { bg: '#92400E', text: '#FFFFFF' },
                       '蓝色': { bg: '#2563EB', text: '#FFFFFF' },
                       '橙色': { bg: '#EA580C', text: '#FFFFFF' },
                       '粉色': { bg: '#EC4899', text: '#FFFFFF' },
-                      '紫色': { bg: '#7C3AED', text: '#FFFFFF' },
-                      '黄色': { bg: '#FACC15', text: '#333333' },
+                      '紫色': { bg: '#9333EA', text: '#FFFFFF' },
+                      '黄色': { bg: '#FACC15', text: '#422006' },
+                      '珊瑚粉橙': { bg: '#FF6B9D', text: '#FFFFFF' },
+                      '琥珀橙': { bg: '#FF9D6B', text: '#FFFFFF' },
+                      '天空蓝': { bg: '#6BD4FF', text: '#FFFFFF' },
                     };
-                    // 渲染带颜色高亮的穿搭建议
                     const renderColorSuggestion = (text: string) => {
-                      // 提取颜色关键词
                       let colorKey = '';
                       let colorInfo: { bg: string; text: string } | null = null;
                       for (const key of Object.keys(colorMap)) {
@@ -1948,14 +1808,16 @@ export default function HomePage() {
                           <>
                             {parts[0]}
                             <span style={{
-                              display: 'inline-block',
-                              padding: '1px 6px',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              padding: '2px 8px',
                               borderRadius: '4px',
                               background: colorInfo.bg,
                               color: colorInfo.text,
-                              fontWeight: 700,
+                              fontWeight: 600,
                               fontSize: '10px',
                               margin: '0 2px',
+                              boxShadow: `0 1px 2px ${colorInfo.bg}40`,
                             }}>
                               {colorKey}
                             </span>
@@ -1967,48 +1829,51 @@ export default function HomePage() {
                     };
                     const getSceneIconSmall = (iconStr: string) => {
                       switch(iconStr) {
-                        case 'briefcase': return <Briefcase style={{ width: '14px', height: '14px' }} />;
-                        case 'shirt': return <ShirtIcon style={{ width: '14px', height: '14px' }} />;
-                        case 'party': return <PartyPopper style={{ width: '14px', height: '14px' }} />;
-                        case 'gift': return <Gift style={{ width: '14px', height: '14px' }} />;
-                        default: return <Star style={{ width: '14px', height: '14px' }} />;
+                        case 'briefcase': return <Briefcase style={{ width: '12px', height: '12px' }} />;
+                        case 'shirt': return <ShirtIcon style={{ width: '12px', height: '12px' }} />;
+                        case 'party': return <PartyPopper style={{ width: '12px', height: '12px' }} />;
+                        case 'gift': return <Gift style={{ width: '12px', height: '12px' }} />;
+                        default: return <Sparkles style={{ width: '12px', height: '12px' }} />;
                       }
                     };
                     return scenes.slice(0, 4).map((scene: any) => {
-                      // 使用 API 返回的真实色彩推荐数据，每日刷新
                       const colors = (scene.colors && scene.colors.length > 0) ? scene.colors : ['纯色系服装', '简约配色'];
                       return (
                         <div key={scene.id} style={{
-                          padding: '12px', borderRadius: '14px',
-                          background: `${scene.accentColor}08`, border: `1px solid ${scene.accentColor}25`,
+                          padding: '10px', borderRadius: '12px',
+                          background: '#FFFFFF',
+                          border: `1px solid ${scene.accentColor}20`,
+                          boxShadow: `0 2px 8px ${scene.accentColor}10`,
                         }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
                             <div style={{
-                              width: '26px', height: '26px', borderRadius: '8px',
-                              background: `${scene.accentColor}20`,
+                              width: '24px', height: '24px', borderRadius: '8px',
+                              background: `linear-gradient(135deg, ${scene.accentColor}, ${scene.accentColor}99)`,
                               display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              color: scene.accentColor,
+                              color: '#FFFFFF',
                             }}>
                               {getSceneIconSmall(scene.icon)}
                             </div>
                             <span style={{
-                              fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700,
+                              fontFamily: 'Outfit', fontSize: '11px', fontWeight: 700,
                               color: scene.accentColor,
                             }}>{scene.label}</span>
                           </div>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '6px' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', marginBottom: '6px', minHeight: '36px' }}>
                             {colors.slice(0, 2).map((color: string, i: number) => (
                               <span key={i} style={{
-                                fontFamily: 'Outfit', fontSize: '10px', color: '#6B7280',
+                                fontFamily: 'Outfit', fontSize: '10px', color: '#666',
+                                lineHeight: 1.4,
                               }}>
-                                · {renderColorSuggestion(color)}
+                                {renderColorSuggestion(color)}
                               </span>
                             ))}
                           </div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                             <div style={{
-                              width: '10px', height: '10px', borderRadius: '50%',
+                              width: '8px', height: '8px', borderRadius: '50%',
                               background: elementColors[scene.element],
+                              boxShadow: `0 0 4px ${elementColors[scene.element]}60`,
                             }} />
                             <span style={{
                               fontFamily: 'Outfit', fontSize: '10px',
@@ -2018,12 +1883,77 @@ export default function HomePage() {
                         </div>
                       );
                     });
-                  })()}
+})()}
                 </div>
-              </div>
-              )}
 
-                {/* 空状态提示 */}
+                {/* 今日色彩详情展开 - 移入卡片内部 */}
+                {activeTab === 'outfit' && outfitRec && (
+                  <div style={{ marginTop: '12px', background: '#FFFFFF', borderRadius: '16px', padding: '14px 16px', border: `1px solid ${PALETTE.coral}20` }}>
+                    {/* 天气信息 */}
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'stretch', background: `linear-gradient(135deg, ${PALETTE.coralLight}, ${PALETTE.orangeLight})`, borderRadius: '14px', padding: '12px 14px', border: `1px solid ${PALETTE.coral}25`, marginBottom: '12px' }}>
+                      <div style={{ width: '44px', height: '44px', borderRadius: '10px', flexShrink: 0, background: '#FFFFFF', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                        {(outfitRec as any).weatherInfo?.weather?.includes('晴') ? <Sun style={{ width: '20px', height: '20px', color: '#FF9D6B' }} /> : (outfitRec as any).weatherInfo?.weather?.includes('雨') ? <CloudRain style={{ width: '20px', height: '20px', color: '#6BD4FF' }} /> : (outfitRec as any).weatherInfo?.weather?.includes('阴') ? <Cloud style={{ width: '20px', height: '20px', color: '#94A3B8' }} /> : <Wind style={{ width: '20px', height: '20px', color: '#6BD4FF' }} />}
+                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', fontWeight: 700, color: '#1A1A2E' }}>{(outfitRec as any).weatherInfo?.temperature || '--'}°</span>
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px' }}>
+                          <MapPin style={{ width: '10px', height: '10px', color: '#6B7280' }} />
+                          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600, color: '#1A1A2E' }}>{(outfitRec as any).weatherInfo?.city || userLocation?.city || '未设置'}</span>
+                          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#6B7280' }}>{(outfitRec as any).weatherInfo?.weather || '加载中...'}</span>
+                        </div>
+                        <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#6B7280', margin: 0 }}>今日五行：<span style={{ color: PALETTE.coral, fontWeight: 600 }}>{(outfitRec as any).weatherInfo?.wuxing || '加载中'}</span></p>
+                      </div>
+                    </div>
+                    {/* 场景穿搭推荐 */}
+                    {(() => {
+                      const scenes = (outfitRec as any).sceneRecommendations || [];
+                      const getSceneIcon = (iconStr: string) => { switch(iconStr) { case 'briefcase': return <Briefcase style={{ width: '14px', height: '14px' }} />; case 'shirt': return <ShirtIcon style={{ width: '14px', height: '14px' }} />; case 'party': return <PartyPopper style={{ width: '14px', height: '14px' }} />; case 'gift': return <Gift style={{ width: '14px', height: '14px' }} />; default: return <Star style={{ width: '14px', height: '14px' }} />; } };
+                      return (
+                        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(scenes.length, 4)}, 1fr)`, gap: '6px', marginBottom: '10px' }}>
+                          {scenes.map((scene: any) => (
+                            <motion.button key={scene.id} onClick={() => setActiveScene(activeScene === scene.id ? null : scene.id)} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} style={{ padding: '8px 6px', borderRadius: '10px', background: activeScene === scene.id ? `${scene.accentColor}20` : `${scene.accentColor}08`, border: `1.5px solid ${activeScene === scene.id ? scene.accentColor : `${scene.accentColor}25`}`, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', transition: 'all 0.2s' }}>
+                              <div style={{ color: scene.accentColor }}>{getSceneIcon(scene.icon)}</div>
+                              <span style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 700, color: scene.accentColor }}>{scene.label}</span>
+                            </motion.button>
+                          ))}
+                        </div>
+                      );
+                    })()}
+                    {/* 场景详细展开 */}
+                    {(() => {
+                      const scenes = (outfitRec as any).sceneRecommendations || [];
+                      const scene = scenes.find((s: any) => s.id === activeScene);
+                      if (!scene) return null;
+                      return (
+                        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} style={{ background: `linear-gradient(135deg, ${scene.accentColor}10, ${scene.accentColor}05)`, borderRadius: '12px', padding: '12px', border: `1.5px solid ${scene.accentColor}25` }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                            <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: scene.accentColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                              <Star style={{ width: '14px', height: '14px', color: '#FFFFFF' }} />
+                            </div>
+                            <div>
+                              <p style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{scene.label}</p>
+                              <p style={{ fontFamily: 'Outfit', fontSize: '10px', color: '#A0A8C0', margin: '1px 0 0' }}>{scene.element}属性 · {scene.weatherTip?.slice(0, 12) || ''}</p>
+                            </div>
+                          </div>
+                          {scene.colors && <div style={{ marginBottom: '10px' }}>
+                            <p style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 600, color: '#6B7280', marginBottom: '4px' }}>推荐颜色</p>
+                            <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
+                              {scene.colors.map((c: string, i: number) => <span key={i} style={{ padding: '3px 8px', borderRadius: '6px', background: `${scene.accentColor}12`, border: `1px solid ${scene.accentColor}25`, fontFamily: 'Outfit', fontSize: '10px', color: '#1A1A2E' }}>{c}</span>)}
+                            </div>
+                          </div>}
+                          <div style={{ padding: '8px', background: '#FFFFFF', borderRadius: '8px', border: `1px solid ${scene.accentColor}20` }}>
+                            <Lightbulb style={{ width: '12px', height: '12px', color: scene.accentColor, marginBottom: '4px' }} />
+                            <p style={{ fontFamily: 'Outfit', fontSize: '10px', color: '#6B7280', lineHeight: 1.6, margin: 0 }}>{scene.explanation}</p>
+                        </div>
+                      </motion.div>
+                      );
+                    })()}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* 空状态提示 */}
                 {(!selectedRecord || !previewInfo || !previewInfo.baziResult) && (
                   <div style={{
                     background: '#FFFFFF', borderRadius: '24px', padding: '48px 32px',

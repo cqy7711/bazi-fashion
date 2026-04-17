@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Send, Loader2, MessageCircle, Sparkles, Trash2, BookOpen, Shirt, Gem, RefreshCw, ArrowLeft, Info, ChevronDown, Users } from 'lucide-react';
+import { Send, Loader2, MessageCircle, Sparkles, Trash2, BookOpen, Shirt, Gem, RefreshCw, ArrowLeft, Info, ChevronDown, Users, Gamepad2, Briefcase, TrendingUp, Eye, X } from 'lucide-react';
 import type { UserBirthInfo } from '../shared/types';
 
 const USER_ID = 'user_default';
@@ -28,10 +28,10 @@ interface ChatMessage {
 }
 
 const QUICK_QUESTIONS = [
-  { icon: <BookOpen className="w-4 h-4" />, text: '我的八字命局解读', prompt: '请详细分析我的八字命局，包括强弱判断、用神选取和格局分析。' },
-  { icon: <Shirt className="w-4 h-4" />, text: '今日色彩搭配建议', prompt: '根据我的八字，今日穿什么颜色的衣服最好？' },
-  { icon: <Gem className="w-4 h-4" />, text: '适合我的手串', prompt: '根据我的八字五行，什么材质的手串最适合我？' },
-  { icon: <Sparkles className="w-4 h-4" />, text: '流年运势', prompt: '请分析我今年的流年运势，有哪些需要注意的事项？' },
+  { icon: <BookOpen className="w-4 h-4" />, text: '我的八字命局解读', prompt: '请详细分析我的八字命局，包括强弱判断、用神选取和格局分析。', color: 'rose', gradient: 'from-rose-400 to-pink-500' },
+  { icon: <Shirt className="w-4 h-4" />, text: '今日色彩搭配建议', prompt: '根据我的八字，今日穿什么颜色的衣服最好？', color: 'orange', gradient: 'from-orange-400 to-amber-500' },
+  { icon: <Gem className="w-4 h-4" />, text: '适合我的手串', prompt: '根据我的八字五行，什么材质的手串最适合我？', color: 'violet', gradient: 'from-violet-400 to-purple-500' },
+  { icon: <Sparkles className="w-4 h-4" />, text: '流年运势', prompt: '请分析我今年的流年运势，有哪些需要注意的事项？', color: 'cyan', gradient: 'from-cyan-400 to-teal-500' },
 ];
 
 const SUGGESTIONS_ABOUT: Record<string, string> = {
@@ -48,9 +48,10 @@ export type ChatStyle = 'plain' | 'fairy' | 'game' | 'career' | 'stock' | 'maste
 interface ChatStyleConfig {
   id: ChatStyle;
   name: string;
-  icon: React.ReactNode;
-  color: string;
-  bgColor: string;
+  icon: React.ComponentType<{ className?: string }>;
+  iconColor: string;
+  gradient: string;
+  bgActive: string;
   description: string;
   maxUses: number;
   promptPrefix: string;
@@ -60,9 +61,10 @@ const CHAT_STYLES: ChatStyleConfig[] = [
   {
     id: 'plain',
     name: '大白话',
-    icon: '💬',
-    color: 'text-amber-600',
-    bgColor: 'bg-amber-50 border-amber-200',
+    icon: MessageCircle,
+    iconColor: 'text-amber-500',
+    gradient: 'from-amber-400 to-orange-400',
+    bgActive: 'bg-gradient-to-br from-amber-50 to-orange-50 border-amber-300',
     description: '简单直白的大白话解读',
     maxUses: 5,
     promptPrefix: '请用最通俗易懂的大白话风格来解读八字命理，避免使用专业术语，让完全没有命理基础的人也能完全听懂。',
@@ -70,9 +72,10 @@ const CHAT_STYLES: ChatStyleConfig[] = [
   {
     id: 'fairy',
     name: '童话',
-    icon: '🌟',
-    color: 'text-pink-600',
-    bgColor: 'bg-pink-50 border-pink-200',
+    icon: Sparkles,
+    iconColor: 'text-pink-500',
+    gradient: 'from-pink-400 to-rose-400',
+    bgActive: 'bg-gradient-to-br from-pink-50 to-rose-50 border-pink-300',
     description: '童话故事风格解读',
     maxUses: 1,
     promptPrefix: '请用童话故事的风格来解读八字命理，把命理概念拟人化、故事化，像讲述一个奇妙的冒险故事一样有趣。',
@@ -80,9 +83,10 @@ const CHAT_STYLES: ChatStyleConfig[] = [
   {
     id: 'game',
     name: '游戏',
-    icon: '🎮',
-    color: 'text-purple-600',
-    bgColor: 'bg-purple-50 border-purple-200',
+    icon: Gamepad2,
+    iconColor: 'text-purple-500',
+    gradient: 'from-purple-400 to-violet-400',
+    bgActive: 'bg-gradient-to-br from-purple-50 to-violet-50 border-purple-300',
     description: '游戏世界观解读',
     maxUses: 1,
     promptPrefix: '请用游戏世界的风格来解读八字命理，把八字比作游戏属性、装备、技能、大招等，用游戏玩家的视角来描述命运。',
@@ -90,9 +94,10 @@ const CHAT_STYLES: ChatStyleConfig[] = [
   {
     id: 'career',
     name: '职场',
-    icon: '💼',
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-50 border-blue-200',
+    icon: Briefcase,
+    iconColor: 'text-blue-500',
+    gradient: 'from-blue-400 to-indigo-400',
+    bgActive: 'bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-300',
     description: '职场发展解读',
     maxUses: 1,
     promptPrefix: '请用职场发展的视角来解读八字命理，把命理概念比作职场技能、工作表现、团队角色、职业规划等实用内容。',
@@ -100,9 +105,10 @@ const CHAT_STYLES: ChatStyleConfig[] = [
   {
     id: 'stock',
     name: '股民',
-    icon: '📈',
-    color: 'text-emerald-600',
-    bgColor: 'bg-emerald-50 border-emerald-200',
+    icon: TrendingUp,
+    iconColor: 'text-emerald-500',
+    gradient: 'from-emerald-400 to-teal-400',
+    bgActive: 'bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-300',
     description: '股市投资风格解读',
     maxUses: 1,
     promptPrefix: '请用股市投资的风格来解读八字命理，把五行运势比作K线图、大盘走势、个股分析、技术指标、持仓策略、牛市熊市等股市术语。',
@@ -110,9 +116,10 @@ const CHAT_STYLES: ChatStyleConfig[] = [
   {
     id: 'master',
     name: '算命师',
-    icon: '🔮',
-    color: 'text-amber-600',
-    bgColor: 'bg-amber-50 border-amber-200',
+    icon: Eye,
+    iconColor: 'text-amber-500',
+    gradient: 'from-amber-400 to-yellow-400',
+    bgActive: 'bg-gradient-to-br from-amber-50 to-yellow-50 border-amber-300',
     description: '传统算命师解读',
     maxUses: 1,
     promptPrefix: '请用传统算命先生的风格来解读八字命理，用古风文言文腔调、神秘高深的氛围、略带玄学意味的口吻来解读命理。',
@@ -890,13 +897,13 @@ export default function AiChatPage() {
       {messages.length <= 2 && (
         <div className="mb-4">
           <p className="text-xs text-muted-foreground mb-2 font-medium">快捷问题</p>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             {QUICK_QUESTIONS.map((q, i) => (
               <motion.button key={i} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
                 onClick={() => handleQuickQuestion(q.prompt)}
-                className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-white border border-border text-left hover:border-primary/50 hover:bg-amber-50/50 transition-all group">
-                <span className="text-primary group-hover:scale-110 transition-transform">{q.icon}</span>
-                <span className="text-xs font-medium text-foreground">{q.text}</span>
+                className={`flex items-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-br ${q.gradient} text-white text-left hover:shadow-lg hover:scale-[1.02] transition-all group`}>
+                <span className="text-white group-hover:scale-110 transition-transform drop-shadow">{q.icon}</span>
+                <span className="text-xs font-bold text-white drop-shadow-sm">{q.text}</span>
               </motion.button>
             ))}
           </div>
@@ -925,15 +932,15 @@ export default function AiChatPage() {
                 </div>
                 
                 {/* AI回复底部：显示风格标签 + 切换按钮 */}
-                {msg.role === 'assistant' && msg.styleUsed && (
+                {msg.role === 'assistant' && msg.styleUsed && currentStyleConfig && (
                   <div className="flex items-center justify-between mt-1.5 px-1">
                     <div className="flex items-center gap-2">
                       {/* 当前风格标签 */}
-                      <span className={cn('text-[10px] px-1.5 py-0.5 rounded', currentStyleConfig?.bgColor, currentStyleConfig?.color)}>
-                        {currentStyleConfig?.icon} {currentStyleConfig?.name}
+                      <span className={cn('text-[10px] px-1.5 py-0.5 rounded flex items-center gap-0.5', currentStyleConfig.bgActive, currentStyleConfig.iconColor)}>
+                        <currentStyleConfig.icon className="w-3 h-3" />{currentStyleConfig.name}
                       </span>
                     </div>
-                    
+
                     {/* 切换风格按钮 */}
                     {otherStyles.length > 0 && (
                       <div className="flex items-center gap-1">
@@ -944,12 +951,12 @@ export default function AiChatPage() {
                             onClick={() => reInterpret(msg.id, s.id)}
                             disabled={loading}
                             className={cn(
-                              'text-[10px] px-1.5 py-0.5 rounded border transition-all',
-                              s.bgColor, s.color,
+                              'text-[10px] px-1.5 py-0.5 rounded border transition-all flex items-center gap-0.5',
+                              s.bgActive, s.iconColor,
                               loading && 'opacity-50 cursor-not-allowed'
                             )}
                           >
-                            {s.icon} {s.name}
+                            <s.icon className="w-3 h-3" />{s.name}
                           </button>
                         ))}
                       </div>
@@ -990,24 +997,28 @@ export default function AiChatPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          {CHAT_STYLES.map(style => {
-            const isActive = currentStyle === style.id;
-            const isDisabled = styleUsageCount[style.id] >= style.maxUses;
+          {CHAT_STYLES.map(s => {
+            const isActive = currentStyle === s.id;
+            const isDisabled = styleUsageCount[s.id] >= s.maxUses;
             return (
-              <button
-                key={style.id}
-                onClick={() => !isDisabled && setCurrentStyle(style.id)}
+              <motion.button
+                key={s.id}
+                whileHover={!isDisabled ? { scale: 1.05 } : undefined}
+                whileTap={!isDisabled ? { scale: 0.95 } : undefined}
+                onClick={() => !isDisabled && setCurrentStyle(s.id)}
                 disabled={isDisabled}
                 className={cn(
-                  'px-3 py-1.5 rounded-lg border text-xs font-medium transition-all flex items-center gap-1.5',
-                  isActive ? `${style.bgColor} ${style.color} border-current shadow-sm` : 'bg-white border-border text-muted-foreground hover:border-primary/50',
+                  'px-3 py-1.5 rounded-xl border text-xs font-medium transition-all flex items-center gap-1.5',
+                  isActive
+                    ? `${s.bgActive} ${s.iconColor} border-current shadow-sm font-semibold`
+                    : 'bg-white border-border text-muted-foreground hover:border-primary/50 hover:bg-gray-50',
                   isDisabled && 'opacity-40 cursor-not-allowed'
                 )}
               >
-                <span>{style.icon}</span>
-                <span>{style.name}</span>
-                {isDisabled && <span className="text-[10px]">✕</span>}
-              </button>
+                <s.icon className={cn('w-3.5 h-3.5', s.iconColor)} />
+                <span>{s.name}</span>
+                {isDisabled && <X className="w-3 h-3 ml-0.5" />}
+              </motion.button>
             );
           })}
         </div>

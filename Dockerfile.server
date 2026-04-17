@@ -1,0 +1,23 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# 安装编译工具链（better-sqlite3 需要）
+RUN apk add --no-cache python3 make g++
+
+# 安装依赖和 tsx
+COPY server/package.json server/package-lock.json* ./
+RUN npm ci && npm install -g tsx
+
+COPY server/ ./server/
+COPY shared/ ./shared/
+
+# 创建数据目录
+RUN mkdir -p /app/data
+
+EXPOSE 3001
+
+ENV NODE_ENV=production
+ENV PORT=3001
+
+CMD ["tsx", "server/src/index.ts"]
