@@ -45,8 +45,7 @@ const EVENT_TYPE_NAMES: Record<string, string> = {
   'session_end': '结束会话',
 };
 
-export default function AdminPage({ visualMode = 'vivid' }: { visualMode?: 'vivid' | 'premium' }) {
-  const isPremium = visualMode === 'premium';
+export default function AdminPage() {
   const [token, setToken] = useState<string | null>(localStorage.getItem('admin-token'));
   const [password, setPassword] = useState('');
   const [logging, setLogging] = useState(false);
@@ -125,10 +124,10 @@ export default function AdminPage({ visualMode = 'vivid' }: { visualMode?: 'vivi
   // 登录页
   if (!token) {
     return (
-      <div className={`min-h-screen ${isPremium ? 'bg-gradient-to-br from-indigo-50 via-blue-50 to-slate-50' : 'bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50'} flex items-center justify-center p-4`}>
+      <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 flex items-center justify-center p-4">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-sm">
           <div className="bg-white rounded-3xl border border-border shadow-xl p-8 text-center">
-            <div className={`w-16 h-16 ${isPremium ? 'bg-gradient-to-br from-indigo-500 to-blue-500 shadow-indigo-200' : 'bg-gradient-to-br from-amber-400 to-orange-500 shadow-orange-200'} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg`}>
+            <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 shadow-orange-200 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
               <Lock className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-2xl font-black text-foreground mb-1">管理后台</h1>
@@ -138,7 +137,7 @@ export default function AdminPage({ visualMode = 'vivid' }: { visualMode?: 'vivi
                 className="w-full px-4 py-3 rounded-xl border border-border bg-background text-center text-lg tracking-widest focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary" autoFocus />
               {loginError && <p className="text-sm text-red-500">{loginError}</p>}
               <button type="submit" disabled={logging}
-                className={`w-full py-3 rounded-xl ${isPremium ? 'bg-gradient-to-r from-indigo-500 to-blue-500 shadow-indigo-200 hover:from-indigo-600 hover:to-blue-600' : 'bg-gradient-to-r from-amber-500 to-orange-500 shadow-orange-200 hover:from-amber-600 hover:to-orange-600'} text-white font-bold shadow-lg transition-all disabled:opacity-60 flex items-center justify-center gap-2`}>
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 shadow-orange-200 hover:from-amber-600 hover:to-orange-600 text-white font-bold shadow-lg transition-all disabled:opacity-60 flex items-center justify-center gap-2">
                 {logging ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
                 {logging ? '验证中...' : '进入后台'}
               </button>
@@ -157,7 +156,7 @@ export default function AdminPage({ visualMode = 'vivid' }: { visualMode?: 'vivi
   const pieData = stats ? Object.entries(stats.elementStats).map(([k, v]) => ({ name: ELEMENT_NAMES[k], value: v, color: ELEMENT_COLORS[k] })).filter(d => d.value > 0) : [];
 
   return (
-    <div className={`min-h-screen ${isPremium ? 'bg-gradient-to-br from-indigo-50/45 via-sky-50/35 to-slate-50/45' : 'bg-gradient-to-br from-rose-50/40 via-sky-50/35 to-emerald-50/35'}`}>
+    <div className="min-h-screen bg-gradient-to-br from-rose-50/40 via-sky-50/35 to-emerald-50/35">
       {/* 顶部导航 */}
       <header className="sticky top-0 z-50 bg-white/78 backdrop-blur-md border-b border-white/70 shadow-[0_8px_24px_rgba(86,64,142,0.08)]">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -166,7 +165,7 @@ export default function AdminPage({ visualMode = 'vivid' }: { visualMode?: 'vivi
               <ArrowLeft className="w-4 h-4" />
             </Link>
             <div className="flex items-center gap-2">
-              <div className={`w-8 h-8 ${isPremium ? 'bg-gradient-to-br from-indigo-500 to-blue-500' : 'bg-gradient-to-br from-amber-400 to-orange-500'} rounded-lg flex items-center justify-center`}>
+              <div className="w-8 h-8 bg-gradient-to-br from-amber-400 to-orange-500 rounded-lg flex items-center justify-center">
                 <span className="text-white text-sm">☯</span>
               </div>
               <span className="font-bold text-foreground">管理后台</span>
@@ -195,21 +194,6 @@ export default function AdminPage({ visualMode = 'vivid' }: { visualMode?: 'vivi
       </header>
 
       <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
-        {isPremium && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-3 rounded-[20px] border border-indigo-200/65 bg-gradient-to-br from-[#f8f9ff] to-[#eef5ff] shadow-[0_14px_28px_rgba(94,92,230,0.14)]">
-            {[
-              { k: '当前页', v: activeTab === 'records' ? '用户记录' : '用户分析' },
-              { k: '总记录', v: `${stats?.totalRecords ?? '--'}` },
-              { k: '今日新增', v: `${stats?.todayRecords ?? '--'}` },
-              { k: '分页大小', v: `${LIMIT}` },
-            ].map((item) => (
-              <div key={item.k} className="min-h-[54px] rounded-[13px] bg-white border border-sky-100 p-2.5 flex flex-col justify-center">
-                <p className="text-[10px] text-muted-foreground font-semibold">{item.k}</p>
-                <p className="text-sm font-black text-foreground mt-0.5">{item.v}</p>
-              </div>
-            ))}
-          </div>
-        )}
         {/* 用户分析页面 */}
         {activeTab === 'analytics' && (
           <div className="space-y-6">
@@ -238,7 +222,7 @@ export default function AdminPage({ visualMode = 'vivid' }: { visualMode?: 'vivi
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* 每日趋势 */}
-                  <div className={`bg-gradient-to-br from-white to-slate-50 rounded-2xl ${isPremium ? 'border border-indigo-100/90 shadow-[0_12px_22px_rgba(92,99,255,0.12)]' : 'border border-white/80 shadow-[0_10px_20px_rgba(92,69,154,0.08)]'} p-5`}>
+                  <div className={`bg-gradient-to-br from-white to-slate-50 rounded-2xl border border-white/80 shadow-[0_10px_20px_rgba(92,69,154,0.08)] p-5`}>
                     <div className="flex items-center gap-2 mb-4">
                       <TrendingUp className="w-4 h-4 text-primary" />
                       <h3 className="text-sm font-bold text-foreground">每日事件趋势</h3>
@@ -248,13 +232,13 @@ export default function AdminPage({ visualMode = 'vivid' }: { visualMode?: 'vivi
                         <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#6B7280' }} axisLine={false} tickLine={false} />
                         <YAxis tick={{ fontSize: 10, fill: '#9CA3AF' }} axisLine={false} tickLine={false} />
                         <Tooltip formatter={(v: any) => [`${v}次`, '事件数']} contentStyle={{ borderRadius: 12, border: '1px solid #e5e7eb', fontSize: 12 }} />
-                        <Line type="monotone" dataKey="count" stroke={isPremium ? '#5C63FF' : '#FF6B9D'} strokeWidth={2} dot={{ fill: isPremium ? '#5C63FF' : '#FF6B9D', strokeWidth: 0, r: 4 }} />
+                        <Line type="monotone" dataKey="count" stroke="#FF6B9D" strokeWidth={2} dot={{ fill: '#FF6B9D', strokeWidth: 0, r: 4 }} />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
 
                   {/* 功能使用排行 */}
-                  <div className={`bg-gradient-to-br from-white to-slate-50 rounded-2xl ${isPremium ? 'border border-indigo-100/90 shadow-[0_12px_22px_rgba(92,99,255,0.12)]' : 'border border-white/80 shadow-[0_10px_20px_rgba(92,69,154,0.08)]'} p-5`}>
+                  <div className={`bg-gradient-to-br from-white to-slate-50 rounded-2xl border border-white/80 shadow-[0_10px_20px_rgba(92,69,154,0.08)] p-5`}>
                     <div className="flex items-center gap-2 mb-4">
                       <MousePointerClick className="w-4 h-4 text-primary" />
                       <h3 className="text-sm font-bold text-foreground">功能使用排行</h3>
@@ -278,7 +262,7 @@ export default function AdminPage({ visualMode = 'vivid' }: { visualMode?: 'vivi
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* 留存率 */}
-                  <div className={`bg-gradient-to-br from-white to-slate-50 rounded-2xl ${isPremium ? 'border border-indigo-100/90 shadow-[0_12px_22px_rgba(92,99,255,0.12)]' : 'border border-white/80 shadow-[0_10px_20px_rgba(92,69,154,0.08)]'} p-5`}>
+                  <div className={`bg-gradient-to-br from-white to-slate-50 rounded-2xl border border-white/80 shadow-[0_10px_20px_rgba(92,69,154,0.08)] p-5`}>
                     <div className="flex items-center gap-2 mb-4">
                       <TrendingDown className="w-4 h-4 text-primary" />
                       <h3 className="text-sm font-bold text-foreground">用户留存率</h3>
@@ -289,14 +273,14 @@ export default function AdminPage({ visualMode = 'vivid' }: { visualMode?: 'vivi
                         <YAxis tick={{ fontSize: 10, fill: '#9CA3AF' }} axisLine={false} tickLine={false} unit="%" />
                         <Tooltip formatter={(v: any) => [`${v}%`, '留存率']} contentStyle={{ borderRadius: 12, border: '1px solid #e5e7eb', fontSize: 12 }} />
                         <Bar dataKey="rate" radius={[4, 4, 4, 4]}>
-                          {analytics.retention.map((_, i) => <Cell key={i} fill={isPremium ? (i === 0 ? '#5C63FF' : i === 1 ? '#39C6FF' : '#8F68FF') : (i === 0 ? '#FF6B9D' : i === 1 ? '#FFB347' : '#7BED9F')} />)}
+                          {analytics.retention.map((_, i) => <Cell key={i} fill={i === 0 ? '#FF6B9D' : i === 1 ? '#FFB347' : '#7BED9F'} />)}
                         </Bar>
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
 
                   {/* 页面访问排行 */}
-                  <div className={`bg-gradient-to-br from-white to-slate-50 rounded-2xl ${isPremium ? 'border border-indigo-100/90 shadow-[0_12px_22px_rgba(92,99,255,0.12)]' : 'border border-white/80 shadow-[0_10px_20px_rgba(92,69,154,0.08)]'} p-5`}>
+                  <div className={`bg-gradient-to-br from-white to-slate-50 rounded-2xl border border-white/80 shadow-[0_10px_20px_rgba(92,69,154,0.08)] p-5`}>
                     <div className="flex items-center gap-2 mb-4">
                       <Activity className="w-4 h-4 text-primary" />
                       <h3 className="text-sm font-bold text-foreground">页面访问排行</h3>
@@ -319,7 +303,7 @@ export default function AdminPage({ visualMode = 'vivid' }: { visualMode?: 'vivi
                 </div>
 
                 {/* 最近事件 */}
-                  <div className={`bg-gradient-to-br from-white to-slate-50 rounded-2xl ${isPremium ? 'border border-indigo-100/90 shadow-[0_12px_22px_rgba(92,99,255,0.12)]' : 'border border-white/80 shadow-[0_10px_20px_rgba(92,69,154,0.08)]'} p-5`}>
+                  <div className={`bg-gradient-to-br from-white to-slate-50 rounded-2xl border border-white/80 shadow-[0_10px_20px_rgba(92,69,154,0.08)] p-5`}>
                   <h3 className="text-sm font-bold text-foreground mb-4">最近用户行为</h3>
                   <div className="overflow-x-auto">
                     <table className="w-full">
@@ -381,9 +365,7 @@ export default function AdminPage({ visualMode = 'vivid' }: { visualMode?: 'vivi
             {/* 搜索 */}
             <div className={cn(
               'bg-gradient-to-br from-white to-slate-50 rounded-2xl p-4',
-              isPremium
-                ? 'border border-indigo-100/90 shadow-[0_14px_28px_rgba(92,99,255,0.14)]'
-                : 'border border-white/80 shadow-[0_10px_20px_rgba(92,69,154,0.08)]'
+              'border border-white/80 shadow-[0_10px_20px_rgba(92,69,154,0.08)]'
             )}>
               <form onSubmit={handleSearch} className="flex gap-2">
                 <div className="flex-1 relative">
@@ -393,13 +375,11 @@ export default function AdminPage({ visualMode = 'vivid' }: { visualMode?: 'vivi
                 </div>
                 <button type="submit" className={cn(
                   'px-4 py-2 rounded-xl text-white text-sm font-medium hover:brightness-105 transition-all',
-                  isPremium
-                    ? 'bg-gradient-to-r from-indigo-500 to-violet-500 shadow-[0_12px_22px_rgba(92,99,255,0.28)]'
-                    : 'bg-gradient-to-r from-primary to-pink-500 shadow-[0_10px_20px_rgba(255,107,157,0.25)]'
+                  'bg-gradient-to-r from-primary to-pink-500 shadow-[0_10px_20px_rgba(255,107,157,0.25)]'
                 )}>搜索</button>
                 <button type="button" onClick={() => { setSearch(''); loadRecords(1, ''); }} className={cn(
                   'px-3 py-2 rounded-xl text-sm text-muted-foreground transition-colors',
-                  isPremium ? 'border border-indigo-100 hover:bg-indigo-50/70' : 'border border-border hover:bg-secondary/50'
+                  'border border-border hover:bg-secondary/50'
                 )}>清空</button>
               </form>
             </div>
@@ -407,9 +387,7 @@ export default function AdminPage({ visualMode = 'vivid' }: { visualMode?: 'vivi
             {/* 记录表格 */}
             <div className={cn(
               'bg-gradient-to-br from-white to-slate-50 rounded-2xl overflow-hidden',
-              isPremium
-                ? 'border border-indigo-100/90 shadow-[0_14px_30px_rgba(92,99,255,0.16)]'
-                : 'border border-white/80 shadow-[0_10px_20px_rgba(92,69,154,0.08)]'
+              'border border-white/80 shadow-[0_10px_20px_rgba(92,69,154,0.08)]'
             )}>
               <div className="px-4 py-3 border-b border-border flex items-center justify-between">
                 <p className="text-sm font-semibold text-foreground">用户记录</p>
@@ -424,7 +402,7 @@ export default function AdminPage({ visualMode = 'vivid' }: { visualMode?: 'vivi
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className={cn('border-b border-border', isPremium ? 'bg-indigo-50/75' : 'bg-secondary/20')}>
+                      <tr className={cn('border-b border-border', 'bg-secondary/20')}>
                         <th className="text-left px-4 py-2.5 text-xs font-semibold text-muted-foreground">姓名</th>
                         <th className="text-left px-4 py-2.5 text-xs font-semibold text-muted-foreground">性别</th>
                         <th className="text-left px-4 py-2.5 text-xs font-semibold text-muted-foreground">出生日期</th>
@@ -439,8 +417,8 @@ export default function AdminPage({ visualMode = 'vivid' }: { visualMode?: 'vivi
                         <motion.tr key={r.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.02 }}
                           className={cn(
                             'border-b border-border last:border-0 transition-colors',
-                            isPremium ? 'hover:bg-indigo-50/55' : 'hover:bg-secondary/20',
-                            selectedRecord?.id === r.id && (isPremium ? 'bg-indigo-100/55' : 'bg-amber-50')
+                            'hover:bg-secondary/20',
+                            selectedRecord?.id === r.id && 'bg-amber-50'
                           )}>
                           <td className="px-4 py-3">
                             <button onClick={() => setSelectedRecord(r)} className="text-sm font-semibold text-foreground hover:text-primary transition-colors text-left">
@@ -520,9 +498,7 @@ export default function AdminPage({ visualMode = 'vivid' }: { visualMode?: 'vivi
             {stats && pieData.length > 0 && (
               <div className={cn(
                 'bg-gradient-to-br from-white to-slate-50 rounded-2xl p-5',
-                isPremium
-                  ? 'border border-indigo-100/90 shadow-[0_14px_28px_rgba(92,99,255,0.14)]'
-                  : 'border border-white/80 shadow-[0_10px_20px_rgba(92,69,154,0.08)]'
+                'border border-white/80 shadow-[0_10px_20px_rgba(92,69,154,0.08)]'
               )}>
                 <div className="flex items-center gap-2 mb-4">
                   <PieChart className="w-4 h-4 text-primary" />
@@ -552,9 +528,7 @@ export default function AdminPage({ visualMode = 'vivid' }: { visualMode?: 'vivi
             {stats && (
               <div className={cn(
                 'bg-gradient-to-br from-white to-slate-50 rounded-2xl p-5',
-                isPremium
-                  ? 'border border-indigo-100/90 shadow-[0_14px_28px_rgba(92,99,255,0.14)]'
-                  : 'border border-white/80 shadow-[0_10px_20px_rgba(92,69,154,0.08)]'
+                'border border-white/80 shadow-[0_10px_20px_rgba(92,69,154,0.08)]'
               )}>
                 <div className="flex items-center gap-2 mb-4">
                   <BarChart2 className="w-4 h-4 text-primary" />
@@ -578,9 +552,7 @@ export default function AdminPage({ visualMode = 'vivid' }: { visualMode?: 'vivi
             {stats && stats.recentRecords.length > 0 && (
               <div className={cn(
                 'bg-gradient-to-br from-white to-slate-50 rounded-2xl p-5',
-                isPremium
-                  ? 'border border-indigo-100/90 shadow-[0_14px_28px_rgba(92,99,255,0.14)]'
-                  : 'border border-white/80 shadow-[0_10px_20px_rgba(92,69,154,0.08)]'
+                'border border-white/80 shadow-[0_10px_20px_rgba(92,69,154,0.08)]'
               )}>
                 <div className="flex items-center gap-2 mb-4">
                   <Calendar className="w-4 h-4 text-primary" />

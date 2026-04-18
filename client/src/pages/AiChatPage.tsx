@@ -540,9 +540,7 @@ ${foods[dm] || foods.earth!}
 `;
 }
 
-export default function AiChatPage({ visualMode = 'vivid' }: { visualMode?: 'vivid' | 'premium' }) {
-  const isPremium = visualMode === 'premium';
-  const isVivid = visualMode === 'vivid';
+export default function AiChatPage() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -559,10 +557,8 @@ export default function AiChatPage({ visualMode = 'vivid' }: { visualMode?: 'viv
     stock: 0,
     master: 0,
   });
-  const accentGradient = isPremium ? 'from-indigo-500 to-blue-500' : 'from-indigo-500 to-violet-500';
-  const shellClass = isPremium
-    ? 'max-w-3xl mx-auto rounded-[24px] border border-indigo-200/70 bg-gradient-to-br from-white/90 via-indigo-50/25 to-blue-50/25 backdrop-blur-md p-4 md:p-5'
-    : 'max-w-3xl mx-auto rounded-[28px] border border-indigo-200/45 bg-gradient-to-br from-[#f8fbff]/92 to-white/80 backdrop-blur-md p-4 md:p-5';
+  const accentGradient = 'from-indigo-500 to-violet-500';
+  const shellClass = 'max-w-3xl mx-auto rounded-[28px] border border-indigo-200/45 bg-gradient-to-br from-[#f8fbff]/92 to-white/80 backdrop-blur-md p-4 md:p-5';
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // 加载用户列表
@@ -900,7 +896,6 @@ export default function AiChatPage({ visualMode = 'vivid' }: { visualMode?: 'viv
         </motion.div>
       )}
 
-      <div className={isPremium ? 'grid lg:grid-cols-[minmax(0,1fr)_260px] gap-4 items-start' : ''}>
       <div>
 
       {/* 快捷问题 */}
@@ -937,9 +932,7 @@ export default function AiChatPage({ visualMode = 'vivid' }: { visualMode?: 'viv
                 <div className={cn('inline-block px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap text-left',
                   msg.role === 'user'
                     ? `bg-gradient-to-br ${accentGradient} text-white rounded-tr-sm shadow-[0_10px_20px_rgba(92,99,255,0.24)]`
-                    : (isVivid
-                      ? 'bg-gradient-to-br from-[#f8fbff] to-white border border-indigo-100/80 rounded-tl-sm shadow-[0_8px_16px_rgba(76,90,176,0.1)]'
-                      : 'bg-gradient-to-br from-white to-slate-50 border border-border rounded-tl-sm shadow-[0_8px_16px_rgba(95,75,156,0.1)]'))}>
+                    : 'bg-gradient-to-br from-[#f8fbff] to-white border border-indigo-100/80 rounded-tl-sm shadow-[0_8px_16px_rgba(76,90,176,0.1)]')}>
                   {msg.content}
                 </div>
                 
@@ -1039,9 +1032,7 @@ export default function AiChatPage({ visualMode = 'vivid' }: { visualMode?: 'viv
       {/* 输入框 */}
       <div className={cn(
         'rounded-2xl p-3 flex gap-2 items-end',
-        isVivid
-          ? 'bg-gradient-to-br from-[#f8fbff] to-white border border-indigo-100/80 shadow-[0_14px_28px_rgba(76,90,176,0.12)]'
-          : 'bg-gradient-to-br from-white to-slate-50 border border-white/80 shadow-[0_14px_28px_rgba(88,66,148,0.14)]'
+        'bg-gradient-to-br from-[#f8fbff] to-white border border-indigo-100/80 shadow-[0_14px_28px_rgba(76,90,176,0.12)]'
       )}>
         {messages.length > 1 && (
           <button onClick={clearChat} className="p-2 rounded-xl hover:bg-secondary/50 text-muted-foreground transition-colors shrink-0" title="清空聊天">
@@ -1062,35 +1053,6 @@ export default function AiChatPage({ visualMode = 'vivid' }: { visualMode?: 'viv
         </button>
       </div>
       <p className="text-[10px] text-muted-foreground/60 text-center mt-2">AI助手基于您的八字信息提供参考建议，内容仅供参考</p>
-      </div>
-      {isPremium && (
-        <aside className="space-y-3 lg:sticky lg:top-4">
-          <div className="rounded-[20px] border border-indigo-200/65 bg-gradient-to-br from-[#f8f9ff] to-[#eef5ff] p-3 shadow-[0_14px_28px_rgba(94,92,230,0.14)]">
-            <p className="text-xs font-semibold text-indigo-600 mb-2">会话摘要</p>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="min-h-[54px] rounded-[13px] bg-white border border-sky-100 p-2 flex flex-col justify-center">
-                <p className="text-[10px] text-muted-foreground">消息数</p>
-                <p className="text-sm font-bold text-foreground">{messages.length}</p>
-              </div>
-              <div className="min-h-[54px] rounded-[13px] bg-white border border-sky-100 p-2 flex flex-col justify-center">
-                <p className="text-[10px] text-muted-foreground">当前风格</p>
-                <p className="text-sm font-bold text-foreground">{CHAT_STYLES.find(s => s.id === currentStyle)?.name || '-'}</p>
-              </div>
-            </div>
-          </div>
-          <div className="rounded-[20px] border border-indigo-200/65 bg-gradient-to-br from-[#f8f9ff] to-[#edf7ff] p-3 shadow-[0_14px_28px_rgba(94,92,230,0.14)]">
-            <p className="text-xs font-semibold text-indigo-600 mb-2">风格使用</p>
-            <div className="space-y-1.5">
-              {CHAT_STYLES.slice(0, 4).map((s) => (
-                <div key={s.id} className="flex items-center justify-between text-[11px]">
-                  <span className="text-muted-foreground">{s.name}</span>
-                  <span className="font-semibold text-foreground">{styleUsageCount[s.id]}/{s.maxUses}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </aside>
-      )}
       </div>
     </div>
   );

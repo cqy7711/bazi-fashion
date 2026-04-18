@@ -49,15 +49,11 @@ const FIVE_ELEMENTS = [
   { name: '水', color: '#42A5F5', desc: '灵动智慧', bg: 'rgba(66,165,245,0.2)' },
 ];
 
-type VisualMode = 'vivid' | 'premium';
-
-export default function IntroPage({ onEnter, visualMode = 'vivid' }: { onEnter: () => void; visualMode?: VisualMode }) {
+export default function IntroPage({ onEnter }: { onEnter: () => void }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showContent, setShowContent] = useState(false);
   const introGradient =
-    visualMode === 'premium'
-      ? 'radial-gradient(circle at 18% 16%, rgba(92,99,255,0.22) 0%, transparent 45%), radial-gradient(circle at 80% 84%, rgba(157,107,255,0.2) 0%, transparent 45%), radial-gradient(circle at 72% 24%, rgba(107,212,255,0.2) 0%, transparent 36%)'
-      : 'radial-gradient(circle at 18% 16%, rgba(255,122,92,0.2) 0%, transparent 45%), radial-gradient(circle at 80% 84%, rgba(157,107,255,0.2) 0%, transparent 45%), radial-gradient(circle at 72% 24%, rgba(107,212,255,0.18) 0%, transparent 36%)';
+    'radial-gradient(circle at 18% 16%, rgba(255,122,92,0.2) 0%, transparent 45%), radial-gradient(circle at 80% 84%, rgba(157,107,255,0.2) 0%, transparent 45%), radial-gradient(circle at 72% 24%, rgba(107,212,255,0.18) 0%, transparent 36%)';
 
   useEffect(() => {
     // 延迟显示内容

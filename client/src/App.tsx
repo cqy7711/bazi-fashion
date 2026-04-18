@@ -10,47 +10,21 @@ import { startSession, endSession, trackEvent, EventTypes } from './utils/analyt
 import { useEffect, useState } from 'react';
 import { COLOR_TOKENS, RADIUS_TOKENS, SHADOW_TOKENS, MOTION_TOKENS } from './theme/designTokens';
 
-type VisualMode = 'vivid' | 'premium';
-const VISUAL_MODE_KEY = 'visual-mode';
-const VISUAL_PRESETS: Record<VisualMode, {
-  accent: string;
-  tints: { coral: string; orange: string; yellow: string; green: string; blue: string; purple: string; indigo: string };
-  pageBg: string;
-  glow: string;
-  logoGradient: string;
-}> = {
-  vivid: {
-    accent: COLOR_TOKENS.brand.coral,
-    tints: {
-      coral: COLOR_TOKENS.brand.coral,
-      orange: COLOR_TOKENS.brand.orange,
-      yellow: COLOR_TOKENS.brand.yellow,
-      green: COLOR_TOKENS.brand.green,
-      blue: COLOR_TOKENS.brand.blue,
-      purple: COLOR_TOKENS.brand.purple,
-      indigo: COLOR_TOKENS.brand.indigo,
-    },
-    pageBg:
-      'radial-gradient(circle at 16% 14%, rgba(255,92,168,0.2) 0%, transparent 28%), radial-gradient(circle at 84% 18%, rgba(44,203,255,0.2) 0%, transparent 30%), radial-gradient(circle at 52% 90%, rgba(143,104,255,0.14) 0%, transparent 30%), linear-gradient(145deg, #fdf8ff 0%, #f3f8ff 40%, #f7fcff 100%)',
-    glow: 'radial-gradient(circle, rgba(255,92,168,0.16) 0%, transparent 72%)',
-    logoGradient: `linear-gradient(135deg, ${COLOR_TOKENS.brand.coral}, ${COLOR_TOKENS.brand.orange})`,
+const VISUAL_PRESET = {
+  accent: COLOR_TOKENS.brand.coral,
+  tints: {
+    coral: COLOR_TOKENS.brand.coral,
+    orange: COLOR_TOKENS.brand.orange,
+    yellow: COLOR_TOKENS.brand.yellow,
+    green: COLOR_TOKENS.brand.green,
+    blue: COLOR_TOKENS.brand.blue,
+    purple: COLOR_TOKENS.brand.purple,
+    indigo: COLOR_TOKENS.brand.indigo,
   },
-  premium: {
-    accent: COLOR_TOKENS.brand.indigo,
-    tints: {
-      coral: '#7C7CFF',
-      orange: '#0A84FF',
-      yellow: '#64D2FF',
-      green: '#30D158',
-      blue: '#5AC8FA',
-      purple: '#BF5AF2',
-      indigo: '#5E5CE6',
-    },
-    pageBg:
-      'radial-gradient(circle at 14% 14%, rgba(94,92,230,0.22) 0%, transparent 30%), radial-gradient(circle at 84% 20%, rgba(10,132,255,0.2) 0%, transparent 32%), radial-gradient(circle at 52% 90%, rgba(191,90,242,0.14) 0%, transparent 30%), linear-gradient(145deg, #f6f8ff 0%, #f2f7ff 42%, #f7fbff 100%)',
-    glow: 'radial-gradient(circle, rgba(94,92,230,0.18) 0%, transparent 72%)',
-    logoGradient: 'linear-gradient(135deg, #5E5CE6, #0A84FF)',
-  },
+  pageBg:
+    'radial-gradient(circle at 16% 14%, rgba(255,92,168,0.2) 0%, transparent 28%), radial-gradient(circle at 84% 18%, rgba(44,203,255,0.2) 0%, transparent 30%), radial-gradient(circle at 52% 90%, rgba(143,104,255,0.14) 0%, transparent 30%), linear-gradient(145deg, #fdf8ff 0%, #f3f8ff 40%, #f7fcff 100%)',
+  glow: 'radial-gradient(circle, rgba(255,92,168,0.16) 0%, transparent 72%)',
+  logoGradient: `linear-gradient(135deg, ${COLOR_TOKENS.brand.coral}, ${COLOR_TOKENS.brand.orange})`,
 };
 
 // 会话时间追踪
@@ -58,16 +32,7 @@ let sessionStartTime = Date.now();
 const INTRO_SEEN_KEY = 'wuxing-intro-seen';
 
 export default function App() {
-  const [visualMode, setVisualMode] = useState<VisualMode>(() => {
-    try {
-      const v = localStorage.getItem(VISUAL_MODE_KEY);
-      return v === 'premium' ? 'premium' : 'vivid';
-    } catch {
-      return 'vivid';
-    }
-  });
-  const preset = VISUAL_PRESETS[visualMode];
-  const isVivid = visualMode === 'vivid';
+  const preset = VISUAL_PRESET;
   const ACCENT = preset.accent;
   const TINTS = preset.tints;
 
@@ -87,14 +52,6 @@ export default function App() {
       // ignore sessionStorage errors
     }
   };
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(VISUAL_MODE_KEY, visualMode);
-    } catch {
-      // ignore localStorage errors
-    }
-  }, [visualMode]);
 
   useEffect(() => {
     sessionStartTime = Date.now();
@@ -135,9 +92,7 @@ export default function App() {
             position: 'fixed',
             inset: 0,
             backgroundImage:
-              isVivid
-                ? 'linear-gradient(rgba(255,255,255,0.24) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.24) 1px, transparent 1px)'
-                : 'linear-gradient(rgba(255,255,255,0.35) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.35) 1px, transparent 1px)',
+              'linear-gradient(rgba(255,255,255,0.24) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.24) 1px, transparent 1px)',
             backgroundSize: '28px 28px',
             maskImage: 'radial-gradient(circle at center, black 20%, transparent 78%)',
             pointerEvents: 'none',
@@ -157,7 +112,7 @@ export default function App() {
           position: 'fixed', bottom: '10%', left: '-60px',
           width: '300px', height: '300px',
           borderRadius: '50%',
-          background: isVivid ? 'radial-gradient(circle, rgba(57,198,255,0.16) 0%, transparent 72%)' : 'radial-gradient(circle, rgba(57,198,255,0.22) 0%, transparent 72%)',
+          background: 'radial-gradient(circle, rgba(57,198,255,0.16) 0%, transparent 72%)',
           animation: 'float 10s ease-in-out infinite reverse',
           pointerEvents: 'none', zIndex: 0,
         }} />
@@ -165,7 +120,7 @@ export default function App() {
           position: 'fixed', top: '40%', left: '5%',
           width: '100px', height: '100px',
           borderRadius: '50%',
-          background: isVivid ? 'radial-gradient(circle, rgba(155,123,255,0.14) 0%, transparent 72%)' : 'radial-gradient(circle, rgba(155,123,255,0.2) 0%, transparent 72%)',
+          background: 'radial-gradient(circle, rgba(155,123,255,0.14) 0%, transparent 72%)',
           animation: 'float 7s ease-in-out infinite 2s',
           pointerEvents: 'none', zIndex: 0,
         }} />
@@ -181,7 +136,7 @@ export default function App() {
             height: '72px',
             borderRadius: '22px',
             background: `linear-gradient(135deg, ${TINTS.yellow}, ${TINTS.orange})`,
-            opacity: isVivid ? 0.16 : 0.22,
+            opacity: 0.16,
             filter: 'blur(0.4px)',
             pointerEvents: 'none',
             zIndex: 0,
@@ -199,7 +154,7 @@ export default function App() {
             height: '64px',
             borderRadius: '999px',
             background: `linear-gradient(135deg, ${TINTS.green}, ${TINTS.blue})`,
-            opacity: isVivid ? 0.14 : 0.2,
+            opacity: 0.14,
             pointerEvents: 'none',
             zIndex: 0,
           }}
@@ -208,7 +163,7 @@ export default function App() {
         {/* 顶部导航 */}
         <header style={{
           position: 'sticky', top: 0, zIndex: 100,
-          background: visualMode === 'premium' ? 'rgba(248,250,255,0.78)' : 'rgba(250,252,255,0.78)',
+          background: 'rgba(250,252,255,0.78)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           borderBottom: `1.5px solid ${TINTS.indigo}22`,
@@ -226,7 +181,7 @@ export default function App() {
                 background: preset.logoGradient,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: '16px',
-                boxShadow: visualMode === 'vivid' ? '0 10px 20px rgba(255,92,168,0.3)' : '0 10px 20px rgba(92,99,255,0.28)',
+                boxShadow: '0 10px 20px rgba(255,92,168,0.3)',
               }}>
                 ✨
               </div>
@@ -256,34 +211,6 @@ export default function App() {
               animate={{ opacity: 1, x: 0 }}
               className="flex items-center gap-1"
             >
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '3px', borderRadius: '999px', background: isVivid ? 'rgba(247,250,255,0.78)' : 'rgba(255,255,255,0.7)', border: `1px solid ${TINTS.indigo}25`, marginRight: '6px' }}>
-                {([
-                  { id: 'vivid', label: '活力版' },
-                  { id: 'premium', label: '高级版' },
-                ] as const).map((m) => (
-                  <button
-                    key={m.id}
-                    onClick={() => setVisualMode(m.id)}
-                    style={{
-                      border: 'none',
-                      cursor: 'pointer',
-                      borderRadius: '999px',
-                      padding: '4px 10px',
-                      fontFamily: 'Outfit, sans-serif',
-                      fontSize: '11px',
-                      fontWeight: 700,
-                      color: visualMode === m.id ? '#FFFFFF' : '#6D7392',
-                      background: visualMode === m.id
-                        ? (isVivid ? `linear-gradient(135deg, ${TINTS.coral}, ${TINTS.purple})` : `linear-gradient(135deg, ${TINTS.indigo}, ${TINTS.purple})`)
-                        : 'transparent',
-                      boxShadow: visualMode === m.id ? `0 8px 14px ${TINTS.indigo}2f` : 'none',
-                      transition: MOTION_TOKENS.uiEase,
-                    }}
-                  >
-                    {m.label}
-                  </button>
-                ))}
-              </div>
               {[
                 { href: '#/', label: '首页', icon: '🏠', color: ACCENT },
                 { href: '/#/ai-chat', label: 'AI 命理', icon: '🤖', color: TINTS.purple },
@@ -294,22 +221,22 @@ export default function App() {
                   style={{
                     color: color,
                     textDecoration: 'none',
-                    background: isVivid ? 'rgba(255,255,255,0.72)' : `${color}16`,
-                    border: isVivid ? `1px solid ${color}26` : `1px solid ${color}2f`,
-                    boxShadow: isVivid ? '0 8px 18px rgba(76,90,176,0.12)' : `0 6px 18px ${color}1f`,
+                    background: 'rgba(255,255,255,0.72)',
+                    border: `1px solid ${color}26`,
+                    boxShadow: '0 8px 18px rgba(76,90,176,0.12)',
                   }}
                   onMouseEnter={e => {
                     const el = e.currentTarget as HTMLElement;
-                    el.style.background = isVivid ? `${color}14` : `${color}2a`;
+                    el.style.background = `${color}14`;
                     el.style.transform = 'translateY(-1px)';
-                    el.style.boxShadow = isVivid ? '0 12px 24px rgba(76,90,176,0.16)' : `0 10px 22px ${color}2c`;
+                    el.style.boxShadow = '0 12px 24px rgba(76,90,176,0.16)';
                     el.style.transition = MOTION_TOKENS.uiEase;
                   }}
                   onMouseLeave={e => {
                     const el = e.currentTarget as HTMLElement;
-                    el.style.background = isVivid ? 'rgba(255,255,255,0.72)' : `${color}16`;
+                    el.style.background = 'rgba(255,255,255,0.72)';
                     el.style.transform = 'translateY(0)';
-                    el.style.boxShadow = isVivid ? '0 8px 18px rgba(76,90,176,0.12)' : `0 6px 18px ${color}1f`;
+                    el.style.boxShadow = '0 8px 18px rgba(76,90,176,0.12)';
                   }}
                 >
                   <span>{icon}</span> <span>{label}</span>
@@ -323,13 +250,11 @@ export default function App() {
         <main
           className="max-w-[1200px] mx-auto px-4 md:px-10 py-6 md:py-12 pb-20 md:pb-24 relative z-10"
           style={{
-            background: visualMode === 'premium'
-              ? 'linear-gradient(160deg, rgba(248,250,255,0.74), rgba(241,246,255,0.56))'
-              : 'linear-gradient(160deg, rgba(255,255,255,0.68), rgba(255,255,255,0.5))',
+            background: 'linear-gradient(160deg, rgba(255,255,255,0.68), rgba(255,255,255,0.5))',
             backgroundBlendMode: 'normal',
             border: `1.5px solid ${TINTS.indigo}22`,
             borderRadius: RADIUS_TOKENS.xxl,
-            boxShadow: isVivid ? '0 26px 70px rgba(74,83,156,0.12)' : SHADOW_TOKENS.glassCard,
+            boxShadow: '0 26px 70px rgba(74,83,156,0.12)',
             backdropFilter: 'blur(8px)',
             WebkitBackdropFilter: 'blur(8px)',
             marginTop: '14px',
@@ -339,14 +264,14 @@ export default function App() {
           <Routes>
             <Route path="/" element={
               showIntro ? (
-                <IntroPage onEnter={handleEnterHome} visualMode={visualMode} />
+                <IntroPage onEnter={handleEnterHome} />
               ) : (
-                <HomePage visualMode={visualMode} />
+                <HomePage />
               )
             } />
-            <Route path="/result/:userId" element={<ResultPage visualMode={visualMode} />} />
-            <Route path="/admin" element={<AdminPage visualMode={visualMode} />} />
-            <Route path="/ai-chat" element={<AiChatPage visualMode={visualMode} />} />
+            <Route path="/result/:userId" element={<ResultPage />} />
+            <Route path="/admin" element={<AdminPage />} />
+            <Route path="/ai-chat" element={<AiChatPage />} />
           </Routes>
         </main>
 
@@ -357,9 +282,7 @@ export default function App() {
           maxWidth: '1200px', margin: '0 auto',
           position: 'relative', zIndex: 1,
           borderRadius: `${RADIUS_TOKENS.xl} ${RADIUS_TOKENS.xl} 0 0`,
-          background: visualMode === 'premium'
-            ? 'linear-gradient(135deg, rgba(244,247,255,0.62), rgba(250,252,255,0.78))'
-            : 'linear-gradient(135deg, rgba(248,251,255,0.64), rgba(255,255,255,0.78))',
+          background: 'linear-gradient(135deg, rgba(248,251,255,0.64), rgba(255,255,255,0.78))',
           backdropFilter: 'blur(10px)',
         }}>
           <div style={{

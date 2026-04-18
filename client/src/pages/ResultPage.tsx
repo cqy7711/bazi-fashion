@@ -631,10 +631,12 @@ function generateDayunData(userInfo: UserBirthInfo): DayunData[] {
   const stems = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
   const branches = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
   const stemEls: Record<string, string> = { '甲': 'wood', '乙': 'wood', '丙': 'fire', '丁': 'fire', '戊': 'earth', '己': 'earth', '庚': 'metal', '辛': 'metal', '壬': 'water', '癸': 'water' };
-  // 从字符串中提取天干地支
-  const yearStem = bazi.yearPillar ? bazi.yearPillar.stem : '甲';
-  const monthStem = bazi.monthPillar ? bazi.monthPillar.stem : '甲';
-  const monthBranch = bazi.monthPillar ? bazi.monthPillar.branch : '子';
+  // 从字符串中提取天干地支（如 "甲辰" -> stem="甲", branch="辰"）
+  const yearPillarStr = typeof bazi.yearPillar === 'string' ? bazi.yearPillar : '甲子';
+  const monthPillarStr = typeof bazi.monthPillar === 'string' ? bazi.monthPillar : '甲子';
+  const yearStem = yearPillarStr.charAt(0);
+  const monthStem = monthPillarStr.charAt(0);
+  const monthBranch = monthPillarStr.charAt(1);
   const isYangYear = ['甲', '丙', '戊', '庚', '壬'].includes(yearStem);
   const isForward = (isYangYear && userInfo.gender === 'male') || (!isYangYear && userInfo.gender === 'female');
   const JIE: Record<number, number> = { 1: 6, 2: 4, 3: 6, 4: 5, 5: 6, 6: 6, 7: 7, 8: 8, 9: 8, 10: 8, 11: 7, 12: 7 };
@@ -1719,13 +1721,11 @@ function DayunTooltip({ active, payload }: any) {
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
-export default function ResultPage({ visualMode = 'vivid' }: { visualMode?: 'vivid' | 'premium' }) {
-  const isPremium = visualMode === 'premium';
-  const isVivid = visualMode === 'vivid';
-  const toneAccent = isPremium ? css.accent : '#5B5CFF';
-  const toneAux = isPremium ? PALETTE.orange : '#2CCBFF';
-  const toneBorder = isPremium ? `${css.accent}22` : 'rgba(91,92,255,0.2)';
-  const toneShadow = isPremium ? `${css.accent}1A` : 'rgba(76,90,176,0.14)';
+export default function ResultPage() {
+  const toneAccent = '#5B5CFF';
+  const toneAux = '#2CCBFF';
+  const toneBorder = 'rgba(91,92,255,0.2)';
+  const toneShadow = 'rgba(76,90,176,0.14)';
   const sectionIds = ['sec-bazi', 'sec-mingge', 'sec-fortune', 'sec-elements', 'sec-dayun'] as const;
   const [activeSection, setActiveSection] = useState<string>('sec-bazi');
   const [readingProgress, setReadingProgress] = useState(0);
@@ -1934,10 +1934,10 @@ export default function ResultPage({ visualMode = 'vivid' }: { visualMode?: 'viv
   }, []);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: isPremium ? '24px' : '28px', paddingBottom: '48px', paddingTop: isPremium ? '4px' : 0 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px', paddingBottom: '48px', paddingTop: 0 }}>
 
       {/* ── Header ── */}
-      <motion.div {...fadeUp(0)} style={{ display: 'flex', alignItems: 'center', gap: '12px', position: isPremium ? 'sticky' : 'static', top: isPremium ? 8 : undefined, zIndex: isPremium ? 20 : undefined }}>
+      <motion.div {...fadeUp(0)} style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'static' }}>
         <Link to="/" style={{
           display: 'flex', alignItems: 'center', gap: '8px',
           padding: '10px 20px', borderRadius: '16px',
@@ -1952,7 +1952,7 @@ export default function ResultPage({ visualMode = 'vivid' }: { visualMode?: 'viv
         </Link>
         <div style={{ flex: 1 }} />
         {/* 用户切换卡片 */}
-        <div style={{ ...cardStyle({ background: isVivid ? 'linear-gradient(145deg, rgba(91,92,255,0.1), rgba(44,203,255,0.08) 45%, #FFFFFF)' : `linear-gradient(145deg, ${css.accent}0D, ${PALETTE.orange}0A 45%, #FFFFFF)` }), padding: '14px 20px', position: 'relative', border: `1px solid ${toneBorder}`, boxShadow: `0 14px 28px ${toneShadow}` }}>
+        <div style={{ ...cardStyle({ background: 'linear-gradient(145deg, rgba(91,92,255,0.1), rgba(44,203,255,0.08) 45%, #FFFFFF)' }), padding: '14px 20px', position: 'relative', border: `1px solid ${toneBorder}`, boxShadow: `0 14px 28px ${toneShadow}` }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <div style={{
               width: '44px', height: '44px', borderRadius: '14px',
@@ -2004,8 +2004,8 @@ export default function ResultPage({ visualMode = 'vivid' }: { visualMode?: 'viv
           {showUserDropdown && userList.length > 1 && (
             <div style={{
               position: 'absolute', top: '100%', right: 0, marginTop: '8px',
-              background: isVivid ? 'linear-gradient(145deg, rgba(91,92,255,0.09), rgba(44,203,255,0.08) 50%, #FFFFFF)' : `linear-gradient(145deg, ${css.accent}0D, ${PALETTE.orange}0A 50%, #FFFFFF)`, borderRadius: '12px', border: `1px solid ${isVivid ? 'rgba(91,92,255,0.2)' : `${css.accent}20`}`,
-              boxShadow: isVivid ? '0 10px 22px rgba(76,90,176,0.16)' : `0 10px 20px ${css.accent}26`, overflow: 'hidden', zIndex: 100,
+              background: 'linear-gradient(145deg, rgba(91,92,255,0.09), rgba(44,203,255,0.08) 50%, #FFFFFF)', borderRadius: '12px', border: '1px solid rgba(91,92,255,0.2)',
+              boxShadow: '0 10px 22px rgba(76,90,176,0.16)', overflow: 'hidden', zIndex: 100,
               minWidth: '240px',
             }}>
               <div style={{ padding: '10px 14px', borderBottom: `1px solid ${css.accent}1F`, background: `linear-gradient(135deg, ${css.accent}0E, #FFFFFF)` }}>
@@ -2060,101 +2060,6 @@ export default function ResultPage({ visualMode = 'vivid' }: { visualMode?: 'viv
           )}
         </div>
       </motion.div>
-
-      {isPremium && (
-        <motion.div {...fadeUp(0.01)}>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
-            gap: '12px',
-            padding: '12px',
-            borderRadius: '20px',
-            background: isPremium
-              ? 'linear-gradient(145deg, rgba(94,92,230,0.14), rgba(10,132,255,0.1), rgba(255,255,255,0.95))'
-              : 'linear-gradient(145deg, rgba(91,92,255,0.12), rgba(44,203,255,0.1), rgba(255,255,255,0.95))',
-            border: isPremium ? '1.5px solid rgba(94,92,230,0.24)' : '1.5px solid rgba(91,92,255,0.2)',
-            boxShadow: isPremium ? '0 14px 28px rgba(76,90,176,0.16)' : '0 14px 26px rgba(76,90,176,0.14)',
-          }}>
-            {[
-              { k: '日主', v: `${bazi.dayMaster}${bazi.dayMasterElement}` },
-              { k: '格局', v: mingGe.name || '--' },
-              { k: '身强弱', v: mingpanAnalysis?.bodyStrengthText || '分析中' },
-              { k: '喜用神', v: (userInfo.favorableElements || []).join(' / ') || '--' },
-            ].map((item) => (
-              <div key={item.k} style={{ minHeight: '54px', padding: '9px 12px', borderRadius: '13px', background: '#FFFFFF', border: isPremium ? '1.5px solid rgba(10,132,255,0.18)' : '1.5px solid rgba(91,92,255,0.16)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <p style={{ margin: 0, fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#8B92B4', fontWeight: 700 }}>{item.k}</p>
-                <p style={{ margin: '3px 0 0', fontFamily: 'Outfit, sans-serif', fontSize: '14px', color: css.text, fontWeight: 800, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.v}</p>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-      )}
-      {isPremium && (
-        <motion.div {...fadeUp(0.015)}>
-          <div style={{
-            display: 'flex',
-            gap: '8px',
-            flexWrap: 'wrap',
-            padding: '8px',
-            borderRadius: '14px',
-            background: isPremium ? 'rgba(247,250,255,0.84)' : 'rgba(248,251,255,0.86)',
-            border: isPremium ? '1.5px solid rgba(94,92,230,0.2)' : '1.5px solid rgba(91,92,255,0.16)',
-          }}>
-            {[
-              { id: 'sec-bazi', label: '四柱八字' },
-              { id: 'sec-mingge', label: '命格详解' },
-              { id: 'sec-fortune', label: '四维运势' },
-              { id: 'sec-elements', label: '五行分析' },
-              { id: 'sec-dayun', label: '人生大运' },
-            ].map((item) => (
-              <button
-                key={item.id}
-                onClick={() => jumpToSection(item.id)}
-                style={{
-                  border: 'none',
-                  cursor: 'pointer',
-                  padding: '6px 12px',
-                  borderRadius: '999px',
-                  fontFamily: 'Outfit, sans-serif',
-                  fontSize: '12px',
-                  fontWeight: 700,
-                  color: activeSection === item.id ? '#FFFFFF' : toneAccent,
-                  background: activeSection === item.id
-                    ? `linear-gradient(135deg, ${toneAccent}, ${toneAux})`
-                    : `linear-gradient(135deg, ${toneAccent}12, ${toneAux}10)`,
-                  boxShadow: activeSection === item.id
-                    ? `0 10px 16px ${toneAccent}3A`
-                    : `0 8px 14px ${toneAccent}22`,
-                }}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-          <div style={{
-            marginTop: '8px',
-            padding: '8px 10px',
-            borderRadius: '12px',
-            background: 'rgba(255,255,255,0.74)',
-            border: `1px solid ${toneAccent}1F`,
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#8B92B4', fontWeight: 700 }}>阅读进度</span>
-              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: toneAccent, fontWeight: 800 }}>{Math.round(readingProgress)}%</span>
-            </div>
-            <div style={{ width: '100%', height: '7px', borderRadius: '999px', background: `${toneAccent}1C`, overflow: 'hidden' }}>
-              <div style={{
-                width: `${readingProgress}%`,
-                height: '100%',
-                borderRadius: '999px',
-                background: `linear-gradient(90deg, ${toneAccent}, ${toneAux})`,
-                boxShadow: `0 4px 10px ${toneAccent}35`,
-                transition: 'width 0.2s ease',
-              }} />
-            </div>
-          </div>
-        </motion.div>
-      )}
 
       {/* 编辑弹窗 */}
       {showEdit && userInfo && (

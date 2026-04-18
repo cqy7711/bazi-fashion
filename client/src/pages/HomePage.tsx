@@ -828,9 +828,8 @@ function ElementBadge({ el }: { el: string }) {
   );
 }
 
-export default function HomePage({ visualMode = 'vivid' }: { visualMode?: 'vivid' | 'premium' }) {
+export default function HomePage() {
   const navigate = useNavigate();
-  const isPremium = visualMode === 'premium';
   const [records, setRecords] = useState<UserBirthInfoListItem[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -871,16 +870,12 @@ export default function HomePage({ visualMode = 'vivid' }: { visualMode?: 'vivid
   const [locating, setLocating] = useState(false);
   const [activeScene, setActiveScene] = useState<string | null>('work');
   const [locationLocked, setLocationLocked] = useState(false); // 定位锁定状态
-  const [showDetailDrawer, setShowDetailDrawer] = useState(false);
   /** 快捷导航：大屏四列横排图标+文字；小屏 2×2 上图下文 */
   const [navWideLayout, setNavWideLayout] = useState(false);
   const jumpToCard = (id: string) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
-  useEffect(() => {
-    if (!selectedId) setShowDetailDrawer(false);
-  }, [selectedId]);
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 768px)');
     const apply = () => setNavWideLayout(mq.matches);
@@ -1178,16 +1173,15 @@ export default function HomePage({ visualMode = 'vivid' }: { visualMode?: 'vivid
       style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: isPremium ? '20px' : '24px',
+        gap: '24px',
         position: 'relative',
         zIndex: 1,
-        padding: isPremium ? '6px 4px 14px' : undefined,
       }}
     >
 
       {/* ── 紧凑 Hero Banner ── */}
       <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-        style={{ position: 'relative', overflow: 'hidden', borderRadius: isPremium ? '24px' : '28px', border: isPremium ? `1.5px solid ${PALETTE.purple}28` : `1px solid ${PALETTE.coral}20`, boxShadow: isPremium ? '0 20px 44px rgba(76,60,152,0.2)' : '0 24px 48px rgba(255,107,157,0.16)' }}>
+        style={{ position: 'relative', overflow: 'hidden', borderRadius: '28px', border: `1px solid ${PALETTE.coral}20`, boxShadow: '0 24px 48px rgba(255,107,157,0.16)' }}>
         <div style={{
           position: 'absolute', inset: 0,
           background: `radial-gradient(circle at 12% 18%, ${PALETTE.coralLight} 0%, transparent 45%), radial-gradient(circle at 86% 24%, ${PALETTE.blueLight} 0%, transparent 45%), linear-gradient(135deg, ${PALETTE.coralLight} 0%, ${PALETTE.orangeLight} 50%, ${PALETTE.yellowLight} 100%)`,
@@ -1197,13 +1191,13 @@ export default function HomePage({ visualMode = 'vivid' }: { visualMode?: 'vivid
         <div style={{ position: 'absolute', bottom: '-42px', left: '18%', width: '180px', height: '120px', borderRadius: '999px', background: `${PALETTE.green}18`, filter: 'blur(2px)' }} />
         <div style={{
           position: 'relative',
-          padding: isPremium ? '20px 24px' : '24px 32px',
+          padding: '24px 32px',
           display: 'flex',
           justifyContent: 'flex-start',
           alignItems: 'flex-start',
           flexWrap: 'wrap',
           gap: '20px',
-          height: isPremium ? '96px' : '100px',
+          height: '100px',
         }}>
           <motion.div animate={{ rotate: [0, 6, -4, 0] }} transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
             style={{
@@ -1241,76 +1235,7 @@ export default function HomePage({ visualMode = 'vivid' }: { visualMode?: 'vivid
       </motion.div>
 
       {/* ── 主体单列布局 ── */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: isPremium ? '18px' : '16px', alignItems: 'stretch' }}>
-        {isPremium && (
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.28 }}
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
-              gap: '12px',
-              padding: '12px',
-              borderRadius: '20px',
-              background: 'linear-gradient(145deg, rgba(94,92,230,0.14), rgba(10,132,255,0.1), rgba(255,255,255,0.94))',
-              border: '1.5px solid rgba(94,92,230,0.24)',
-              boxShadow: '0 14px 28px rgba(76,90,176,0.16)',
-            }}
-          >
-            {[
-              { label: '命主人数', value: `${records.length}` },
-              { label: '当前状态', value: selectedRecord ? '已选中' : '待选择' },
-              { label: '定位方式', value: locationLocked ? '手动城市' : '自动定位' },
-              { label: '推荐更新', value: selectedId ? '实时' : '--' },
-            ].map((item) => (
-              <div key={item.label} style={{ minHeight: '54px', padding: '9px 12px', borderRadius: '13px', background: '#FFFFFF', border: '1.5px solid rgba(10,132,255,0.18)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <p style={{ margin: 0, fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#8B92B4', fontWeight: 700 }}>{item.label}</p>
-                <p style={{ margin: '3px 0 0', fontFamily: 'Outfit, sans-serif', fontSize: '14px', color: '#1A1A2E', fontWeight: 800 }}>{item.value}</p>
-              </div>
-            ))}
-          </motion.div>
-        )}
-        {isPremium && selectedRecord && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.24 }}
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-              gap: '12px',
-            }}
-          >
-            {[
-              { label: '主面板', value: '命盘信息 + 今日运势', tone: `${PALETTE.purple}18`, border: `${PALETTE.purple}36` },
-              { label: '次面板', value: '色彩搭配 + 手串推荐', tone: `${PALETTE.blue}18`, border: `${PALETTE.blue}36` },
-            ].map((item) => (
-              <div key={item.label} style={{ minHeight: '62px', padding: '11px 12px', borderRadius: '14px', background: item.tone, border: `1px solid ${item.border}`, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <p style={{ margin: 0, fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#8B92B4', fontWeight: 700 }}>{item.label}</p>
-                <p style={{ margin: '4px 0 0', fontFamily: 'Outfit, sans-serif', fontSize: '13px', color: '#1A1A2E', fontWeight: 800 }}>{item.value}</p>
-              </div>
-            ))}
-            <button
-              onClick={() => setShowDetailDrawer((v) => !v)}
-              style={{
-                border: `1px solid ${PALETTE.coral}46`,
-                minHeight: '62px',
-                background: 'linear-gradient(135deg, rgba(94,92,230,0.16), rgba(10,132,255,0.14))',
-                borderRadius: '14px',
-                cursor: 'pointer',
-                textAlign: 'left',
-                padding: '11px 12px',
-              }}
-            >
-              <p style={{ margin: 0, fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#8B92B4', fontWeight: 700 }}>详情抽屉</p>
-              <p style={{ margin: '4px 0 0', fontFamily: 'Outfit, sans-serif', fontSize: '13px', color: '#5E5CE6', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '5px' }}>
-                查看详细分析
-                {showDetailDrawer ? <ChevronUp style={{ width: '13px', height: '13px' }} /> : <ChevronDown style={{ width: '13px', height: '13px' }} />}
-              </p>
-            </button>
-          </motion.div>
-        )}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'stretch' }}>
         {/* ── 第一行：我的生辰 + 命盘信息 + 今日运势（3列并排） ── */}
         {/* ​—​ 第一行：我的生辰（用户选择栏） —​ */}
         <motion.div {...fadeUp} transition={{ delay: 0.05 }}>
@@ -1318,10 +1243,8 @@ export default function HomePage({ visualMode = 'vivid' }: { visualMode?: 'vivid
             whileHover={{ y: -3 }}
             transition={{ duration: 0.2 }}
             style={{
-            background: isPremium
-              ? 'linear-gradient(155deg, rgba(255,255,255,0.96), rgba(255,255,255,0.84))'
-              : 'linear-gradient(155deg, rgba(249,252,255,0.95), rgba(255,255,255,0.9))', borderRadius: '24px', padding: '20px',
-            boxShadow: isPremium ? '0 16px 32px rgba(66,53,124,0.1)' : '0 14px 28px rgba(74,86,152,0.1)', border: isPremium ? `1px solid ${PALETTE.purple}22` : '1px solid rgba(91,92,255,0.18)',
+            background: 'linear-gradient(155deg, rgba(249,252,255,0.95), rgba(255,255,255,0.9))', borderRadius: '24px', padding: '20px',
+            boxShadow: '0 14px 28px rgba(74,86,152,0.1)', border: '1px solid rgba(91,92,255,0.18)',
             backdropFilter: 'blur(7px)', WebkitBackdropFilter: 'blur(7px)',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
@@ -1599,7 +1522,7 @@ export default function HomePage({ visualMode = 'vivid' }: { visualMode?: 'vivid
         </motion.div>
 
         {/* 活力版：快捷导航（在“我的生辰”下方） */}
-        {!isPremium && selectedRecord && (
+        {selectedRecord && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1669,7 +1592,7 @@ export default function HomePage({ visualMode = 'vivid' }: { visualMode?: 'vivid
             transition={{ duration: 0.35, delay: 0.08 }}
             style={{
               display: 'grid',
-              gridTemplateColumns: isPremium ? 'minmax(0, 1.2fr) minmax(0, 0.8fr)' : '1fr',
+              gridTemplateColumns: '1fr',
               gap: '12px',
               marginBottom: '16px',
               alignItems: 'start',
@@ -1682,10 +1605,8 @@ export default function HomePage({ visualMode = 'vivid' }: { visualMode?: 'vivid
           {selectedRecord && previewInfo && previewInfo.baziResult ? (
             <div id="mingpan-section" style={{
               flex: 1,
-              background: isPremium
-                ? `linear-gradient(145deg, ${PALETTE.purple}0E 0%, ${PALETTE.blue}08 42%, rgba(255,255,255,0.95) 100%)`
-                : 'linear-gradient(145deg, rgba(91,92,255,0.11) 0%, rgba(44,203,255,0.08) 42%, rgba(255,255,255,0.95) 100%)', borderRadius: '24px', padding: '20px',
-              boxShadow: isPremium ? '0 18px 38px rgba(98,72,176,0.18)' : '0 16px 30px rgba(74,86,152,0.14)', border: isPremium ? `1px solid ${PALETTE.purple}28` : '1px solid rgba(91,92,255,0.22)',
+              background: 'linear-gradient(145deg, rgba(91,92,255,0.11) 0%, rgba(44,203,255,0.08) 42%, rgba(255,255,255,0.95) 100%)', borderRadius: '24px', padding: '20px',
+              boxShadow: '0 16px 30px rgba(74,86,152,0.14)', border: '1px solid rgba(91,92,255,0.22)',
               backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
               display: 'flex', flexDirection: 'column',
             }}>
@@ -1889,10 +1810,8 @@ export default function HomePage({ visualMode = 'vivid' }: { visualMode?: 'vivid
           {dailyFortune && (
             <div id="fortune-section" style={{
               flex: 1,
-              background: isPremium
-                ? `linear-gradient(145deg, ${PALETTE.coral}10 0%, ${PALETTE.orange}0E 42%, rgba(255,255,255,0.95) 100%)`
-                : 'linear-gradient(145deg, rgba(255,92,168,0.1) 0%, rgba(91,92,255,0.1) 42%, rgba(255,255,255,0.95) 100%)', borderRadius: '24px', padding: '20px',
-              boxShadow: isPremium ? '0 18px 36px rgba(255,121,102,0.16)' : '0 16px 30px rgba(74,86,152,0.14)', border: isPremium ? `1px solid ${PALETTE.orange}2A` : '1px solid rgba(255,92,168,0.2)',
+              background: 'linear-gradient(145deg, rgba(255,92,168,0.1) 0%, rgba(91,92,255,0.1) 42%, rgba(255,255,255,0.95) 100%)', borderRadius: '24px', padding: '20px',
+              boxShadow: '0 16px 30px rgba(74,86,152,0.14)', border: '1px solid rgba(255,92,168,0.2)',
               backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
               display: 'flex', flexDirection: 'column',
             }}>
@@ -2973,95 +2892,6 @@ export default function HomePage({ visualMode = 'vivid' }: { visualMode?: 'vivid
 
 
       {/* 关闭城市下拉 */}
-      <AnimatePresence>
-        {isPremium && selectedRecord && showDetailDrawer && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              style={{ position: 'fixed', inset: 0, background: 'rgba(10, 14, 28, 0.35)', backdropFilter: 'blur(2px)', zIndex: 56 }}
-              onClick={() => setShowDetailDrawer(false)}
-            />
-            <motion.div
-              initial={{ opacity: 0, x: 24 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 24 }}
-              transition={{ duration: 0.24 }}
-              style={{
-                position: 'fixed',
-                top: '16px',
-                right: '16px',
-                bottom: '16px',
-                width: 'min(400px, calc(100vw - 24px))',
-                borderRadius: '24px',
-                background: `linear-gradient(145deg, ${PALETTE.purple}16, ${PALETTE.blue}14, rgba(255,255,255,0.96))`,
-                border: `1.5px solid ${PALETTE.purple}36`,
-                boxShadow: '0 28px 56px rgba(42,33,84,0.28)',
-                zIndex: 57,
-                padding: '16px',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '12px',
-                overflow: 'auto',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div>
-                  <p style={{ margin: 0, fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#8B92B4', fontWeight: 700 }}>详情抽屉</p>
-                  <p style={{ margin: '4px 0 0', fontFamily: 'Outfit, sans-serif', fontSize: '16px', color: '#1A1A2E', fontWeight: 900 }}>命盘深度分析入口</p>
-                </div>
-                <button onClick={() => setShowDetailDrawer(false)} style={{ border: 'none', width: '30px', height: '30px', borderRadius: '9px', cursor: 'pointer', background: 'rgba(255,255,255,0.72)' }}>
-                  <X style={{ width: '14px', height: '14px', color: '#596180' }} />
-                </button>
-              </div>
-              <div style={{ padding: '12px', borderRadius: '14px', background: '#FFFFFF', border: `1px solid ${PALETTE.blue}22` }}>
-                <p style={{ margin: 0, fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#6B7280', lineHeight: 1.65 }}>
-                  当前命主：{selectedRecord.name}。可继续进入完整章节报告，查看四柱、命格、四维运势、五行比例与人生大运的分段趋势。
-                </p>
-              </div>
-              {[
-                { icon: <BookOpen style={{ width: '14px', height: '14px', color: PALETTE.purple }} />, title: '章节导航', desc: '按结构化章节阅读，快速定位核心结论' },
-                { icon: <Activity style={{ width: '14px', height: '14px', color: PALETTE.blue }} />, title: '运势趋势', desc: '对比维度评分变化，识别当期重点' },
-                { icon: <Calendar style={{ width: '14px', height: '14px', color: PALETTE.coral }} />, title: '大运周期', desc: '结合阶段节律安排行动计划' },
-              ].map((item) => (
-                <div key={item.title} style={{ display: 'flex', gap: '10px', alignItems: 'flex-start', padding: '10px 12px', borderRadius: '12px', background: 'rgba(255,255,255,0.86)', border: `1px solid ${PALETTE.purple}1A` }}>
-                  <div style={{ width: '24px', height: '24px', borderRadius: '8px', background: `${PALETTE.purple}12`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{item.icon}</div>
-                  <div>
-                    <p style={{ margin: 0, fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 800, color: '#1A1A2E' }}>{item.title}</p>
-                    <p style={{ margin: '2px 0 0', fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#7B819E' }}>{item.desc}</p>
-                  </div>
-                </div>
-              ))}
-              <motion.button
-                whileHover={{ y: -2 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => selectedRecord && navigate(`/result/${selectedRecord.id}`)}
-                style={{
-                  marginTop: 'auto',
-                  border: 'none',
-                  borderRadius: '12px',
-                  cursor: 'pointer',
-                  background: `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange})`,
-                  color: '#FFFFFF',
-                  fontFamily: 'Outfit, sans-serif',
-                  fontSize: '13px',
-                  fontWeight: 800,
-                  padding: '11px 14px',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '6px',
-                  boxShadow: `0 12px 22px ${PALETTE.coral}3B`,
-                }}
-              >
-                进入完整分析报告
-                <ArrowRight style={{ width: '13px', height: '13px' }} />
-              </motion.button>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
       {showCityDropdown && (
         <>
           <div
