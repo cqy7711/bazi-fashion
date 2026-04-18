@@ -78,6 +78,7 @@ export default function App() {
   return (
     <HashRouter>
       <div
+        data-app-shell="wuxing-v2"
         style={{
           background: preset.pageBg,
           color: COLOR_TOKENS.text.primary,
