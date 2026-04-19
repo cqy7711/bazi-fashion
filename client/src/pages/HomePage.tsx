@@ -861,13 +861,14 @@ export default function HomePage() {
   const [previewInfo, setPreviewInfo] = useState<UserBirthInfo | null>(null);
   const [dailyFortune, setDailyFortune] = useState<DailyFortune | null>(null);
 
-  // 地理位置状态
-  const [userLocation, setUserLocation] = useState<{ city: string; lat?: number; lon?: number } | null>(null);
+  // 地理位置状态（从 localStorage 恢复缓存，避免每次弹出定位弹窗）
+  const savedLocation = (() => { try { const s = localStorage.getItem('bazi_user_location'); return s ? JSON.parse(s) : null; } catch { return null; } })();
+  const [userLocation, setUserLocation] = useState<{ city: string; lat?: number; lon?: number } | null>(savedLocation);
   const [showCityDropdown, setShowCityDropdown] = useState(false);
   const [citySearch, setCitySearch] = useState('');
   const [locating, setLocating] = useState(false);
   const [activeScene, setActiveScene] = useState<string | null>('work');
-  const [locationLocked, setLocationLocked] = useState(false); // 定位锁定状态
+  const [locationLocked, setLocationLocked] = useState(!!savedLocation); // 有缓存就锁定
   /** 快捷导航：大屏四列横排图标+文字；小屏 2×2 上图下文 */
   const [navWideLayout, setNavWideLayout] = useState(false);
   const jumpToCard = (id: string) => {
@@ -913,11 +914,15 @@ export default function HomePage() {
           const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json&accept-language=zh`);
           const data = await res.json();
           const city = data.address?.city || data.address?.town || data.address?.district || '未知';
-          setUserLocation({ city: city.replace('市', ''), lat: latitude, lon: longitude });
+          const loc = { city: city.replace('市', ''), lat: latitude, lon: longitude };
+          setUserLocation(loc);
           setLocationLocked(true); // 定位成功后锁定
+          localStorage.setItem('bazi_user_location', JSON.stringify(loc)); // 缓存到 localStorage
         } catch {
-          setUserLocation({ city: '未知', lat: latitude, lon: longitude });
+          const loc = { city: '未知', lat: latitude, lon: longitude };
+          setUserLocation(loc);
           setLocationLocked(true); // 定位失败也锁定（使用默认城市）
+          localStorage.setItem('bazi_user_location', JSON.stringify(loc));
         }
         setLocating(false);
       },
@@ -930,10 +935,12 @@ export default function HomePage() {
 
   // 选择城市后刷新推荐并锁定定位
   const selectCity = (city: string) => {
-    setUserLocation({ city });
+    const loc = { city };
+    setUserLocation(loc);
     setLocationLocked(true); // 选择城市后锁定
     setShowCityDropdown(false);
     setCitySearch('');
+    localStorage.setItem('bazi_user_location', JSON.stringify(loc)); // 缓存
     if (selectedId) {
       fetchRecommendations(selectedId, city); // 直接传城市参数
     }
