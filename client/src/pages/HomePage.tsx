@@ -1849,6 +1849,68 @@ export default function HomePage() {
                 );
               })()}
 
+              {/* 五行命格总结 */}
+              {(() => {
+                const fe = previewInfo.fiveElements || { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
+                const vals = [fe.wood || 0, fe.fire || 0, fe.earth || 0, fe.metal || 0, fe.water || 0];
+                const total = vals.reduce((a, b) => a + b, 0) || 1;
+                const elNames = ['木', '火', '土', '金', '水'];
+                const elKeys = ['wood', 'fire', 'earth', 'metal', 'water'];
+                const elColors = ['#4CAF50', '#FF5252', '#FFC107', '#90A4AE', '#42A5F5'];
+                const maxVal = Math.max(...vals);
+                const minVal = Math.min(...vals);
+                const strongest = elKeys[vals.indexOf(maxVal)];
+                const weakest = elKeys[vals.indexOf(minVal)];
+                const mingGeStrength: Record<string, string> = {
+                  wood: '偏弱', fire: '偏弱', earth: '偏弱', metal: '偏弱', water: '偏弱',
+                };
+                const mingGeTips: Record<string, string> = {
+                  wood: '宜补水润木，忌金木过旺', fire: '宜土泄火气，忌火势过旺',
+                  earth: '宜金生水气，忌土气过盛', metal: '宜火制金，忌金气过刚',
+                  water: '宜木来生火，忌水势过泛',
+                };
+                return (
+                  <div style={{
+                    padding: navWideLayout ? '10px 12px' : '8px 10px', borderRadius: '12px',
+                    background: `linear-gradient(135deg, ${PALETTE.purple}0E, ${PALETTE.blue}08)`,
+                    marginBottom: '12px', border: `1px solid ${PALETTE.purple}22`,
+                    boxShadow: `0 6px 14px ${PALETTE.purple}14`,
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '7px' }}>
+                      <TrendingUp style={{ width: '13px', height: '13px', color: PALETTE.purple }} />
+                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '13px' : '11px', fontWeight: 700, color: '#2D2D5A' }}>命格总结</span>
+                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#8A8ABB', marginLeft: 'auto' }}>
+                        {elNames[vals.indexOf(maxVal)]}气最旺 · {elNames[vals.indexOf(minVal)]}气最弱
+                      </span>
+                    </div>
+                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '11px' : '10px', color: '#5A5A8A', marginBottom: '8px', lineHeight: '1.5' }}>
+                      {mingGeTips[strongest] || '五行平衡为宜，补不足而泄有余'}
+                    </p>
+                    <div style={{ display: 'flex', gap: '3px', height: '6px', borderRadius: '3px', overflow: 'hidden' }}>
+                      {elKeys.map((k, i) => (
+                        <div key={k} style={{
+                          flex: vals[i], minWidth: 0,
+                          background: elColors[i],
+                          borderRadius: i === 0 ? '3px 0 0 3px' : i === 4 ? '0 3px 3px 0' : '0',
+                          transition: 'flex 0.4s ease',
+                        }} />
+                      ))}
+                    </div>
+                    <div style={{ display: 'flex', gap: '8px', marginTop: '5px', flexWrap: 'wrap' }}>
+                      {elKeys.map((k, i) => (
+                        <span key={k} style={{
+                          fontFamily: 'Outfit, sans-serif', fontSize: '10px',
+                          color: vals[i] === maxVal ? elColors[i] : '#888',
+                          fontWeight: vals[i] === maxVal ? 700 : 400,
+                        }}>
+                          {elNames[i]}: {Math.round((vals[i] / total) * 100)}%
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
               {/* 五行分布 - 横向进度条 */}
               {previewInfo.fiveElements && (
                 (() => {
