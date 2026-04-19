@@ -2048,7 +2048,7 @@ export default function HomePage() {
                 <ArrowRight style={{ width: '14px', height: '14px' }} />
               </button>
             </div>
-          ) : (
+          ) : (activeSection === 'fortune' ? null : (
             selectedRecord && (
               <div style={{
                 background: 'linear-gradient(155deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85))', borderRadius: '24px', padding: '32px 20px',
@@ -2059,9 +2059,9 @@ export default function HomePage() {
                 <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#A0A8C0' }}>正在加载命盘信息…</p>
               </div>
             )
-          )}
+          ))}
           {/* 今日运势 */}
-          {dailyFortune && (activeSection as 'mingpan'|'fortune'|'outfit'|'bracelet'|null) === 'fortune' && (
+          {dailyFortune && (
             <div id="fortune-section" style={{
               flex: 1,
               background: 'linear-gradient(145deg, rgba(255,92,168,0.1) 0%, rgba(91,92,255,0.1) 42%, rgba(255,255,255,0.95) 100%)', borderRadius: '24px', padding: navWideLayout ? '20px' : '14px',
