@@ -55,7 +55,7 @@ const UI_EASE = MOTION_TOKENS.uiEase;
 function getScoreColor(score: number): string {
   if (score >= 85) return '#00C47A';
   if (score >= 70) return '#FF9D6B';
-  if (score >= 55) return '#FFD666';
+  if (score >= 55) return '#00C9FF';
   if (score >= 45) return '#A0A8C0';
   if (score >= 30) return '#FF9D6B';
   return '#FF6B6B';
