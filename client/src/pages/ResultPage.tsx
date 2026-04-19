@@ -799,6 +799,7 @@ function getFortuneAnalysis(style: LanguageStyle, dmEl: string, fav: string[], u
       career: `${dm}日主，${favN}是你的核心竞争优势。${favN.includes('金') || favN.includes('水') ? '适合战略规划、资本运作类岗位。' : favN.includes('木') || favN.includes('火') ? '适合内容创作、品牌运营、市场策划方向。' : '适合行政管理、财务、法务等稳定型岗位。'}${unfavN}属性领域建议战略性回避。`,
       fortune: `职场财运：${dm}日主${favN.includes('金') ? '薪酬提升空间大，争取绩效奖金。' : favN.includes('水') ? '兼职外快机会多，可发展副业。' : favN.includes('木') || favN.includes('火') ? '才华变现渠道广，版权收益可观。' : '薪资稳定增长，不宜冒险跳槽。'}`,
       family: `${dm}日主在家庭中是情感纽带${favN.includes('水') ? '，能调和矛盾，让家人感到温暖。' : '，是家人的依靠，承担更多责任。'}`,
+      investment: `职场投资建议：${dm}日主宜${favN.includes('金') || favN.includes('水') ? '配置职场人脉资源，长期回报率高。' : favN.includes('木') || favN.includes('火') ? '投资自我成长和学习，提升核心竞争力。' : '稳健型投资，储蓄和保险为主。'}`,
       marriage: `${dm}日主在感情中${favN.includes('火') ? '是主导型选手，注意给伴侣留出成长空间。' : '善于长期经营，稳定的陪伴是你最大的优势。'}`,
       health: `职场高压人群建议：${dmEl === 'wood' ? '肝脏排毒（加班护肝）。' : dmEl === 'fire' ? '心血管健康（少熬夜）。' : dmEl === 'earth' ? '肠胃调理（外卖要少吃）。' : dmEl === 'metal' ? '呼吸系统（空调房多通风）。' : '腰肾保养（不要久坐）。'}`,
     },
