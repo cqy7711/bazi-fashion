@@ -947,10 +947,8 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    // 只有未锁定时才自动检测定位
-    if (!locationLocked) {
-      detectLocation();
-    }
+    // 首次加载时不自动弹出定位，仅静默检测
+    // 城市选择弹窗需要用户手动点击触发
   }, []);
 
   useEffect(() => { fetchRecords(); }, []);
