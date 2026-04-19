@@ -2556,7 +2556,7 @@ export default function ResultPage() {
   
   // 获取当前大运（覆盖当前年份的大运）
   const currentYear = new Date().getFullYear();
-  const currentDayun = dayunData.find(d => currentYear >= d.year && currentYear < d.yearEnd) || dayunData[0];
+  const currentDayun = dayunData.find((d: DayunData) => currentYear >= d.year && currentYear < d.yearEnd) || dayunData[0];
   
   const fortuneCards = [
     { cardKey: 'career', label: CARD_LABELS.career, color: CARD_COLORS.career.hex, text: fortuneAnalysis.career, icon: CARD_ICONS.career, dayMaster: bazi.dayMaster, dayElement: bazi.dayMasterElement, favorableElements: userInfo.favorableElements || [], unfavorableElements: userInfo.unfavorableElements || [] },
