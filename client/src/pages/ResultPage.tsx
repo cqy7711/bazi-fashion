@@ -1401,7 +1401,7 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
         scores: monthScores,
         yearScore,
         favorable: yearScore >= 55,
-        yearlyDetails: getYearDetailAnalysis(dayun.year + i, stem, yearElement, dayMaster, dayElement, favorableElements, yearScore),
+        yearlyDetails: { ...getYearDetailAnalysis(dayun.year + i, stem, yearElement, dayMaster, dayElement, favorableElements, yearScore), ganZhi, yearScore },
       });
     }
     return yearlyData;
@@ -1863,7 +1863,7 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
                     {/* 四维详细分析 */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
                       {['career', 'fortune', 'marriage', 'health'].map((key) => {
-                        const item = year[key] || { score: 50, advice: '', tip: '' };
+                        const item = (year as any)[key] || { score: 50, advice: '', tip: '' };
                         const isHigh = item.score > 50;
                         return (
                           <div key={key} style={{ 
@@ -2120,7 +2120,7 @@ function DecadeCard({ data, index }: { data: CandlestickData; index: number }) {
                   {/* 四维详细分析 */}
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
                     {['career', 'fortune', 'marriage', 'health'].map((key) => {
-                      const item = year[key] || { score: 50, advice: '', tip: '' };
+                      const item = (year as any)[key] || { score: 50, advice: '', tip: '' };
                       const isHigh = item.score >= 55;
                       return (
                         <div key={key} style={{ 
