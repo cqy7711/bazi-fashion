@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2, ArrowLeft, TrendingUp, Users, Heart, Activity, Sparkles, Edit2, X, ChevronDown, Home, Apple } from 'lucide-react';
+import { Loader2, ArrowLeft, TrendingUp, Users, Heart, Activity, Sparkles, Edit2, X, ChevronDown, Home, Apple, Coins, PieChart } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, ReferenceLine, Cell } from 'recharts';
 import type { UserBirthInfo, FiveElementsAnalysis, LanguageStyle } from '../shared/types';
 import { COLOR_TOKENS, SHADOW_TOKENS, RADIUS_TOKENS } from '../theme/designTokens';
@@ -733,41 +733,41 @@ function getFortuneAnalysis(style: LanguageStyle, dmEl: string, fav: string[], u
   const favN = fav.map(e => ELEMENT_NAMES[e]).join('、');
   const unfavN = unfav.map(e => ELEMENT_NAMES[e]).join('、');
   const dm = ELEMENT_NAMES[dmEl] || '木';
-  const content: Record<LanguageStyle, { career: string; family: string; marriage: string; health: string }> = {
+  const content: Record<LanguageStyle, { career: string; fortune: string; investment: string; health: string }> = {
     normal: {
       career: `${dm}日主，搭配${favN}，事业上${favN.includes('金') || favN.includes('水') ? '适合金融、科技、流通领域发展。' : favN.includes('木') || favN.includes('火') ? '适合文化、教育、创意领域。' : '适合稳定发展，逐步积累。'}忌${unfavN}过重的行业。`,
-      family: `命局${favN.includes('土') ? '显示重视家庭，与家人关系融洽。' : favN.includes('水') ? '情感表达丰富，注意情绪管理。' : '性格独立，需平衡家庭与个人空间。'}`,
-      marriage: `${dm}日主的人${favN.includes('火') ? '热情主动，感情丰富。' : favN.includes('水') ? '温柔细腻，需要安全感。' : '稳重踏实，值得信赖。'}`,
+      fortune: `命局显示${dm}日主${favN.includes('金') ? '财星高照，正财稳健。' : favN.includes('水') ? '财运流动，适合流动性投资。' : favN.includes('木') || favN.includes('火') ? '才华生财，适合知识变现。' : '土气养财，宜稳不宜冒进。'}`,
+      investment: `${dm}日主偏${favN.includes('金') || favN.includes('水') ? '向于金融理财产品。' : favN.includes('木') || favN.includes('火') ? '向于股权、创意类投资。' : '向于房产、固收类投资。'}`,
       health: `${dm}日主需注意${dmEl === 'wood' ? '肝胆、神经系统。' : dmEl === 'fire' ? '心脏、眼睛。' : dmEl === 'earth' ? '脾胃、消化系统。' : dmEl === 'metal' ? '肺、呼吸系统。' : '肾、泌尿系统。'}保养。`,
     },
     stock: {
       career: `${dm}日走${favN}势，${favN.includes('金') || favN.includes('水') ? '金融、科技板块利好，适合加仓。' : favN.includes('木') || favN.includes('火') ? '文化创意板块值得布局。' : '低估值稳健标的为主。'}注意回避${unfavN}相关板块。`,
-      family: `${favN.includes('水') ? '家庭账户需控仓，注意情绪波动影响判断。' : '家庭关系稳定，适合长期持有。'}`,
-      marriage: `${dm}日主感情线${favN.includes('火') ? '强势，但需设置止损线（控制情绪）。' : '稳步推进，适合长线经营。'}`,
+      fortune: `财运${favN.includes('金') || favN.includes('水') ? '处于上升通道，适合主动出击。' : favN.includes('木') || favN.includes('火') ? '偏文创板块，可布局未来。' : '宜守不宜攻，稳健为主。'}`,
+      investment: `投资风格：${dmEl === 'wood' ? '长线价值型。' : dmEl === 'fire' ? '短线热点型。' : dmEl === 'earth' ? '稳健固收型。' : dmEl === 'metal' ? '量化对冲型。' : '灵活配置型。'}`,
       health: `健康管理：${dmEl === 'wood' ? '肝胆指标' : dmEl === 'fire' ? '心血管' : dmEl === 'earth' ? '消化系统' : dmEl === 'metal' ? '呼吸系统' : '肾功能'}需定期检查。`,
     },
     game: {
       career: `${dm}属性，${favN}是主力技能！${favN.includes('金') || favN.includes('水') ? '金融科技流，核心输出！' : favN.includes('木') || favN.includes('火') ? '文创天赋流，后期大C！' : '稳健发育流，适合辅助位。'}${unfavN}是debuff，记得绕开！`,
-      family: `${favN.includes('水') ? '家庭关系有隐藏支线剧情，建议多花时间解锁。' : '家庭是稳定的增益buff，好好维护。'}`,
-      marriage: `${dm}日主桃花运${favN.includes('火') ? '强势Carry，但别上头！' : '稳步发育，适合细水长流。'}`,
+      fortune: `财运是隐藏副本！${favN.includes('金') ? '金属性装备爆率高，优先刷！' : favN.includes('水') ? '流动性属性加成，适合快进快出。' : '土属性稳扎稳打，适合蹲守。'}`,
+      investment: `投资技能树：${dmEl === 'wood' ? '长线价值投资（推荐点满）。' : dmEl === 'fire' ? '热点追击（小心翻车！）。' : dmEl === 'earth' ? '稳健固收（新手推荐）。' : dmEl === 'metal' ? '对冲量化（高玩专属）。' : '灵活配置（均衡加点）。'}`,
       health: `HP值：${dmEl === 'wood' ? '肝/神经系统' : dmEl === 'fire' ? '心脏/眼睛' : dmEl === 'earth' ? '消化系统' : dmEl === 'metal' ? '肺/呼吸' : '肾/泌尿'}需要日常维护，别忘了吃补剂！`,
     },
     fairytale: {
       career: `${dm}小精灵，你的命运花园里${favN}是最珍贵的花朵！${favN.includes('金') || favN.includes('水') ? '金融和知识的泉水在等你发现。' : favN.includes('木') || favN.includes('火') ? '创意和艺术的阳光照耀着你。' : '大地的果实会给你带来稳定的幸福。'}`,
-      family: `${dm}小天使，你的家庭是一片小小的魔法森林，${favN.includes('水') ? '记得给情感的小溪留出空间。' : '守护好每一棵树的成长。'}`,
-      marriage: `${dm}日主，你的爱情是一颗等待发芽的种子，${favN.includes('火') ? '热烈的阳光会让它绽放。' : '需要耐心地用温柔浇灌。'}`,
+      fortune: `${dm}小天使，你的财运是一颗闪耀的星星！${favN.includes('金') ? '金色星星代表正财，好运正在降临。' : favN.includes('水') ? '蓝色星星在远方闪烁，那是流动的财富。' : '温暖的星星守护着你的钱袋。'}`,
+      investment: `${dm}小精灵，你的投资是一段神奇的冒险！${favN.includes('金') || favN.includes('水') ? '金融王国的大门为你敞开。' : favN.includes('木') || favN.includes('火') ? '创意的翅膀会让你的财富飞翔。' : '大地的宝藏需要耐心挖掘。'}`,
       health: `小精灵要好好照顾自己：${dmEl === 'wood' ? '森林之心（肝胆）' : dmEl === 'fire' ? '太阳之眼（心脏）' : dmEl === 'earth' ? '大地之腹（脾胃）' : dmEl === 'metal' ? '天空之肺' : '月亮之泉（肾）'}需要你的关注。`,
     },
     fortune: {
       career: `${dm}日主，贫道夜观天象，你命中${favN}旺盛，${favN.includes('金') || favN.includes('水') ? '金水相生，财源广进，适合商贾金融之路。' : favN.includes('木') || favN.includes('火') ? '木火通明，才华显露，宜文教艺术之途。' : '土气厚重，宜稳扎稳打。'}切记避开${unfavN}之方。`,
-      family: `命格显示${dm}日主${favN.includes('土') ? '与长辈缘分深厚，家宅安稳。' : favN.includes('水') ? '情感细腻，需防桃花劫。' : '独立自主，宅运平稳。'}`,
-      marriage: `${dm}日主，${favN.includes('火') ? '官星/夫星旺盛，姻缘早至，然需防情深不寿。' : favN.includes('水') ? '正缘在远方，需耐心等待，不可强求。' : '婚姻平稳，正缘需待时机。'}`,
+      fortune: `施主命格显示：${dm}日主${favN.includes('金') ? '正财旺盛，宜勤勉积累。' : favN.includes('水') ? '偏财流动，宜把握时机。' : favN.includes('木') || favN.includes('火') ? '才华生财，智慧变现。' : '土气养财，稳步发展。'}忌${unfavN}耗泄。`,
+      investment: `投资之道：${dm}日主宜${favN.includes('金') ? '金融投资，利在金秋。' : favN.includes('水') ? '流动资产，灵活配置。' : favN.includes('木') || favN.includes('火') ? '知识投资，智慧增值。' : '固定资产，长远布局。'}`,
       health: `施主须注意${dmEl === 'wood' ? '肝胆经络，易有郁结之症。' : dmEl === 'fire' ? '心火过旺，宜静心养神。' : dmEl === 'earth' ? '脾胃运化，需饮食有节。' : dmEl === 'metal' ? '肺金较弱，秋冬季宜进补。' : '肾水不足，宜早睡养精。'}`,
     },
     workplace: {
       career: `${dm}日主，${favN}是你的核心竞争优势。${favN.includes('金') || favN.includes('水') ? '适合战略规划、资本运作类岗位。' : favN.includes('木') || favN.includes('火') ? '适合内容创作、品牌运营、市场策划方向。' : '适合行政管理、财务、法务等稳定型岗位。'}${unfavN}属性领域建议战略性回避。`,
-      family: `${dm}职场人格需要${favN.includes('水') ? '在家庭中建立清晰的边界感，避免工作情绪入侵家庭。' : '稳定的家庭支持是你职场表现的基石。'}`,
-      marriage: `${dm}日主在感情中${favN.includes('火') ? '是主导型选手，注意给伴侣留出成长空间。' : '善于长期经营，稳定的陪伴是你最大的优势。'}`,
+      fortune: `职场财运：${dm}日主${favN.includes('金') ? '薪酬提升空间大，争取绩效奖金。' : favN.includes('水') ? '兼职外快机会多，可发展副业。' : favN.includes('木') || favN.includes('火') ? '才华变现渠道广，版权收益可观。' : '薪资稳定增长，不宜冒险跳槽。'}`,
+      investment: `职场人投资指南：${dmEl === 'wood' ? '长期定投指数基金，适合稳健积累。' : dmEl === 'fire' ? '适当参与热点板块，但需控制仓位。' : dmEl === 'earth' ? '房产和固收是首选，风险偏好低。' : dmEl === 'metal' ? '量化产品和海外资产可考虑配置。' : '灵活配置，根据现金流调整。'}`,
       health: `职场高压人群建议：${dmEl === 'wood' ? '肝脏排毒（加班护肝）。' : dmEl === 'fire' ? '心血管健康（少熬夜）。' : dmEl === 'earth' ? '肠胃调理（外卖要少吃）。' : dmEl === 'metal' ? '呼吸系统（空调房多通风）。' : '腰肾保养（不要久坐）。'}`,
     },
   };
@@ -777,18 +777,18 @@ function getFortuneAnalysis(style: LanguageStyle, dmEl: string, fav: string[], u
 // ─── Fortune Card ─────────────────────────────────────────────────────────────
 const CARD_ICONS: Record<string, React.ReactNode> = {
   career: <TrendingUp style={{ width: '20px', height: '20px' }} />,
-  family: <Users style={{ width: '20px', height: '20px' }} />,
-  marriage: <Heart style={{ width: '20px', height: '20px' }} />,
+  fortune: <Coins style={{ width: '20px', height: '20px' }} />,
+  investment: <PieChart style={{ width: '20px', height: '20px' }} />,
   health: <Activity style={{ width: '20px', height: '20px' }} />,
 };
 const CARD_COLORS: Record<string, { hex: string; grad: string }> = {
   career: { hex: '#FF9D6B', grad: 'linear-gradient(135deg, rgba(255,157,107,0.1), rgba(255,157,107,0.03))' },
-  family: { hex: '#6BD4FF', grad: 'linear-gradient(135deg, rgba(107,212,255,0.1), rgba(107,212,255,0.03))' },
-  marriage: { hex: '#FF6B9D', grad: 'linear-gradient(135deg, rgba(255,107,157,0.1), rgba(255,107,157,0.03))' },
+  fortune: { hex: '#FFD700', grad: 'linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.03))' },
+  investment: { hex: '#9B6BFF', grad: 'linear-gradient(135deg, rgba(155,107,255,0.1), rgba(155,107,255,0.03))' },
   health: { hex: '#00C47A', grad: 'linear-gradient(135deg, rgba(0,196,122,0.1), rgba(0,196,122,0.03))' },
 };
 const CARD_LABELS: Record<string, string> = {
-  career: '事业运势', family: '家庭关系', marriage: '婚姻感情', health: '健康养生',
+  career: '事业运势', fortune: '财运运势', investment: '投资理财', health: '健康养生',
 };
 
 // 生成四维运势详细分析
@@ -812,34 +812,34 @@ function generateFortuneDetails(cardKey: string, dayMaster: string, dayElement: 
         '合伙经营需谨慎，避免资金往来不清'
       ]
     };
-  } else if (cardKey === 'family') {
+  } else if (cardKey === 'fortune') {
     return {
       favorable: [
-        `${dayMaster}日主与父母宫关系以${getElementRelation(dayEl)}为佳`,
-        '年柱与月柱相生相合者，根基稳固，家人助力明显',
-        favorableElements.includes(dayEl) ? '家庭氛围和谐，自己能为家人带来好运' : '家庭关系稳定，互相支持共同进步',
-        '流年吉神到位时，是增进家庭感情的绝佳时机'
+        `${dayMaster}日主，${getElementFortuneAdvice(dayEl)}最利偏财运`,
+        favorableElements.includes(dayEl) ? '本命五行旺盛，财运基础扎实' : '用神到位时财源广进',
+        '流年吉神生助之期，横财机遇较多',
+        '与命格相合之人合作求财，更易获利'
       ],
       precautions: [
-        unfavorableElements.includes(dayEl) ? `${dayEl}气受制年注意父母健康` : '流年冲克之年与长辈沟通需耐心',
-        unfavorableStr.includes('受制') ? '避免在家庭问题上过于固执' : '切勿忽视对长辈的关心陪伴',
-        '子女宫状态影响晚年福气，需提前规划布局',
-        '家庭财务规划宜稳不宜冒进，尤其忌神当令年'
+        unfavorableElements.includes(dayEl) ? `${dayEl}气受制年忌大额投资` : '流年冲克之年财运波动较大',
+        unfavorableStr.includes('受制') ? '避免投机取巧，稳扎稳打为宜' : '不可过于贪婪，见好就收',
+        '注意破财方位，流年冲克方向谨慎行事',
+        '合伙经营需明确契约，避免财务纠纷'
       ]
     };
-  } else if (cardKey === 'marriage') {
+  } else if (cardKey === 'investment') {
     return {
       favorable: [
-        `${dayMaster}日主${getMarriageTiming(dayEl)}最利姻缘`,
-        '日支为配偶宫，日主与日支相生者感情融洽',
-        favorableElements.includes(dayEl) ? '自身魅力出众，姻缘运势上佳' : '桃花星旺相之年，是脱单良机',
-        '流年天喜、红鸾星动时，婚恋机会大增'
+        `${dayMaster}日主偏好${getElementInvestmentType(dayEl)}投资方式`,
+        favorableElements.includes(dayEl) ? '本命旺盛时期适合主动投资' : '用神到位时投资胜率较高',
+        `流年${getElementLuckyMonth(dayEl)}是投资黄金期`,
+        '与命格相合的项目或合作伙伴可重点关注'
       ],
       precautions: [
-        '日支被冲克之年，感情易生变故',
-        unfavorableElements.includes(dayEl) ? `${dayEl}气受制期感情易遇挫折` : '流年桃花星过旺需防烂桃花',
-        unfavorableStr.includes('受制') ? '婚恋决策宜缓不宜急' : '切勿因外界压力仓促确定关系',
-        '婚姻宫受冲年份避免重大感情决定'
+        unfavorableElements.includes(dayEl) ? `${dayEl}气受制期忌高风险投资` : '流年冲克之年投资需谨慎',
+        unfavorableStr.includes('受制') ? '避免加杠杆操作，控制仓位为宜' : '切勿追涨杀跌，保持理性',
+        '注意投资方向的五行属性与自身命格相合',
+        '重大投资决策避开流年太岁相冲月份'
       ]
     };
   } else {
@@ -873,6 +873,18 @@ function getOppositeElement(el: string): string {
 function getElementCareerAdvice(el: string): string {
   const map: Record<string, string> = { 木: '东方、文教、设计', 火: '南方、能源、餐饮', 土: '地产、农业、建筑', 金: '西方、金融、法律', 水: '北方、物流、贸易' };
   return map[el] || '';
+}
+function getElementFortuneAdvice(el: string): string {
+  const map: Record<string, string> = { 木: '东方木属性行业', 火: '南方火属性行业', 土: '本地土属性行业', 金: '西方金属性行业', 水: '北方水属性行业' };
+  return map[el] || '五行流通行业';
+}
+function getElementInvestmentType(el: string): string {
+  const map: Record<string, string> = { 木: '长线价值', 火: '短线热点', 土: '稳健固收', 金: '量化对冲', 水: '灵活配置' };
+  return map[el] || '均衡配置';
+}
+function getElementLuckyMonth(el: string): string {
+  const map: Record<string, string> = { 木: '春季木旺月', 火: '夏季火旺月', 土: '长夏土旺月', 金: '秋季金旺月', 水: '冬季水旺月' };
+  return map[el] || '用神当令月';
 }
 function getElementRelation(el: string): string {
   const map: Record<string, string> = { 木: '木火相生', 火: '火土相生', 土: '土金相生', 金: '金水相生', 水: '水木相生' };
@@ -2098,8 +2110,8 @@ export default function ResultPage() {
   const fortuneAnalysis = getFortuneAnalysis(style, bazi.dayMasterElement, userInfo.favorableElements || [], userInfo.unfavorableElements || []);
   const fortuneCards = [
     { cardKey: 'career', label: CARD_LABELS.career, color: CARD_COLORS.career.hex, text: fortuneAnalysis.career, icon: CARD_ICONS.career, dayMaster: bazi.dayMaster, dayElement: bazi.dayMasterElement, favorableElements: userInfo.favorableElements || [], unfavorableElements: userInfo.unfavorableElements || [] },
-    { cardKey: 'family', label: CARD_LABELS.family, color: CARD_COLORS.family.hex, text: fortuneAnalysis.family, icon: CARD_ICONS.family, dayMaster: bazi.dayMaster, dayElement: bazi.dayMasterElement, favorableElements: userInfo.favorableElements || [], unfavorableElements: userInfo.unfavorableElements || [] },
-    { cardKey: 'marriage', label: CARD_LABELS.marriage, color: CARD_COLORS.marriage.hex, text: fortuneAnalysis.marriage, icon: CARD_ICONS.marriage, dayMaster: bazi.dayMaster, dayElement: bazi.dayMasterElement, favorableElements: userInfo.favorableElements || [], unfavorableElements: userInfo.unfavorableElements || [] },
+    { cardKey: 'fortune', label: CARD_LABELS.fortune, color: CARD_COLORS.fortune.hex, text: fortuneAnalysis.fortune, icon: CARD_ICONS.fortune, dayMaster: bazi.dayMaster, dayElement: bazi.dayMasterElement, favorableElements: userInfo.favorableElements || [], unfavorableElements: userInfo.unfavorableElements || [] },
+    { cardKey: 'investment', label: CARD_LABELS.investment, color: CARD_COLORS.investment.hex, text: fortuneAnalysis.investment, icon: CARD_ICONS.investment, dayMaster: bazi.dayMaster, dayElement: bazi.dayMasterElement, favorableElements: userInfo.favorableElements || [], unfavorableElements: userInfo.unfavorableElements || [] },
     { cardKey: 'health', label: CARD_LABELS.health, color: CARD_COLORS.health.hex, text: fortuneAnalysis.health, icon: CARD_ICONS.health, dayMaster: bazi.dayMaster, dayElement: bazi.dayMasterElement, favorableElements: userInfo.favorableElements || [], unfavorableElements: userInfo.unfavorableElements || [] },
   ];
 
