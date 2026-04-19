@@ -1839,12 +1839,6 @@ export default function HomePage() {
                     <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '11px' : '10px', color: '#6B7280', lineHeight: 1.5, marginBottom: '8px', overflow: 'hidden' }}>
                       {elementDesc[dmEl]}
                     </p>
-                    {renderStyleGuideTriplet(
-                      `以${elementNames[dmEl]}元素为主轴，穿搭优先同色系渐变过渡。`,
-                      '避免冷暖高饱和色同时抢主角，防止气场分散。',
-                      '用一件金属或珠光配饰收束视觉，整体更显高级。',
-                      { primary: elementColors[dmEl], avoid: PALETTE.coral, upgrade: PALETTE.purple, border: `${elementColors[dmEl]}2A` },
-                    )}
 
                   </div>
                 );
@@ -2514,12 +2508,6 @@ export default function HomePage() {
                               {scene.colors.map((c: string, i: number) => <span key={i} style={{ padding: '3px 8px', borderRadius: '6px', background: `${scene.accentColor}12`, border: `1px solid ${scene.accentColor}25`, fontFamily: 'Outfit', fontSize: '10px', color: '#1A1A2E' }}>{c}</span>)}
                             </div>
                           </div>}
-                          {renderStyleGuideTriplet(
-                            `${sceneMainTone}打底，强调层次渐变。`,
-                            `${sceneAvoidTone}，避免破坏高级感。`,
-                            sceneUpgradeTip,
-                            { primary: scene.accentColor, avoid: '#E76F51', upgrade: '#7C3AED', border: `${scene.accentColor}20` },
-                          )}
                           <div style={{ padding: '8px', background: '#FFFFFF', borderRadius: '8px', border: `1px solid ${scene.accentColor}20` }}>
                             <Lightbulb style={{ width: '12px', height: '12px', color: scene.accentColor, marginBottom: '4px' }} />
                             <p style={{ fontFamily: 'Outfit', fontSize: '10px', color: '#6B7280', lineHeight: 1.6, margin: 0 }}>{scene.explanation}</p>
@@ -2782,12 +2770,6 @@ export default function HomePage() {
                                           <span key={sIdx} style={{ padding: '3px 8px', borderRadius: '6px', background: `${PALETTE.green}10`, border: `1px solid ${PALETTE.green}25`, fontFamily: 'Outfit', fontSize: '9px', color: PALETTE.green }}>{scene.name || scene.scene}</span>
                                         ))}
                                       </div>
-                                    )}
-                                    {renderStyleGuideTriplet(
-                                      '作为副手串用于层次叠戴，主打低调提亮。',
-                                      '避免同时叠加过多高亮材质，防止视觉过满。',
-                                      '和主推荐同色系配饰呼应，整体更有高级统一感。',
-                                      { primary: PALETTE.blue, avoid: PALETTE.coral, upgrade: PALETTE.purple, border: `${PALETTE.blue}22` },
                                     )}
                                   </div>
                                 );
