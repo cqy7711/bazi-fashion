@@ -1,0 +1,1669 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 350" width="500" height="350">
+  <rect width="500" height="350" fill="#ECEFF1"/>
+
+  <!-- 底部投影 -->
+  <ellipse cx="250" cy="285" rx="148.5" ry="18" fill="#000" opacity="0.07" filter="url(#blur3)"/>
+
+  <!-- 穿绳（后半段） -->
+  <path d="M 96.58687982843853 161.07190407549592
+           Q 250 95 403.41312017156145 161.07190407549592"
+        fill="none" stroke="#FFD54F" stroke-width="2.5" opacity="0.5"/>
+
+
+  <g transform="translate(403.41312017156145, 161.07190407549592) scale(0.7338461538461538)">
+    <svg width="49.90153846153846" height="49.90153846153846" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="946" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="28.95076923076923" rx="21.208153846153845" ry="6.237692307692307" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="24.95076923076923" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="23.95076923076923" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="24.95076923076923" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="24.45076923076923" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-7.984246153846153" cy="-7.984246153846153" rx="9.481292307692307" ry="6.4872" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="5.489169230769231" cy="6.9862153846153845" rx="3.4931076923076922" ry="2.495076923076923" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-3.7426153846153842" cy="-11.227846153846153" r="1.2475384615384615" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(406.38178765158165, 164.26764489562547) scale(0.7615384615384615)">
+    <svg width="51.78461538461538" height="51.78461538461538" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="755" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="29.89230769230769" rx="22.008461538461535" ry="6.473076923076922" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="25.89230769230769" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="24.89230769230769" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="25.89230769230769" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="25.39230769230769" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-8.285538461538462" cy="-8.285538461538462" rx="9.839076923076922" ry="6.731999999999999" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="5.696307692307692" cy="7.249846153846153" rx="3.6249230769230767" ry="2.589230769230769" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-3.8838461538461533" cy="-11.651538461538461" r="1.2946153846153845" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(408.92182352161365, 167.52021166000773) scale(0.7892307692307692)">
+    <svg width="53.667692307692306" height="53.667692307692306" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="290" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="30.833846153846153" rx="22.80876923076923" ry="6.708461538461538" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="26.833846153846153" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="25.833846153846153" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="26.833846153846153" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="26.333846153846153" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-8.586830769230769" cy="-8.586830769230769" rx="10.196861538461539" ry="6.9768" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="5.903446153846153" cy="7.513476923076923" rx="3.7567384615384616" ry="2.6833846153846155" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-4.025076923076923" cy="-12.07523076923077" r="1.3416923076923077" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(411.02626571989333, 170.82068930922475) scale(0.8169230769230769)">
+    <svg width="55.55076923076923" height="55.55076923076923" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="488" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="31.775384615384613" rx="23.60907692307692" ry="6.943846153846153" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="27.775384615384613" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="26.775384615384613" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="27.775384615384613" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="27.275384615384613" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-8.888123076923076" cy="-8.888123076923076" rx="10.554646153846154" ry="7.2216" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="6.110584615384615" cy="7.777107692307692" rx="3.888553846153846" ry="2.7775384615384615" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-4.166307692307692" cy="-12.498923076923075" r="1.3887692307692308" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(412.6893461166333, 174.16003146345332) scale(0.8446153846153845)">
+    <svg width="57.43384615384615" height="57.43384615384615" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="458" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="32.716923076923074" rx="24.409384615384614" ry="7.179230769230768" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="28.716923076923074" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="27.716923076923074" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="28.716923076923074" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="28.216923076923074" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-9.189415384615383" cy="-9.189415384615383" rx="10.912430769230768" ry="7.466399999999999" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="6.317723076923076" cy="8.040738461538462" rx="4.020369230769231" ry="2.8716923076923075" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-4.307538461538461" cy="-12.922615384615384" r="1.4358461538461538" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(413.9065063240654, 177.52908521796365) scale(0.8723076923076922)">
+    <svg width="59.316923076923075" height="59.316923076923075" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="791" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="33.65846153846154" rx="25.209692307692308" ry="7.414615384615384" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="29.658461538461538" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="28.658461538461538" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="29.658461538461538" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="29.158461538461538" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-9.490707692307693" cy="-9.490707692307693" rx="11.270215384615385" ry="7.7112" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="6.524861538461538" cy="8.30436923076923" rx="4.152184615384615" ry="2.965846153846154" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-4.448769230769231" cy="-13.346307692307692" r="1.482923076923077" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(414.67441019066484, 180.9186162305946) scale(0.8999999999999999)">
+    <svg width="61.199999999999996" height="61.199999999999996" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="880" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="34.599999999999994" rx="26.009999999999998" ry="7.6499999999999995" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="30.599999999999998" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="29.599999999999998" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="30.599999999999998" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="30.099999999999998" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-9.792" cy="-9.792" rx="11.628" ry="7.9559999999999995" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="6.731999999999999" cy="8.568" rx="4.284" ry="3.06" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-4.59" cy="-13.77" r="1.53" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(414.9909529453095, 184.31933403244403) scale(0.8723076923076922)">
+    <svg width="59.316923076923075" height="59.316923076923075" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="795" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="33.65846153846154" rx="25.209692307692308" ry="7.414615384615384" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="29.658461538461538" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="28.658461538461538" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="29.658461538461538" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="29.158461538461538" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-9.490707692307693" cy="-9.490707692307693" rx="11.270215384615385" ry="7.7112" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="6.524861538461538" cy="8.30436923076923" rx="4.152184615384615" ry="2.965846153846154" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-4.448769230769231" cy="-13.346307692307692" r="1.482923076923077" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(414.85526696631166, 187.72191749239798) scale(0.8446153846153845)">
+    <svg width="57.43384615384615" height="57.43384615384615" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="831" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="32.716923076923074" rx="24.409384615384614" ry="7.179230769230768" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="28.716923076923074" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="27.716923076923074" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="28.716923076923074" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="28.216923076923074" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-9.189415384615383" cy="-9.189415384615383" rx="10.912430769230768" ry="7.466399999999999" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="6.317723076923076" cy="8.040738461538462" rx="4.020369230769231" ry="2.8716923076923075" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-4.307538461538461" cy="-12.922615384615384" r="1.4358461538461538" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(414.2677241595082, 191.11704036570342) scale(0.8169230769230769)">
+    <svg width="55.55076923076923" height="55.55076923076923" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="90" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="31.775384615384613" rx="23.60907692307692" ry="6.943846153846153" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="27.775384615384613" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="26.775384615384613" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="27.775384615384613" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="27.275384615384613" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-8.888123076923076" cy="-8.888123076923076" rx="10.554646153846154" ry="7.2216" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="6.110584615384615" cy="7.777107692307692" rx="3.888553846153846" ry="2.7775384615384615" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-4.166307692307692" cy="-12.498923076923075" r="1.3887692307692308" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(413.22993493889305, 194.49539685655674) scale(0.7892307692307692)">
+    <svg width="53.667692307692306" height="53.667692307692306" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="480" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="30.833846153846153" rx="22.80876923076923" ry="6.708461538461538" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="26.833846153846153" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="25.833846153846153" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="26.833846153846153" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="26.333846153846153" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-8.586830769230769" cy="-8.586830769230769" rx="10.196861538461539" ry="6.9768" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="5.903446153846153" cy="7.513476923076923" rx="3.7567384615384616" ry="2.6833846153846155" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-4.025076923076923" cy="-12.07523076923077" r="1.3416923076923077" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(411.7447438125841, 197.84772712464323) scale(0.7615384615384615)">
+    <svg width="51.78461538461538" height="51.78461538461538" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="722" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="29.89230769230769" rx="22.008461538461535" ry="6.473076923076922" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="25.89230769230769" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="24.89230769230769" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="25.89230769230769" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="25.39230769230769" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-8.285538461538462" cy="-8.285538461538462" rx="9.839076923076922" ry="6.731999999999999" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="5.696307692307692" cy="7.249846153846153" rx="3.6249230769230767" ry="2.589230769230769" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-3.8838461538461533" cy="-11.651538461538461" r="1.2946153846153845" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(409.8162215862241, 201.16484266571558) scale(0.7338461538461538)">
+    <svg width="49.90153846153846" height="49.90153846153846" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="793" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="28.95076923076923" rx="21.208153846153845" ry="6.237692307692307" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="24.95076923076923" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="23.95076923076923" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="24.95076923076923" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="24.45076923076923" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-7.984246153846153" cy="-7.984246153846153" rx="9.481292307692307" ry="6.4872" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="5.489169230769231" cy="6.9862153846153845" rx="3.4931076923076922" ry="2.495076923076923" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-3.7426153846153842" cy="-11.227846153846153" r="1.2475384615384615" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(96.58687982843853, 161.07190407549592) scale(0.8609874015906291)">
+    <svg width="58.54714330816278" height="58.54714330816278" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="128" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="33.273571654081394" rx="24.88253590596918" ry="7.318392913520348" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="29.27357165408139" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="28.27357165408139" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="29.27357165408139" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="28.77357165408139" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-9.367542929306046" cy="-9.367542929306046" rx="11.123957228550928" ry="7.611128630061161" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="6.440185763897906" cy="8.19660006314279" rx="4.098300031571395" ry="2.9273571654081394" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-4.391035748112208" cy="-13.173107244336625" r="1.4636785827040697" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(403.41312017156145, 161.07190407549592) scale(0.8609874015906293)">
+    <svg width="58.54714330816279" height="58.54714330816279" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="916" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="33.273571654081394" rx="24.882535905969185" ry="7.3183929135203485" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="29.273571654081394" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="28.273571654081394" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="29.273571654081394" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="28.773571654081394" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-9.367542929306046" cy="-9.367542929306046" rx="11.12395722855093" ry="7.611128630061162" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="6.440185763897906" cy="8.19660006314279" rx="4.098300031571395" ry="2.9273571654081394" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-4.391035748112209" cy="-13.173107244336627" r="1.4636785827040697" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(109.1212673897227, 151.16204450166543) scale(0.8945284647635939)">
+    <svg width="60.82793560392439" height="60.82793560392439" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="165" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="34.413967801962194" rx="25.851872631667863" ry="7.6034919504905485" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="30.413967801962194" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="29.413967801962194" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="30.413967801962194" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="29.913967801962194" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-9.732469696627902" cy="-9.732469696627902" rx="11.557307764745634" ry="7.90763162851017" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="6.691072916431683" cy="8.515910984549414" rx="4.257955492274707" ry="3.0413967801962194" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-4.562095170294329" cy="-13.686285510882987" r="1.5206983900981097" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(390.8787326102773, 151.16204450166543) scale(0.8945284647635939)">
+    <svg width="60.82793560392439" height="60.82793560392439" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="909" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="34.413967801962194" rx="25.851872631667863" ry="7.6034919504905485" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="30.413967801962194" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="29.413967801962194" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="30.413967801962194" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="29.913967801962194" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-9.732469696627902" cy="-9.732469696627902" rx="11.557307764745634" ry="7.90763162851017" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="6.691072916431683" cy="8.515910984549414" rx="4.257955492274707" ry="3.0413967801962194" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-4.562095170294329" cy="-13.686285510882987" r="1.5206983900981097" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(125.74320810940421, 142.2339828139187) scale(0.9247465197067368)">
+    <svg width="62.882763340058105" height="62.882763340058105" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="667" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="35.44138167002905" rx="26.725174419524695" ry="7.860345417507263" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="31.441381670029052" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="30.441381670029052" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="31.441381670029052" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="30.941381670029052" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-10.061242134409296" cy="-10.061242134409296" rx="11.94772503461104" ry="8.174759234207555" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="6.917103967406391" cy="8.803586867608136" rx="4.401793433804068" ry="3.1441381670029056" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-4.7162072505043575" cy="-14.148621751513074" r="1.5720690835014528" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(374.2567918905958, 142.23398281391866) scale(0.9247465197067368)">
+    <svg width="62.882763340058105" height="62.882763340058105" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="314" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="35.44138167002905" rx="26.725174419524695" ry="7.860345417507263" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="31.441381670029052" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="30.441381670029052" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="31.441381670029052" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="30.941381670029052" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-10.061242134409296" cy="-10.061242134409296" rx="11.94772503461104" ry="8.174759234207555" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="6.917103967406391" cy="8.803586867608136" rx="4.401793433804068" ry="3.1441381670029056" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-4.7162072505043575" cy="-14.148621751513074" r="1.5720690835014528" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(145.97042148262227, 134.54676398003704) scale(0.9507647988367978)">
+    <svg width="64.65200632090225" height="64.65200632090225" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="908" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="36.32600316045112" rx="27.477102686383454" ry="8.08150079011278" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="32.32600316045112" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="31.326003160451123" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="32.32600316045112" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="31.826003160451123" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-10.344321011344359" cy="-10.344321011344359" rx="12.283881200971427" ry="8.404760821717293" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="7.111720695299247" cy="9.051280884926316" rx="4.525640442463158" ry="3.2326003160451124" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-4.848900474067668" cy="-14.546701422203006" r="1.6163001580225562" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(354.02957851737773, 134.54676398003704) scale(0.9507647988367978)">
+    <svg width="64.65200632090225" height="64.65200632090225" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="156" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="36.32600316045112" rx="27.477102686383454" ry="8.08150079011278" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="32.32600316045112" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="31.326003160451123" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="32.32600316045112" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="31.826003160451123" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-10.344321011344359" cy="-10.344321011344359" rx="12.283881200971427" ry="8.404760821717293" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="7.111720695299247" cy="9.051280884926316" rx="4.525640442463158" ry="3.2326003160451124" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-4.848900474067668" cy="-14.546701422203006" r="1.6163001580225562" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(169.21602112576636, 128.32343029349894) scale(0.9718283897758497)">
+    <svg width="66.08433050475779" height="66.08433050475779" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="249" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="37.042165252378894" rx="28.085840464522057" ry="8.260541313094723" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="33.042165252378894" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="32.042165252378894" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="33.042165252378894" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="32.542165252378894" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-10.573492880761247" cy="-10.573492880761247" rx="12.55602279590398" ry="8.590962965618512" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="7.269276355523357" cy="9.25180627066609" rx="4.625903135333045" ry="3.3042165252378894" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-4.9563247878568335" cy="-14.868974363570503" r="1.6521082626189447" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(330.78397887423364, 128.32343029349892) scale(0.9718283897758497)">
+    <svg width="66.08433050475779" height="66.08433050475779" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="516" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="37.042165252378894" rx="28.085840464522057" ry="8.260541313094723" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="33.042165252378894" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="32.042165252378894" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="33.042165252378894" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="32.542165252378894" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-10.573492880761247" cy="-10.573492880761247" rx="12.55602279590398" ry="8.590962965618512" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="7.269276355523357" cy="9.25180627066609" rx="4.625903135333045" ry="3.3042165252378894" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-4.9563247878568335" cy="-14.868974363570503" r="1.6521082626189447" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(194.8055431046455, 123.74454986983774) scale(0.9873261389020876)">
+    <svg width="67.13817744534197" height="67.13817744534197" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="693" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="37.56908872267098" rx="28.533725414270336" ry="8.392272180667746" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="33.56908872267098" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="32.56908872267098" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="33.56908872267098" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="33.06908872267098" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-10.742108391254716" cy="-10.742108391254716" rx="12.756253714614974" ry="8.727963067894455" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="7.3851995189876165" cy="9.399344842347876" rx="4.699672421173938" ry="3.3569088722670983" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-5.0353633084006475" cy="-15.106089925201942" r="1.6784544361335492" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(305.1944568953545, 123.74454986983773) scale(0.9873261389020878)">
+    <svg width="67.13817744534197" height="67.13817744534197" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="274" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="37.56908872267098" rx="28.533725414270336" ry="8.392272180667746" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="33.56908872267098" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="32.56908872267098" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="33.56908872267098" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="33.06908872267098" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-10.742108391254716" cy="-10.742108391254716" rx="12.756253714614974" ry="8.727963067894455" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="7.3851995189876165" cy="9.399344842347876" rx="4.699672421173938" ry="3.3569088722670983" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-5.0353633084006475" cy="-15.106089925201942" r="1.6784544361335492" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(221.99651529838962, 120.94297751822776) scale(0.9968083837844599)">
+    <svg width="67.78297009734328" height="67.78297009734328" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="431" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="37.89148504867164" rx="28.807762291370892" ry="8.47287126216791" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="33.89148504867164" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="32.89148504867164" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="33.89148504867164" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="33.39148504867164" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-10.845275215574926" cy="-10.845275215574926" rx="12.878764318495223" ry="8.811786112654627" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="7.456126710707761" cy="9.48961581362806" rx="4.74480790681403" ry="3.389148504867164" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-5.0837227573007455" cy="-15.25116827190224" r="1.694574252433582" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(278.0034847016104, 120.94297751822776) scale(0.9968083837844599)">
+    <svg width="67.78297009734328" height="67.78297009734328" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="264" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="37.89148504867164" rx="28.807762291370892" ry="8.47287126216791" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="33.89148504867164" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="32.89148504867164" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="33.89148504867164" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="33.39148504867164" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-10.845275215574926" cy="-10.845275215574926" rx="12.878764318495223" ry="8.811786112654627" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="7.456126710707761" cy="9.48961581362806" rx="4.74480790681403" ry="3.389148504867164" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-5.0837227573007455" cy="-15.25116827190224" r="1.694574252433582" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <g transform="translate(250, 120) scale(1)">
+    <svg width="68" height="68" viewBox="-40 -40 80 80">
+      
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#424242"/>
+      <stop offset="20%" stop-color="#212121"/>
+      <stop offset="45%" stop-color="#1a1a1a"/>
+      <stop offset="70%" stop-color="#0d0d0d"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </radialGradient>
+    <radialGradient id="spec" cx="28%" cy="22%" r="22%">
+      <stop offset="0%" stop-color="#616161" stop-opacity="0.95"/>
+      <stop offset="35%" stop-color="#616161" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="rim" cx="50%" cy="52%" r="50%">
+      <stop offset="60%" stop-color="#212121" stop-opacity="0"/>
+      <stop offset="85%" stop-color="#424242" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#616161" stop-opacity="0.55"/>
+    </radialGradient>
+    <radialGradient id="shad" cx="50%" cy="52%" r="48%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" seed="797" result="n"/>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 0.18 0" in="n"/>
+    </filter>
+    <filter id="blur3"><feGaussianBlur stdDeviation="3"/></filter>
+    <filter id="blur1"><feGaussianBlur stdDeviation="1"/></filter>
+  </defs>
+
+  <!-- 珠子阴影 -->
+  <ellipse cx="2" cy="38" rx="28.9" ry="8.5" fill="#000" opacity="0.2" filter="url(#blur3)"/>
+
+  <!-- 主体球 -->
+  <circle r="34" fill="url(#bg)"/>
+
+  <!-- 材质纹理层 -->
+  <circle r="33" fill="url(#bg)" filter="url(#noise)" opacity="0.5"/>
+
+  <!-- 内部深色渐变（立体感） -->
+  <circle r="34" fill="url(#shad)" opacity="0.6"/>
+
+  <!-- 边缘透光 -->
+  <circle r="33.5" fill="url(#rim)"/>
+
+  <!-- 主高光 -->
+  <ellipse cx="-10.88" cy="-10.88" rx="12.92" ry="8.84" fill="url(#spec)"/>
+
+  <!-- 次高光（底部反光） -->
+  <ellipse cx="7.48" cy="9.520000000000001" rx="4.760000000000001" ry="3.4000000000000004" fill="#616161" opacity="0.2"/>
+
+  <!-- 顶部微小点高光 -->
+  <circle cx="-5.1" cy="-15.3" r="1.7000000000000002" fill="#fff" opacity="0.6"/>
+
+    </svg>
+  </g>
+  <!-- 穿绳（前半段） -->
+  <path d="M 96.58687982843853 161.07190407549592
+           Q 250 95 403.41312017156145 161.07190407549592"
+        fill="none" stroke="#FFD54F" stroke-width="2" opacity="0.7"/>
+</svg>
