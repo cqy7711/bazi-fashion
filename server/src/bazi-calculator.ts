@@ -1295,7 +1295,7 @@ export function calculateDayun(
 
     // 大运干：以日干为起点，顺着天干顺序数（顺行）或逆着数（逆行）
     // 大运支：以月令地支为起点，顺着地支顺序数（顺行）或逆着数（逆行）
-    const dayunCount = 8; // 计算8步大运（约80年）
+    const dayunCount = 10; // 计算10步大运（约100年）
     const results: DayunResult[] = [];
 
     for (let i = 1; i <= dayunCount; i++) {

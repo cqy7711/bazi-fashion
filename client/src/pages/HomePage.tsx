@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MOTION_TOKENS } from '../theme/designTokens';
 import { 
@@ -829,7 +828,6 @@ function ElementBadge({ el }: { el: string }) {
 }
 
 export default function HomePage() {
-  const navigate = useNavigate();
   const [records, setRecords] = useState<UserBirthInfoListItem[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -1634,6 +1632,7 @@ export default function HomePage() {
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
               boxSizing: 'border-box',
+              overflow: 'hidden',
             }}
           >
             <div style={{
@@ -1663,45 +1662,45 @@ export default function HomePage() {
                 id: 'mingpan-section',
                 label: '命盘信息',
                 icon: (s: number) => <Star style={{ width: s, height: s, strokeWidth: 2.1 }} />,
-                iconBg: 'linear-gradient(150deg, #C8C4D4 0%, #D8D4E2 100%)',
-                iconShadow: '0 6px 16px rgba(72, 68, 88, 0.1)',
-                iconColor: '#5E5A6C',
-                cardBg: 'linear-gradient(165deg, rgba(200, 196, 212, 0.22) 0%, rgba(250, 249, 251, 0.98) 58%, #FAFAF9 100%)',
-                border: 'rgba(108, 102, 124, 0.14)',
-                labelColor: '#5C5866',
+                iconBg: 'linear-gradient(150deg, #E8D5F9 0%, #D4B8F0 100%)',
+                iconShadow: '0 6px 16px rgba(180, 120, 220, 0.15)',
+                iconColor: '#8B5CF6',
+                cardBg: 'linear-gradient(165deg, rgba(232, 213, 249, 0.35) 0%, rgba(250, 249, 251, 0.98) 58%, #FAFAF9 100%)',
+                border: 'rgba(139, 92, 246, 0.18)',
+                labelColor: '#7C3AED',
               },
               {
                 id: 'fortune-section',
                 label: '今日运势',
                 icon: (s: number) => <Sparkles style={{ width: s, height: s, strokeWidth: 2.1 }} />,
-                iconBg: 'linear-gradient(150deg, #D4B8B8 0%, #E0CBC8 100%)',
-                iconShadow: '0 6px 16px rgba(88, 64, 64, 0.09)',
-                iconColor: '#6B5656',
-                cardBg: 'linear-gradient(165deg, rgba(212, 184, 184, 0.2) 0%, rgba(252, 249, 248, 0.98) 55%, #FAF8F7 100%)',
-                border: 'rgba(120, 92, 92, 0.14)',
-                labelColor: '#5E4F4F',
+                iconBg: 'linear-gradient(150deg, #FFD5E5 0%, #FFB8D0 100%)',
+                iconShadow: '0 6px 16px rgba(255, 107, 157, 0.15)',
+                iconColor: '#EC4899',
+                cardBg: 'linear-gradient(165deg, rgba(255, 213, 229, 0.35) 0%, rgba(252, 249, 248, 0.98) 55%, #FAF8F7 100%)',
+                border: 'rgba(236, 72, 153, 0.18)',
+                labelColor: '#DB2777',
               },
               {
                 id: 'outfit-section',
                 label: '今日色彩搭配',
                 icon: (s: number) => <Palette style={{ width: s, height: s, strokeWidth: 2.1 }} />,
-                iconBg: 'linear-gradient(150deg, #C4BCAE 0%, #D2CAC0 100%)',
-                iconShadow: '0 6px 16px rgba(72, 68, 58, 0.09)',
-                iconColor: '#58544C',
-                cardBg: 'linear-gradient(165deg, rgba(196, 188, 174, 0.22) 0%, rgba(250, 249, 246, 0.98) 55%, #F9F8F5 100%)',
-                border: 'rgba(96, 90, 78, 0.14)',
-                labelColor: '#565248',
+                iconBg: 'linear-gradient(150deg, #FEF3C7 0%, #FDE68A 100%)',
+                iconShadow: '0 6px 16px rgba(245, 158, 11, 0.15)',
+                iconColor: '#D97706',
+                cardBg: 'linear-gradient(165deg, rgba(254, 243, 199, 0.35) 0%, rgba(250, 249, 246, 0.98) 55%, #F9F8F5 100%)',
+                border: 'rgba(217, 119, 6, 0.18)',
+                labelColor: '#B45309',
               },
               {
                 id: 'bracelet-section',
                 label: '今日手串推荐',
                 icon: (s: number) => <Gem style={{ width: s, height: s, strokeWidth: 2.1 }} />,
-                iconBg: 'linear-gradient(150deg, #A8B2BC 0%, #B9C2CA 100%)',
-                iconShadow: '0 6px 16px rgba(58, 68, 78, 0.1)',
-                iconColor: '#4A535E',
-                cardBg: 'linear-gradient(165deg, rgba(168, 178, 188, 0.22) 0%, rgba(247, 249, 250, 0.98) 58%, #F7F8F9 100%)',
-                border: 'rgba(78, 88, 98, 0.14)',
-                labelColor: '#4E5660',
+                iconBg: 'linear-gradient(150deg, #C7D2FE 0%, #A5B4FC 100%)',
+                iconShadow: '0 6px 16px rgba(99, 102, 241, 0.15)',
+                iconColor: '#4F46E5',
+                cardBg: 'linear-gradient(165deg, rgba(199, 210, 254, 0.35) 0%, rgba(247, 249, 250, 0.98) 58%, #F7F8F9 100%)',
+                border: 'rgba(79, 70, 229, 0.18)',
+                labelColor: '#4338CA',
               },
             ] as const).map((item) => {
               const iconPx = navWideLayout ? 16 : 18;
@@ -1782,22 +1781,25 @@ export default function HomePage() {
           {selectedRecord && previewInfo && previewInfo.baziResult ? (
             <div id="mingpan-section" style={{
               flex: 1,
-              background: 'linear-gradient(145deg, rgba(91,92,255,0.11) 0%, rgba(44,203,255,0.08) 42%, rgba(255,255,255,0.95) 100%)', borderRadius: '24px', padding: '20px',
+              background: 'linear-gradient(145deg, rgba(91,92,255,0.11) 0%, rgba(44,203,255,0.08) 42%, rgba(255,255,255,0.95) 100%)', borderRadius: '24px', padding: navWideLayout ? '20px' : '14px',
               boxShadow: '0 16px 30px rgba(74,86,152,0.14)', border: '1px solid rgba(91,92,255,0.22)',
               backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
               display: 'flex', flexDirection: 'column',
+              overflow: 'hidden',
+              minWidth: 0,
+              maxWidth: '100%',
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: navWideLayout ? '16px' : '12px' }}>
                 <div style={{
-                  width: '26px', height: '26px', borderRadius: '8px',
+                  width: navWideLayout ? '26px' : '22px', height: navWideLayout ? '26px' : '22px', borderRadius: '8px',
                   background: `linear-gradient(135deg, ${PALETTE.purple}20, ${PALETTE.blue}20)`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
-                  <Star style={{ width: '14px', height: '14px', color: PALETTE.purple }} />
+                  <Star style={{ width: navWideLayout ? '14px' : '12px', height: navWideLayout ? '14px' : '12px', color: PALETTE.purple }} />
                 </div>
                 <div>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 800, color: '#1A1A2E' }}>命盘信息</span>
-                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#959CC0', margin: '2px 0 0' }}>核心命盘 · 高级渐变解读</p>
+                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '14px' : '13px', fontWeight: 800, color: '#1A1A2E' }}>命盘信息</span>
+                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#959CC0', margin: '2px 0 0' }}>核心命盘</p>
                 </div>
               </div>
 
@@ -1822,21 +1824,23 @@ export default function HomePage() {
                 };
                 return (
                   <div style={{
-                    padding: '14px', borderRadius: '16px',
+                    padding: navWideLayout ? '14px' : '12px', borderRadius: '16px',
                     background: `linear-gradient(145deg, ${elementColors[dmEl]}14, ${elementColors[dmEl]}08)`, border: `1px solid ${elementColors[dmEl]}30`,
                     marginBottom: '14px',
                     boxShadow: `0 10px 22px ${elementColors[dmEl]}20`,
+                    overflow: 'hidden',
+                    minWidth: 0,
                   }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
                       <span style={{
                         padding: '4px 12px', borderRadius: '8px',
                         background: elementColors[dmEl],
-                        fontFamily: 'Outfit', fontSize: '14px', fontWeight: 800, color: '#fff',
+                        fontFamily: 'Outfit', fontSize: navWideLayout ? '14px' : '12px', fontWeight: 800, color: '#fff',
                       }}>
                         {(previewInfo.baziResult as any).dayPillar}
                       </span>
                       <div>
-                        <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: elementColors[dmEl], margin: 0 }}>
+                        <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '13px' : '12px', fontWeight: 700, color: elementColors[dmEl], margin: 0 }}>
                           日主{elementNames[dmEl]}命
                         </p>
                         <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#A0A8C0', margin: 0 }}>
@@ -1844,7 +1848,7 @@ export default function HomePage() {
                         </p>
                       </div>
                     </div>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#6B7280', lineHeight: 1.6, marginBottom: '8px' }}>
+                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '11px' : '10px', color: '#6B7280', lineHeight: 1.5, marginBottom: '8px', overflow: 'hidden' }}>
                       {elementDesc[dmEl]}
                     </p>
                     {renderStyleGuideTriplet(
@@ -1880,16 +1884,18 @@ export default function HomePage() {
                   }
                   const elementNames: Record<string, string> = { wood: '木', fire: '火', earth: '土', metal: '金', water: '水' };
                   return (
-                    <div style={{ marginBottom: '10px' }}>
+                    <div style={{ marginBottom: '10px', minWidth: 0, overflow: 'hidden' }}>
                       {/* 标题行 */}
                       <div style={{
                         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                         marginBottom: '8px',
+                        flexWrap: 'wrap',
+                        gap: '4px',
                       }}>
                         <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#333' }}>
                           五行分布
                         </span>
-                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#888' }}>
+                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#888', flexShrink: 0 }}>
                           {elements.map((el, i) => `${el.name}:${vals[i]}`).join(' ')}
                         </span>
                       </div>
@@ -1957,14 +1963,7 @@ export default function HomePage() {
                   const id = selectedRecord?.id?.trim();
                   if (!id) return;
                   window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
-                  const path = `/result/${encodeURIComponent(id)}`;
-                  navigate(path);
-                  queueMicrotask(() => {
-                    const expected = `#${path}`;
-                    if (window.location.hash !== expected) {
-                      window.location.hash = expected;
-                    }
-                  });
+                  window.location.hash = `#/result/${encodeURIComponent(id)}`;
                 }}
                 style={{
                   width: '100%', padding: '12px',
@@ -2003,26 +2002,31 @@ export default function HomePage() {
           {dailyFortune && (
             <div id="fortune-section" style={{
               flex: 1,
-              background: 'linear-gradient(145deg, rgba(255,92,168,0.1) 0%, rgba(91,92,255,0.1) 42%, rgba(255,255,255,0.95) 100%)', borderRadius: '24px', padding: '20px',
+              background: 'linear-gradient(145deg, rgba(255,92,168,0.1) 0%, rgba(91,92,255,0.1) 42%, rgba(255,255,255,0.95) 100%)', borderRadius: '24px', padding: navWideLayout ? '20px' : '14px',
               boxShadow: '0 16px 30px rgba(74,86,152,0.14)', border: '1px solid rgba(255,92,168,0.2)',
               backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
               display: 'flex', flexDirection: 'column',
+              overflow: 'hidden',
+              minWidth: 0,
+              maxWidth: '100%',
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: navWideLayout ? '18px' : '12px' }}>
                 <div style={{
-                  width: '32px', height: '32px', borderRadius: '10px', flexShrink: 0,
+                  width: navWideLayout ? '32px' : '28px', height: navWideLayout ? '32px' : '28px', borderRadius: '10px', flexShrink: 0,
                   background: `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange})`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   boxShadow: `0 3px 10px rgba(255,107,157,0.3)`,
                 }}>
-                  <Sparkles style={{ width: '16px', height: '16px', color: '#FFFFFF' }} />
+                  <Sparkles style={{ width: navWideLayout ? '16px' : '14px', height: navWideLayout ? '16px' : '14px', color: '#FFFFFF' }} />
                 </div>
                 <div>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 800, color: '#1A1A2E' }}>今日运势</span>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#A0A8C0', marginLeft: '8px' }}>
-                    {new Date().getMonth() + 1}月{new Date().getDate()}日
-                  </span>
-                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#8F97B5', margin: '2px 0 0' }}>多巴胺节奏 · 当日能量总览</p>
+                  <div style={{ display: 'flex', alignItems: 'baseline', flexWrap: 'wrap', gap: '4px' }}>
+                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '15px' : '14px', fontWeight: 800, color: '#1A1A2E' }}>今日运势</span>
+                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '12px' : '10px', color: '#A0A8C0' }}>
+                      {new Date().getMonth() + 1}月{new Date().getDate()}日
+                    </span>
+                  </div>
+                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#8F97B5', margin: '2px 0 0' }}>当日能量总览</p>
                 </div>
               </div>
               {renderInsightBlock(
@@ -2043,14 +2047,14 @@ export default function HomePage() {
                 display: 'flex', flexDirection: 'column', alignItems: 'center',
                 marginBottom: '10px', padding: '6px 0'
               }}>
-                <svg width="86" height="86" viewBox="0 0 72 72" style={{ display: 'block' }}>
+                <svg width={navWideLayout ? 86 : 72} height={navWideLayout ? 86 : 72} viewBox="0 0 72 72" style={{ display: 'block' }}>
                   <circle cx="36" cy="36" r="30" fill="none" stroke="#F0E8E5" strokeWidth="7" />
                   <circle cx="36" cy="36" r="30" fill="none"
                     stroke={getScoreColor(dailyFortune.totalScore)} strokeWidth="7"
                     strokeDasharray={`${(dailyFortune.totalScore / 100) * 188.5} 188.5`}
                     strokeLinecap="round" transform="rotate(-90 36 36)" />
                   <text x="36" y="33" textAnchor="middle" dominantBaseline="middle"
-                    style={{ fontFamily: 'Outfit', fontSize: '22px', fontWeight: 900, fill: getScoreColor(dailyFortune.totalScore) }}>{dailyFortune.totalScore}</text>
+                    style={{ fontFamily: 'Outfit', fontSize: navWideLayout ? '22px' : '20px', fontWeight: 900, fill: getScoreColor(dailyFortune.totalScore) }}>{dailyFortune.totalScore}</text>
                   <text x="36" y="50" textAnchor="middle" dominantBaseline="middle"
                     style={{ fontFamily: 'Outfit', fontSize: '10px', fill: '#B0A8C0' }}>总分</text>
                 </svg>
@@ -2068,21 +2072,23 @@ export default function HomePage() {
                   { label: '专注', score: dailyFortune.studyScore ?? Math.round((dailyFortune.careerScore + dailyFortune.healthScore) / 2), icon: BookOpen, desc: '思路清晰，适合深度工作', color: '#0EA5E9' },
                 ].map(d => (
                   <div key={d.label} style={{
-                    padding: '10px 12px', borderRadius: '12px',
+                    padding: navWideLayout ? '10px 12px' : '8px 10px', borderRadius: '12px',
                     background: `${getScoreColor(d.score)}08`, border: `1px solid ${getScoreColor(d.score)}15`,
                     display: 'flex', flexDirection: 'column',
+                    minWidth: 0,
+                    overflow: 'hidden',
                   }}>
                     {/* 标题行：图标+名称 */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '3px' }}>
-                      <d.icon style={{ width: '13px', height: '13px', color: d.color }} />
-                      <p style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700, color: '#555' }}>{d.label}</p>
+                      <d.icon style={{ width: navWideLayout ? '13px' : '12px', height: navWideLayout ? '13px' : '12px', color: d.color }} />
+                      <p style={{ fontFamily: 'Outfit', fontSize: navWideLayout ? '12px' : '11px', fontWeight: 700, color: '#555' }}>{d.label}</p>
                     </div>
                     {/* 分数 */}
                     <div style={{ display: 'flex', alignItems: 'baseline', marginBottom: '3px' }}>
-                      <p style={{ fontFamily: 'Outfit', fontSize: '22px', fontWeight: 900, color: getScoreColor(d.score), lineHeight: 1 }}>{d.score}</p>
+                      <p style={{ fontFamily: 'Outfit', fontSize: navWideLayout ? '22px' : '18px', fontWeight: 900, color: getScoreColor(d.score), lineHeight: 1 }}>{d.score}</p>
                     </div>
                     {/* 描述文字 */}
-                    <p style={{ fontFamily: 'Outfit', fontSize: '10px', color: '#999', lineHeight: 1.35, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.desc}</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: navWideLayout ? '10px' : '9px', color: '#999', lineHeight: 1.35, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{d.desc}</p>
                   </div>
                 ))}
               </div>
@@ -2152,25 +2158,25 @@ export default function HomePage() {
               </div>
 
               {/* 宜/不宜事项（保留，精简间距） */}
-              <div style={{ display: 'flex', flexDirection: 'row', gap: '6px' }}>
-                <div style={{ flex: 1, padding: '7px 10px', borderRadius: '10px', background: `${PALETTE.green}08`, border: `1px solid ${PALETTE.green}20`, display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <div style={{ display: 'flex', flexDirection: 'row', gap: '6px', minWidth: 0 }}>
+                <div style={{ flex: 1, padding: '7px 10px', borderRadius: '10px', background: `${PALETTE.green}08`, border: `1px solid ${PALETTE.green}20`, display: 'flex', alignItems: 'center', gap: '5px', minWidth: 0 }}>
                   <Check style={{ width: '11px', height: '11px', color: PALETTE.green, flexShrink: 0 }} />
-                  <div style={{ flex: 1 }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700, color: PALETTE.green, marginBottom: '1.5px' }}>宜</p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px' }}>
                       {dailyFortune.goodThings.slice(0, 3).map((g: string) => (
-                        <span key={g} style={{ padding: '1px 5px', borderRadius: '4px', background: `${PALETTE.green}12`, fontFamily: 'Outfit', fontSize: '11px', color: PALETTE.green }}>{g}</span>
+                        <span key={g} style={{ padding: '1px 5px', borderRadius: '4px', background: `${PALETTE.green}12`, fontFamily: 'Outfit', fontSize: navWideLayout ? '11px' : '10px', color: PALETTE.green }}>{g}</span>
                       ))}
                     </div>
                   </div>
                 </div>
-                <div style={{ flex: 1, padding: '7px 10px', borderRadius: '10px', background: `${PALETTE.coral}08`, border: `1px solid ${PALETTE.coral}20`, display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <div style={{ flex: 1, padding: '7px 10px', borderRadius: '10px', background: `${PALETTE.coral}08`, border: `1px solid ${PALETTE.coral}20`, display: 'flex', alignItems: 'center', gap: '5px', minWidth: 0 }}>
                   <X style={{ width: '11px', height: '11px', color: PALETTE.coral, flexShrink: 0 }} />
-                  <div style={{ flex: 1 }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700, color: PALETTE.coral, marginBottom: '1.5px' }}>不宜</p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px' }}>
                       {dailyFortune.avoidThings.slice(0, 3).map((a: string) => (
-                        <span key={a} style={{ padding: '1px 5px', borderRadius: '4px', background: `${PALETTE.coral}12`, fontFamily: 'Outfit', fontSize: '11px', color: PALETTE.coral }}>{a}</span>
+                        <span key={a} style={{ padding: '1px 5px', borderRadius: '4px', background: `${PALETTE.coral}12`, fontFamily: 'Outfit', fontSize: navWideLayout ? '11px' : '10px', color: PALETTE.coral }}>{a}</span>
                       ))}
                     </div>
                   </div>
