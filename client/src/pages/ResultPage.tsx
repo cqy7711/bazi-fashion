@@ -764,7 +764,7 @@ function getFortuneAnalysis(style: LanguageStyle, dmEl: string, fav: string[], u
   const favN = fav.map(e => ELEMENT_NAMES[e]).join('、');
   const unfavN = unfav.map(e => ELEMENT_NAMES[e]).join('、');
   const dm = ELEMENT_NAMES[dmEl] || '木';
-  const content: Record<LanguageStyle, { career: string; fortune: string; investment: string; health: string }> = {
+  const content: Record<LanguageStyle, { career: string; fortune: string; investment: string; family?: string; marriage?: string; health: string }> = {
     normal: {
       career: `${dm}属性的你，干啥比较顺呢？命中带着${favN}，说明${favN.includes('金') || favN.includes('水') ? '脑子灵光，适合搞金融、科技、或者跟人打交道的工作。' : favN.includes('木') || favN.includes('火') ? '创意满满，适合做内容、教育、策划类的事情。' : '踏实稳重，适合一步一步来的工作。'}至于${unfavN}相关的行业，就不太建议了，硬做也会比较累。`,
       fortune: `说到钱嘛，${dm}属性的你总体财运${favN.includes('金') ? '还不错，正财运比较稳，工资奖金这些是主要来源。' : favN.includes('水') ? '偏财运好一点，平时可以留意一下理财和投资机会。' : favN.includes('木') || favN.includes('火') ? '主要靠才华和技能赚钱，适合接私活、做副业。' : '稳扎稳打型，别想着一夜暴富，存钱是硬道理。'}`,
@@ -1401,7 +1401,7 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
         scores: monthScores,
         yearScore,
         favorable: yearScore >= 55,
-        yearlyDetails: { ...getYearDetailAnalysis(dayun.year + i, stem, yearElement, dayMaster, dayElement, favorableElements, yearScore), ganZhi, yearScore },
+        yearlyDetails: { ...getYearDetailAnalysis(dayun.year + i, stem, yearElement, dayMaster || '甲', dayElement || '木', favorableElements || [], yearScore), ganZhi, yearScore },
       });
     }
     return yearlyData;
