@@ -1836,8 +1836,8 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
                 const ganZhi = year.ganZhi || stem + '子';
                 const yearScore = year.yearScore || 50;
                 const isGoodYear = yearScore >= 55;
-                const detailColors = { career: '#FF9D6B', fortune: '#D4A000', marriage: '#FF6B9D', health: '#00C47A' };
-                const detailLabels = { career: '📈 事业', fortune: '💰 财运投资', marriage: '❤️ 婚姻感情', health: '💪 健康身体' };
+                const detailColors: Record<string, string> = { career: '#FF9D6B', fortune: '#D4A000', marriage: '#FF6B9D', health: '#00C47A' };
+                const detailLabels: Record<string, string> = { career: '📈 事业', fortune: '💰 财运投资', marriage: '❤️ 婚姻感情', health: '💪 健康身体' };
                 
                 return (
                   <div style={{ 
@@ -2093,8 +2093,8 @@ function DecadeCard({ data, index }: { data: CandlestickData; index: number }) {
               const ganZhi = year.ganZhi || stem + '子';
               const yearScore = year.yearScore || 50;
               const isGoodYear = yearScore >= 55;
-              const detailColors = { career: '#FF9D6B', fortune: '#D4A000', marriage: '#FF6B9D', health: '#00C47A' };
-              const detailLabels = { career: '📈 事业', fortune: '💰 财运投资', marriage: '❤️ 婚姻感情', health: '💪 健康身体' };
+              const detailColors: Record<string, string> = { career: '#FF9D6B', fortune: '#D4A000', marriage: '#FF6B9D', health: '#00C47A' };
+              const detailLabels: Record<string, string> = { career: '📈 事业', fortune: '💰 财运投资', marriage: '❤️ 婚姻感情', health: '💪 健康身体' };
               
               return (
                 <div style={{ 
@@ -2562,7 +2562,7 @@ export default function ResultPage() {
     { cardKey: 'career', label: CARD_LABELS.career, color: CARD_COLORS.career.hex, text: fortuneAnalysis.career, icon: CARD_ICONS.career, dayMaster: bazi.dayMaster, dayElement: bazi.dayMasterElement, favorableElements: userInfo.favorableElements || [], unfavorableElements: userInfo.unfavorableElements || [] },
     { cardKey: 'fortune', label: CARD_LABELS.fortune, color: CARD_COLORS.fortune.hex, text: fortuneAnalysis.fortune, icon: CARD_ICONS.fortune, dayMaster: bazi.dayMaster, dayElement: bazi.dayMasterElement, favorableElements: userInfo.favorableElements || [], unfavorableElements: userInfo.unfavorableElements || [] },
     { cardKey: 'investment', label: CARD_LABELS.investment, color: CARD_COLORS.investment.hex, text: fortuneAnalysis.investment, icon: CARD_ICONS.investment, dayMaster: bazi.dayMaster, dayElement: bazi.dayMasterElement, favorableElements: userInfo.favorableElements || [], unfavorableElements: userInfo.unfavorableElements || [], currentDayun },
-    { cardKey: 'marriage', label: CARD_LABELS.marriage, color: CARD_COLORS.marriage.hex, text: fortuneAnalysis.marriage, icon: CARD_ICONS.marriage, dayMaster: bazi.dayMaster, dayElement: bazi.dayMasterElement, favorableElements: userInfo.favorableElements || [], unfavorableElements: userInfo.unfavorableElements || [], currentDayun },
+    { cardKey: 'marriage', label: CARD_LABELS.marriage, color: CARD_COLORS.marriage.hex, text: fortuneAnalysis.investment, icon: CARD_ICONS.marriage, dayMaster: bazi.dayMaster, dayElement: bazi.dayMasterElement, favorableElements: userInfo.favorableElements || [], unfavorableElements: userInfo.unfavorableElements || [], currentDayun },
     { cardKey: 'health', label: CARD_LABELS.health, color: CARD_COLORS.health.hex, text: fortuneAnalysis.health, icon: CARD_ICONS.health, dayMaster: bazi.dayMaster, dayElement: bazi.dayMasterElement, favorableElements: userInfo.favorableElements || [], unfavorableElements: userInfo.unfavorableElements || [] },
   ];
 
