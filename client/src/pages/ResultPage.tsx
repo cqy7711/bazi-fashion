@@ -585,11 +585,11 @@ function getMingGeByStyle(baseMingGe: MingGeType, style: LanguageStyle, dmEl: st
   const content: Record<LanguageStyle, { desc: string; formation: string; characteristics: string; strengths: string; weaknesses: string; luckTips: string }> = {
     normal: {
       desc: baseMingGe.description || baseMingGe.desc,
-      formation: `月支${baseMingGe.name}成格，需日主有力、能驾驭月令之气。格局成败关键在于用神是否得力。`,
-      characteristics: `此格局 ${baseMingGe.name} 之人，${baseMingGe.desc} 整体运势较为平稳，${favorable.length > 0 ? `命中宜${favN}，忌${unfavN}。` : '五行趋于平衡。'}`,
-      strengths: `${dm}日主配合${baseMingGe.name}，${dmEl === 'wood' ? '木气仁慈，有韧性' : dmEl === 'fire' ? '火气热情，有活力' : dmEl === 'earth' ? '土气厚重，有包容' : dmEl === 'metal' ? '金气果断，有魄力' : '水气智慧，有变通'}。${favorable.includes('木') || favorable.includes('火') ? '木火通明，才华出众。' : favorable.includes('土') ? '土气护身，稳步发展。' : favorable.includes('金') || favorable.includes('水') ? '金水相生，财运亨通。' : '五行流通，运势平稳。'}`,
-      weaknesses: `${dm}日主需注意${unfavN}对命局的影响，${unfavorable.includes('木') ? '木气受制时易犹豫不决。' : unfavorable.includes('火') ? '火气过旺易急躁冲动。' : unfavorable.includes('土') ? '土气过重易保守固执。' : unfavorable.includes('金') ? '金气过刚易得罪他人。' : '水气过泛易方向迷失。'}`,
-      luckTips: `${dm}日主全年运势${favorable.length > unfavorable.length ? '吉大于凶，宜积极进取。' : unfavorable.length > favorable.length ? '凶中有吉，宜稳扎稳打。' : '吉凶参半，需审时度势。'}流年用神到位时把握机遇，忌神当令时低调蛰伏。`,
+      formation: `简单来说，你命里${baseMingGe.name}。月令就是你的核心能量源，能驾驭住就顺，驾驭不住就累。关键是看${favorable.length > 0 ? `你的用神${favN}能不能到位` : '五行能不能平衡'}。`,
+      characteristics: `你是${baseMingGe.name}选手，${baseMingGe.desc} 总体来说${favorable.length > unfavorable.length ? '命里带着好运buff，${favN}是你的人生助力。' : unfavorable.length > favorable.length ? '有点小挑战，${unfavN}是你需要绕开的坑。' : '比较平衡，没大起大落。'}`,
+      strengths: `${dm}属性的你，${dmEl === 'wood' ? '有韧性，像竹子一样能屈能伸。' : dmEl === 'fire' ? '热情有活力，走到哪都是焦点。' : dmEl === 'earth' ? '踏实稳重，给人安全感。' : dmEl === 'metal' ? '果断有魄力，做决定快准狠。' : '灵活变通，适应能力强。'}加上${baseMingGe.name}这个格局，${favorable.includes('木') || favorable.includes('火') ? '创意和表达能力是你的杀手锏。' : favorable.includes('土') ? '稳扎稳打，积累型选手。' : favorable.includes('金') || favorable.includes('水') ? '财运和头脑是你的强项。' : '各方面发展比较均衡。'}`,
+      weaknesses: `需要注意的地方：${unfavN}是你的软肋。${unfavorable.includes('木') ? '遇到挫折容易想太多，陷入纠结。' : unfavorable.includes('火') ? '一激动就容易上头，说不该说的话。' : unfavorable.includes('土') ? '有时候太保守，机会来了不敢冲。' : unfavorable.includes('金') ? '太追求完美，容易得罪人。' : '方向太多容易迷失，不知道该往哪走。'}`,
+      luckTips: `今年总体来说${favorable.length > unfavorable.length ? '运气不错，是发力的时候！该冲就冲，别怂。' : unfavorable.length > favorable.length ? '有点背，别硬刚，顺着来，别逞强。' : '平平淡淡，稳着点来。'}记住，用神到位的年份要抓住机会，忌神当道的年份就低调点。`,
     },
     stock: {
       desc: `${dm}日主${baseMingGe.name}，相当于股市中的"${['正官格', '七杀格', '正印格', '偏印格', '食神格', '伤官格', '正财格', '偏财格', '比肩格', '劫财格'].indexOf(baseMingGe.name) < 3 ? '蓝筹绩优股' : ['食神格', '伤官格'].indexOf(baseMingGe.name) >= 0 ? '成长股' : ['正财格', '偏财格'].indexOf(baseMingGe.name) >= 0 ? '白马股' : '周期股'}"，${baseMingGe.desc}`,
@@ -735,10 +735,10 @@ function getFortuneAnalysis(style: LanguageStyle, dmEl: string, fav: string[], u
   const dm = ELEMENT_NAMES[dmEl] || '木';
   const content: Record<LanguageStyle, { career: string; fortune: string; investment: string; health: string }> = {
     normal: {
-      career: `${dm}日主，搭配${favN}，事业上${favN.includes('金') || favN.includes('水') ? '适合金融、科技、流通领域发展。' : favN.includes('木') || favN.includes('火') ? '适合文化、教育、创意领域。' : '适合稳定发展，逐步积累。'}忌${unfavN}过重的行业。`,
-      fortune: `命局显示${dm}日主${favN.includes('金') ? '财星高照，正财稳健。' : favN.includes('水') ? '财运流动，适合流动性投资。' : favN.includes('木') || favN.includes('火') ? '才华生财，适合知识变现。' : '土气养财，宜稳不宜冒进。'}`,
-      investment: `${dm}日主偏${favN.includes('金') || favN.includes('水') ? '向于金融理财产品。' : favN.includes('木') || favN.includes('火') ? '向于股权、创意类投资。' : '向于房产、固收类投资。'}`,
-      health: `${dm}日主需注意${dmEl === 'wood' ? '肝胆、神经系统。' : dmEl === 'fire' ? '心脏、眼睛。' : dmEl === 'earth' ? '脾胃、消化系统。' : dmEl === 'metal' ? '肺、呼吸系统。' : '肾、泌尿系统。'}保养。`,
+      career: `${dm}属性的你，干啥比较顺呢？命中带着${favN}，说明${favN.includes('金') || favN.includes('水') ? '脑子灵光，适合搞金融、科技、或者跟人打交道的工作。' : favN.includes('木') || favN.includes('火') ? '创意满满，适合做内容、教育、策划类的事情。' : '踏实稳重，适合一步一步来的工作。'}至于${unfavN}相关的行业，就不太建议了，硬做也会比较累。`,
+      fortune: `说到钱嘛，${dm}属性的你总体财运${favN.includes('金') ? '还不错，正财运比较稳，工资奖金这些是主要来源。' : favN.includes('水') ? '偏财运好一点，平时可以留意一下理财和投资机会。' : favN.includes('木') || favN.includes('火') ? '主要靠才华和技能赚钱，适合接私活、做副业。' : '稳扎稳打型，别想着一夜暴富，存钱是硬道理。'}`,
+      investment: `投资方面嘛，${dm}属性的你比较${favN.includes('金') || favN.includes('水') ? '适合买基金、理财这类稳妥的产品。' : favN.includes('木') || favN.includes('火') ? '可以尝试点有创意、有潜力的投资方向。' : '偏好房产、债券这种看得见摸得着的。'}记住，不懂的东西别乱投。`,
+      health: `身体方面，${dm}属性的你平时要多注意${dmEl === 'wood' ? '肝胆这块，别熬夜、别生闷气。' : dmEl === 'fire' ? '心脏和眼睛，少看手机早点睡。' : dmEl === 'earth' ? '肠胃问题，少吃点外卖和冷的。' : dmEl === 'metal' ? '肺和呼吸道，抽烟的少抽，待空调房的通风。' : '腰和肾，别久坐，多站起来动动。'}`,
     },
     stock: {
       career: `${dm}日走${favN}势，${favN.includes('金') || favN.includes('水') ? '金融、科技板块利好，适合加仓。' : favN.includes('木') || favN.includes('火') ? '文化创意板块值得布局。' : '低估值稳健标的为主。'}注意回避${unfavN}相关板块。`,
@@ -1714,10 +1714,10 @@ function DecadeCard({ data, index }: { data: CandlestickData; index: number }) {
           {/* 四维详细 */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
             {[
-              { icon: '📈', label: '事业', text: isUp ? '上升期，适合主动出击，晋升或创业机会增多。' : '调整期，宜稳扎稳打，避免激进决策。', color: '#FF9D6B' },
-              { icon: '💰', label: '财运', text: isUp ? '财运转好，投资理财多有斩获。' : '财务承压，量入为出，不宜大额投资。', color: '#D4A000' },
-              { icon: '💪', label: '健康', text: isUp ? '精力充沛，抵抗力强，可加强锻炼。' : `注意${ELEMENT_NAMES[data.element]}属性对应脏腑保养。`, color: '#00C47A' },
-              { icon: '🤝', label: '人际', text: isUp ? '贵人运强，社交活跃，利合作拓展。' : '关系稳定，沉淀积累，专注自我提升。', color: '#6BD4FF' },
+              { icon: '📈', label: '事业', text: isUp ? `这十年事业蒸蒸日上！${data.ganZhi}大运带着${ELEMENT_NAMES[data.element]}气，工作上会有突破。${data.score >= 75 ? '是换工作、晋升、创业的好时机，大胆往前冲！' : data.score >= 65 ? '稳中有升，做好本职工作同时可以尝试新方向。' : '虽然不是大爆发，但积累期，做好规划很重要。'}` : `这十年事业处于调整阶段。${data.ganZhi}大运中${ELEMENT_NAMES[data.element]}气不是你的用神，别急着扩张。${data.score >= 45 ? '可以趁这时候学点新技能，为以后做准备。' : '有点难熬，但也是沉淀自己的好时机，别放弃！'}`, color: '#FF9D6B' },
+              { icon: '💰', label: '财运', text: isUp ? `财运来了挡不住！${data.ganZhi}这步大运正财偏财都不错。${data.element === '金' || data.element === '水' ? '理财投资可以适当参与，但别贪。' : data.element === '木' || data.element === '火' ? '才华变现的好时候，可以发展副业。' : '正财为主，稳扎稳打存钱。'}${data.score >= 75 ? '财库大开，储蓄和投资都能有收获！' : '财务状况改善，注意别乱花钱就行。'}` : `这十年花钱的地方会比较多。${data.ganZhi}大运中${ELEMENT_NAMES[data.element]}气偏弱，${data.element === '金' ? '破财可能性大，谨慎投资，捂紧钱袋子。' : data.element === '水' ? '财务流动大，做好预算管理，别月光！' : data.element === '木' ? '可能有意外开支，提前存一笔应急钱。' : data.element === '火' ? '感情和人际上花费可能增多，理性消费。' : '稳健为主，大额支出前多考虑几天。'}`, color: '#D4A000' },
+              { icon: '💪', label: '健康', text: isUp ? `身体状态棒棒的！${data.ganZhi}这十年精力充沛。${data.element === '木' ? '注意肝胆，少熬夜生闷气。' : data.element === '火' ? '心脏和眼睛要多休息，别太拼。' : data.element === '土' ? '肠胃容易出问题，少吃外卖冷饮。' : data.element === '金' ? '呼吸系统敏感，流感季节多注意。' : '肾气消耗大，早睡是养生第一要义。'}趁着运势好多运动，把身体底子打好！` : `健康要上心了。${data.ganZhi}大运中${ELEMENT_NAMES[data.element]}气对${data.element === '木' ? '肝胆' : data.element === '火' ? '心脑血管' : data.element === '土' ? '脾胃' : data.element === '金' ? '肺呼吸道' : '肾泌尿'}系统不太友好。${data.score >= 45 ? '有不舒服及时看，别硬扛。' : '建议每年体检，平时注意休息和营养。'}`, color: '#00C47A' },
+              { icon: '🤝', label: '人际关系', text: isUp ? `人缘好到爆！${data.ganZhi}这十年贵人运超旺。${data.element === '金' ? '领导赏识，职场关系和谐。' : data.element === '水' ? '朋友多，社交圈子扩大，合作机会多。' : data.element === '木' ? '贵人多来自文教创意领域，人脉质量高。' : data.element === '火' ? '走到哪都是焦点，感染力强。' : '遇到的人都比较实在，适合深交。'}这是拓展人脉的好时机，多出去走走！` : `人际关系需要维护。${data.ganZhi}大运中${ELEMENT_NAMES[data.element]}气，${data.element === '水' ? '社交变少，独处时间多，专注自我成长。' : data.element === '金' ? '职场可能有摩擦，谨言慎行。' : data.element === '木' ? '和长辈沟通要耐心，别太固执。' : data.element === '火' ? '脾气容易上来，控制情绪很重要。' : '关系趋于稳定，精简圈子，质量比数量重要。'}`, color: '#6BD4FF' },
             ].map(item => (
               <div key={item.label} style={{
                 padding: '10px 12px', borderRadius: '12px',
@@ -1731,6 +1731,14 @@ function DecadeCard({ data, index }: { data: CandlestickData; index: number }) {
                 <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', lineHeight: 1.6, color: css.textSecondary }}>{item.text}</p>
               </div>
             ))}
+          </div>
+          
+          {/* 十年关键词 */}
+          <div style={{ marginTop: '12px', padding: '10px 12px', background: `${color}10`, borderRadius: '10px', border: `1px solid ${color}20` }}>
+            <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: color, fontWeight: 600 }}>关键词</span>
+            <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: css.textSecondary, marginLeft: '8px' }}>
+              {isUp ? `${ELEMENT_NAMES[data.element]}气旺盛 · 主动出击 · 把握机遇` : `能量积累期 · 稳扎稳打 · 静待时机`}
+            </span>
           </div>
         </div>
       </motion.div>
