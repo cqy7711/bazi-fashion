@@ -832,6 +832,7 @@ export default function HomePage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [activeTab, setActiveTab] = useState<'outfit' | 'bracelet' | null>(null);
+  const [activeSection, setActiveSection] = useState<'mingpan' | 'fortune' | 'outfit' | 'bracelet' | null>('mingpan');
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
@@ -871,7 +872,19 @@ export default function HomePage() {
   const [locationLocked, setLocationLocked] = useState(!!savedLocation); // 有缓存就锁定
   /** 快捷导航：大屏四列横排图标+文字；小屏 2×2 上图下文 */
   const [navWideLayout, setNavWideLayout] = useState(false);
+  useEffect(() => {
+    if (!activeSection) return;
+    requestAnimationFrame(() => {
+      const el = document.getElementById(`\${activeSection}-section`);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }, [activeSection]);
   const jumpToCard = (id: string) => {
+    const sectionMap: Record<string, 'mingpan' | 'fortune' | 'outfit' | 'bracelet'> = {
+      'mingpan-section': 'mingpan', 'fortune-section': 'fortune',
+      'outfit-section': 'outfit', 'bracelet-section': 'bracelet',
+    };
+    setActiveSection(sectionMap[id] || null);
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
@@ -2047,8 +2060,8 @@ export default function HomePage() {
               </div>
             )
           )}
-          {/* 今日运势 - 第一行第三列 */}
-          {dailyFortune && (
+          {/* 今日运势 */}
+          {dailyFortune && (activeSection as 'mingpan'|'fortune'|'outfit'|'bracelet'|null) === 'fortune' && (
             <div id="fortune-section" style={{
               flex: 1,
               background: 'linear-gradient(145deg, rgba(255,92,168,0.1) 0%, rgba(91,92,255,0.1) 42%, rgba(255,255,255,0.95) 100%)', borderRadius: '24px', padding: navWideLayout ? '20px' : '14px',
@@ -2236,7 +2249,7 @@ export default function HomePage() {
           </motion.div>        )}
         {/* ​—​ 第三行：今日穿搭 + 手串推荐（选中用户时显示） —​ */}
         {/* ── 右栏：今日穿搭 + 手串 ── */}
-        {selectedRecord && previewInfo && previewInfo.baziResult && (
+        {(activeSection as 'mingpan'|'fortune'|'outfit'|'bracelet'|null) === 'outfit' && selectedRecord && previewInfo && previewInfo.baziResult && (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }} style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'stretch' }}>
 
             {/* 今日色彩搭配建议卡片 */}
@@ -2612,7 +2625,7 @@ export default function HomePage() {
                 )}
 
                 {/* 今日手串推荐卡片 - 独立卡片 */}
-                {braceletRec && (
+                {(activeSection as 'mingpan'|'fortune'|'outfit'|'bracelet'|null) === 'bracelet' && braceletRec && (
                   <div id="bracelet-section" style={{
                     flex: 1,
                     background: `linear-gradient(145deg, ${PALETTE.purple}0E 0%, ${PALETTE.blue}08 45%, rgba(255,255,255,0.94) 100%)`, borderRadius: '24px', padding: '20px',
