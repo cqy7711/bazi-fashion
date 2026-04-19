@@ -1105,20 +1105,8 @@ export default function HomePage() {
     upgradeTip: string,
     tone: { primary: string; avoid: string; upgrade: string; border: string },
   ) => (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '6px', marginBottom: '10px' }}>
-      <div style={{ padding: '8px', borderRadius: '8px', background: '#FFFFFF', border: `1.5px solid ${tone.border}` }}>
-        <p style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 800, color: tone.primary, margin: 0 }}>场景主轴</p>
-        <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#5E6788', margin: '3px 0 0', lineHeight: 1.5 }}>{mainAxis}</p>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '6px', marginBottom: '10px' }}>
       </div>
-      <div style={{ padding: '8px', borderRadius: '8px', background: '#FFFFFF', border: `1.5px solid ${tone.border}` }}>
-        <p style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 800, color: tone.avoid, margin: 0 }}>配色禁忌</p>
-        <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#5E6788', margin: '3px 0 0', lineHeight: 1.5 }}>{avoidRule}</p>
-      </div>
-      <div style={{ padding: '8px', borderRadius: '8px', background: '#FFFFFF', border: `1.5px solid ${tone.border}` }}>
-        <p style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 800, color: tone.upgrade, margin: 0 }}>提升建议</p>
-        <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#5E6788', margin: '3px 0 0', lineHeight: 1.5 }}>{upgradeTip}</p>
-      </div>
-    </div>
   );
   const renderInsightBlock = (
     title: string,
