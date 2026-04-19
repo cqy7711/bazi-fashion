@@ -884,6 +884,22 @@ export default function HomePage() {
     return () => mq.removeEventListener('change', apply);
   }, []);
 
+  /** 旧版顶栏「活力版 / 高级版」等可能写入的本地开关，进入首页即清除，避免仍走高级布局 */
+  useEffect(() => {
+    try {
+      [
+        'wuxing-home-ui-mode',
+        'wuxing_home_ui_mode',
+        'wuxing-home-layout',
+        'wuxing_home_layout',
+        'home-advanced-ui',
+        'bazi-home-advanced',
+      ].forEach((k) => localStorage.removeItem(k));
+    } catch {
+      // ignore
+    }
+  }, []);
+
   // 获取用户当前位置
   const detectLocation = () => {
     if (!navigator.geolocation) {
@@ -1179,59 +1195,137 @@ export default function HomePage() {
       }}
     >
 
-      {/* ── 紧凑 Hero Banner ── */}
+      {/* ── 紧凑 Hero Banner（移动端自适应高度；BAZI 水印绝对定位避免遮挡） ── */}
       <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-        style={{ position: 'relative', overflow: 'hidden', borderRadius: '28px', border: `1px solid ${PALETTE.coral}20`, boxShadow: '0 24px 48px rgba(255,107,157,0.16)' }}>
+        style={{
+          position: 'relative', overflow: 'hidden',
+          borderRadius: navWideLayout ? '28px' : '18px',
+          border: `1px solid ${PALETTE.coral}20`,
+          boxShadow: navWideLayout ? '0 24px 48px rgba(255,107,157,0.16)' : '0 14px 32px rgba(255,107,157,0.14)',
+        }}>
         <div style={{
           position: 'absolute', inset: 0,
           background: `radial-gradient(circle at 12% 18%, ${PALETTE.coralLight} 0%, transparent 45%), radial-gradient(circle at 86% 24%, ${PALETTE.blueLight} 0%, transparent 45%), linear-gradient(135deg, ${PALETTE.coralLight} 0%, ${PALETTE.orangeLight} 50%, ${PALETTE.yellowLight} 100%)`,
           opacity: 0.92,
         }} />
-        <div style={{ position: 'absolute', top: '-24px', right: '-12px', width: '140px', height: '140px', borderRadius: '40px', background: `${PALETTE.purple}22`, filter: 'blur(2px)' }} />
-        <div style={{ position: 'absolute', bottom: '-42px', left: '18%', width: '180px', height: '120px', borderRadius: '999px', background: `${PALETTE.green}18`, filter: 'blur(2px)' }} />
         <div style={{
-          position: 'relative',
-          padding: '24px 32px',
-          display: 'flex',
-          justifyContent: 'flex-start',
-          alignItems: 'flex-start',
-          flexWrap: 'wrap',
-          gap: '20px',
-          height: '100px',
-        }}>
-          <motion.div animate={{ rotate: [0, 6, -4, 0] }} transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
-            style={{
-              width: '52px', height: '52px', flexShrink: 0, borderRadius: '16px',
-              background: `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange})`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 4px 16px rgba(255,122,92,0.32)',
-            }}>
-            <Sparkle style={{ width: '28px', height: '28px', color: '#FFFFFF' }} />
-          </motion.div>
-          <div style={{ flex: 1 }}>
-            <h2 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '20px', fontWeight: 900, color: '#1A1A2E', letterSpacing: '-0.02em', marginBottom: '4px', textShadow: '0 4px 14px rgba(255,255,255,0.65)' }}>五行色彩搭配</h2>
-            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', color: '#6B7280', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              输入生辰与出生地，获取每日穿搭色彩、手串建议和运势重点
-              <Sparkles style={{ width: '14px', height: '14px', color: PALETTE.coral }} />
-            </p>
+          position: 'absolute', top: '-24px', right: '-12px', width: '140px', height: '140px', borderRadius: '40px',
+          background: `${PALETTE.purple}22`,
+          filter: 'blur(2px)',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: '-42px', left: '18%', width: '180px', height: '120px', borderRadius: '999px',
+          background: `${PALETTE.green}18`,
+          filter: 'blur(2px)',
+        }} />
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 1,
+            padding: navWideLayout ? '24px 32px' : '16px 14px 20px',
+            display: 'flex',
+            flexDirection: navWideLayout ? 'row' : 'column',
+            justifyContent: 'flex-start',
+            alignItems: navWideLayout ? 'flex-start' : 'stretch',
+            flexWrap: navWideLayout ? 'wrap' : 'nowrap',
+            gap: navWideLayout ? '20px' : '14px',
+            minHeight: navWideLayout ? '100px' : undefined,
+          }}
+        >
+          <div style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            gap: navWideLayout ? '20px' : '14px',
+            width: navWideLayout ? 'auto' : '100%',
+            minWidth: 0,
+            flex: navWideLayout ? '1 1 200px' : undefined,
+          }}>
+            <motion.div animate={{ rotate: [0, 6, -4, 0] }} transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+              style={{
+                width: navWideLayout ? '52px' : '44px',
+                height: navWideLayout ? '52px' : '44px',
+                flexShrink: 0,
+                borderRadius: '16px',
+                background: `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange})`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 4px 16px rgba(255,122,92,0.32)',
+              }}>
+              <Sparkle style={{ width: navWideLayout ? '28px' : '24px', height: navWideLayout ? '28px' : '24px', color: '#FFFFFF' }} />
+            </motion.div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <h2 style={{
+                fontFamily: 'Outfit, sans-serif',
+                fontSize: navWideLayout ? '20px' : '17px',
+                fontWeight: 900,
+                color: '#1A1A2E',
+                letterSpacing: '-0.02em',
+                marginBottom: '4px',
+                textShadow: '0 4px 14px rgba(255,255,255,0.65)',
+              }}>五行色彩搭配</h2>
+              <p style={{
+                fontFamily: 'Outfit, sans-serif',
+                fontSize: navWideLayout ? '13px' : '12px',
+                color: '#6B7280',
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '6px',
+                lineHeight: 1.45,
+              }}>
+                <span style={{ flex: 1, minWidth: 0 }}>
+                  输入生辰与出生地，获取每日穿搭色彩、手串建议和运势重点
+                </span>
+                <Sparkles style={{ width: '14px', height: '14px', color: PALETTE.coral, flexShrink: 0, marginTop: '2px' }} />
+              </p>
+            </div>
           </div>
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+          <div style={{
+            display: 'flex',
+            gap: '6px',
+            flexWrap: 'wrap',
+            justifyContent: navWideLayout ? 'flex-end' : 'flex-start',
+            alignItems: 'center',
+            width: navWideLayout ? 'auto' : '100%',
+            flex: navWideLayout ? undefined : undefined,
+            paddingBottom: navWideLayout ? undefined : '4px',
+          }}>
             {DOPAMINE_COLORS.map(({ label, color, icon }) => (
               <div key={label} style={{
-                display: 'flex', alignItems: 'center', gap: '5px', padding: '5px 10px',
-                background: `${color}18`, border: `1px solid ${color}30`, borderRadius: '9999px',
+                display: 'flex', alignItems: 'center', gap: '4px',
+                padding: navWideLayout ? '5px 10px' : '4px 8px',
+                background: `${color}18`,
+                border: `1px solid ${color}30`,
+                borderRadius: '9999px',
               }}>
                 {icon}
-                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 600, color }}>{label}</span>
+                <span style={{
+                  fontFamily: 'Outfit, sans-serif',
+                  fontSize: navWideLayout ? '12px' : '11px',
+                  fontWeight: 600,
+                  color,
+                }}>{label}</span>
               </div>
             ))}
           </div>
-          <div style={{
-            fontFamily: 'Outfit, sans-serif', fontSize: '72px', fontWeight: 900,
-            color: 'rgba(255,122,92,0.12)', lineHeight: 1, letterSpacing: '-0.05em', userSelect: 'none', flexShrink: 0,
-            textShadow: '0 14px 28px rgba(255,122,92,0.18)',
-          }}>BAZI</div>
         </div>
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute',
+            right: navWideLayout ? '8px' : '6px',
+            bottom: navWideLayout ? '-4px' : '6px',
+            fontFamily: 'Outfit, sans-serif',
+            fontSize: navWideLayout ? '72px' : '40px',
+            fontWeight: 900,
+            color: 'rgba(255,122,92,0.1)',
+            lineHeight: 1,
+            letterSpacing: '-0.05em',
+            userSelect: 'none',
+            pointerEvents: 'none',
+            textShadow: '0 14px 28px rgba(255,122,92,0.12)',
+            zIndex: 0,
+          }}
+        >BAZI</div>
       </motion.div>
 
       {/* ── 主体单列布局 ── */}
@@ -1243,8 +1337,11 @@ export default function HomePage() {
             whileHover={{ y: -3 }}
             transition={{ duration: 0.2 }}
             style={{
-            background: 'linear-gradient(155deg, rgba(249,252,255,0.95), rgba(255,255,255,0.9))', borderRadius: '24px', padding: '20px',
-            boxShadow: '0 14px 28px rgba(74,86,152,0.1)', border: '1px solid rgba(91,92,255,0.18)',
+            background: 'linear-gradient(155deg, rgba(249,252,255,0.95), rgba(255,255,255,0.9))',
+            borderRadius: '24px',
+            padding: '20px',
+            boxShadow: '0 14px 28px rgba(74,86,152,0.1)',
+            border: '1px solid rgba(91,92,255,0.18)',
             backdropFilter: 'blur(7px)', WebkitBackdropFilter: 'blur(7px)',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
@@ -1333,7 +1430,7 @@ export default function HomePage() {
                           />
                         </div>
                       </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: navWideLayout ? 'repeat(4, minmax(0, 1fr))' : 'repeat(2, minmax(0, 1fr))', gap: '10px' }}>
                         {[
                           { label: '出生年', value: form.birthYear, options: YEAR_OPTIONS, key: 'birthYear' as const },
                           { label: '出生月', value: form.birthMonth, options: MONTH_OPTIONS, key: 'birthMonth' as const },
@@ -1521,66 +1618,146 @@ export default function HomePage() {
           </motion.div>
         </motion.div>
 
-        {/* 活力版：快捷导航（在“我的生辰”下方） */}
+        {/* 快捷导航：仅保留当前首页布局，不再提供「高级版」切换 */}
         {selectedRecord && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25 }}
             style={{
-              display: 'grid',
-              gridTemplateColumns: navWideLayout ? 'repeat(4, minmax(0, 1fr))' : 'repeat(2, minmax(0, 1fr))',
-              gap: navWideLayout ? '8px' : '6px',
               width: '100%',
               padding: '10px',
               borderRadius: '18px',
-              background: 'linear-gradient(145deg, rgba(248,251,255,0.92), rgba(255,255,255,0.8))',
-              border: '1px solid rgba(91,92,255,0.16)',
-              boxShadow: '0 14px 26px rgba(76,90,176,0.12)',
+              background: 'linear-gradient(165deg, rgba(236, 234, 240, 0.55) 0%, rgba(252, 251, 253, 0.95) 100%)',
+              border: '1px solid rgba(110, 106, 120, 0.1)',
+              boxShadow: '0 8px 22px rgba(62, 58, 72, 0.06)',
               backdropFilter: 'blur(10px)',
               WebkitBackdropFilter: 'blur(10px)',
-              alignItems: 'stretch',
               boxSizing: 'border-box',
             }}
           >
-            {[
-              { id: 'mingpan-section', label: '命盘信息', icon: (s: number) => <Star style={{ width: s, height: s }} /> },
-              { id: 'fortune-section', label: '今日运势', icon: (s: number) => <Sparkles style={{ width: s, height: s }} /> },
-              { id: 'outfit-section', label: '今日色彩搭配', icon: (s: number) => <Palette style={{ width: s, height: s }} /> },
-              { id: 'bracelet-section', label: '今日手串推荐', icon: (s: number) => <Gem style={{ width: s, height: s }} /> },
-            ].map((item) => (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              marginBottom: '8px',
+              paddingLeft: '2px',
+            }}>
+              <span style={{
+                fontFamily: 'Outfit, sans-serif',
+                fontSize: '11px',
+                fontWeight: 700,
+                color: '#9490A0',
+                letterSpacing: '0.06em',
+                textTransform: 'uppercase',
+              }}>快捷导航</span>
+            </div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: navWideLayout ? 'repeat(4, minmax(0, 1fr))' : 'repeat(2, minmax(0, 1fr))',
+              gap: navWideLayout ? '8px' : '6px',
+              alignItems: 'stretch',
+            }}
+            >
+            {([
+              {
+                id: 'mingpan-section',
+                label: '命盘信息',
+                icon: (s: number) => <Star style={{ width: s, height: s, strokeWidth: 2.1 }} />,
+                iconBg: 'linear-gradient(150deg, #C8C4D4 0%, #D8D4E2 100%)',
+                iconShadow: '0 6px 16px rgba(72, 68, 88, 0.1)',
+                iconColor: '#5E5A6C',
+                cardBg: 'linear-gradient(165deg, rgba(200, 196, 212, 0.22) 0%, rgba(250, 249, 251, 0.98) 58%, #FAFAF9 100%)',
+                border: 'rgba(108, 102, 124, 0.14)',
+                labelColor: '#5C5866',
+              },
+              {
+                id: 'fortune-section',
+                label: '今日运势',
+                icon: (s: number) => <Sparkles style={{ width: s, height: s, strokeWidth: 2.1 }} />,
+                iconBg: 'linear-gradient(150deg, #D4B8B8 0%, #E0CBC8 100%)',
+                iconShadow: '0 6px 16px rgba(88, 64, 64, 0.09)',
+                iconColor: '#6B5656',
+                cardBg: 'linear-gradient(165deg, rgba(212, 184, 184, 0.2) 0%, rgba(252, 249, 248, 0.98) 55%, #FAF8F7 100%)',
+                border: 'rgba(120, 92, 92, 0.14)',
+                labelColor: '#5E4F4F',
+              },
+              {
+                id: 'outfit-section',
+                label: '今日色彩搭配',
+                icon: (s: number) => <Palette style={{ width: s, height: s, strokeWidth: 2.1 }} />,
+                iconBg: 'linear-gradient(150deg, #C4BCAE 0%, #D2CAC0 100%)',
+                iconShadow: '0 6px 16px rgba(72, 68, 58, 0.09)',
+                iconColor: '#58544C',
+                cardBg: 'linear-gradient(165deg, rgba(196, 188, 174, 0.22) 0%, rgba(250, 249, 246, 0.98) 55%, #F9F8F5 100%)',
+                border: 'rgba(96, 90, 78, 0.14)',
+                labelColor: '#565248',
+              },
+              {
+                id: 'bracelet-section',
+                label: '今日手串推荐',
+                icon: (s: number) => <Gem style={{ width: s, height: s, strokeWidth: 2.1 }} />,
+                iconBg: 'linear-gradient(150deg, #A8B2BC 0%, #B9C2CA 100%)',
+                iconShadow: '0 6px 16px rgba(58, 68, 78, 0.1)',
+                iconColor: '#4A535E',
+                cardBg: 'linear-gradient(165deg, rgba(168, 178, 188, 0.22) 0%, rgba(247, 249, 250, 0.98) 58%, #F7F8F9 100%)',
+                border: 'rgba(78, 88, 98, 0.14)',
+                labelColor: '#4E5660',
+              },
+            ] as const).map((item) => {
+              const iconPx = navWideLayout ? 16 : 18;
+              const boxPx = navWideLayout ? 38 : 42;
+              return (
               <motion.button
                 key={item.id}
-                whileHover={{ y: -1 }}
+                whileHover={{ y: -1, boxShadow: '0 10px 22px rgba(62, 58, 68, 0.07)' }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => jumpToCard(item.id)}
                 style={{
                   width: '100%',
                   minWidth: 0,
-                  border: '1px solid rgba(91,92,255,0.18)',
-                  background: 'rgba(255,255,255,0.78)',
-                  borderRadius: navWideLayout ? '999px' : '14px',
-                  padding: navWideLayout ? '10px 8px' : '8px 4px',
+                  border: `1px solid ${item.border}`,
+                  background: item.cardBg,
+                  borderRadius: navWideLayout ? '999px' : '16px',
+                  padding: navWideLayout ? '10px 12px' : '12px 8px',
                   cursor: 'pointer',
                   display: 'flex',
                   flexDirection: navWideLayout ? 'row' : 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: navWideLayout ? '6px' : '4px',
+                  gap: navWideLayout ? '10px' : '8px',
                   fontFamily: 'Outfit, sans-serif',
                   fontSize: navWideLayout ? '12px' : '10px',
-                  fontWeight: 800,
-                  color: '#5B5CFF',
-                  boxShadow: '0 8px 16px rgba(76,90,176,0.1)',
+                  fontWeight: 700,
+                  color: item.labelColor,
+                  boxShadow: '0 6px 18px rgba(62, 58, 68, 0.05)',
                   transition: UI_EASE,
                   lineHeight: navWideLayout ? 1.2 : 1.25,
                   textAlign: 'center',
                 }}
               >
-                <span style={{ color: '#5B5CFF', display: 'inline-flex', flexShrink: 0 }}>{item.icon(navWideLayout ? 15 : 14)}</span>
+                <span
+                  style={{
+                    width: boxPx,
+                    height: boxPx,
+                    borderRadius: navWideLayout ? '14px' : '14px',
+                    background: item.iconBg,
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    boxShadow: item.iconShadow,
+                    border: '1px solid rgba(255,255,255,0.55)',
+                  }}
+                >
+                  <span style={{ color: item.iconColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    {item.icon(iconPx)}
+                  </span>
+                </span>
                 <span style={{ display: 'block', flex: navWideLayout ? 1 : undefined, minWidth: 0 }}>{item.label}</span>
               </motion.button>
-            ))}
+              );
+            })}
+            </div>
           </motion.div>
         )}
 
@@ -1773,11 +1950,22 @@ export default function HomePage() {
                 })()
               )}
 
-              {/* 详细分析按钮 */}
-              <motion.button
-                onClick={() => navigate(`/result/${selectedRecord.id}`)}
-                whileHover={{ y: -2, scale: 1.01 }}
-                whileTap={{ y: 0, scale: 0.97 }}
+              {/* Native button + hash fallback: framer motion buttons can fail to fire click on some mobile WebViews */}
+              <button
+                type="button"
+                onClick={() => {
+                  const id = selectedRecord?.id?.trim();
+                  if (!id) return;
+                  window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+                  const path = `/result/${encodeURIComponent(id)}`;
+                  navigate(path);
+                  queueMicrotask(() => {
+                    const expected = `#${path}`;
+                    if (window.location.hash !== expected) {
+                      window.location.hash = expected;
+                    }
+                  });
+                }}
                 style={{
                   width: '100%', padding: '12px',
                   borderRadius: '14px',
@@ -1787,12 +1975,17 @@ export default function HomePage() {
                   fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#FFFFFF',
                   boxShadow: `0 14px 26px ${PALETTE.coral}4A`,
                   transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                  boxSizing: 'border-box',
+                  touchAction: 'manipulation',
+                  WebkitTapHighlightColor: 'transparent',
+                  position: 'relative',
+                  zIndex: 2,
                 }}
               >
                 <TrendingUp style={{ width: '15px', height: '15px' }} />
                 查看详细分析报告
                 <ArrowRight style={{ width: '14px', height: '14px' }} />
-              </motion.button>
+              </button>
             </div>
           ) : (
             selectedRecord && (
@@ -2292,7 +2485,7 @@ export default function HomePage() {
                       const scenes = (outfitRec as any).sceneRecommendations || [];
                       const getSceneIcon = (iconStr: string) => { switch(iconStr) { case 'briefcase': return <Briefcase style={{ width: '14px', height: '14px' }} />; case 'shirt': return <ShirtIcon style={{ width: '14px', height: '14px' }} />; case 'party': return <PartyPopper style={{ width: '14px', height: '14px' }} />; case 'gift': return <Gift style={{ width: '14px', height: '14px' }} />; default: return <Star style={{ width: '14px', height: '14px' }} />; } };
                       return (
-                        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(scenes.length, 4)}, 1fr)`, gap: '6px', marginBottom: '10px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(scenes.length, navWideLayout ? 4 : 2)}, minmax(0, 1fr))`, gap: '6px', marginBottom: '10px' }}>
                           {scenes.map((scene: any) => (
                             <motion.button key={scene.id} onClick={() => setActiveScene(activeScene === scene.id ? null : scene.id)} whileHover={{ y: -2, scale: 1.03 }} whileTap={{ y: 0, scale: 0.97 }} style={{ padding: '8px 6px', borderRadius: '10px', background: activeScene === scene.id ? `${scene.accentColor}20` : `${scene.accentColor}08`, border: `1.5px solid ${activeScene === scene.id ? scene.accentColor : `${scene.accentColor}25`}`, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', transition: 'all 0.2s', boxShadow: activeScene === scene.id ? `0 10px 18px ${scene.accentColor}33` : `0 6px 12px ${scene.accentColor}18` }}>
                               <div style={{ color: scene.accentColor }}>{getSceneIcon(scene.icon)}</div>
@@ -2615,281 +2808,7 @@ export default function HomePage() {
 
           </motion.div>
         )}
-
-      {/* ── 详情展开区域（横向展开，左右对齐） ── */}
-      <AnimatePresence>
-        {activeTab && selectedRecord && previewInfo && previewInfo.baziResult && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            style={{ overflow: 'hidden' }}
-          >
-            <div style={{ 
-              display: 'flex', 
-              flexDirection: 'row', 
-              gap: '12px', 
-              alignItems: 'stretch',
-              paddingTop: '12px'
-            }}>
-              {/* 今日穿搭详情 */}
-              {activeTab === 'outfit' && outfitRec && (
-                <div style={{
-                  flex: 1,
-                  background: 'linear-gradient(155deg, rgba(255,255,255,0.96), rgba(255,255,255,0.86))', borderRadius: '24px', padding: '20px',
-                  boxShadow: '0 16px 36px rgba(70,54,130,0.12)', border: `1px solid ${PALETTE.coral}22`,
-                  backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
-                }}>
-                  {/* 天气信息 */}
-                  <div style={{
-                    display: 'flex', gap: '12px', alignItems: 'stretch',
-                    background: `linear-gradient(135deg, ${PALETTE.coralLight}, ${PALETTE.orangeLight})`,
-                    borderRadius: '16px', padding: '14px 16px',
-                    border: `1px solid ${PALETTE.coral}25`, marginBottom: '14px',
-                  }}>
-                    <div style={{
-                      width: '50px', height: '50px', borderRadius: '12px', flexShrink: 0,
-                      background: '#FFFFFF', display: 'flex', flexDirection: 'column',
-                      alignItems: 'center', justifyContent: 'center',
-                    }}>
-                      {(outfitRec as any).weatherInfo?.weather?.includes('晴') ? (
-                        <Sun style={{ width: '24px', height: '24px', color: '#FF9D6B' }} />
-                      ) : (outfitRec as any).weatherInfo?.weather?.includes('雨') ? (
-                        <CloudRain style={{ width: '24px', height: '24px', color: '#6BD4FF' }} />
-                      ) : (outfitRec as any).weatherInfo?.weather?.includes('阴') ? (
-                        <Cloud style={{ width: '24px', height: '24px', color: '#94A3B8' }} />
-                      ) : (
-                        <Wind style={{ width: '24px', height: '24px', color: '#6BD4FF' }} />
-                      )}
-                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 700, color: '#1A1A2E' }}>{(outfitRec as any).weatherInfo?.temperature || '--'}°</span>
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <MapPin style={{ width: '12px', height: '12px', color: '#6B7280' }} />
-                          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 600, color: '#1A1A2E' }}>{(outfitRec as any).weatherInfo?.city || userLocation?.city || '未设置'}</span>
-                          {locationLocked && userLocation?.city && (
-                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '2px', padding: '2px 6px', borderRadius: '4px', background: `${PALETTE.green}15`, border: `1px solid ${PALETTE.green}30`, fontSize: '9px', color: PALETTE.green, fontWeight: 600 }}>
-                              <Sparkle style={{ width: '8px', height: '8px' }} />已锁定
-                            </span>
-                          )}
-                          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#6B7280' }}>{(outfitRec as any).weatherInfo?.weather || '加载中...'}</span>
-                        </div>
-                        <button onClick={() => locationLocked ? unlockLocation() : setShowCityDropdown(!showCityDropdown)} style={{ padding: '4px 10px', borderRadius: '8px', background: locationLocked ? `${PALETTE.coral}10` : 'linear-gradient(145deg, #FFFFFF, #F8FAFF)', border: `1px solid ${locationLocked ? PALETTE.coral : '#E8EAF6'}`, cursor: 'pointer', fontSize: '10px', color: locationLocked ? PALETTE.coral : '#6B7280', fontFamily: 'Outfit, sans-serif', display: 'flex', alignItems: 'center', gap: '4px', boxShadow: '0 6px 12px rgba(99,74,176,0.08)' }}>
-                          {locationLocked ? <><Navigation style={{ width: '10px', height: '10px' }} />修改位置</> : <><Navigation style={{ width: '10px', height: '10px' }} />{showCityDropdown ? '收起' : '选择城市'}</>}
-                        </button>
-                      </div>
-                      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#6B7280', margin: 0 }}>
-                        今日五行：<span style={{ color: PALETTE.coral, fontWeight: 600 }}>{(outfitRec as any).weatherInfo?.wuxing || '加载中'}</span>
-                      </p>
-                    </div>
-                  </div>
-                  {/* 场景穿搭推荐 */}
-                  {(() => {
-                    const scenes = (outfitRec as any).sceneRecommendations || [];
-                    const getSceneIcon = (iconStr: string) => {
-                      switch(iconStr) { case 'briefcase': return <Briefcase style={{ width: '16px', height: '16px' }} />; case 'shirt': return <ShirtIcon style={{ width: '16px', height: '16px' }} />; case 'party': return <PartyPopper style={{ width: '16px', height: '16px' }} />; case 'gift': return <Gift style={{ width: '16px', height: '16px' }} />; default: return <Star style={{ width: '16px', height: '16px' }} />; }
-                    };
-                    return (
-                      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${Math.min(scenes.length, 4)}, 1fr)`, gap: '8px', marginBottom: '12px' }}>
-                        {scenes.map((scene: any) => (
-                          <motion.button key={scene.id} onClick={() => setActiveScene(activeScene === scene.id ? null : scene.id)} whileHover={{ y: -2, scale: 1.03 }} whileTap={{ y: 0, scale: 0.97 }} style={{ padding: '10px', borderRadius: '12px', background: activeTab === 'outfit' && activeScene === scene.id ? `linear-gradient(145deg, ${scene.accentColor}26, ${scene.accentColor}14)` : (activeScene === scene.id ? `${scene.accentColor}20` : `${scene.accentColor}08`), border: `1.5px solid ${activeScene === scene.id ? scene.accentColor : `${scene.accentColor}25`}`, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', transition: 'all 0.2s', boxShadow: activeScene === scene.id ? `0 10px 18px ${scene.accentColor}33` : `0 6px 12px ${scene.accentColor}18` }}>
-                            <div style={{ color: scene.accentColor }}>{getSceneIcon(scene.icon)}</div>
-                            <span style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 700, color: scene.accentColor }}>{scene.label}</span>
-                          </motion.button>
-                        ))}
-                      </div>
-                    );
-                  })()}
-                  {/* 场景详细展开 */}
-                  {(() => {
-                    const scenes = (outfitRec as any).sceneRecommendations || [];
-                    const scene = scenes.find((s: any) => s.id === activeScene);
-                    if (!scene) return null;
-                    return (
-                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }} style={{ background: `linear-gradient(135deg, ${scene.accentColor}10, ${scene.accentColor}05)`, borderRadius: '16px', padding: '16px', border: `1.5px solid ${scene.accentColor}25` }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                          <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: scene.accentColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <Star style={{ width: '18px', height: '18px', color: '#FFFFFF' }} />
-                          </div>
-                          <div>
-                            <p style={{ fontFamily: 'Outfit', fontSize: '14px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{scene.label}</p>
-                            <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#A0A8C0', margin: '2px 0 0' }}>{scene.element}属性 · {scene.weatherTip?.slice(0, 15) || ''}</p>
-                          </div>
-                        </div>
-                        {/* 颜色推荐 */}
-                        {scene.colors && <div style={{ marginBottom: '12px' }}>
-                          <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 600, color: '#6B7280', marginBottom: '6px' }}>推荐颜色</p>
-                          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                            {scene.colors.map((c: string, i: number) => <span key={i} style={{ padding: '4px 10px', borderRadius: '8px', background: `${scene.accentColor}12`, border: `1px solid ${scene.accentColor}25`, fontFamily: 'Outfit', fontSize: '11px', color: '#1A1A2E' }}>{c}</span>)}
-                          </div>
-                        </div>}
-                        {/* 场景说明 */}
-                        <div style={{ padding: '10px', background: `linear-gradient(145deg, ${scene.accentColor}08, #FFFFFF)`, borderRadius: '10px', border: `1px solid ${scene.accentColor}24` }}>
-                          <Lightbulb style={{ width: '14px', height: '14px', color: scene.accentColor, marginBottom: '6px' }} />
-                          <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#6B7280', lineHeight: 1.7, margin: 0 }}>{scene.explanation}</p>
-                        </div>
-                      </motion.div>
-                    );
-                  })()}
-                </div>
-              )}
-              
-              {/* 今日手串详情 */}
-              {false && activeTab === 'bracelet' && braceletRec && (
-                <div style={{
-                  flex: 1,
-                  background: 'linear-gradient(155deg, rgba(255,255,255,0.96), rgba(255,255,255,0.86))', borderRadius: '24px', padding: '20px',
-                  boxShadow: '0 16px 36px rgba(70,54,130,0.12)', border: `1px solid ${PALETTE.blue}24`,
-                  backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
-                }}>
-                  {/* 主手串详情 */}
-                  {(braceletRec as any).primaryBracelet && (() => {
-                    const primary = (braceletRec as any).primaryBracelet;
-                    const material = primary.material || primary.name || '';
-                    const details = getBraceletDetails(material);
-                    return (
-                      <div style={{ marginBottom: '16px' }}>
-                        {/* 主手串标题 */}
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: `linear-gradient(135deg, ${PALETTE.purple}, ${PALETTE.blue})`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                              <Gem style={{ width: '20px', height: '20px', color: '#FFFFFF' }} />
-                            </div>
-                            <div>
-                              <p style={{ fontFamily: 'Outfit', fontSize: '16px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{material}</p>
-                              <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#A0A8C0', margin: '2px 0 0' }}>{primary.color || ''} · 首选推荐</p>
-                            </div>
-                          </div>
-                          {primary.element && (
-                            <ElementBadge el={primary.element} />
-                          )}
-                        </div>
-
-                        {/* 主手串与今日运势搭配 */}
-                        <div style={{ padding: '12px', background: `linear-gradient(135deg, ${PALETTE.purple}08, ${PALETTE.blue}08)`, borderRadius: '12px', border: `1px solid ${PALETTE.purple}15`, marginBottom: '12px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
-                            <Sparkles style={{ width: '14px', height: '14px', color: PALETTE.purple }} />
-                            <p style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700, color: PALETTE.purple, margin: 0 }}>今日运势搭配</p>
-                          </div>
-                          <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#6B7280', margin: 0, lineHeight: 1.7 }}>
-                            {primary.whyRecommended || `今日${(braceletRec as any).summary?.tenGod || '流日'}当令，${material}五行属${primary.element || ''}，与日主${(braceletRec as any).bodyStrength?.type === 'strong' ? '身强' : (braceletRec as any).bodyStrength?.type === 'weak' ? '身弱' : '中性'}格局相宜，${primary.effect || '可增强运势'}`}
-                          </p>
-                        </div>
-
-                        {/* 主手串功效说明 */}
-                        {primary.effect && (
-                          <div style={{ padding: '10px 12px', background: `${PALETTE.purple}08`, borderRadius: '10px', border: `1px solid ${PALETTE.purple}15`, marginBottom: '10px' }}>
-                            <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 600, color: PALETTE.purple, marginBottom: '4px' }}>推荐功效</p>
-                            <p style={{ fontFamily: 'Outfit', fontSize: '12px', color: '#6B7280', margin: 0, lineHeight: 1.6 }}>{primary.effect}</p>
-                          </div>
-                        )}
-
-                        {/* 适合佩戴场景 */}
-                        {primary.suitableScenes && primary.suitableScenes.length > 0 && (
-                          <div style={{ marginBottom: '10px' }}>
-                            <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 600, color: '#1A1A2E', marginBottom: '8px' }}>适合场景</p>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-                              {primary.suitableScenes.map((scene: any, idx: number) => (
-                                <div key={idx} style={{ padding: '6px 10px', borderRadius: '8px', background: `${PALETTE.green}10`, border: `1px solid ${PALETTE.green}25`, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                  <span style={{ fontSize: '12px' }}>{scene.icon || '✦'}</span>
-                                  <span style={{ fontFamily: 'Outfit', fontSize: '10px', color: PALETTE.green, fontWeight: 600 }}>{scene.name || scene.scene}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* 详细解说 */}
-                        {details && (
-                          <>
-                            {/* 简介 */}
-                            {details?.description && (
-                              <div style={{ padding: '10px 12px', background: `linear-gradient(145deg, ${PALETTE.blue}06, #FFFFFF)`, borderRadius: '10px', border: `1px solid ${PALETTE.blue}24`, marginBottom: '8px' }}>
-                                <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 600, color: PALETTE.blue, marginBottom: '4px' }}>手串简介</p>
-                                <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#6B7280', margin: 0, lineHeight: 1.6 }}>{details?.description}</p>
-                              </div>
-                            )}
-                            {/* 功效列表 */}
-                            {(details?.effects?.length ?? 0) > 0 && (
-                              <div style={{ padding: '10px 12px', background: `linear-gradient(145deg, ${PALETTE.green}06, #FFFFFF)`, borderRadius: '10px', border: `1px solid ${PALETTE.green}24`, marginBottom: '8px' }}>
-                                <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 600, color: PALETTE.green, marginBottom: '6px' }}>功效作用</p>
-                                {details?.effects?.map((eff, idx) => (
-                                  <p key={idx} style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#6B7280', margin: '2px 0', paddingLeft: '10px', lineHeight: 1.5 }}>
-                                    · {eff}
-                                  </p>
-                                ))}
-                              </div>
-                            )}
-                            {/* 适用场景 */}
-                            {(details?.occasions?.length ?? 0) > 0 && (
-                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
-                                {details?.occasions?.map((occ, idx) => (
-                                  <span key={idx} style={{ padding: '4px 10px', borderRadius: '8px', background: `${PALETTE.coral}10`, border: `1px solid ${PALETTE.coral}25`, fontFamily: 'Outfit', fontSize: '10px', color: PALETTE.coral }}>{occ}</span>
-                                ))}
-                              </div>
-                            )}
-                          </>
-                        )}
-                      </div>
-                    );
-                  })()}
-
-                  {/* 次选手串 */}
-                  {(braceletRec as any).secondaryBracelets && (braceletRec as any).secondaryBracelets.length > 0 && (
-                    <div style={{ marginBottom: '16px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
-                        <Sparkles style={{ width: '14px', height: '14px', color: PALETTE.purple }} />
-                        <p style={{ fontFamily: 'Outfit', fontSize: '13px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>次选推荐</p>
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        {(braceletRec as any).secondaryBracelets.map((sec: any, idx: number) => {
-                          const secMaterial = sec.material || sec.name || '';
-                          const secDetails = getBraceletDetails(secMaterial);
-                          return (
-                            <div key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '12px', borderRadius: '12px', background: `${PALETTE.blue}05`, border: `1px solid ${PALETTE.blue}15` }}>
-                              <div style={{ display: 'flex', gap: '10px' }}>
-                                <div style={{ width: '44px', height: '44px', borderRadius: '10px', background: `${PALETTE.blue}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                                  <Gem style={{ width: '20px', height: '20px', color: PALETTE.blue }} />
-                                </div>
-                                <div style={{ flex: 1 }}>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-                                    <p style={{ fontFamily: 'Outfit', fontSize: '13px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{secMaterial}</p>
-                                    {sec.element && <ElementBadge el={sec.element} />}
-                                  </div>
-                                  <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#6B7280', margin: 0, lineHeight: 1.4 }}>{sec.effect || secDetails?.description?.slice(0, 50) || ''}</p>
-                                </div>
-                              </div>
-                              {/* 次选手串与今日运势搭配 */}
-                              {sec.whyRecommended && (
-                                <div style={{ padding: '8px 10px', background: `${PALETTE.purple}06`, borderRadius: '8px', border: `1px solid ${PALETTE.purple}12` }}>
-                                  <p style={{ fontFamily: 'Outfit', fontSize: '10px', color: PALETTE.purple, margin: 0, lineHeight: 1.5 }}>💫 {sec.whyRecommended}</p>
-                                </div>
-                              )}
-                              {/* 适合场景标签 */}
-                              {sec.suitableScenes && sec.suitableScenes.length > 0 && (
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                                  {sec.suitableScenes.slice(0, 3).map((scene: any, sIdx: number) => (
-                                    <span key={sIdx} style={{ padding: '3px 8px', borderRadius: '6px', background: `${PALETTE.green}10`, border: `1px solid ${PALETTE.green}25`, fontFamily: 'Outfit', fontSize: '9px', color: PALETTE.green }}>{scene.name || scene.scene}</span>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-    </div>
-
+      </div>
 
       {/* 关闭城市下拉 */}
       {showCityDropdown && (

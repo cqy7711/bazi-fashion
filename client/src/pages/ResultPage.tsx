@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2, ArrowLeft, TrendingUp, Users, Heart, Activity, Sparkles, Edit2, X, ChevronDown, Home, Apple } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, ReferenceLine, Cell } from 'recharts';
@@ -43,6 +43,61 @@ const styleLabels: Record<LanguageStyle, string> = {
 };
 
 function cn(...c: (string | boolean | undefined)[]) { return c.filter(Boolean).join(' '); }
+
+async function parseJsonSafe(res: Response): Promise<any> {
+  const text = await res.text();
+  if (!text) return {};
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(
+      `接口返回非 JSON（HTTP ${res.status}）。请在本机启动后端（端口 3001）并确认 Vite 已将 /api 代理到该服务。`,
+    );
+  }
+}
+
+function useCompactMobile(): boolean {
+  const [isCompact, setIsCompact] = useState(() => window.matchMedia('(max-width: 767px)').matches);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)');
+    const handler = (e: MediaQueryListEvent) => setIsCompact(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  return isCompact;
+}
+
+/** Read /result/:userId from HashRouter URL without useParams (avoids RR7 hook-order edge cases). */
+function getResultUserIdFromHash(): string | undefined {
+  if (typeof window === 'undefined') return undefined;
+  const raw = window.location.hash.startsWith('#') ? window.location.hash.slice(1) : window.location.hash;
+  if (!raw.startsWith('/result/')) return undefined;
+  const seg = raw.slice('/result/'.length).split(/[/?#]/)[0];
+  if (!seg) return undefined;
+  try {
+    return decodeURIComponent(seg);
+  } catch {
+    return seg;
+  }
+}
+
+function useHashResultUserId(): string | undefined {
+  const [userId, setUserId] = useState<string | undefined>(getResultUserIdFromHash());
+
+  useEffect(() => {
+    setUserId(getResultUserIdFromHash());
+  }, []);
+
+  useEffect(() => {
+    const handler = () => setUserId(getResultUserIdFromHash());
+    window.addEventListener('hashchange', handler);
+    return () => window.removeEventListener('hashchange', handler);
+  }, []);
+
+  return userId;
+}
 
 // ─── 每日运势计算 ────────────────────────────────────────────────────────────
 interface DailyFortune {
@@ -435,15 +490,16 @@ function GlassCard({ children, className = '', style = {} as React.CSSProperties
   );
 }
 
-function SectionTitle({ children, icon, action }: { children: React.ReactNode; icon?: React.ReactNode; action?: React.ReactNode }) {
+function SectionTitle({ children, icon, action, compact }: { children: React.ReactNode; icon?: React.ReactNode; action?: React.ReactNode; compact?: boolean }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
-      {icon && <span style={{ fontSize: '16px' }}>{icon}</span>}
+    <div style={{ display: 'flex', alignItems: 'center', gap: compact ? 8 : 10, marginBottom: compact ? 14 : 20 }}>
+      {icon && <span style={{ fontSize: compact ? '18px' : '16px' }}>{icon}</span>}
       <h2 style={{
-        fontFamily: 'Outfit, sans-serif',
-        fontSize: '13px', fontWeight: 700,
-        letterSpacing: '0.18em', textTransform: 'uppercase',
-        color: css.textMuted,
+        fontFamily: 'Outfit, "Noto Sans SC", -apple-system, sans-serif',
+        fontSize: compact ? '17px' : '13px', fontWeight: 700,
+        letterSpacing: compact ? '0.02em' : '0.18em',
+        textTransform: compact ? 'none' : 'uppercase',
+        color: compact ? '#3C3C43' : css.textMuted,
       }}>
         {children}
       </h2>
@@ -469,29 +525,33 @@ function ElementBadge({ el }: { el: string }) {
   );
 }
 
-function PillarCell({ label, pillar, shiShen, highlight = false }: {
-  label: string; pillar: string; shiShen: string; highlight?: boolean;
+function PillarCell({ label, pillar, shiShen, highlight = false, compact = false }: {
+  label: string; pillar: string; shiShen: string; highlight?: boolean; compact?: boolean;
 }) {
   const shiShenColor = SHISHEN_COLORS[shiShen] || css.textMuted;
   return (
     <div style={{
-      textAlign: 'center', padding: '20px 12px', borderRadius: '16px',
+      textAlign: 'center', padding: compact ? '14px 10px' : '20px 12px', borderRadius: compact ? 14 : 16,
       background: highlight ? `${css.accent}0A` : '#F8F9FC',
       border: highlight ? `2px solid ${css.accent}40` : '1px solid #F0F1F8',
       transition: 'all 0.2s',
     }}>
-      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '8px', color: css.textMuted }}>{label}</p>
       <p style={{
-        fontSize: '28px', fontWeight: 900, marginBottom: '8px',
+        fontFamily: 'Outfit, "Noto Sans SC", sans-serif',
+        fontSize: compact ? '13px' : '11px', letterSpacing: compact ? '0.04em' : '0.15em',
+        textTransform: compact ? 'none' : 'uppercase', marginBottom: compact ? 6 : 8, color: '#8E8E93', fontWeight: 600,
+      }}>{label}</p>
+      <p style={{
+        fontSize: compact ? 26 : 28, fontWeight: 900, marginBottom: compact ? 6 : 8,
         color: highlight ? css.accent : css.text,
-        fontFamily: 'Outfit, sans-serif',
+        fontFamily: 'Outfit, "Noto Sans SC", sans-serif',
       }}>{pillar}</p>
       <span style={{
-        display: 'inline-block', padding: '3px 10px', borderRadius: '9999px',
-        fontSize: '12px', fontWeight: 600,
+        display: 'inline-block', padding: compact ? '4px 10px' : '3px 10px', borderRadius: '9999px',
+        fontSize: compact ? '13px' : '12px', fontWeight: 600,
         background: shiShenColor + '15', color: shiShenColor,
         border: `1px solid ${shiShenColor}30`,
-        fontFamily: 'Outfit, sans-serif',
+        fontFamily: 'Outfit, "Noto Sans SC", sans-serif',
       }}>
         {shiShen}
       </span>
@@ -1720,113 +1780,248 @@ function DayunTooltip({ active, payload }: any) {
   );
 }
 
+/** Section ids for scroll-spy + reading progress (stable reference for effects). */
+const RESULT_PAGE_SECTION_IDS = [
+  'sec-bazi',
+  'sec-mingge',
+  'sec-fortune',
+  'sec-elements',
+  'sec-dayun',
+] as const;
+
+/** HashRouter navigation without useNavigate — RR7 useNavigate toggles stable/unstable implementations (different hook counts). */
+function replaceHashRoute(pathWithLeadingSlash: string): void {
+  const path = pathWithLeadingSlash.startsWith('/') ? pathWithLeadingSlash : `/${pathWithLeadingSlash}`;
+  const nextHash = `#${path}`;
+  if (window.location.hash === nextHash) return;
+  const url = `${window.location.pathname}${window.location.search}${nextHash}`;
+  window.location.replace(url);
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function ResultPage() {
+  const { userId } = useParams<{ userId: string }>();
+  const navigate = useNavigate();
   const toneAccent = '#5B5CFF';
   const toneAux = '#2CCBFF';
   const toneBorder = 'rgba(91,92,255,0.2)';
   const toneShadow = 'rgba(76,90,176,0.14)';
-  const sectionIds = ['sec-bazi', 'sec-mingge', 'sec-fortune', 'sec-elements', 'sec-dayun'] as const;
   const [activeSection, setActiveSection] = useState<string>('sec-bazi');
   const [readingProgress, setReadingProgress] = useState(0);
-  const { userId } = useParams<{ userId: string }>();
   const [userInfo, setUserInfo] = useState<UserBirthInfo | null>(null);
   const [analysis, setAnalysis] = useState<any>(null);
   const [mingpanAnalysis, setMingpanAnalysis] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [style, setStyle] = useState<LanguageStyle>('normal');
   const [userList, setUserList] = useState<Array<{id: string; name: string; birthYear: number; birthMonth: number; birthDay: number; birthHour: number; gender: string}>>([]);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [showBaziExplanation, setShowBaziExplanation] = useState(false);
+  const compact = useCompactMobile();
 
   useEffect(() => {
-    if (!userId) { setLoading(false); return; }
-    // 获取用户列表
-    fetch(`/api/users/${USER_ID}/birth-info`).then(r => r.json()).then(data => {
-      if (!data.error && data.items) setUserList(data.items);
-    }).catch(console.error);
-    // 获取当前用户数据
-    Promise.all([
-      fetch(`/api/users/${USER_ID}/birth-info/${userId}`).then(r => r.json()),
-      fetch(`/api/users/${USER_ID}/five-elements-analysis?recordId=${userId}`).then(r => r.json()),
-      fetch(`/api/users/${USER_ID}/mingpan-analysis?recordId=${userId}`).then(r => r.json()),
-    ]).then(([info, ana, mpAna]) => {
-      if (!info.error) { setUserInfo(info); setStyle(info.languageStyle || 'normal'); }
-      if (!ana.error) setAnalysis(ana);
-      if (!mpAna.error) setMingpanAnalysis(mpAna);
-    }).catch(console.error).finally(() => setLoading(false));
+    const onScroll = () => {
+      let current: string = RESULT_PAGE_SECTION_IDS[0];
+      for (const id of RESULT_PAGE_SECTION_IDS) {
+        const el = document.getElementById(id);
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= 140) current = id;
+      }
+      setActiveSection(current);
+      const doc = document.documentElement;
+      const total = doc.scrollHeight - window.innerHeight;
+      const progress = total > 0 ? Math.min(100, Math.max(0, (window.scrollY / total) * 100)) : 0;
+      setReadingProgress(progress);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    if (!userId) {
+      setLoading(false);
+      setLoadError(null);
+      return () => {
+        window.removeEventListener('scroll', onScroll);
+      };
+    }
+
+    const recordId = decodeURIComponent(userId);
+    let cancelled = false;
+
+    setLoading(true);
+    setLoadError(null);
+    setUserInfo(null);
+    setAnalysis(null);
+    setMingpanAnalysis(null);
+
+    fetch(`/api/users/${USER_ID}/birth-info`)
+      .then((r) => parseJsonSafe(r))
+      .then((data) => {
+        if (!cancelled && !data.error && data.items) setUserList(data.items);
+      })
+      .catch(() => {});
+
+    (async () => {
+      try {
+        const infoRes = await fetch(
+          `/api/users/${USER_ID}/birth-info/${encodeURIComponent(recordId)}`,
+        );
+        const anaRes = await fetch(
+          `/api/users/${USER_ID}/five-elements-analysis?recordId=${encodeURIComponent(recordId)}`,
+        );
+        const mpRes = await fetch(
+          `/api/users/${USER_ID}/mingpan-analysis?recordId=${encodeURIComponent(recordId)}`,
+        );
+        const [info, ana, mpAna] = await Promise.all([
+          parseJsonSafe(infoRes),
+          parseJsonSafe(anaRes),
+          parseJsonSafe(mpRes),
+        ]);
+        if (cancelled) return;
+
+        if (!infoRes.ok) {
+          const msg =
+            typeof info?.error === 'string' && info.error
+              ? info.error
+              : `加载生辰记录失败（HTTP ${infoRes.status}）`;
+          setLoadError(msg);
+          return;
+        }
+        if (info?.error) {
+          setLoadError(typeof info.error === 'string' ? info.error : '记录加载失败');
+          return;
+        }
+        setUserInfo(info);
+        setStyle(info.languageStyle || 'normal');
+        if (!ana.error) setAnalysis(ana);
+        if (!mpAna.error) setMingpanAnalysis(mpAna);
+      } catch (e: unknown) {
+        if (!cancelled) {
+          setLoadError(
+            e instanceof Error
+              ? e.message
+              : '网络错误：请确认本机已启动后端（端口 3001），手机访问时请使用开发机局域网 IP 打开前端。',
+          );
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener('scroll', onScroll);
+    };
   }, [userId]);
 
   // 切换用户 - 重新获取该用户的完整命盘数据
   const switchUser = async (recordId: string) => {
     if (recordId === userId) {
       setShowUserDropdown(false);
-      return;
-    }
-    setShowUserDropdown(false);
-    setLoading(true);
-    // 清空旧数据
-    setUserInfo(null);
-    setAnalysis(null);
-    setMingpanAnalysis(null);
-    try {
-      // 直接获取新用户的数据
-      const [info, ana, mpAna] = await Promise.all([
-        fetch(`/api/users/${USER_ID}/birth-info/${recordId}`).then(r => r.json()),
-        fetch(`/api/users/${USER_ID}/five-elements-analysis?recordId=${recordId}`).then(r => r.json()),
-        fetch(`/api/users/${USER_ID}/mingpan-analysis?recordId=${recordId}`).then(r => r.json()),
-      ]);
-      if (!info.error) { setUserInfo(info); setStyle(info.languageStyle || 'normal'); }
-      else { console.error('获取用户信息失败:', info); }
-      if (!ana.error) setAnalysis(ana);
-      else { console.error('获取五行分析失败:', ana); }
-      if (!mpAna.error) setMingpanAnalysis(mpAna);
-      else { console.error('获取命盘分析失败:', mpAna); }
-      // 更新 URL 但不刷新页面
-      window.history.pushState({}, '', `/result/${recordId}`);
-    } catch (err) {
-      console.error('切换用户失败:', err);
-    } finally {
-      setLoading(false);
+    } else {
+      setShowUserDropdown(false);
+      setLoading(true);
+      setLoadError(null);
+      // 清空旧数据
+      setUserInfo(null);
+      setAnalysis(null);
+      setMingpanAnalysis(null);
+      try {
+        const rid = encodeURIComponent(recordId);
+        const infoRes = await fetch(`/api/users/${USER_ID}/birth-info/${rid}`);
+        const anaRes = await fetch(`/api/users/${USER_ID}/five-elements-analysis?recordId=${rid}`);
+        const mpRes = await fetch(`/api/users/${USER_ID}/mingpan-analysis?recordId=${rid}`);
+        const [info, ana, mpAna] = await Promise.all([
+          parseJsonSafe(infoRes),
+          parseJsonSafe(anaRes),
+          parseJsonSafe(mpRes),
+        ]);
+        if (!infoRes.ok || info?.error) {
+          setLoadError(
+            typeof info?.error === 'string' && info.error
+              ? info.error
+              : !infoRes.ok
+                ? `加载失败（HTTP ${infoRes.status}）`
+                : '记录加载失败',
+          );
+        } else {
+          setUserInfo(info);
+          setStyle(info.languageStyle || 'normal');
+          if (!ana.error) setAnalysis(ana);
+          else console.error('获取五行分析失败:', ana);
+          if (!mpAna.error) setMingpanAnalysis(mpAna);
+          else console.error('获取命盘分析失败:', mpAna);
+          navigate(`/result/${recordId}`);
+        }
+      } catch (err) {
+        console.error('切换用户失败:', err);
+        setLoadError(err instanceof Error ? err.message : '切换用户失败');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
-  if (loading) return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 20px', gap: '16px' }}>
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-        style={{
-          width: '64px', height: '64px', borderRadius: '20px',
-          background: `linear-gradient(135deg, ${css.accent}, ${PALETTE.orange})`,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '32px', fontWeight: 900,
-          boxShadow: '0 8px 32px rgba(255,107,157,0.3)',
-        }}>
-        ☯
-      </motion.div>
-      <motion.p
-        animate={{ opacity: [0.5, 1, 0.5] }}
-        transition={{ duration: 1.5, repeat: Infinity }}
-        style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', color: css.textMuted }}>
-        八字解读中...
-      </motion.p>
-    </div>
-  );
-
-  if (!userInfo || !userInfo.baziResult) return (
-    <div style={{ ...cardStyle({ padding: '48px' }), textAlign: 'center' }}>
-      <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔮</div>
-      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '18px', fontWeight: 700, color: css.text, marginBottom: '12px' }}>请先填写生辰信息</p>
-      <Link to="/" style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', color: css.accent, textDecoration: 'none', fontWeight: 600 }}>返回首页 →</Link>
-    </div>
-  );
-
-  const bazi = userInfo.baziResult as any;
+  return (
+    <>
+      {!userId ? (
+        <div style={{ ...cardStyle({ padding: '40px 24px', borderRadius: 16 }), textAlign: 'center' }}>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '16px', fontWeight: 700, color: css.text, marginBottom: '12px' }}>无效的页面链接</p>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', color: css.textMuted, marginBottom: '20px' }}>
+            请从首页命盘卡片中的「查看详细分析报告」进入；地址栏应为「#/result/用户ID」形式。
+          </p>
+          <Link to="/" style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', color: css.accent, textDecoration: 'none', fontWeight: 600 }}>返回首页 →</Link>
+        </div>
+      ) : loading ? (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 20px', gap: '16px' }}>
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+            style={{
+              width: '64px', height: '64px', borderRadius: '20px',
+              background: `linear-gradient(135deg, ${css.accent}, ${PALETTE.orange})`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: '32px', fontWeight: 900,
+              boxShadow: '0 8px 32px rgba(255,107,157,0.3)',
+            }}>
+            ☯
+          </motion.div>
+          <motion.p
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 1.5, repeat: Infinity }}
+            style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', color: css.textMuted }}>
+            八字解读中...
+          </motion.p>
+        </div>
+      ) : loadError ? (
+        <div style={{ ...cardStyle({ padding: '48px 24px' }), textAlign: 'center', maxWidth: 440, margin: '0 auto' }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '18px', fontWeight: 700, color: css.text, marginBottom: '12px' }}>无法打开该报告</p>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', color: css.textSecondary, lineHeight: 1.7, marginBottom: '20px' }}>
+            {loadError}
+          </p>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', color: css.textMuted, lineHeight: 1.6, marginBottom: '20px' }}>
+            若在手机浏览器打开：请确保开发机已运行前端（Vite）与后端（3001），且该记录在开发机数据库中存在；链接格式应为「#/result/记录ID」。
+          </p>
+          <Link to="/" style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', color: css.accent, textDecoration: 'none', fontWeight: 600 }}>返回首页 →</Link>
+        </div>
+      ) : !userInfo || !userInfo.baziResult ? (
+        <div style={{ ...cardStyle({ padding: '48px' }), textAlign: 'center' }}>
+          <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔮</div>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '18px', fontWeight: 700, color: css.text, marginBottom: '12px' }}>未找到完整命盘数据</p>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', color: css.textSecondary, marginBottom: '16px' }}>
+            接口已返回记录，但缺少排盘结果。请回到首页重新保存生辰后再试。
+          </p>
+          <Link to="/" style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', color: css.accent, textDecoration: 'none', fontWeight: 600 }}>返回首页 →</Link>
+        </div>
+      ) : (
+        (() => {
+          const bazi = userInfo.baziResult as any;
   const fiveEls = (userInfo.fiveElements || { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 }) as unknown as Record<string, number>;
   const fiveElKeys = ['wood', 'fire', 'earth', 'metal', 'water'] as const;
   const total = Object.values(fiveEls).reduce((a: number, b: number) => a + b, 0);
+  const totalSafe = total || 1;
 
   // 计算当前年龄
   const calculateAge = (bd: Date) => {
@@ -1840,7 +2035,7 @@ export default function ResultPage() {
   const currentAge = calculateAge(currentBirthDate);
   const chartData = fiveElKeys.map((el: string) => ({
     name: ELEMENT_NAMES[el], count: fiveEls[el],
-    pct: Math.round((fiveEls[el] / total) * 100),
+    pct: Math.round((fiveEls[el] / totalSafe) * 100),
     color: ELEMENT_COLORS[el],
   }));
 
@@ -1909,38 +2104,22 @@ export default function ResultPage() {
   ];
 
   const fadeUp = (delay: number) => ({ initial: { opacity: 0, y: 24 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.5, delay, ease: [0.25, 0.46, 0.45, 0.94] as any } });
+  const ios = compact;
+  const cardRadius = ios ? 16 : 20;
+  const sectionGap = ios ? 16 : 28;
   const jumpToSection = (id: string) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
-  useEffect(() => {
-    const onScroll = () => {
-      let current: string = sectionIds[0];
-      for (const id of sectionIds) {
-        const el = document.getElementById(id);
-        if (!el) continue;
-        const rect = el.getBoundingClientRect();
-        if (rect.top <= 140) current = id;
-      }
-      setActiveSection(current);
-      const doc = document.documentElement;
-      const total = doc.scrollHeight - window.innerHeight;
-      const progress = total > 0 ? Math.min(100, Math.max(0, (window.scrollY / total) * 100)) : 0;
-      setReadingProgress(progress);
-    };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '28px', paddingBottom: '48px', paddingTop: 0 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: sectionGap, paddingBottom: ios ? 32 : 48, paddingTop: 0 }}>
 
       {/* ── Header ── */}
-      <motion.div {...fadeUp(0)} style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'static' }}>
+      <motion.div {...fadeUp(0)} style={{ display: 'flex', flexDirection: ios ? 'column' : 'row', alignItems: ios ? 'stretch' : 'center', gap: ios ? 10 : 12, position: 'static' }}>
         <Link to="/" style={{
-          display: 'flex', alignItems: 'center', gap: '8px',
-          padding: '10px 20px', borderRadius: '16px',
+          display: 'flex', alignItems: 'center', gap: '8px', alignSelf: ios ? 'flex-start' : undefined,
+          padding: ios ? '10px 14px' : '10px 20px', borderRadius: cardRadius,
           fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 600,
           background: `linear-gradient(135deg, ${css.accent}12, ${PALETTE.orange}10, #FFFFFF)`, color: css.textSecondary,
           border: `1.5px solid ${css.accent}25`,
@@ -1950,10 +2129,21 @@ export default function ResultPage() {
         }}>
           <ArrowLeft style={{ width: '16px', height: '16px' }} /> 返回
         </Link>
-        <div style={{ flex: 1 }} />
+        {!ios && <div style={{ flex: 1 }} />}
         {/* 用户切换卡片 */}
-        <div style={{ ...cardStyle({ background: 'linear-gradient(145deg, rgba(91,92,255,0.1), rgba(44,203,255,0.08) 45%, #FFFFFF)' }), padding: '14px 20px', position: 'relative', border: `1px solid ${toneBorder}`, boxShadow: `0 14px 28px ${toneShadow}` }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+        <div style={{
+          ...cardStyle({
+            borderRadius: cardRadius,
+            background: 'linear-gradient(145deg, rgba(91,92,255,0.1), rgba(44,203,255,0.08) 45%, #FFFFFF)',
+          }),
+          minWidth: ios ? 0 : 280,
+          width: ios ? '100%' : undefined,
+          padding: ios ? '12px 14px' : '14px 20px',
+          position: 'relative',
+          border: `1px solid ${toneBorder}`,
+          boxShadow: `0 14px 28px ${toneShadow}`,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: ios ? 10 : 14, flexWrap: 'wrap' }}>
             <div style={{
               width: '44px', height: '44px', borderRadius: '14px',
               background: `linear-gradient(135deg, ${css.accent}, ${PALETTE.orange})`,
@@ -2077,10 +2267,10 @@ export default function ResultPage() {
       <motion.div {...fadeUp(0.02)}>
         <div style={{
           background: `linear-gradient(140deg, ${css.accent}0D, ${PALETTE.orange}08 42%, #FFFFFF)`,
-          borderRadius: '20px',
+          borderRadius: cardRadius,
           border: `1px solid ${css.accent}22`,
           boxShadow: `0 12px 24px ${css.accent}1A`,
-          padding: '20px 24px',
+          padding: ios ? '14px 16px' : '20px 24px',
           marginBottom: '16px',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
@@ -2092,12 +2282,12 @@ export default function ResultPage() {
               选择后对下方所有解读生效
             </span>
           </div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: ios ? 8 : 8 }}>
             {(Object.keys(styleLabels) as LanguageStyle[]).map(s => (
               <motion.button key={s} onClick={() => setStyle(s)} whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
                 style={{
-                  padding: '10px 20px', borderRadius: '14px',
-                  fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 600,
+                  padding: ios ? '10px 14px' : '10px 20px', borderRadius: 12,
+                  fontFamily: 'Outfit, sans-serif', fontSize: ios ? '13px' : '14px', fontWeight: 600,
                   cursor: 'pointer', transition: 'all 0.2s',
                   background: style === s ? `linear-gradient(135deg, ${css.accent}, ${PALETTE.orange})` : '#FFFFFF',
                   color: style === s ? '#FFFFFF' : css.textMuted,
@@ -2113,13 +2303,13 @@ export default function ResultPage() {
 
       {/* ── 四柱八字 ── */}
       <motion.div {...fadeUp(0.05)} id="sec-bazi">
-        <SectionTitle icon={<span style={{ color: css.accent, fontSize: '16px' }}>☯</span>}>四柱八字</SectionTitle>
-        <GlassCard style={{ padding: '28px', background: `linear-gradient(145deg, ${css.accent}0A, ${PALETTE.orange}08 48%, #FFFFFF)`, border: `1px solid ${css.accent}20`, boxShadow: `0 14px 30px ${css.accent}16` }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '20px' }}>
-            <PillarCell label="年柱" pillar={bazi.yearPillar} shiShen={bazi.shiShen?.yearStem || bazi.shiShen?.year || '比肩'} />
-            <PillarCell label="月柱" pillar={bazi.monthPillar} shiShen={bazi.shiShen?.monthStem || bazi.shiShen?.month || '正印'} />
-            <PillarCell label="日柱" pillar={bazi.dayPillar} shiShen={bazi.dayMaster} highlight />
-            <PillarCell label="时柱" pillar={bazi.hourPillar} shiShen={bazi.shiShen?.hourStem || bazi.shiShen?.hour || '食神'} />
+        <SectionTitle icon={<span style={{ color: css.accent, fontSize: '16px' }}>☯</span>} compact={ios}>四柱八字</SectionTitle>
+        <GlassCard style={{ padding: ios ? '16px' : '28px', borderRadius: cardRadius, background: `linear-gradient(145deg, ${css.accent}0A, ${PALETTE.orange}08 48%, #FFFFFF)`, border: `1px solid ${css.accent}20`, boxShadow: `0 14px 30px ${css.accent}16` }}>
+          <div style={{ display: 'grid', gridTemplateColumns: ios ? 'repeat(2, minmax(0,1fr))' : 'repeat(4, 1fr)', gap: ios ? 10 : 12, marginBottom: ios ? 16 : 20 }}>
+            <PillarCell label="年柱" pillar={bazi.yearPillar} shiShen={bazi.shiShen?.yearStem || bazi.shiShen?.year || '比肩'} compact={ios} />
+            <PillarCell label="月柱" pillar={bazi.monthPillar} shiShen={bazi.shiShen?.monthStem || bazi.shiShen?.month || '正印'} compact={ios} />
+            <PillarCell label="日柱" pillar={bazi.dayPillar} shiShen={bazi.dayMaster} highlight compact={ios} />
+            <PillarCell label="时柱" pillar={bazi.hourPillar} shiShen={bazi.shiShen?.hourStem || bazi.shiShen?.hour || '食神'} compact={ios} />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px', paddingTop: '16px', borderTop: '1px solid #F0F1F8' }}>
             <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', color: css.textMuted }}>日主</span>
@@ -2151,6 +2341,7 @@ export default function ResultPage() {
         <div onClick={() => setShowBaziExplanation(!showBaziExplanation)} style={{ cursor: 'pointer' }}>
           <SectionTitle 
             icon={<span style={{ color: css.accent, fontSize: '16px' }}>📖</span>}
+            compact={ios}
             action={
               <motion.span 
                 animate={{ rotate: showBaziExplanation ? 90 : 0 }}
@@ -2173,8 +2364,8 @@ export default function ResultPage() {
               transition={{ duration: 0.3 }}
               style={{ overflow: 'hidden' }}
             >
-              <GlassCard style={{ padding: '24px', background: `linear-gradient(145deg, ${css.accent}0A, ${PALETTE.orange}08 48%, #FFFFFF)`, border: `1px solid ${css.accent}20` }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+              <GlassCard style={{ padding: ios ? '16px' : '24px', borderRadius: cardRadius, background: `linear-gradient(145deg, ${css.accent}0A, ${PALETTE.orange}08 48%, #FFFFFF)`, border: `1px solid ${css.accent}20` }}>
+                <div style={{ display: 'grid', gridTemplateColumns: ios ? '1fr' : 'repeat(2, 1fr)', gap: ios ? 12 : 16 }}>
                   <div style={{ padding: '16px', background: `linear-gradient(135deg, ${PALETTE.blue}10, #FFFFFF)`, borderRadius: '12px', border: `1px solid ${PALETTE.blue}1F` }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                       <span style={{ fontSize: '20px' }}>🌿</span>
@@ -2231,10 +2422,10 @@ export default function ResultPage() {
 
       {/* ── 命格详解 ── */}
       <motion.div {...fadeUp(0.15)} id="sec-mingge">
-        <SectionTitle icon={<Sparkles style={{ width: '16px', height: '16px', color: css.accent }} />}>命格详解</SectionTitle>
-        <GlassCard style={{ padding: '24px', background: `linear-gradient(145deg, ${css.accent}0A, ${PALETTE.orange}08 48%, #FFFFFF)`, border: `1px solid ${css.accent}20`, boxShadow: `0 12px 26px ${css.accent}18` }}>
+        <SectionTitle icon={<Sparkles style={{ width: '16px', height: '16px', color: css.accent }} />} compact={ios}>命格详解</SectionTitle>
+        <GlassCard style={{ padding: ios ? '16px' : '24px', borderRadius: cardRadius, background: `linear-gradient(145deg, ${css.accent}0A, ${PALETTE.orange}08 48%, #FFFFFF)`, border: `1px solid ${css.accent}20`, boxShadow: `0 12px 26px ${css.accent}18` }}>
           {/* 头部：格局名称 */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', flexDirection: ios ? 'column' : 'row', alignItems: ios ? 'flex-start' : 'center', gap: ios ? 14 : 20, marginBottom: ios ? 16 : 20 }}>
             <motion.div
               whileHover={{ rotate: 6, scale: 1.05 }}
               transition={{ type: 'spring', stiffness: 300 }}
@@ -2305,7 +2496,7 @@ export default function ResultPage() {
           )}
 
           {/* 优劣势对比 */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: ios ? '1fr' : '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
             {mingGe.strengths && (
               <div style={{ padding: '14px', background: '#F0FFF4', borderRadius: '12px', border: '1px solid #D1FAE5' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
@@ -2331,7 +2522,7 @@ export default function ResultPage() {
           </div>
 
           {/* 适合/不适合职业 */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: ios ? '1fr' : '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
             {mingGe && mingGe.suitableCareer && mingGe.suitableCareer.length > 0 && (
               <div style={{ padding: '14px', background: '#F0F9FF', borderRadius: '12px', border: '1px solid #BAE6FD' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
@@ -2389,8 +2580,8 @@ export default function ResultPage() {
 
       {/* ── 四维运势 ── */}
       <motion.div {...fadeUp(0.2)} id="sec-fortune">
-        <SectionTitle icon={<TrendingUp style={{ width: '16px', height: '16px', color: css.accent }} />}>四维运势分析</SectionTitle>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
+        <SectionTitle icon={<TrendingUp style={{ width: '16px', height: '16px', color: css.accent }} />} compact={ios}>四维运势分析</SectionTitle>
+        <div style={{ display: 'grid', gridTemplateColumns: ios ? '1fr' : 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
           {fortuneCards.map(card => (
             <FortuneCard
               key={card.cardKey}
@@ -2411,10 +2602,10 @@ export default function ResultPage() {
       {/* ── 五行分析 ── */}
       {(analysis || mingpanAnalysis) && (
         <motion.div {...fadeUp(0.3)} id="sec-elements">
-          <SectionTitle icon={<span style={{ color: css.accent, fontSize: '16px' }}>✦</span>}>五行分析</SectionTitle>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
+          <SectionTitle icon={<span style={{ color: css.accent, fontSize: '16px' }}>✦</span>} compact={ios}>五行分析</SectionTitle>
+          <div style={{ display: 'grid', gridTemplateColumns: ios ? '1fr' : 'repeat(3, 1fr)', gap: 12 }}>
             {/* 十神占比（最左边新增） */}
-            <GlassCard style={{ padding: '20px', background: `linear-gradient(145deg, ${css.accent}0A, #FFFFFF)`, border: `1px solid ${css.accent}20` }}>
+            <GlassCard style={{ padding: ios ? '16px' : '20px', borderRadius: cardRadius, background: `linear-gradient(145deg, ${css.accent}0A, #FFFFFF)`, border: `1px solid ${css.accent}20` }}>
               <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: css.accent, marginBottom: '16px' }}>十神分布</p>
               {(() => {
                 // 获取日柱天干作为日主
@@ -2584,7 +2775,7 @@ export default function ResultPage() {
               })()}
             </GlassCard>
 
-            <GlassCard style={{ padding: '24px', background: `linear-gradient(145deg, ${PALETTE.blue}0A, #FFFFFF)`, border: `1px solid ${PALETTE.blue}20` }}>
+            <GlassCard style={{ padding: ios ? '16px' : '24px', borderRadius: cardRadius, background: `linear-gradient(145deg, ${PALETTE.blue}0A, #FFFFFF)`, border: `1px solid ${PALETTE.blue}20` }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
                 <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 700, color: css.accent }}>得令状态</span>
               </div>
@@ -2628,7 +2819,7 @@ export default function ResultPage() {
               </div>
             </GlassCard>
 
-            <GlassCard style={{ padding: '24px', background: `linear-gradient(145deg, ${PALETTE.orange}0A, #FFFFFF)`, border: `1px solid ${PALETTE.orange}20` }}>
+            <GlassCard style={{ padding: ios ? '16px' : '24px', borderRadius: cardRadius, background: `linear-gradient(145deg, ${PALETTE.orange}0A, #FFFFFF)`, border: `1px solid ${PALETTE.orange}20` }}>
               <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 700, color: css.accent, marginBottom: '14px' }}>用神策略</p>
               {(() => {
                 // 获取日主信息用于测算说明
@@ -2747,5 +2938,9 @@ export default function ResultPage() {
       })()}
 
     </div>
+          );
+        })()
+      )}
+    </>
   );
 }

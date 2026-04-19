@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
-import { HashRouter, Routes, Route } from 'react-router-dom';
-import HomePageNew from './pages/HomePageNew';
+import { HashRouter, Routes, Route, Link } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ResultPage from './pages/ResultPage';
 import AdminPage from './pages/AdminPage';
@@ -76,7 +75,7 @@ export default function App() {
   }, []);
 
   return (
-    <HashRouter>
+    <HashRouter unstable_useTransitions={false}>
       <div
         data-app-shell="wuxing-v2"
         style={{
@@ -164,67 +163,73 @@ export default function App() {
         {/* 顶部导航 */}
         <header style={{
           position: 'sticky', top: 0, zIndex: 100,
-          background: 'rgba(250,252,255,0.78)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: `1.5px solid ${TINTS.indigo}22`,
-          boxShadow: SHADOW_TOKENS.glassHeader,
+          background: 'linear-gradient(180deg, rgba(252,250,253,0.92) 0%, rgba(248,245,250,0.88) 100%)',
+          backdropFilter: 'blur(22px)',
+          WebkitBackdropFilter: 'blur(22px)',
+          borderBottom: '1px solid rgba(140, 132, 152, 0.12)',
+          boxShadow: '0 4px 24px rgba(72, 64, 88, 0.06)',
+          paddingLeft: 'max(20px, env(safe-area-inset-left))',
+          paddingRight: 'max(20px, env(safe-area-inset-right))',
+          paddingTop: 'env(safe-area-inset-top)',
         }}>
-          <div className="max-w-[1200px] mx-auto px-5 md:px-10 flex items-center justify-between h-14 md:h-16">
-            {/* Logo */}
+          <div className="max-w-[1200px] mx-auto px-3 sm:px-5 md:px-10 flex flex-wrap items-center justify-between gap-y-2.5 gap-x-2 min-h-14 md:min-h-16 py-2.5 md:py-0">
+            {/* Logo — 设计稿：英文副标 + 中文主标（移动端亦显示） */}
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
+              className="min-w-0 flex-1 sm:flex-initial"
               style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}
             >
               <div style={{
-                width: '32px', height: '32px', borderRadius: '10px',
+                width: '34px', height: '34px', borderRadius: '11px',
                 background: preset.logoGradient,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '16px',
-                boxShadow: '0 10px 20px rgba(255,92,168,0.3)',
+                fontSize: '17px',
+                boxShadow: '0 8px 18px rgba(200, 120, 140, 0.22)',
               }}>
                 ✨
               </div>
-              <div>
-                <h1 style={{
-                  fontFamily: 'Outfit, Noto Sans SC, sans-serif',
-                  fontSize: '14px', fontWeight: 800,
-                  color: COLOR_TOKENS.text.primary, letterSpacing: '-0.02em',
-                  lineHeight: 1.2,
-                }}>
-                  五行色彩搭配
-                </h1>
+              <div className="min-w-0">
                 <p style={{
                   fontFamily: 'Space Grotesk, sans-serif',
-                  fontSize: '8px', letterSpacing: '0.15em',
-                  color: '#A0A8C0', textTransform: 'uppercase',
-                  marginTop: '1px',
+                  fontSize: '9px', letterSpacing: '0.18em',
+                  color: '#9B96A8', textTransform: 'uppercase',
+                  marginBottom: '2px',
+                  lineHeight: 1,
                 }}>
                   WUXING · COLOR
                 </p>
+                <h1 style={{
+                  fontFamily: 'Outfit, Noto Sans SC, sans-serif',
+                  fontSize: '15px', fontWeight: 800,
+                  color: '#3D3A45', letterSpacing: '-0.02em',
+                  lineHeight: 1.15,
+                  margin: 0,
+                }}>
+                  五行色彩搭配
+                </h1>
               </div>
             </motion.div>
 
-            {/* 导航 */}
+            {/* 导航 — Morandi 胶囊按钮 */}
             <motion.nav
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-1"
+              className="flex flex-wrap items-center justify-end gap-1.5 w-full sm:w-auto shrink-0"
             >
               {[
-                { href: '#/', label: '首页', icon: '🏠', color: ACCENT },
-                { href: '/#/ai-chat', label: 'AI 命理', icon: '🤖', color: TINTS.purple },
-                { href: '/#/admin', label: '管理', icon: '⚙️', color: TINTS.indigo },
-              ].map(({ href, label, icon, color }) => (
-                <a key={href} href={href}
-                  className="px-3 md:px-5 py-2 text-xs md:text-sm font-semibold rounded-xl flex items-center gap-1 md:gap-2 transition-all"
+                { to: '/', label: '首页', icon: '🏠', color: ACCENT },
+                { to: '/ai-chat', label: 'AI 命理', icon: '🤖', color: TINTS.purple },
+                { to: '/admin', label: '管理', icon: '⚙️', color: TINTS.indigo },
+              ].map(({ to, label, icon, color }) => (
+                <Link key={to} to={to}
+                  className="px-2.5 sm:px-3 md:px-5 py-1.5 sm:py-2 text-[11px] sm:text-xs md:text-sm font-semibold rounded-full sm:rounded-xl flex items-center gap-0.5 sm:gap-1 md:gap-2 transition-all whitespace-nowrap"
                   style={{
                     color: color,
                     textDecoration: 'none',
-                    background: 'rgba(255,255,255,0.72)',
-                    border: `1px solid ${color}26`,
-                    boxShadow: '0 8px 18px rgba(76,90,176,0.12)',
+                    background: 'linear-gradient(180deg, rgba(255,255,255,0.94), rgba(248,246,250,0.88))',
+                    border: `1px solid rgba(130, 122, 142, 0.14)`,
+                    boxShadow: '0 6px 14px rgba(72, 64, 82, 0.06)',
                   }}
                   onMouseEnter={e => {
                     const el = e.currentTarget as HTMLElement;
@@ -241,7 +246,7 @@ export default function App() {
                   }}
                 >
                   <span>{icon}</span> <span>{label}</span>
-                </a>
+                </Link>
               ))}
             </motion.nav>
           </div>
@@ -249,16 +254,16 @@ export default function App() {
 
         {/* 主内容 */}
         <main
-          className="max-w-[1200px] mx-auto px-4 md:px-10 py-6 md:py-12 pb-20 md:pb-24 relative z-10"
+          className="max-w-[1200px] w-[calc(100%-0.75rem)] sm:w-[calc(100%-1rem)] md:w-auto mx-auto px-3 sm:px-4 md:px-10 py-4 sm:py-6 md:py-12 pb-[max(5rem,env(safe-area-inset-bottom))] md:pb-24 relative z-10"
           style={{
-            background: 'linear-gradient(160deg, rgba(255,255,255,0.68), rgba(255,255,255,0.5))',
+            background: 'linear-gradient(165deg, rgba(255,255,255,0.82) 0%, rgba(252,249,251,0.72) 45%, rgba(248,246,252,0.78) 100%)',
             backgroundBlendMode: 'normal',
-            border: `1.5px solid ${TINTS.indigo}22`,
+            border: '1px solid rgba(160, 152, 172, 0.14)',
             borderRadius: RADIUS_TOKENS.xxl,
-            boxShadow: '0 26px 70px rgba(74,83,156,0.12)',
-            backdropFilter: 'blur(8px)',
-            WebkitBackdropFilter: 'blur(8px)',
-            marginTop: '14px',
+            boxShadow: '0 20px 56px rgba(72, 64, 88, 0.08), 0 1px 0 rgba(255,255,255,0.75) inset',
+            backdropFilter: 'blur(14px)',
+            WebkitBackdropFilter: 'blur(14px)',
+            marginTop: '12px',
             marginBottom: '20px',
           }}
         >
@@ -279,7 +284,7 @@ export default function App() {
         {/* 底部 */}
         <footer style={{
           borderTop: '1px solid rgba(255,255,255,0.75)',
-          padding: '24px 20px',
+          padding: '20px max(16px, env(safe-area-inset-left)) calc(24px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-right))',
           maxWidth: '1200px', margin: '0 auto',
           position: 'relative', zIndex: 1,
           borderRadius: `${RADIUS_TOKENS.xl} ${RADIUS_TOKENS.xl} 0 0`,
