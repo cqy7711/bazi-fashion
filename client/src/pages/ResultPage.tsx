@@ -612,7 +612,7 @@ function getMingGeByStyle(baseMingGe: MingGeType, style: LanguageStyle, dmEl: st
   const unfavN = unfavorable.map(e => ELEMENT_NAMES[e]).join('、');
   const dayElName = dmEl === 'wood' ? '木' : dmEl === 'fire' ? '火' : dmEl === 'earth' ? '土' : dmEl === 'metal' ? '金' : '水';
   
-  const content: Record<LanguageStyle, { desc: string; formation: string; characteristics: string; strengths: string; weaknesses: string; luckTips: string }> = {
+  const content: Record<LanguageStyle, { desc: string; formation: string; characteristics: string; strengths: string; weaknesses: string; luckTips: string; investment?: string }> = {
     normal: {
       desc: baseMingGe.description || baseMingGe.desc,
       formation: `简单来说，你命里${baseMingGe.name}。月令就是你的核心能量源，能驾驭住就顺，驾驭不住就累。关键是看${favorable.length > 0 ? `你的用神${favN}能不能到位` : '五行能不能平衡'}。`,
