@@ -660,6 +660,7 @@ function getMingGeByStyle(baseMingGe: MingGeType, style: LanguageStyle, dmEl: st
       strengths: `${dm}职场人的核心竞争力是${dmEl === 'wood' ? '🌿 战略规划能力，长远布局思维' : dmEl === 'fire' ? '🔥 执行力和感染力，激励团队士气' : dmEl === 'earth' ? '🪨 稳定性和可靠性，是团队的中流砥柱' : dmEl === 'metal' ? '⚡ 分析能力和决断力，精准打击问题' : '💧 适应能力和学习力，随机应变高手'}。${favorable.includes('木') || favorable.includes('火') ? '文创策划是你的王牌领域！' : favorable.includes('金') || favorable.includes('水') ? '金融战略是你的专属赛道！' : '综合管理是你的最强项！'}`,
       weaknesses: `⚠️ 职场雷区：${unfavN}！${dmEl === 'wood' ? '木气受阻时别做重大决定，先收集信息' : dmEl === 'fire' ? '火气过旺时少说话多做事，避免冲动决策' : dmEl === 'earth' ? '土气过重时多接受新事物，避免思维僵化' : dmEl === 'metal' ? '金气过刚时注意团队协作，别一个人扛' : '水气过泛时聚焦核心目标，别分散精力'}。`,
       luckTips: `💼 职场攻略：${dm}职场人，${favorable.length > unfavorable.length ? '今年是晋升加薪的好年景，主动争取机会！' : '今年需要稳扎稳打，积累资历和口碑。'}用神当令的月份是谈薪资、申请资源的最佳时机！忌神当令时低调行事，避免站队和冒进。`,
+      investment: `💰 职场投资建议：${dm}日主宜${favN.includes('金') || favN.includes('水') ? '配置职场人脉资源，长期回报率高。' : favN.includes('木') || favN.includes('火') ? '投资自我成长和学习，提升核心竞争力。' : '稳健型投资，储蓄和保险为主。'}`,
     },
   };
   
