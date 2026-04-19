@@ -2249,7 +2249,7 @@ export default function HomePage() {
           </motion.div>        )}
         {/* ​—​ 第三行：今日穿搭 + 手串推荐（选中用户时显示） —​ */}
         {/* ── 右栏：今日穿搭 + 手串 ── */}
-        {(activeSection as 'mingpan'|'fortune'|'outfit'|'bracelet'|null) === 'outfit' && selectedRecord && previewInfo && previewInfo.baziResult && (
+        {((activeSection as 'mingpan'|'fortune'|'outfit'|'bracelet'|null) === 'outfit' || (activeSection as 'mingpan'|'fortune'|'outfit'|'bracelet'|null) === 'bracelet') && selectedRecord && previewInfo && previewInfo.baziResult && (
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }} style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'stretch' }}>
 
             {/* 今日色彩搭配建议卡片 */}
