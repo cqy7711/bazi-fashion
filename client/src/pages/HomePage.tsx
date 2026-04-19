@@ -1568,22 +1568,22 @@ export default function HomePage() {
                     >
                       <Edit3 style={{ width: '12px', height: '12px', color: '#3B82F6' }} />
                     </div>
-                    {/* 关闭按钮 — 右上角（取消选中） */}
+                    {/* 删除按钮 — 右上角 */}
                     <div
-                      onClick={(e) => { e.stopPropagation(); setSelectedId(null); setOutfitRec(null); setBraceletRec(null); setPreviewInfo(null); setDailyFortune(null); }}
+                      onClick={(e) => { e.stopPropagation(); handleDelete(r.id); }}
                       onMouseDown={e => e.stopPropagation()}
-                      title="取消选中"
+                      title="删除"
                       style={{
                         position: 'absolute', top: '5px', right: '5px',
                         width: '22px', height: '22px', borderRadius: '50%',
-                        background: 'rgba(160,168,192,0.12)', border: 'none',
+                        background: 'rgba(239,68,68,0.12)', border: 'none',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         cursor: 'pointer', zIndex: 3,
                       }}
-                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(160,168,192,0.28)')}
-                      onMouseLeave={e => (e.currentTarget.style.background = 'rgba(160,168,192,0.12)')}
+                      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(239,68,68,0.25)')}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'rgba(239,68,68,0.12)')}
                     >
-                      <X style={{ width: '11px', height: '11px', color: '#A0A8C0' }} />
+                      <Trash2 style={{ width: '11px', height: '11px', color: '#EF4444' }} />
                     </div>
 
                     <div style={{
