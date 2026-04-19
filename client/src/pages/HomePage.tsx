@@ -1260,7 +1260,7 @@ export default function HomePage() {
                 letterSpacing: '-0.02em',
                 marginBottom: '4px',
                 textShadow: '0 4px 14px rgba(255,255,255,0.65)',
-              }}>五行色彩搭配</h2>
+              }}>五行·色彩·运势</h2>
               <p style={{
                 fontFamily: 'Outfit, sans-serif',
                 fontSize: navWideLayout ? '13px' : '12px',

@@ -1658,29 +1658,39 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
         <div style={{ display: 'flex', gap: `${gap}px`, overflowX: 'auto', paddingBottom: '8px' }}>
           {data.map((d, i) => {
             const isSelected = selectedIndex === i;
+            // 判断是否未来大运（结束年份 > 当前年份2026）
+            const isFuture = d.year > 2026;
             // 60分以上红色（吉运），60分以下绿色（平/逆）
             const color = d.score >= 60 ? UP_COLOR : DOWN_COLOR;
             return (
               <div
                 key={`detail-${i}`}
-                onClick={() => setSelectedIndex(i)}
+                onClick={() => {
+                  if (isFuture) {
+                    // 未来大运：显示待解锁提示
+                    alert(`${d.year}-${d.yearEnd}年 ${d.ganZhi}大运尚未到来，点击详解待解锁`);
+                    return;
+                  }
+                  setSelectedIndex(i);
+                }}
                 style={{
                   flexShrink: 0,
                   width: `${itemWidth}px`,
                   padding: '14px 10px',
-                  background: isSelected ? (d.score >= 60 ? '#FFF0EE' : '#F0FFF4') : '#FAFAFA',
+                  background: isFuture ? '#F5F5F5' : (isSelected ? (d.score >= 60 ? '#FFF0EE' : '#F0FFF4') : '#FAFAFA'),
                   borderRadius: '10px',
-                  border: isSelected ? `1px solid ${color}40` : '1px solid transparent',
-                  cursor: 'pointer',
+                  border: isFuture ? '1px solid #E0E0E0' : (isSelected ? `1px solid ${color}40` : '1px solid transparent'),
+                  cursor: isFuture ? 'not-allowed' : 'pointer',
                   transition: 'all 0.2s ease',
+                  opacity: isFuture ? 0.7 : 1,
                 }}
               >
                 {/* 年龄范围 */}
-                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 700, color: '#333333', marginBottom: '2px' }}>
+                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 700, color: isFuture ? '#AAAAAA' : '#333333', marginBottom: '2px' }}>
                   {Math.round(d.age)}-{Math.round(d.endAge)}岁
                 </div>
                 {/* 干支 */}
-                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#999999', marginBottom: '6px' }}>
+                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: isFuture ? '#CCCCCC' : '#999999', marginBottom: '6px' }}>
                   {d.ganZhi}
                 </div>
                 {/* 年份 */}
@@ -1690,18 +1700,18 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
                 {/* 分数 */}
                 <div style={{
                   fontFamily: 'Outfit, sans-serif', fontSize: '18px', fontWeight: 800,
-                  color: color,
+                  color: isFuture ? '#CCCCCC' : color,
                   marginBottom: '6px',
                 }}>
-                  {d.score}分
+                  {isFuture ? '🔒' : `${d.score}分`}
                 </div>
                 {/* 详情 */}
                 <div style={{
                   fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#999999',
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between'
                 }}>
-                  <span>{isSelected && selectedIndex === i ? '收起' : '详情'}</span>
-                  <span style={{ transform: isSelected ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}>›</span>
+                  <span>{isFuture ? '待解锁' : (isSelected ? '收起' : '详情')}</span>
+                  {!isFuture && <span style={{ transform: isSelected ? 'rotate(90deg)' : 'none', transition: 'transform 0.2s' }}>›</span>}
                 </div>
               </div>
             );
@@ -1779,7 +1789,7 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
                   else if (element === '金') elementTip = '大运见金，利财运投资、事业突破';
                   else elementTip = '大运见水，利智慧流通、变通发展';
                   
-                  return `${overall} ${bestYear?.year}年运势最佳(${bestYear?.yearScore}分)是把握机遇的关键年份；${worstYear?.year}年需特别注意(${worstYear?.yearScore}分)。${elementTip}。`;
+                  return `${overall} ${bestYear?.year}年运势最佳，是把握机遇的关键年份；${worstYear?.year}年需特别注意。${elementTip}。`;
                 })()}
               </p>
             </div>
@@ -1842,7 +1852,7 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
                           padding: '4px 10px', borderRadius: '9999px', fontSize: '12px', fontWeight: 600,
                           background: isGoodYear ? '#FFEBEE' : '#E8F5E9', 
                           color: isGoodYear ? '#E74C3C' : '#27AE60'
-                        }}>{yearScore}分 · {ganZhi}</span>
+                        }}>{ganZhi}</span>
                       </div>
                       <div 
                         onClick={() => setSelectedYear(null)}
@@ -1868,7 +1878,7 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
                               <span style={{ 
                                 fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700,
                                 color: isHigh ? '#2E7D32' : '#E65100'
-                              }}>{item.score}分</span>
+                              }}>{isHigh ? '↑' : '↓'}</span>
                             </div>
                             <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#555', margin: '0 0 4px 0', lineHeight: 1.4 }}>
                               {item.advice || '运势平稳，按部就班'}
@@ -2099,7 +2109,7 @@ function DecadeCard({ data, index }: { data: CandlestickData; index: number }) {
                         padding: '4px 10px', borderRadius: '9999px', fontSize: '12px', fontWeight: 600,
                         background: isGoodYear ? '#E8F5E9' : '#FFF3E0', 
                         color: isGoodYear ? '#2E7D32' : '#E65100'
-                      }}>{yearScore}分 · {ganZhi}</span>
+                      }}>{ganZhi}</span>
                     </div>
                     <div 
                       onClick={() => setSelectedYear(null)}
@@ -2125,7 +2135,7 @@ function DecadeCard({ data, index }: { data: CandlestickData; index: number }) {
                             <span style={{ 
                               fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700,
                               color: isHigh ? '#2E7D32' : '#E65100'
-                            }}>{item.score}分</span>
+                            }}>{isHigh ? '↑' : '↓'}</span>
                           </div>
                           <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#555', margin: '0 0 4px 0', lineHeight: 1.4 }}>
                             {item.advice || '运势平稳，按部就班'}

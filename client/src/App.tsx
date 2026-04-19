@@ -206,7 +206,7 @@ export default function App() {
                   lineHeight: 1.15,
                   margin: 0,
                 }}>
-                  五行色彩搭配
+                  五行·色彩·运势
                 </h1>
               </div>
             </motion.div>
