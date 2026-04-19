@@ -1352,6 +1352,46 @@ function DayunKLineChart({ data, startAge, userInfo }: { data: CandlestickData[]
               </button>
             </div>
 
+            {/* 十年综合运势总结 */}
+            <div style={{ 
+              padding: '16px 20px', 
+              background: 'linear-gradient(135deg, rgba(255,107,157,0.08) 0%, rgba(255,157,107,0.08) 100%)',
+              borderRadius: '16px', 
+              border: '1px solid rgba(255,107,157,0.15)',
+              marginBottom: '16px'
+            }}>
+              <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#FF6B9D', marginBottom: '8px' }}>
+                📊 这十年运势总评
+              </div>
+              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#666666', lineHeight: 1.8, margin: 0 }}>
+                {(() => {
+                  if (yearlyData.length === 0) return '暂无十年运势数据';
+                  const avgScore = yearlyData.reduce((sum, y) => sum + y.yearScore, 0) / yearlyData.length;
+                  const bestYear = yearlyData.reduce((best, y) => y.yearScore > best.yearScore ? y : best, yearlyData[0]);
+                  const worstYear = yearlyData.reduce((worst, y) => y.yearScore < worst.yearScore ? y : worst, yearlyData[0]);
+                  const dayunStem = selectedDayun?.ganZhi?.[0] || '甲';
+                  const stemToElement: Record<string, string> = { '甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土', '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水' };
+                  const element = stemToElement[dayunStem];
+                  
+                  let overall = '';
+                  if (avgScore >= 75) overall = `这十年整体运势非常旺盛，是人生发展的黄金期。`;
+                  else if (avgScore >= 65) overall = `这十年运势较好，机遇与挑战并存，宜积极进取。`;
+                  else if (avgScore >= 55) overall = `这十年运势平稳，稳扎稳打可有所收获。`;
+                  else if (avgScore >= 45) overall = `这十年运势有所波动，宜守不宜攻，谨慎行事。`;
+                  else overall = `这十年运势较低，建议韬光养晦，积累等待时机。`;
+                  
+                  let elementTip = '';
+                  if (element === '木') elementTip = '大运见木，利文书学业、创业发展';
+                  else if (element === '火') elementTip = '大运见火，利名声地位、社交人脉';
+                  else if (element === '土') elementTip = '大运见土，利房产田产、稳定积累';
+                  else if (element === '金') elementTip = '大运见金，利财运投资、事业突破';
+                  else elementTip = '大运见水，利智慧流通、变通发展';
+                  
+                  return `${overall} ${bestYear?.year}年运势最佳(${bestYear?.yearScore}分)是把握机遇的关键年份；${worstYear?.year}年需特别注意(${worstYear?.yearScore}分)。${elementTip}。`;
+                })()}
+              </p>
+            </div>
+
             {/* 十年综合流年运势折线图 */}
             <div style={{ 
               padding: '20px', 
@@ -1488,155 +1528,6 @@ function DayunKLineChart({ data, startAge, userInfo }: { data: CandlestickData[]
                     );
                   })()}
                 </svg>
-              </div>
-            </div>
-            
-            {/* ── 十年综合运势建议 ── */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
-              {/* 事业运势 */}
-              <div style={{ padding: '16px', background: '#FFFFFF', borderRadius: '12px', border: '1px solid #F0F1F8' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(255,157,107,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <TrendingUp style={{ width: '16px', height: '16px', color: '#FF9D6B' }} />
-                  </div>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: '#333333' }}>事业运势</span>
-                </div>
-                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#666666', lineHeight: 1.7, marginBottom: '10px' }}>
-                  {(() => {
-                    if (yearlyData.length === 0) return '暂无事业运势分析数据';
-                    const avgScore = yearlyData.reduce((sum, y) => sum + y.yearScore, 0) / yearlyData.length;
-                    const bestYear = yearlyData.reduce((best, y) => y.yearScore > best.yearScore ? y : best, yearlyData[0]);
-                    const worstYear = yearlyData.reduce((worst, y) => y.yearScore < worst.yearScore ? y : worst, yearlyData[0]);
-                    if (avgScore >= 70) return `这十年事业运势整体旺盛，平均得分${Math.round(avgScore)}分。${bestYear?.year}年运势最佳(${bestYear?.yearScore}分)，是事业突破的关键年份，建议把握机遇，大胆发展。`;
-                    if (avgScore >= 50) return `这十年事业运势平稳，平均得分${Math.round(avgScore)}分。宜稳扎稳打，${bestYear?.year}年运势较佳可重点把握。`;
-                    return `这十年事业运势有所波动，建议谨慎行事。${worstYear?.year}年需特别注意，${bestYear?.year}年可把握机会。`;
-                  })()}
-                </p>
-                <div style={{ padding: '8px 10px', background: 'rgba(255,157,107,0.06)', borderRadius: '8px' }}>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#FF9D6B', fontWeight: 600 }}>有利方位</span>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#666666', marginLeft: '6px' }}>东、东南</span>
-                </div>
-              </div>
-              
-              {/* 财运运势 */}
-              <div style={{ padding: '16px', background: '#FFFFFF', borderRadius: '12px', border: '1px solid #F0F1F8' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(255,215,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Coins style={{ width: '16px', height: '16px', color: '#FFD700' }} />
-                  </div>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: '#333333' }}>财运运势</span>
-                </div>
-                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#666666', lineHeight: 1.7, marginBottom: '10px' }}>
-                  {(() => {
-                    if (yearlyData.length === 0) return '暂无财运运势分析数据';
-                    const avgScore = yearlyData.reduce((sum, y) => sum + y.yearScore, 0) / yearlyData.length;
-                    const bestYear = yearlyData.reduce((best, y) => y.yearScore > best.yearScore ? y : best, yearlyData[0]);
-                    const worstYear = yearlyData.reduce((worst, y) => y.yearScore < worst.yearScore ? y : worst, yearlyData[0]);
-                    const dayunStem = selectedDayun?.ganZhi?.[0] || '甲';
-                    const stemToElement: Record<string, string> = { '甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土', '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水' };
-                    const element = stemToElement[dayunStem];
-                    let fortuneTip = '';
-                    if (element === '金') fortuneTip = '利于薪酬提升，争取绩效奖金';
-                    else if (element === '水') fortuneTip = '兼职外快机会多，可发展副业';
-                    else if (element === '木' || element === '火') fortuneTip = '才华变现渠道广，版权收益可观';
-                    else fortuneTip = '薪资稳定增长，不宜冒险投资';
-                    
-                    if (avgScore >= 70) return `这十年财运整体旺盛，平均得分${Math.round(avgScore)}分。${bestYear?.year}年财运最佳(${bestYear?.yearScore}分)，${fortuneTip}。`;
-                    if (avgScore >= 50) return `这十年财运平稳，平均得分${Math.round(avgScore)}分。${fortuneTip}，稳中求进。`;
-                    return `这十年财运有挑战，${worstYear?.year}年需谨慎理财。${bestYear?.year}年可把握财运机遇。`;
-                  })()}
-                </p>
-                <div style={{ padding: '8px 10px', background: 'rgba(255,215,0,0.06)', borderRadius: '8px' }}>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#FFD700', fontWeight: 600 }}>理财建议</span>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#666666', marginLeft: '6px' }}>稳健为主</span>
-                </div>
-              </div>
-              
-              {/* 家庭关系 */}
-              <div style={{ padding: '16px', background: '#FFFFFF', borderRadius: '12px', border: '1px solid #F0F1F8' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(255,107,157,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Heart style={{ width: '16px', height: '16px', color: '#FF6B9D' }} />
-                  </div>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: '#333333' }}>家庭关系</span>
-                </div>
-                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#666666', lineHeight: 1.7, marginBottom: '10px' }}>
-                  {(() => {
-                    if (yearlyData.length === 0) return '暂无家庭关系分析数据';
-                    const dayunStem = selectedDayun?.ganZhi?.[0] || '甲';
-                    const stemToElement: Record<string, string> = { '甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土', '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水' };
-                    const element = stemToElement[dayunStem];
-                    if (element === '木') return `这十年家庭关系和谐，家宅安稳。大运见木，有利于文书、学业进修，可借此时机提升自我。`;
-                    if (element === '火') return `这十年家庭氛围温馨，利于婚嫁、添丁。大运见火，宜注意与长辈沟通方式，保持谦和。`;
-                    if (element === '土') return `这十年家运平稳，利于房产、田产相关事宜。大运见土，宜守成不宜冒进。`;
-                    if (element === '金') return `这十年家运有变动的可能，利于乔迁、装修。大运见金，宜注重家庭财务规划。`;
-                    return `这十年家运平和，利于家庭关系的维护与增进。大运见水，宜保持弹性，灵活应对家庭事务。`;
-                  })()}
-                </p>
-                <div style={{ padding: '8px 10px', background: 'rgba(255,107,157,0.06)', borderRadius: '8px' }}>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#FF6B9D', fontWeight: 600 }}>家庭重点</span>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#666666', marginLeft: '6px' }}>家和万事兴</span>
-                </div>
-              </div>
-              
-              {/* 婚姻感情 */}
-              <div style={{ padding: '16px', background: '#FFFFFF', borderRadius: '12px', border: '1px solid #F0F1F8' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(155,107,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Sparkles style={{ width: '16px', height: '16px', color: '#9B6BFF' }} />
-                  </div>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: '#333333' }}>婚姻感情</span>
-                </div>
-                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#666666', lineHeight: 1.7, marginBottom: '10px' }}>
-                  {(() => {
-                    if (yearlyData.length === 0) return '暂无婚姻感情分析数据';
-                    const avgScore = yearlyData.reduce((sum, y) => sum + y.yearScore, 0) / yearlyData.length;
-                    const highYears = yearlyData.filter(y => y.yearScore >= 65);
-                    const bestYear = highYears[0];
-                    if (avgScore >= 70) return `这十年感情运势旺盛，已婚者感情升温，未婚者桃花缘分佳。${bestYear?.year}年姻缘运势最佳，把握良缘。`;
-                    if (avgScore >= 50) return `这十年感情运势平稳，已婚者需注意沟通，未婚者可积极社交。`;
-                    return `这十年感情运势有挑战，已婚者注意维护关系，未婚者遇良缘时需主动把握。`;
-                  })()}
-                </p>
-                <div style={{ padding: '8px 10px', background: 'rgba(155,107,255,0.06)', borderRadius: '8px' }}>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#9B6BFF', fontWeight: 600 }}>姻缘方位</span>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#666666', marginLeft: '6px' }}>正南、正北</span>
-                </div>
-              </div>
-              
-              {/* 健康养生 */}
-              <div style={{ padding: '16px', background: '#FFFFFF', borderRadius: '12px', border: '1px solid #F0F1F8' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(0,196,122,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Apple style={{ width: '16px', height: '16px', color: '#00C47A' }} />
-                  </div>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: '#333333' }}>健康养生</span>
-                </div>
-                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#666666', lineHeight: 1.7, marginBottom: '10px' }}>
-                  {(() => {
-                    if (yearlyData.length === 0) return '暂无健康养生分析数据';
-                    const avgScore = yearlyData.reduce((sum, y) => sum + y.yearScore, 0) / yearlyData.length;
-                    const lowYears = yearlyData.filter(y => y.yearScore < 50);
-                    const worstYear = lowYears[0];
-                    const dayunStem = selectedDayun?.ganZhi?.[0] || '甲';
-                    const stemToElement: Record<string, string> = { '甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土', '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水' };
-                    const element = stemToElement[dayunStem];
-                    let healthTip = '';
-                    if (element === '木') healthTip = '肝胆经络保养';
-                    else if (element === '火') healthTip = '心血管健康';
-                    else if (element === '土') healthTip = '肠胃调理';
-                    else if (element === '金') healthTip = '呼吸系统';
-                    else healthTip = '腰肾保养';
-                    
-                    if (avgScore >= 70) return `这十年健康运势良好，体质佳，精力充沛。注重${healthTip}可锦上添花。`;
-                    if (avgScore >= 50) return `这十年健康运势平稳，${worstYear ? worstYear.year + '年需注意' + healthTip : '整体状态良好'}。建议规律作息，适度运动。`;
-                    return `这十年健康运势需注意，${worstYear ? worstYear.year + '年是健康关键期' : '需加强保养'}。建议定期体检，${healthTip}。`;
-                  })()}
-                </p>
-                <div style={{ padding: '8px 10px', background: 'rgba(0,196,122,0.06)', borderRadius: '8px' }}>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#00C47A', fontWeight: 600 }}>养生重点</span>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#666666', marginLeft: '6px' }}>起居有常</span>
-                </div>
               </div>
             </div>
           </motion.div>
