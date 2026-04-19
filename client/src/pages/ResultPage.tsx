@@ -885,7 +885,7 @@ function generateFortuneDetails(cardKey: string, dayMaster: string, dayElement: 
         '与命格相合的同事合作，更易获得支持与资源'
       ],
       precautions: [
-        unfavorableElements.includes(dayEl) ? `${dayEl}气受制时期忌重大决策` : '注意流年忌神旺相时的投资风险',
+        unfavorableElements.includes(dayEl) ? `${ELEMENT_NAMES[dayEl] || dayEl}气受制时期忌重大决策` : '注意流年忌神旺相时的投资风险',
         unfavorableStr.includes('受制') ? '避免强出头，低调积蓄能量' : '不可过于保守，错失良机',
         '与上司沟通注意方式方法，尤其是流年冲克之年',
         '合伙经营需谨慎，避免资金往来不清'
@@ -900,7 +900,7 @@ function generateFortuneDetails(cardKey: string, dayMaster: string, dayElement: 
         '与命格相合之人合作求财，更易获利'
       ],
       precautions: [
-        unfavorableElements.includes(dayEl) ? `${dayEl}气受制年忌大额投资` : '流年冲克之年财运波动较大',
+        unfavorableElements.includes(dayEl) ? `${ELEMENT_NAMES[dayEl] || dayEl}气受制年忌大额投资` : '流年冲克之年财运波动较大',
         unfavorableStr.includes('受制') ? '避免投机取巧，稳扎稳打为宜' : '不可过于贪婪，见好就收',
         '注意破财方位，流年冲克方向谨慎行事',
         '合伙经营需明确契约，避免财务纠纷'
@@ -918,13 +918,13 @@ function generateFortuneDetails(cardKey: string, dayMaster: string, dayElement: 
     return {
       favorable: [
         `${dayMaster}日主偏好${getElementInvestmentType(dayEl)}投资方式`,
-        `当前${dayunElement}气大运，投资${dayunAdvice.type}`,
+        `当前${ELEMENT_NAMES[dayunElement] || dayunElement}气大运，投资${dayunAdvice.type}`,
         `最佳投资窗口：${dayunAdvice.timing}`,
         `吉祥方位：${dayunAdvice.direction}，可重点布局`
       ],
       precautions: [
         `当前大运运势评分：${dayunScore}分（${riskLevel.level}），${riskLevel.desc}`,
-        unfavorableElements.includes(dayEl) ? `${dayEl}气受制期忌高风险投资` : '流年冲克之年投资需谨慎观望',
+        unfavorableElements.includes(dayEl) ? `${ELEMENT_NAMES[dayEl] || dayEl}气受制期忌高风险投资` : '流年冲克之年投资需谨慎观望',
         unfavorableStr.includes('受制') ? '避免加杠杆操作，控制仓位在50%以下' : '仓位可适度提高，但勿全仓激进',
         `流年关键转折年：${keyYears.length > 0 ? keyYears.join('、') : '关注用神当令年'}，需特别注意资产配置调整`
       ]
@@ -944,13 +944,13 @@ function generateFortuneDetails(cardKey: string, dayMaster: string, dayElement: 
     return {
       favorable: [
         `${dayMaster}日主属于「${marriageStyle}」感情模式${relationshipType}`,
-        `${dayunElement}气大运期间，${favorableTiming}是感情发展的黄金期`,
+        `${ELEMENT_NAMES[dayunElement] || dayunElement}气大运期间，${favorableTiming}是感情发展的黄金期`,
         `最佳婚恋年龄区间：${marriageAge}岁前后，正缘概率较高`,
         `配偶五行属${spouseElement}之人，与你命格相合度更高`
       ],
       precautions: [
         `当前大运运势评分：${dayunScore}分，大运${dayunScore >= 60 ? '走势利婚，感情缘分较旺' : dayunScore >= 45 ? '感情平稳，单身者宜主动出击' : '感情运势较弱，不宜强求'} `,
-        unfavorableElements.includes(dayEl) ? `${dayEl}气受制期感情易有波折，避免冲动做决定` : '流年冲克之年感情容易出现第三者或误会',
+        unfavorableElements.includes(dayEl) ? `${ELEMENT_NAMES[dayEl] || dayEl}气受制期感情易有波折，避免冲动做决定` : '流年冲克之年感情容易出现第三者或误会',
         `需特别注意的年份：${marriageRiskYears.length > 0 ? marriageRiskYears.join('、') : '关注大运转换年'}，这些年份感情易有变故`,
         unfavorableStr.includes('受制') ? '这阶段适合修身养性，感情事顺其自然为佳' : '保持开放心态，多参加社交活动有利姻缘'
       ]
@@ -2545,7 +2545,7 @@ export default function ResultPage() {
       year: d.startYear,
       yearEnd: d.startYear + 10,
       desc: `${d.ganZhi}大运`,
-      summary: `${d.element}气主导`,
+      summary: `${ELEMENT_NAMES[d.element] || d.element}气主导`,
       favorableElements: mingpanAnalysis.favorable,
     };
   }) : generateDayunData(userInfo);
