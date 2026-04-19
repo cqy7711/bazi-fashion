@@ -767,7 +767,8 @@ function getFortuneAnalysis(style: LanguageStyle, dmEl: string, fav: string[], u
     workplace: {
       career: `${dm}日主，${favN}是你的核心竞争优势。${favN.includes('金') || favN.includes('水') ? '适合战略规划、资本运作类岗位。' : favN.includes('木') || favN.includes('火') ? '适合内容创作、品牌运营、市场策划方向。' : '适合行政管理、财务、法务等稳定型岗位。'}${unfavN}属性领域建议战略性回避。`,
       fortune: `职场财运：${dm}日主${favN.includes('金') ? '薪酬提升空间大，争取绩效奖金。' : favN.includes('水') ? '兼职外快机会多，可发展副业。' : favN.includes('木') || favN.includes('火') ? '才华变现渠道广，版权收益可观。' : '薪资稳定增长，不宜冒险跳槽。'}`,
-      investment: `职场人投资指南：${dmEl === 'wood' ? '长期定投指数基金，适合稳健积累。' : dmEl === 'fire' ? '适当参与热点板块，但需控制仓位。' : dmEl === 'earth' ? '房产和固收是首选，风险偏好低。' : dmEl === 'metal' ? '量化产品和海外资产可考虑配置。' : '灵活配置，根据现金流调整。'}`,
+      family: `${dm}日主在家庭中是情感纽带${favN.includes('水') ? '，能调和矛盾，让家人感到温暖。' : '，是家人的依靠，承担更多责任。'}`,
+      marriage: `${dm}日主在感情中${favN.includes('火') ? '是主导型选手，注意给伴侣留出成长空间。' : '善于长期经营，稳定的陪伴是你最大的优势。'}`,
       health: `职场高压人群建议：${dmEl === 'wood' ? '肝脏排毒（加班护肝）。' : dmEl === 'fire' ? '心血管健康（少熬夜）。' : dmEl === 'earth' ? '肠胃调理（外卖要少吃）。' : dmEl === 'metal' ? '呼吸系统（空调房多通风）。' : '腰肾保养（不要久坐）。'}`,
     },
   };
@@ -778,17 +779,19 @@ function getFortuneAnalysis(style: LanguageStyle, dmEl: string, fav: string[], u
 const CARD_ICONS: Record<string, React.ReactNode> = {
   career: <TrendingUp style={{ width: '20px', height: '20px' }} />,
   fortune: <Coins style={{ width: '20px', height: '20px' }} />,
-  investment: <PieChart style={{ width: '20px', height: '20px' }} />,
+  family: <Heart style={{ width: '20px', height: '20px' }} />,
+  marriage: <Sparkles style={{ width: '20px', height: '20px' }} />,
   health: <Activity style={{ width: '20px', height: '20px' }} />,
 };
 const CARD_COLORS: Record<string, { hex: string; grad: string }> = {
   career: { hex: '#FF9D6B', grad: 'linear-gradient(135deg, rgba(255,157,107,0.1), rgba(255,157,107,0.03))' },
   fortune: { hex: '#FFD700', grad: 'linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.03))' },
-  investment: { hex: '#9B6BFF', grad: 'linear-gradient(135deg, rgba(155,107,255,0.1), rgba(155,107,255,0.03))' },
+  family: { hex: '#FF6B9D', grad: 'linear-gradient(135deg, rgba(255,107,157,0.1), rgba(255,107,157,0.03))' },
+  marriage: { hex: '#9B6BFF', grad: 'linear-gradient(135deg, rgba(155,107,255,0.1), rgba(155,107,255,0.03))' },
   health: { hex: '#00C47A', grad: 'linear-gradient(135deg, rgba(0,196,122,0.1), rgba(0,196,122,0.03))' },
 };
 const CARD_LABELS: Record<string, string> = {
-  career: '事业运势', fortune: '财运运势', investment: '投资理财', health: '健康养生',
+  career: '事业运势', fortune: '财运运势', family: '家庭关系', marriage: '婚姻感情', health: '健康养生',
 };
 
 // 生成四维运势详细分析
@@ -1493,8 +1496,8 @@ function DayunKLineChart({ data, startAge, userInfo }: { data: CandlestickData[]
               {/* 事业运势 */}
               <div style={{ padding: '16px', background: '#FFFFFF', borderRadius: '12px', border: '1px solid #F0F1F8' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(255,107,157,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <TrendingUp style={{ width: '16px', height: '16px', color: PALETTE.coral }} />
+                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(255,157,107,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <TrendingUp style={{ width: '16px', height: '16px', color: '#FF9D6B' }} />
                   </div>
                   <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: '#333333' }}>事业运势</span>
                 </div>
@@ -1509,17 +1512,51 @@ function DayunKLineChart({ data, startAge, userInfo }: { data: CandlestickData[]
                     return `这十年事业运势有所波动，建议谨慎行事。${worstYear?.year}年需特别注意，${bestYear?.year}年可把握机会。`;
                   })()}
                 </p>
-                <div style={{ padding: '8px 10px', background: 'rgba(255,107,157,0.06)', borderRadius: '8px' }}>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: PALETTE.coral, fontWeight: 600 }}>有利方位</span>
+                <div style={{ padding: '8px 10px', background: 'rgba(255,157,107,0.06)', borderRadius: '8px' }}>
+                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#FF9D6B', fontWeight: 600 }}>有利方位</span>
                   <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#666666', marginLeft: '6px' }}>东、东南</span>
+                </div>
+              </div>
+              
+              {/* 财运运势 */}
+              <div style={{ padding: '16px', background: '#FFFFFF', borderRadius: '12px', border: '1px solid #F0F1F8' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(255,215,0,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Coins style={{ width: '16px', height: '16px', color: '#FFD700' }} />
+                  </div>
+                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: '#333333' }}>财运运势</span>
+                </div>
+                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#666666', lineHeight: 1.7, marginBottom: '10px' }}>
+                  {(() => {
+                    if (yearlyData.length === 0) return '暂无财运运势分析数据';
+                    const avgScore = yearlyData.reduce((sum, y) => sum + y.yearScore, 0) / yearlyData.length;
+                    const bestYear = yearlyData.reduce((best, y) => y.yearScore > best.yearScore ? y : best, yearlyData[0]);
+                    const worstYear = yearlyData.reduce((worst, y) => y.yearScore < worst.yearScore ? y : worst, yearlyData[0]);
+                    const dayunStem = selectedDayun?.ganZhi?.[0] || '甲';
+                    const stemToElement: Record<string, string> = { '甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土', '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水' };
+                    const element = stemToElement[dayunStem];
+                    let fortuneTip = '';
+                    if (element === '金') fortuneTip = '利于薪酬提升，争取绩效奖金';
+                    else if (element === '水') fortuneTip = '兼职外快机会多，可发展副业';
+                    else if (element === '木' || element === '火') fortuneTip = '才华变现渠道广，版权收益可观';
+                    else fortuneTip = '薪资稳定增长，不宜冒险投资';
+                    
+                    if (avgScore >= 70) return `这十年财运整体旺盛，平均得分${Math.round(avgScore)}分。${bestYear?.year}年财运最佳(${bestYear?.yearScore}分)，${fortuneTip}。`;
+                    if (avgScore >= 50) return `这十年财运平稳，平均得分${Math.round(avgScore)}分。${fortuneTip}，稳中求进。`;
+                    return `这十年财运有挑战，${worstYear?.year}年需谨慎理财。${bestYear?.year}年可把握财运机遇。`;
+                  })()}
+                </p>
+                <div style={{ padding: '8px 10px', background: 'rgba(255,215,0,0.06)', borderRadius: '8px' }}>
+                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#FFD700', fontWeight: 600 }}>理财建议</span>
+                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#666666', marginLeft: '6px' }}>稳健为主</span>
                 </div>
               </div>
               
               {/* 家庭关系 */}
               <div style={{ padding: '16px', background: '#FFFFFF', borderRadius: '12px', border: '1px solid #F0F1F8' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(52,152,219,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Home style={{ width: '16px', height: '16px', color: '#3498DB' }} />
+                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(255,107,157,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Heart style={{ width: '16px', height: '16px', color: '#FF6B9D' }} />
                   </div>
                   <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: '#333333' }}>家庭关系</span>
                 </div>
@@ -1536,8 +1573,8 @@ function DayunKLineChart({ data, startAge, userInfo }: { data: CandlestickData[]
                     return `这十年家运平和，利于家庭关系的维护与增进。大运见水，宜保持弹性，灵活应对家庭事务。`;
                   })()}
                 </p>
-                <div style={{ padding: '8px 10px', background: 'rgba(52,152,219,0.06)', borderRadius: '8px' }}>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#3498DB', fontWeight: 600 }}>家庭重点</span>
+                <div style={{ padding: '8px 10px', background: 'rgba(255,107,157,0.06)', borderRadius: '8px' }}>
+                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#FF6B9D', fontWeight: 600 }}>家庭重点</span>
                   <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#666666', marginLeft: '6px' }}>家和万事兴</span>
                 </div>
               </div>
@@ -1545,8 +1582,8 @@ function DayunKLineChart({ data, startAge, userInfo }: { data: CandlestickData[]
               {/* 婚姻感情 */}
               <div style={{ padding: '16px', background: '#FFFFFF', borderRadius: '12px', border: '1px solid #F0F1F8' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(231,76,60,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Heart style={{ width: '16px', height: '16px', color: '#E74C3C' }} />
+                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(155,107,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Sparkles style={{ width: '16px', height: '16px', color: '#9B6BFF' }} />
                   </div>
                   <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: '#333333' }}>婚姻感情</span>
                 </div>
@@ -1561,8 +1598,8 @@ function DayunKLineChart({ data, startAge, userInfo }: { data: CandlestickData[]
                     return `这十年感情运势有挑战，已婚者注意维护关系，未婚者遇良缘时需主动把握。`;
                   })()}
                 </p>
-                <div style={{ padding: '8px 10px', background: 'rgba(231,76,60,0.06)', borderRadius: '8px' }}>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#E74C3C', fontWeight: 600 }}>姻缘方位</span>
+                <div style={{ padding: '8px 10px', background: 'rgba(155,107,255,0.06)', borderRadius: '8px' }}>
+                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#9B6BFF', fontWeight: 600 }}>姻缘方位</span>
                   <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#666666', marginLeft: '6px' }}>正南、正北</span>
                 </div>
               </div>
@@ -1570,8 +1607,8 @@ function DayunKLineChart({ data, startAge, userInfo }: { data: CandlestickData[]
               {/* 健康养生 */}
               <div style={{ padding: '16px', background: '#FFFFFF', borderRadius: '12px', border: '1px solid #F0F1F8' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(39,174,96,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Apple style={{ width: '16px', height: '16px', color: '#27AE60' }} />
+                  <div style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(0,196,122,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Apple style={{ width: '16px', height: '16px', color: '#00C47A' }} />
                   </div>
                   <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: '#333333' }}>健康养生</span>
                 </div>
@@ -1581,13 +1618,23 @@ function DayunKLineChart({ data, startAge, userInfo }: { data: CandlestickData[]
                     const avgScore = yearlyData.reduce((sum, y) => sum + y.yearScore, 0) / yearlyData.length;
                     const lowYears = yearlyData.filter(y => y.yearScore < 50);
                     const worstYear = lowYears[0];
-                    if (avgScore >= 70) return `这十年健康运势良好，体质佳，精力充沛。注重保养可锦上添花。`;
-                    if (avgScore >= 50) return `这十年健康运势平稳，${worstYear ? worstYear.year + '年需注意身体保养' : '整体状态良好'}。建议规律作息，适度运动。`;
-                    return `这十年健康运势需注意，${worstYear ? worstYear.year + '年是健康关键期' : '需加强保养'}。建议定期体检，规律作息。`;
+                    const dayunStem = selectedDayun?.ganZhi?.[0] || '甲';
+                    const stemToElement: Record<string, string> = { '甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土', '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水' };
+                    const element = stemToElement[dayunStem];
+                    let healthTip = '';
+                    if (element === '木') healthTip = '肝胆经络保养';
+                    else if (element === '火') healthTip = '心血管健康';
+                    else if (element === '土') healthTip = '肠胃调理';
+                    else if (element === '金') healthTip = '呼吸系统';
+                    else healthTip = '腰肾保养';
+                    
+                    if (avgScore >= 70) return `这十年健康运势良好，体质佳，精力充沛。注重${healthTip}可锦上添花。`;
+                    if (avgScore >= 50) return `这十年健康运势平稳，${worstYear ? worstYear.year + '年需注意' + healthTip : '整体状态良好'}。建议规律作息，适度运动。`;
+                    return `这十年健康运势需注意，${worstYear ? worstYear.year + '年是健康关键期' : '需加强保养'}。建议定期体检，${healthTip}。`;
                   })()}
                 </p>
-                <div style={{ padding: '8px 10px', background: 'rgba(39,174,96,0.06)', borderRadius: '8px' }}>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#27AE60', fontWeight: 600 }}>养生重点</span>
+                <div style={{ padding: '8px 10px', background: 'rgba(0,196,122,0.06)', borderRadius: '8px' }}>
+                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#00C47A', fontWeight: 600 }}>养生重点</span>
                   <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#666666', marginLeft: '6px' }}>起居有常</span>
                 </div>
               </div>
@@ -2119,7 +2166,8 @@ export default function ResultPage() {
   const fortuneCards = [
     { cardKey: 'career', label: CARD_LABELS.career, color: CARD_COLORS.career.hex, text: fortuneAnalysis.career, icon: CARD_ICONS.career, dayMaster: bazi.dayMaster, dayElement: bazi.dayMasterElement, favorableElements: userInfo.favorableElements || [], unfavorableElements: userInfo.unfavorableElements || [] },
     { cardKey: 'fortune', label: CARD_LABELS.fortune, color: CARD_COLORS.fortune.hex, text: fortuneAnalysis.fortune, icon: CARD_ICONS.fortune, dayMaster: bazi.dayMaster, dayElement: bazi.dayMasterElement, favorableElements: userInfo.favorableElements || [], unfavorableElements: userInfo.unfavorableElements || [] },
-    { cardKey: 'investment', label: CARD_LABELS.investment, color: CARD_COLORS.investment.hex, text: fortuneAnalysis.investment, icon: CARD_ICONS.investment, dayMaster: bazi.dayMaster, dayElement: bazi.dayMasterElement, favorableElements: userInfo.favorableElements || [], unfavorableElements: userInfo.unfavorableElements || [] },
+    { cardKey: 'family', label: CARD_LABELS.family, color: CARD_COLORS.family.hex, text: fortuneAnalysis.family, icon: CARD_ICONS.family, dayMaster: bazi.dayMaster, dayElement: bazi.dayMasterElement, favorableElements: userInfo.favorableElements || [], unfavorableElements: userInfo.unfavorableElements || [] },
+    { cardKey: 'marriage', label: CARD_LABELS.marriage, color: CARD_COLORS.marriage.hex, text: fortuneAnalysis.marriage, icon: CARD_ICONS.marriage, dayMaster: bazi.dayMaster, dayElement: bazi.dayMasterElement, favorableElements: userInfo.favorableElements || [], unfavorableElements: userInfo.unfavorableElements || [] },
     { cardKey: 'health', label: CARD_LABELS.health, color: CARD_COLORS.health.hex, text: fortuneAnalysis.health, icon: CARD_ICONS.health, dayMaster: bazi.dayMaster, dayElement: bazi.dayMasterElement, favorableElements: userInfo.favorableElements || [], unfavorableElements: userInfo.unfavorableElements || [] },
   ];
 
