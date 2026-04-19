@@ -107,7 +107,7 @@ export const EventTypes = {
 export const PageNames = {
   HOME: '首页',
   RESULT: '命盘结果',
-  AI_CHAT: 'AI命理',
+  AI_CHAT: 'AI解读',
   ADMIN: '管理后台',
 };
 

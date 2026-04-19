@@ -219,7 +219,7 @@ export default function App() {
             >
               {[
                 { to: '/', label: '首页', icon: '🏠', color: ACCENT },
-                { to: '/ai-chat', label: 'AI 命理', icon: '🤖', color: TINTS.purple },
+                { to: '/ai-chat', label: 'AI 解读', icon: '🤖', color: TINTS.purple },
                 { to: '/admin', label: '管理', icon: '⚙️', color: TINTS.indigo },
               ].map(({ to, label, icon, color }) => (
                 <Link key={to} to={to}
