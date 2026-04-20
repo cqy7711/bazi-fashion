@@ -2061,7 +2061,7 @@ export default function HomePage() {
             )
           )}
           {/* 今日运势 */}
-          {dailyFortune && (
+          {dailyFortune && selectedRecord && previewInfo && previewInfo.baziResult && (
             <div id="fortune-section" style={{
               flex: 1,
               background: 'linear-gradient(145deg, rgba(255,92,168,0.1) 0%, rgba(91,92,255,0.1) 42%, rgba(255,255,255,0.95) 100%)', borderRadius: '24px', padding: navWideLayout ? '20px' : '14px',
@@ -2253,7 +2253,7 @@ export default function HomePage() {
           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }} style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'stretch' }}>
 
             {/* 今日色彩搭配建议卡片 */}
-            {outfitRec && (
+            {(activeSection as 'mingpan'|'fortune'|'outfit'|'bracelet'|null) === 'outfit' && outfitRec && (
             <div id="outfit-section" style={{
               flex: 1,
               background: `linear-gradient(140deg, ${PALETTE.coral}0D 0%, ${PALETTE.orange}0A 35%, #FFFFFF 100%)`,
