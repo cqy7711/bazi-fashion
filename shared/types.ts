@@ -59,6 +59,20 @@ export type UserBirthInfo = {
   fiveElements?: FiveElementsDistribution;
   favorableElements?: FiveElement[];
   unfavorableElements?: FiveElement[];
+  pattern?: {
+    type: string;
+    name: string;
+    description?: string;
+    mainGod?: string;
+    subGod?: string;
+    formation?: string;
+    characteristics?: string;
+    strengths?: string;
+    weaknesses?: string;
+    suitableCareer?: string[];
+    avoidCareer?: string[];
+    luckTips?: string;
+  };
 };
 
 export type UserBirthInfoListItem = Omit<UserBirthInfo, 'baziResult' | 'fiveElements' | 'unfavorableElements'>;

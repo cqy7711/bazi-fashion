@@ -603,6 +603,7 @@ interface MingGeType {
   description?: string; formation?: string | null; characteristics?: string | null;
   strengths?: string | null; weaknesses?: string | null;
   suitableCareer?: string[]; avoidCareer?: string[]; luckTips?: string | null;
+  mainGod?: string; subGod?: string;
 }
 
 // 根据解读风格生成命格详解内容
@@ -742,7 +743,7 @@ function generateDayunData(userInfo: UserBirthInfo): DayunData[] {
   const startBi = branches.indexOf(monthBranch);
   const data: DayunData[] = [];
   let prevScore = 50;
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 12; i++) {
     const off = isForward ? i + 1 : -(i + 1);
     const si = (startSi + off + 10) % 10;
     const bi = (startBi + off + 12) % 12;
@@ -1386,7 +1387,7 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
   // 生成每年流年运势波动图数据（确定性）
   const generateYearlyData = (dayun: CandlestickData) => {
     const yearlyData = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 12; i++) {
       const seed = (dayun.year + i) * 11 % 100;
       const baseScore = dayun.score + (seed % 40 - 20);
       const monthScores = [];
@@ -2516,6 +2517,8 @@ export default function ResultPage() {
     suitableCareer: mingpanAnalysis.pattern.suitableCareer || [],
     avoidCareer: mingpanAnalysis.pattern.avoidCareer || [],
     luckTips: mingpanAnalysis.pattern.luckTips,
+    mainGod: mingpanAnalysis.pattern.mainGod,
+    subGod: mingpanAnalysis.pattern.subGod,
   } : null;
   
   const fallbackMingGe = getMingGe(bazi.monthStem, bazi.monthBranch);
@@ -3065,6 +3068,31 @@ export default function ResultPage() {
                 </span>
               </div>
               <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', lineHeight: 1.7, color: css.textSecondary }}>{mingGe.description || mingGe.desc}</p>
+              {/* 格局十神关系标签 */}
+              {mingGe.mainGod && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px', flexWrap: 'wrap' }}>
+                  <div style={{
+                    padding: '4px 12px', borderRadius: '9999px',
+                    background: `linear-gradient(135deg, ${css.accent}18, ${PALETTE.orange}14)`,
+                    border: `1px solid ${css.accent}30`,
+                    fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 700,
+                    color: css.accent,
+                  }}>
+                    {mingGe.mainGod}为格主
+                  </div>
+                  {mingGe.subGod && (
+                    <div style={{
+                      padding: '4px 12px', borderRadius: '9999px',
+                      background: `linear-gradient(135deg, ${PALETTE.orange}14, ${PALETTE.blue}10)`,
+                      border: `1px solid ${PALETTE.orange}30`,
+                      fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 600,
+                      color: css.textSecondary,
+                    }}>
+                      配{mingGe.subGod}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 

@@ -1931,6 +1931,44 @@ export default function HomePage() {
                 );
               })()}
 
+              {/* 喜用神 / 忌神 */}
+              {(() => {
+                const elementNames: Record<string, string> = { wood: '木', fire: '火', earth: '土', metal: '金', water: '水' };
+                const favEls = previewInfo.favorableElements || [];
+                const unfavEls = previewInfo.unfavorableElements || [];
+                if (favEls.length === 0 && unfavEls.length === 0) return null;
+                return (
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                    {favEls.length > 0 && (
+                      <div style={{
+                        padding: '5px 12px', borderRadius: '999px',
+                        background: `linear-gradient(135deg, #E8F5E9, #F1F8E9)`, border: '1px solid #66BB6A40',
+                        display: 'inline-flex', alignItems: 'center', gap: '4px',
+                        boxShadow: '0 4px 10px rgba(76,175,80,0.12)',
+                      }}>
+                        <span style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 800, color: '#2E7D32' }}>喜</span>
+                        <span style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 600, color: '#388E3C' }}>
+                          {favEls.map((e: string) => elementNames[e] || e).join(' · ')}
+                        </span>
+                      </div>
+                    )}
+                    {unfavEls.length > 0 && (
+                      <div style={{
+                        padding: '5px 12px', borderRadius: '999px',
+                        background: `linear-gradient(135deg, #FFF3E0, #FFEBEE)`, border: '1px solid #EF9A9A40',
+                        display: 'inline-flex', alignItems: 'center', gap: '4px',
+                        boxShadow: '0 4px 10px rgba(239,154,154,0.12)',
+                      }}>
+                        <span style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 800, color: '#C62828' }}>忌</span>
+                        <span style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 600, color: '#D32F2F' }}>
+                          {unfavEls.map((e: string) => elementNames[e] || e).join(' · ')}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+
               {/* 五行命格总结 */}
               {(() => {
                 const fe = previewInfo.fiveElements || { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
@@ -1942,6 +1980,9 @@ export default function HomePage() {
                 const maxVal = Math.max(...vals);
                 const minVal = Math.min(...vals);
                 const strongest = elKeys[vals.indexOf(maxVal)];
+                const patName = previewInfo.pattern?.name;
+                const patMainGod = previewInfo.pattern?.mainGod;
+                const patSubGod = previewInfo.pattern?.subGod;
                 const weakest = elKeys[vals.indexOf(minVal)];
                 const mingGeStrength: Record<string, string> = {
                   wood: '偏弱', fire: '偏弱', earth: '偏弱', metal: '偏弱', water: '偏弱',
@@ -1961,6 +2002,17 @@ export default function HomePage() {
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '7px' }}>
                       <TrendingUp style={{ width: '13px', height: '13px', color: PALETTE.purple }} />
                       <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '13px' : '11px', fontWeight: 700, color: '#2D2D5A' }}>命格总结</span>
+                      {patName && (
+                        <span style={{
+                          fontFamily: 'Outfit, sans-serif', fontSize: '10px', fontWeight: 600,
+                          padding: '1px 8px', borderRadius: '9999px',
+                          background: `linear-gradient(135deg, ${PALETTE.purple}18, ${PALETTE.blue}12)`,
+                          border: `1px solid ${PALETTE.purple}30`,
+                          color: '#5B4BA0',
+                        }}>
+                          {patName}{patMainGod ? ` · ${patMainGod}为格主` : ''}{patSubGod ? ` 配${patSubGod}` : ''}
+                        </span>
+                      )}
                       <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#8A8ABB', marginLeft: 'auto' }}>
                         {elNames[vals.indexOf(maxVal)]}气最旺 · {elNames[vals.indexOf(minVal)]}气最弱
                       </span>

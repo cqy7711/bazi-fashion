@@ -37,6 +37,20 @@ export interface UserBirthInfo extends UserBirthInfoListItem {
   baziResult?: BaziResult;
   fiveElements?: FiveElementsAnalysis;
   bodyStrengthScore?: number;
+  pattern?: {
+    type: string;
+    name: string;
+    description?: string;
+    mainGod?: string;
+    subGod?: string;
+    formation?: string;
+    characteristics?: string;
+    strengths?: string;
+    weaknesses?: string;
+    suitableCareer?: string[];
+    avoidCareer?: string[];
+    luckTips?: string;
+  };
 }
 
 export interface OutfitRecommendation {
