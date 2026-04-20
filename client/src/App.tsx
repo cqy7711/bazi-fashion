@@ -184,7 +184,7 @@ export default function App() {
                 width: '34px', height: '34px', borderRadius: '11px',
                 background: preset.logoGradient,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '17px',
+                fontSize: '1.06remrem',
                 boxShadow: '0 8px 18px rgba(200, 120, 140, 0.22)',
               }}>
                 ✨
@@ -192,7 +192,7 @@ export default function App() {
               <div className="min-w-0">
                 <p style={{
                   fontFamily: 'Space Grotesk, sans-serif',
-                  fontSize: '9px', letterSpacing: '0.18em',
+                  fontSize: '0.56remrem', letterSpacing: '0.18em',
                   color: '#9B96A8', textTransform: 'uppercase',
                   marginBottom: '2px',
                   lineHeight: 1,
@@ -201,7 +201,7 @@ export default function App() {
                 </p>
                 <h1 style={{
                   fontFamily: 'Outfit, Noto Sans SC, sans-serif',
-                  fontSize: '15px', fontWeight: 800,
+                  fontSize: '0.94remrem', fontWeight: 800,
                   color: '#3D3A45', letterSpacing: '-0.02em',
                   lineHeight: 1.15,
                   margin: 0,
@@ -300,18 +300,18 @@ export default function App() {
                 width: '28px', height: '28px', borderRadius: '8px',
                 background: `linear-gradient(135deg, ${TINTS.coral}, ${TINTS.orange})`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '14px', boxShadow: SHADOW_TOKENS.glowSoft,
+                fontSize: '0.88remrem', boxShadow: SHADOW_TOKENS.glowSoft,
               }}>☯</div>
               <span style={{
                 fontFamily: 'Outfit, sans-serif',
-                fontSize: '13px', color: '#6D628A', fontWeight: 600,
+                fontSize: '0.81remrem', color: '#6D628A', fontWeight: 600,
               }}>
 用色彩读懂你的五行命理
               </span>
             </div>
             <p style={{
               fontFamily: 'Outfit, sans-serif',
-              fontSize: '11px', color: '#9FA3BE',
+              fontSize: '0.69remrem', color: '#9FA3BE',
             }}>
               内容仅供娱乐参考 · 八字测算结果仅供参考
             </p>

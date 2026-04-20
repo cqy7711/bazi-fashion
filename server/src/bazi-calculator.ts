@@ -1295,14 +1295,10 @@ export function calculateDayun(
 
     // 大运干：以日干为起点，顺着天干顺序数（顺行）或逆着数（逆行）
     // 大运支：以月令地支为起点，顺着地支顺序数（顺行）或逆着数（逆行）
-    // 动态计算大运步数，确保覆盖到100岁
-    const maxAge = 100;
-    const dayunCount = Math.max(8, Math.ceil((maxAge - Math.floor(qiyunAge)) / 10));
+    const dayunCount = 10; // 计算10步大运（约100年）
     const results: DayunResult[] = [];
 
     for (let i = 1; i <= dayunCount; i++) {
-      // 如果该步的起始年龄已超过100岁，不再计算
-      if (Math.floor(qiyunAge) + (i - 1) * 10 > maxAge) break;
       // 大运地支偏移：以月令地支为起点
       const branchOffset = isForward ? i : -i;
       const targetIdx = ((monthIdx + branchOffset) % 12 + 12) % 12;

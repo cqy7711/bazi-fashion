@@ -797,7 +797,7 @@ function HighlightColors({ text, baseColor }: { text: string; baseColor: string 
               }} />
               <span style={{
                 fontFamily: 'Outfit, sans-serif',
-                fontSize: '11px',
+                fontSize: '0.69remrem',
                 fontWeight: 600,
                 color: colorInfo.hex,
               }}>{colorInfo.color}</span>
@@ -822,7 +822,7 @@ function ElementBadge({ el }: { el: string }) {
       background: `${color}18`, border: `1px solid ${color}35`,
     }}>
       <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: color }} />
-      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 600, color }}>{names[el] || el}</span>
+      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 600, color }}>{names[el] || el}</span>
     </div>
   );
 }
@@ -1139,10 +1139,10 @@ export default function HomePage() {
       background: tone.background,
       border: `1.5px solid ${tone.border}`,
     }}>
-      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 800, color: tone.title, margin: 0 }}>
+      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 800, color: tone.title, margin: 0 }}>
         {title}
       </p>
-      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#5E6788', margin: '4px 0 0', lineHeight: 1.6 }}>
+      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: '#5E6788', margin: '4px 0 0', lineHeight: 1.6 }}>
         {content}
       </p>
     </div>
@@ -1168,20 +1168,20 @@ export default function HomePage() {
           <Gem style={{ width: '20px', height: '20px', color: '#FFFFFF' }} />
         </div>
         <div style={{ flex: 1 }}>
-          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{material}</p>
-          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#A0A8C0', margin: '2px 0 0' }}>{primary.color || ''} · {details?.description?.slice(0, 30) || ''}</p>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{material}</p>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: '#A0A8C0', margin: '2px 0 0' }}>{primary.color || ''} · {details?.description?.slice(0, 30) || ''}</p>
           <div style={{ display: 'flex', gap: '6px', marginTop: '6px' }}>
             <span style={{ width: '20px', height: '6px', borderRadius: '999px', background: `linear-gradient(90deg, ${PALETTE.purple}, ${PALETTE.blue})` }} />
             <span style={{ width: '20px', height: '6px', borderRadius: '999px', background: `linear-gradient(90deg, ${PALETTE.coral}, ${PALETTE.orange})` }} />
           </div>
-          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#8F97B5', margin: '5px 0 0' }}>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#8F97B5', margin: '5px 0 0' }}>
             推荐风格：通勤轻奢 · 柔光高级感
           </p>
         </div>
         <span style={{
           padding: '4px 10px', borderRadius: '8px',
           background: `linear-gradient(135deg, ${PALETTE.purple}, ${PALETTE.blue})`,
-          fontSize: '10px', fontWeight: 700, color: '#FFFFFF',
+          fontSize: '0.63remrem', fontWeight: 700, color: '#FFFFFF',
           fontFamily: 'Outfit, sans-serif',
         }}>{badgeText}</span>
       </div>
@@ -1356,10 +1356,10 @@ export default function HomePage() {
                 }}>
                   <Star style={{ width: '14px', height: '14px', color: PALETTE.coral }} />
                 </div>
-                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: '#1A1A2E' }}>我的生辰</span>
+                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 700, color: '#1A1A2E' }}>我的生辰</span>
                 {records.length > 0 && (
                   <span style={{
-                    fontFamily: 'Outfit', fontSize: '11px', fontWeight: 600,
+                    fontFamily: 'Outfit', fontSize: '0.69remrem', fontWeight: 600,
                     color: PALETTE.coral, background: `${PALETTE.coral}10`,
                     padding: '2px 8px', borderRadius: '9999px',
                   }}>{records.length}人</span>
@@ -1400,35 +1400,35 @@ export default function HomePage() {
                   <div style={{ paddingTop: '16px', borderTop: `1px solid ${PALETTE.coral}15`, marginTop: '14px' }}>
                     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                       <div>
-                        <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#6B7280', marginBottom: '6px', fontWeight: 500 }}>姓名</label>
+                        <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: '#6B7280', marginBottom: '6px', fontWeight: 500 }}>姓名</label>
                         <input
                           value={form.name}
                           onChange={e => setForm({ ...form, name: e.target.value })}
                           placeholder="给自己起个名字"
-                          style={{ width: '100%', padding: '12px 14px', fontSize: '14px', borderRadius: '12px', border: '1.5px solid #E8EAF6', background: 'linear-gradient(145deg, #FFFFFF, #F8F9FC)', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E', boxSizing: 'border-box', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.8), 0 6px 14px rgba(99,74,176,0.08)', transition: 'all 0.2s ease' }}
+                          style={{ width: '100%', padding: '12px 14px', fontSize: '0.88remrem', borderRadius: '12px', border: '1.5px solid #E8EAF6', background: 'linear-gradient(145deg, #FFFFFF, #F8F9FC)', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E', boxSizing: 'border-box', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.8), 0 6px 14px rgba(99,74,176,0.08)', transition: 'all 0.2s ease' }}
                           onFocus={e => { (e.target as HTMLElement).style.borderColor = PALETTE.coral; (e.target as HTMLElement).style.boxShadow = `0 0 0 3px ${PALETTE.coral}22, 0 10px 18px rgba(255,107,157,0.12)`; }}
                           onBlur={e => { (e.target as HTMLElement).style.borderColor = '#E8EAF6'; (e.target as HTMLElement).style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.8), 0 6px 14px rgba(99,74,176,0.08)'; }}
                         />
                       </div>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                         <div>
-                          <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#6B7280', marginBottom: '6px', fontWeight: 500 }}>出生省份</label>
+                          <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: '#6B7280', marginBottom: '6px', fontWeight: 500 }}>出生省份</label>
                           <input
                             value={form.birthProvince}
                             onChange={e => setForm({ ...form, birthProvince: e.target.value })}
                             placeholder="例如：广东省"
-                            style={{ width: '100%', padding: '12px 14px', fontSize: '14px', borderRadius: '12px', border: '1.5px solid #E8EAF6', background: 'linear-gradient(145deg, #FFFFFF, #F8F9FC)', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E', boxSizing: 'border-box', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.8), 0 6px 14px rgba(99,74,176,0.08)', transition: UI_EASE }}
+                            style={{ width: '100%', padding: '12px 14px', fontSize: '0.88remrem', borderRadius: '12px', border: '1.5px solid #E8EAF6', background: 'linear-gradient(145deg, #FFFFFF, #F8F9FC)', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E', boxSizing: 'border-box', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.8), 0 6px 14px rgba(99,74,176,0.08)', transition: UI_EASE }}
                             onFocus={e => { (e.target as HTMLElement).style.borderColor = PALETTE.coral; (e.target as HTMLElement).style.boxShadow = `0 0 0 3px ${PALETTE.coral}22, 0 10px 18px rgba(255,107,157,0.12)`; }}
                             onBlur={e => { (e.target as HTMLElement).style.borderColor = '#E8EAF6'; (e.target as HTMLElement).style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.8), 0 6px 14px rgba(99,74,176,0.08)'; }}
                           />
                         </div>
                         <div>
-                          <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#6B7280', marginBottom: '6px', fontWeight: 500 }}>出生市区</label>
+                          <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: '#6B7280', marginBottom: '6px', fontWeight: 500 }}>出生市区</label>
                           <input
                             value={form.birthCity}
                             onChange={e => setForm({ ...form, birthCity: e.target.value })}
                             placeholder="例如：深圳市南山区"
-                            style={{ width: '100%', padding: '12px 14px', fontSize: '14px', borderRadius: '12px', border: '1.5px solid #E8EAF6', background: 'linear-gradient(145deg, #FFFFFF, #F8F9FC)', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E', boxSizing: 'border-box', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.8), 0 6px 14px rgba(99,74,176,0.08)', transition: UI_EASE }}
+                            style={{ width: '100%', padding: '12px 14px', fontSize: '0.88remrem', borderRadius: '12px', border: '1.5px solid #E8EAF6', background: 'linear-gradient(145deg, #FFFFFF, #F8F9FC)', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E', boxSizing: 'border-box', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.8), 0 6px 14px rgba(99,74,176,0.08)', transition: UI_EASE }}
                             onFocus={e => { (e.target as HTMLElement).style.borderColor = PALETTE.coral; (e.target as HTMLElement).style.boxShadow = `0 0 0 3px ${PALETTE.coral}22, 0 10px 18px rgba(255,107,157,0.12)`; }}
                             onBlur={e => { (e.target as HTMLElement).style.borderColor = '#E8EAF6'; (e.target as HTMLElement).style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.8), 0 6px 14px rgba(99,74,176,0.08)'; }}
                           />
@@ -1442,11 +1442,11 @@ export default function HomePage() {
                           { label: '出生时', value: form.birthHour, options: HOUR_OPTIONS, key: 'birthHour' as const },
                         ].map(({ label, value, options, key }) => (
                           <div key={key}>
-                            <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#A0A8C0', marginBottom: '4px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{label}</label>
+                            <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#A0A8C0', marginBottom: '4px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{label}</label>
                             <select
                               value={value}
                               onChange={e => setForm({ ...form, [key]: +e.target.value })}
-                              style={{ width: '100%', padding: '10px 12px', fontSize: '13px', borderRadius: '12px', border: '1.5px solid #E8EAF6', background: 'linear-gradient(145deg, #FFFFFF, #F8F9FC)', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E', boxShadow: '0 6px 14px rgba(99,74,176,0.07)', transition: 'all 0.2s ease' }}
+                              style={{ width: '100%', padding: '10px 12px', fontSize: '0.81remrem', borderRadius: '12px', border: '1.5px solid #E8EAF6', background: 'linear-gradient(145deg, #FFFFFF, #F8F9FC)', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E', boxShadow: '0 6px 14px rgba(99,74,176,0.07)', transition: 'all 0.2s ease' }}
                               onFocus={e => { (e.target as HTMLElement).style.borderColor = PALETTE.coral; (e.target as HTMLElement).style.boxShadow = `0 0 0 3px ${PALETTE.coral}22, 0 10px 18px rgba(255,107,157,0.12)`; }}
                               onBlur={e => { (e.target as HTMLElement).style.borderColor = '#E8EAF6'; (e.target as HTMLElement).style.boxShadow = '0 6px 14px rgba(99,74,176,0.07)'; }}
                             >
@@ -1456,7 +1456,7 @@ export default function HomePage() {
                         ))}
                       </div>
                       <div>
-                        <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#A0A8C0', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>性别</label>
+                        <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#A0A8C0', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>性别</label>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                           {[{ v: 'male', l: '男 ♂', color: PALETTE.blue }, { v: 'female', l: '女 ♀', color: PALETTE.purple }].map(({ v, l, color }) => (
                             <button key={v} type="button"
@@ -1464,7 +1464,7 @@ export default function HomePage() {
                               style={{
                                 padding: '10px', borderRadius: '12px', border: `2px solid ${form.gender === v ? color : '#E8EAF6'}`,
                                 background: form.gender === v ? `${color}12` : 'linear-gradient(145deg, #FFFFFF, #FAFBFF)', cursor: 'pointer',
-                                fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 600, color: form.gender === v ? color : '#A0A8C0',
+                                fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 600, color: form.gender === v ? color : '#A0A8C0',
                                 transition: 'all 0.2s',
                                 boxShadow: form.gender === v ? `0 8px 18px ${color}22` : '0 6px 12px rgba(99,74,176,0.06)',
                               }}
@@ -1473,7 +1473,7 @@ export default function HomePage() {
                         </div>
                       </div>
                       <div>
-                        <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#A0A8C0', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>历法</label>
+                        <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#A0A8C0', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>历法</label>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                           {[{ v: 'solar', l: '公历（新历）' }, { v: 'lunar', l: '农历（旧历）' }].map(({ v, l }) => (
                             <button key={v} type="button"
@@ -1481,7 +1481,7 @@ export default function HomePage() {
                               style={{
                                 padding: '10px', borderRadius: '12px', border: `2px solid ${form.calendarType === v ? PALETTE.coral : '#E8EAF6'}`,
                                 background: form.calendarType === v ? `${PALETTE.coral}12` : 'linear-gradient(145deg, #FFFFFF, #FAFBFF)', cursor: 'pointer',
-                                fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 600, color: form.calendarType === v ? PALETTE.coral : '#A0A8C0',
+                                fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 600, color: form.calendarType === v ? PALETTE.coral : '#A0A8C0',
                                 transition: 'all 0.2s',
                                 boxShadow: form.calendarType === v ? `0 8px 18px ${PALETTE.coral}22` : '0 6px 12px rgba(99,74,176,0.06)',
                               }}
@@ -1492,14 +1492,14 @@ export default function HomePage() {
                       <div style={{ display: 'flex', gap: '10px', paddingTop: '4px' }}>
                         <button type="button" onClick={() => setShowForm(false)}
                           style={{
-                            flex: 1, padding: '12px', fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 600,
+                            flex: 1, padding: '12px', fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 600,
                             background: 'linear-gradient(145deg, #FFFFFF, #F3F6FF)', border: '1.5px solid #E8EAF6', color: '#7F8AA8', borderRadius: '12px', cursor: 'pointer',
                             boxShadow: '0 8px 16px rgba(86,73,140,0.08)',
                           }}
                         >取消</button>
                         <button type="submit" disabled={submitting}
                           style={{
-                            flex: 2, padding: '12px', fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700,
+                            flex: 2, padding: '12px', fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700,
                             background: `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange})`,
                             border: 'none', color: '#FFFFFF', borderRadius: '12px', cursor: 'pointer',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
@@ -1530,7 +1530,7 @@ export default function HomePage() {
                 }}>
                   <Star style={{ width: '22px', height: '22px', color: PALETTE.coral }} />
                 </div>
-                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#A0A8C0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: '#A0A8C0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                   还没有记录，点击上方 + 新建
                   <Sparkles style={{ width: '12px', height: '12px', color: PALETTE.coral }} />
                 </p>
@@ -1595,24 +1595,24 @@ export default function HomePage() {
                       background: selectedId === r.id ? PALETTE.coral : `${PALETTE.coral}15`,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
-                      <span style={{ fontFamily: 'Outfit', fontSize: '14px', fontWeight: 800, color: selectedId === r.id ? '#fff' : PALETTE.coral }}>
+                      <span style={{ fontFamily: 'Outfit', fontSize: '0.88remrem', fontWeight: 800, color: selectedId === r.id ? '#fff' : PALETTE.coral }}>
                         {r.name.charAt(0)}
                       </span>
                     </div>
                     <p style={{
-                      fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 800,
+                      fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 800,
                       color: selectedId === r.id ? PALETTE.coral : '#1A1A2E',
                       marginBottom: '2px',
                       whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                     }}>{r.name}</p>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#A0A8C0', lineHeight: 1.4 }}>
+                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#A0A8C0', lineHeight: 1.4 }}>
                       {r.birthYear}.{String(r.birthMonth).padStart(2,'0')}.{String(r.birthDay).padStart(2,'0')}
                     </p>
                     {selectedId === r.id && (
                       <div style={{
                         marginTop: '4px', paddingTop: '3px',
                         borderTop: `1px solid ${PALETTE.coralLight}`,
-                        fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: PALETTE.coral, fontWeight: 600,
+                        fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: PALETTE.coral, fontWeight: 600,
                       }}>已选中 ✓</div>
                     )}
                   </motion.div>
@@ -1649,7 +1649,7 @@ export default function HomePage() {
             }}>
               <span style={{
                 fontFamily: 'Outfit, sans-serif',
-                fontSize: '11px',
+                fontSize: '0.69remrem',
                 fontWeight: 700,
                 color: '#9490A0',
                 letterSpacing: '0.06em',
@@ -1668,49 +1668,49 @@ export default function HomePage() {
                 id: 'mingpan-section',
                 label: '命盘信息',
                 icon: (s: number) => <Star style={{ width: s, height: s, strokeWidth: 2.1 }} />,
-                iconBg: 'linear-gradient(150deg, #E8D5F9 0%, #D4B8F0 100%)',
-                iconShadow: '0 6px 16px rgba(180, 120, 220, 0.15)',
-                iconColor: '#8B5CF6',
-                cardBg: 'linear-gradient(165deg, rgba(232, 213, 249, 0.35) 0%, rgba(250, 249, 251, 0.98) 58%, #FAFAF9 100%)',
-                border: 'rgba(139, 92, 246, 0.18)',
+                iconBg: 'linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)',
+                iconShadow: '0 8px 20px rgba(139, 92, 246, 0.45)',
+                iconColor: '#FFFFFF',
+                cardBg: 'linear-gradient(165deg, rgba(232, 213, 249, 0.5) 0%, rgba(250, 249, 251, 0.98) 58%, #FAFAF9 100%)',
+                border: 'rgba(139, 92, 246, 0.25)',
                 labelColor: '#7C3AED',
               },
               {
                 id: 'fortune-section',
                 label: '今日运势',
                 icon: (s: number) => <Sparkles style={{ width: s, height: s, strokeWidth: 2.1 }} />,
-                iconBg: 'linear-gradient(150deg, #FFD5E5 0%, #FFB8D0 100%)',
-                iconShadow: '0 6px 16px rgba(255, 107, 157, 0.15)',
-                iconColor: '#EC4899',
-                cardBg: 'linear-gradient(165deg, rgba(255, 213, 229, 0.35) 0%, rgba(252, 249, 248, 0.98) 55%, #FAF8F7 100%)',
-                border: 'rgba(236, 72, 153, 0.18)',
+                iconBg: 'linear-gradient(135deg, #EC4899 0%, #F472B6 100%)',
+                iconShadow: '0 8px 20px rgba(236, 72, 153, 0.45)',
+                iconColor: '#FFFFFF',
+                cardBg: 'linear-gradient(165deg, rgba(255, 213, 229, 0.5) 0%, rgba(252, 249, 248, 0.98) 55%, #FAF8F7 100%)',
+                border: 'rgba(236, 72, 153, 0.25)',
                 labelColor: '#DB2777',
               },
               {
                 id: 'outfit-section',
                 label: '今日色彩搭配',
                 icon: (s: number) => <Palette style={{ width: s, height: s, strokeWidth: 2.1 }} />,
-                iconBg: 'linear-gradient(150deg, #FEF3C7 0%, #FDE68A 100%)',
-                iconShadow: '0 6px 16px rgba(245, 158, 11, 0.15)',
-                iconColor: '#D97706',
-                cardBg: 'linear-gradient(165deg, rgba(254, 243, 199, 0.35) 0%, rgba(250, 249, 246, 0.98) 55%, #F9F8F5 100%)',
-                border: 'rgba(217, 119, 6, 0.18)',
+                iconBg: 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)',
+                iconShadow: '0 8px 20px rgba(245, 158, 11, 0.45)',
+                iconColor: '#FFFFFF',
+                cardBg: 'linear-gradient(165deg, rgba(254, 243, 199, 0.5) 0%, rgba(250, 249, 246, 0.98) 55%, #F9F8F5 100%)',
+                border: 'rgba(217, 119, 6, 0.25)',
                 labelColor: '#B45309',
               },
               {
                 id: 'bracelet-section',
                 label: '今日手串推荐',
                 icon: (s: number) => <Gem style={{ width: s, height: s, strokeWidth: 2.1 }} />,
-                iconBg: 'linear-gradient(150deg, #C7D2FE 0%, #A5B4FC 100%)',
-                iconShadow: '0 6px 16px rgba(99, 102, 241, 0.15)',
-                iconColor: '#4F46E5',
-                cardBg: 'linear-gradient(165deg, rgba(199, 210, 254, 0.35) 0%, rgba(247, 249, 250, 0.98) 58%, #F7F8F9 100%)',
-                border: 'rgba(79, 70, 229, 0.18)',
+                iconBg: 'linear-gradient(135deg, #4F46E5 0%, #818CF8 100%)',
+                iconShadow: '0 8px 20px rgba(79, 70, 229, 0.45)',
+                iconColor: '#FFFFFF',
+                cardBg: 'linear-gradient(165deg, rgba(199, 210, 254, 0.5) 0%, rgba(247, 249, 250, 0.98) 58%, #F7F8F9 100%)',
+                border: 'rgba(79, 70, 229, 0.25)',
                 labelColor: '#4338CA',
               },
             ] as const).map((item) => {
-              const iconPx = navWideLayout ? 16 : 18;
-              const boxPx = navWideLayout ? 38 : 42;
+              const iconPx = navWideLayout ? 18 : 20;
+              const boxPx = navWideLayout ? 42 : 46;
               return (
               <motion.button
                 key={item.id}
@@ -1731,7 +1731,7 @@ export default function HomePage() {
                   justifyContent: 'center',
                   gap: navWideLayout ? '10px' : '8px',
                   fontFamily: 'Outfit, sans-serif',
-                  fontSize: navWideLayout ? '12px' : '10px',
+                  fontSize: navWideLayout ? '0.81rem' : '0.75rem',
                   fontWeight: 700,
                   color: item.labelColor,
                   boxShadow: '0 6px 18px rgba(62, 58, 68, 0.05)',
@@ -1796,23 +1796,17 @@ export default function HomePage() {
               maxWidth: '100%',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: navWideLayout ? '16px' : '12px' }}>
-                <div style={{ position: 'relative', flexShrink: 0 }}>
-                  <div style={{
-                    width: navWideLayout ? '36px' : '30px', height: navWideLayout ? '36px' : '30px', borderRadius: '50%',
-                    background: `linear-gradient(135deg, ${PALETTE.purple}, ${PALETTE.blue})`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    boxShadow: `0 4px 16px ${PALETTE.purple}50, inset 0 1px 0 rgba(255,255,255,0.25)`,
-                  }}>
-                    <Star style={{ width: navWideLayout ? '17px' : '14px', height: navWideLayout ? '17px' : '14px', color: '#fff' }} />
-                  </div>
-                  <div style={{
-                    position: 'absolute', inset: '-3px', borderRadius: '50%',
-                    border: `1.5px solid ${PALETTE.purple}30`,
-                  }} />
+                <div style={{
+                  width: navWideLayout ? '32px' : '28px', height: navWideLayout ? '32px' : '28px', borderRadius: '10px', flexShrink: 0,
+                  background: `linear-gradient(135deg, ${PALETTE.purple}, ${PALETTE.blue})`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: `0 3px 10px rgba(139,92,246,0.3)`,
+                }}>
+                  <Star style={{ width: navWideLayout ? '16px' : '14px', height: navWideLayout ? '16px' : '14px', color: '#FFFFFF' }} />
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '15px' : '13px', fontWeight: 800, color: '#1A1A2E', letterSpacing: '0.02em' }}>命盘信息</span>
-                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#959CC0', margin: '1px 0 0' }}>核心命盘</p>
+                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#959CC0', margin: '1px 0 0' }}>核心命盘</p>
                 </div>
               </div>
 
@@ -1829,21 +1823,21 @@ export default function HomePage() {
                     <span style={{
                       padding: '3px 10px', borderRadius: '8px',
                       background: 'rgba(91,92,255,0.08)', border: '1px solid rgba(91,92,255,0.15)',
-                      fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600, color: '#4A4A7A',
+                      fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', fontWeight: 600, color: '#4A4A7A',
                     }}>
                       {selectedRecord.name}
                     </span>
                     <span style={{
                       padding: '3px 10px', borderRadius: '8px',
                       background: 'rgba(255,107,157,0.08)', border: '1px solid rgba(255,107,157,0.15)',
-                      fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600, color: PALETTE.coral,
+                      fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', fontWeight: 600, color: PALETTE.coral,
                     }}>
                       {genderText}
                     </span>
                     <span style={{
                       padding: '3px 10px', borderRadius: '8px',
                       background: 'rgba(217,119,6,0.08)', border: '1px solid rgba(217,119,6,0.15)',
-                      fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600, color: '#B45309',
+                      fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', fontWeight: 600, color: '#B45309',
                     }}>
                       {calendarText} {birthDate}
                     </span>
@@ -1851,7 +1845,7 @@ export default function HomePage() {
                       <span style={{
                         padding: '3px 10px', borderRadius: '8px',
                         background: 'rgba(0,168,232,0.08)', border: '1px solid rgba(0,168,232,0.15)',
-                        fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600, color: '#0088BB',
+                        fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', fontWeight: 600, color: '#0088BB',
                       }}>
                         📍{location}
                       </span>
@@ -1869,7 +1863,7 @@ export default function HomePage() {
                 // 天干对应的自然意象（SVG 图示）
                 const stemIcons: Record<string, { svg: string; label: string; desc: string; bgGrad: string[] }> = {
                   '甲': { svg: '<path d="M12 3v3M12 18v3M5.6 6.6l2.1 2.1M16.3 15.3l2.1 2.1M3 12h3M18 12h3M5.6 17.4l2.1-2.1M16.3 8.7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="2" fill="currentColor"/>', label: '参天大树', desc: '如参天大树，挺拔向上', bgGrad: ['#2D6A4F', '#40916C'] },
-                  '乙': { svg: '<path d="M7 20c0-4 3-8 5-10s4-4 4-7M12 10c-1 2-3 4-5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="1.5" fill="currentColor" opacity="0.6"/><circle cx="14" cy="5" r="1" fill="currentColor" opacity="0.6"/>', label: '花草藤蔓', desc: '如花草藤蔓，柔韧生长', bgGrad: ['#52B788', '#74C69D'] },
+                  '乙': { svg: '<path d="M6 21h12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.35"/><path d="M12 21c0-3 0-6 0-9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 18c-1-0.8-4-3-5-5.5s0.8-3.5 3-2.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M12 17c1-1 4-3.5 5.5-3s2.5 2.5 1.5 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M12 15c-0.8-0.5-3-2-3.5-3.8s0.5-2.8 2.2-2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M12 14c0.8-0.8 3-2.5 4.5-2.2s2 1.8 1 3.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M12 12c-0.3-0.8-1.2-2.5-0.8-4s1.2-1.2 1.2 0c0 0.5 0 1 0 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/><path d="M12 12c0.3-0.8 1.2-2.5 0.8-4s-1.2-1.2-1.2 0c0 0.5 0 1 0 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/><circle cx="8" cy="12.5" r="0.7" fill="currentColor" opacity="0.4"/>', label: '花草藤蔓', desc: '如花草藤蔓，柔韧生长', bgGrad: ['#52B788', '#74C69D'] },
                   '丙': { svg: '<circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>', label: '太阳之火', desc: '如太阳高照，光芒万丈', bgGrad: ['#E85D04', '#F48C06'] },
                   '丁': { svg: '<path d="M9 18h6M10 14h4M11 10h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 6v1M10 6h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 2c-1 2 0 3 1 3s2-1 1-3" fill="currentColor" opacity="0.7"/>', label: '灯火烛光', desc: '如灯火温暖，照亮四周', bgGrad: ['#DC6B19', '#F4A261'] },
                   '戊': { svg: '<path d="M2 20L12 4l10 16H2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/><path d="M7 20l5-8 5 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>', label: '巍峨高山', desc: '如高山厚土，承载万物', bgGrad: ['#7B6D4E', '#A68A64'] },
@@ -1928,7 +1922,7 @@ export default function HomePage() {
                           </span>
                         </div>
                         {stemInfo.desc && (
-                          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#9A9FC2', margin: '3px 0 0' }}>
+                          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#9A9FC2', margin: '3px 0 0' }}>
                             {stemInfo.desc}
                           </p>
                         )}
@@ -1958,8 +1952,8 @@ export default function HomePage() {
                         boxShadow: '0 4px 10px rgba(76,175,80,0.12)',
                       }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01z" fill="#43A047" stroke="#2E7D32" stroke-width="1"/></svg>
-                        <span style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 800, color: '#2E7D32' }}>喜</span>
-                        <span style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 600, color: '#388E3C' }}>
+                        <span style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', fontWeight: 800, color: '#2E7D32' }}>喜</span>
+                        <span style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', fontWeight: 600, color: '#388E3C' }}>
                           {favEls.map((e: string) => elementNames[e] || e).join(' · ')}
                         </span>
                       </div>
@@ -1972,8 +1966,8 @@ export default function HomePage() {
                         boxShadow: '0 4px 10px rgba(239,154,154,0.12)',
                       }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#C62828" stroke-width="2"/><path d="M12 7v5l3 3" stroke="#C62828" stroke-width="2" stroke-linecap="round"/></svg>
-                        <span style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 800, color: '#C62828' }}>忌</span>
-                        <span style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 600, color: '#D32F2F' }}>
+                        <span style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', fontWeight: 800, color: '#C62828' }}>忌</span>
+                        <span style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', fontWeight: 600, color: '#D32F2F' }}>
                           {unfavEls.map((e: string) => elementNames[e] || e).join(' · ')}
                         </span>
                       </div>
@@ -2023,7 +2017,7 @@ export default function HomePage() {
                       <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '13px' : '11px', fontWeight: 700, color: '#2D2D5A' }}>命格总结</span>
                       {patName && (
                         <span style={{
-                          fontFamily: 'Outfit, sans-serif', fontSize: '10px', fontWeight: 600,
+                          fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', fontWeight: 600,
                           padding: '1px 8px', borderRadius: '9999px',
                           background: `linear-gradient(135deg, ${PALETTE.purple}18, ${PALETTE.blue}12)`,
                           border: `1px solid ${PALETTE.purple}30`,
@@ -2032,7 +2026,7 @@ export default function HomePage() {
                           {patName}{patMainGod ? ` · ${patMainGod}为格主` : ''}{patSubGod ? ` 配${patSubGod}` : ''}
                         </span>
                       )}
-                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#8A8ABB', marginLeft: 'auto' }}>
+                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#8A8ABB', marginLeft: 'auto' }}>
                         {elNames[vals.indexOf(maxVal)]}气最旺 · {elNames[vals.indexOf(minVal)]}气最弱
                       </span>
                     </div>
@@ -2052,7 +2046,7 @@ export default function HomePage() {
                     <div style={{ display: 'flex', gap: '8px', marginTop: '5px', flexWrap: 'wrap' }}>
                       {elKeys.map((k, i) => (
                         <span key={k} style={{
-                          fontFamily: 'Outfit, sans-serif', fontSize: '10px',
+                          fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem',
                           color: vals[i] === maxVal ? elColors[i] : '#888',
                           fontWeight: vals[i] === maxVal ? 700 : 400,
                         }}>
@@ -2079,7 +2073,7 @@ export default function HomePage() {
                   background: `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange}, ${PALETTE.yellow})`,
                   border: 'none', cursor: 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                  fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#FFFFFF',
+                  fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700, color: '#FFFFFF',
                   boxShadow: `0 14px 26px ${PALETTE.coral}4A`,
                   transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                   boxSizing: 'border-box',
@@ -2114,7 +2108,7 @@ export default function HomePage() {
                 backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
               }}>
                 <Loader2 style={{ width: '22px', height: '22px', color: PALETTE.coral, animation: 'spin 1s linear infinite', margin: '0 auto 10px' }} />
-                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#A0A8C0' }}>正在加载命盘信息…</p>
+                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: '#A0A8C0' }}>正在加载命盘信息…</p>
               </div>
             )
           )}
@@ -2142,11 +2136,11 @@ export default function HomePage() {
                 <div>
                   <div style={{ display: 'flex', alignItems: 'baseline', flexWrap: 'wrap', gap: '4px' }}>
                     <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '15px' : '14px', fontWeight: 800, color: '#1A1A2E' }}>今日运势</span>
-                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '12px' : '10px', color: '#A0A8C0' }}>
+                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '0.81rem' : '0.75rem', color: '#A0A8C0' }}>
                       {new Date().getMonth() + 1}月{new Date().getDate()}日
                     </span>
                   </div>
-                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#8F97B5', margin: '2px 0 0' }}>当日能量总览</p>
+                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#8F97B5', margin: '2px 0 0' }}>当日能量总览</p>
                 </div>
               </div>
               {renderInsightBlock(
@@ -2176,9 +2170,9 @@ export default function HomePage() {
                   <text x="36" y="33" textAnchor="middle" dominantBaseline="middle"
                     style={{ fontFamily: 'Outfit', fontSize: navWideLayout ? '22px' : '20px', fontWeight: 900, fill: getScoreColor(dailyFortune.totalScore) }}>{dailyFortune.totalScore}</text>
                   <text x="36" y="50" textAnchor="middle" dominantBaseline="middle"
-                    style={{ fontFamily: 'Outfit', fontSize: '10px', fill: '#B0A8C0' }}>总分</text>
+                    style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', fill: '#B0A8C0' }}>总分</text>
                 </svg>
-                <span style={{ fontFamily: 'Outfit', fontSize: '12px', color: getScoreColor(dailyFortune.totalScore), fontWeight: 700, marginTop: '2px' }}>{dailyFortune.totalLabel}</span>
+                <span style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', color: getScoreColor(dailyFortune.totalScore), fontWeight: 700, marginTop: '2px' }}>{dailyFortune.totalLabel}</span>
               </div>
 
               {/* ===== 六宫格：事业/财运/感情/健康/人际/专注（3行×2列） ===== */}
@@ -2227,8 +2221,8 @@ export default function HomePage() {
                     background: dailyFortune.luckyColor.hex,
                     boxShadow: '0 1.5px 6px rgba(255,107,157,0.22)',
                   }} />
-                  <p style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 700, color: '#555', lineHeight: 1.2 }}>幸运色</p>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '10.5px', fontWeight: 800, color: '#00C47A' }}>{dailyFortune.luckyColor.name}</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', fontWeight: 700, color: '#555', lineHeight: 1.2 }}>幸运色</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.66remrem', fontWeight: 800, color: '#00C47A' }}>{dailyFortune.luckyColor.name}</p>
                 </div>
                 {/* 幸运数字 */}
                 <div style={{
@@ -2237,8 +2231,8 @@ export default function HomePage() {
                   background: `linear-gradient(135deg, #FF6B9D06, #FF6B9D02)`, border: '1px solid #FF6B9D12',
                   textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
                 }}>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '21px', fontWeight: 900, color: '#FF6B9D', lineHeight: 1.1, marginBottom: '2px' }}>{dailyFortune.luckyNumber}</p>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 700, color: '#555', lineHeight: 1.2 }}>幸运数字</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '1.31remrem', fontWeight: 900, color: '#FF6B9D', lineHeight: 1.1, marginBottom: '2px' }}>{dailyFortune.luckyNumber}</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', fontWeight: 700, color: '#555', lineHeight: 1.2 }}>幸运数字</p>
                 </div>
                 {/* 吉时 */}
                 <div style={{
@@ -2248,8 +2242,8 @@ export default function HomePage() {
                   textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
                 }}>
                   <Clock style={{ width: '16px', height: '16px', color: '#999', marginBottom: '2px' }} />
-                  <p style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 700, color: '#555', lineHeight: 1.2 }}>吉时</p>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 800, color: '#00C47A' }}>{timeToBeijing(dailyFortune.luckyTime.split('·')[0])}</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', fontWeight: 700, color: '#555', lineHeight: 1.2 }}>吉时</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', fontWeight: 800, color: '#00C47A' }}>{timeToBeijing(dailyFortune.luckyTime.split('·')[0])}</p>
                 </div>
                 {/* 吉祥方位 */}
                 <div style={{
@@ -2259,8 +2253,8 @@ export default function HomePage() {
                   textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
                 }}>
                   <Compass style={{ width: '16px', height: '16px', color: '#999', marginBottom: '2px' }} />
-                  <p style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 700, color: '#555', lineHeight: 1.2 }}>吉祥方位</p>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 800, color: '#FF6B9D' }}>{dailyFortune.avoidDirection.split('·')[0]}<span style={{ fontSize: '9px', color: '#AAA', marginLeft: '2px' }}>({dailyFortune.relationDescription.slice(0, 2)})</span></p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', fontWeight: 700, color: '#555', lineHeight: 1.2 }}>吉祥方位</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', fontWeight: 800, color: '#FF6B9D' }}>{dailyFortune.avoidDirection.split('·')[0]}<span style={{ fontSize: '0.56remrem', color: '#AAA', marginLeft: '2px' }}>({dailyFortune.relationDescription.slice(0, 2)})</span></p>
                 </div>
               </div>
 
@@ -2273,8 +2267,8 @@ export default function HomePage() {
                 display: 'flex', alignItems: 'center', gap: '6px',
               }}>
                 <Lightbulb style={{ width: '13px', height: '13px', color: getScoreColor(dailyFortune.totalScore), flexShrink: 0 }} />
-                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#777', lineHeight: 1.45, flex: 1 }}>{dailyFortune.mainTip}</span>
-                <span style={{ fontFamily: 'Outfit', fontSize: '9.5px', color: getScoreColor(dailyFortune.totalScore), opacity: 0.55, whiteSpace: 'nowrap', flexShrink: 0 }}>{dailyFortune.totalLabel}</span>
+                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: '#777', lineHeight: 1.45, flex: 1 }}>{dailyFortune.mainTip}</span>
+                <span style={{ fontFamily: 'Outfit', fontSize: '0.59remrem', color: getScoreColor(dailyFortune.totalScore), opacity: 0.55, whiteSpace: 'nowrap', flexShrink: 0 }}>{dailyFortune.totalLabel}</span>
               </div>
 
               {/* 宜/不宜事项（保留，精简间距） */}
@@ -2282,7 +2276,7 @@ export default function HomePage() {
                 <div style={{ flex: 1, padding: '7px 10px', borderRadius: '10px', background: `${PALETTE.green}08`, border: `1px solid ${PALETTE.green}20`, display: 'flex', alignItems: 'center', gap: '5px', minWidth: 0 }}>
                   <Check style={{ width: '11px', height: '11px', color: PALETTE.green, flexShrink: 0 }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700, color: PALETTE.green, marginBottom: '1.5px' }}>宜</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', fontWeight: 700, color: PALETTE.green, marginBottom: '1.5px' }}>宜</p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px' }}>
                       {dailyFortune.goodThings.slice(0, 3).map((g: string) => (
                         <span key={g} style={{ padding: '1px 5px', borderRadius: '4px', background: `${PALETTE.green}12`, fontFamily: 'Outfit', fontSize: navWideLayout ? '11px' : '10px', color: PALETTE.green }}>{g}</span>
@@ -2293,7 +2287,7 @@ export default function HomePage() {
                 <div style={{ flex: 1, padding: '7px 10px', borderRadius: '10px', background: `${PALETTE.coral}08`, border: `1px solid ${PALETTE.coral}20`, display: 'flex', alignItems: 'center', gap: '5px', minWidth: 0 }}>
                   <X style={{ width: '11px', height: '11px', color: PALETTE.coral, flexShrink: 0 }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700, color: PALETTE.coral, marginBottom: '1.5px' }}>不宜</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', fontWeight: 700, color: PALETTE.coral, marginBottom: '1.5px' }}>不宜</p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px' }}>
                       {dailyFortune.avoidThings.slice(0, 3).map((a: string) => (
                         <span key={a} style={{ padding: '1px 5px', borderRadius: '4px', background: `${PALETTE.coral}12`, fontFamily: 'Outfit', fontSize: navWideLayout ? '11px' : '10px', color: PALETTE.coral }}>{a}</span>
@@ -2331,9 +2325,9 @@ export default function HomePage() {
                     <Palette style={{ width: '18px', height: '18px', color: '#FFFFFF' }} />
                   </div>
                   <div>
-                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 900, color: '#1A1A2E' }}>今日色彩搭配</span>
-                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#8F97B5', marginLeft: '6px' }}>多巴胺精选</span>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#A0A8C0', margin: '2px 0 0' }}>渐变质感配色，按场景自动推荐</p>
+                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', fontWeight: 900, color: '#1A1A2E' }}>今日色彩搭配</span>
+                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: '#8F97B5', marginLeft: '6px' }}>多巴胺精选</span>
+                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#A0A8C0', margin: '2px 0 0' }}>渐变质感配色，按场景自动推荐</p>
                   </div>
                   <motion.button
                     onClick={() => setActiveTab(activeTab === 'outfit' ? null : 'outfit')}
@@ -2343,7 +2337,7 @@ export default function HomePage() {
                       marginLeft: 'auto', padding: '5px 12px', borderRadius: '20px',
                       background: activeTab === 'outfit' ? `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange})` : 'rgba(255,107,157,0.08)',
                       border: `1.5px solid ${activeTab === 'outfit' ? PALETTE.coral : 'rgba(255,107,157,0.2)'}`,
-                      cursor: 'pointer', fontFamily: 'Outfit, sans-serif', fontSize: '11px',
+                      cursor: 'pointer', fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem',
                       fontWeight: 600, color: activeTab === 'outfit' ? '#FFF' : PALETTE.coral, transition: UI_EASE,
                       boxShadow: activeTab === 'outfit' ? `0 10px 20px ${PALETTE.coral}3a` : `0 6px 12px ${PALETTE.coral}1a`,
                     }}
@@ -2419,7 +2413,7 @@ export default function HomePage() {
                               background: colorInfo.bg,
                               color: colorInfo.text,
                               fontWeight: 700,
-                              fontSize: '10px',
+                              fontSize: '0.63remrem',
                               margin: '0 2px',
                               boxShadow: `0 6px 12px ${(colorInfo as any).shadow || 'rgba(91,92,255,0.25)'}`,
                               border: '1px solid rgba(255,255,255,0.35)',
@@ -2460,14 +2454,14 @@ export default function HomePage() {
                               {getSceneIconSmall(scene.icon)}
                             </div>
                             <span style={{
-                              fontFamily: 'Outfit', fontSize: '11px', fontWeight: 700,
+                              fontFamily: 'Outfit', fontSize: '0.69remrem', fontWeight: 700,
                               color: scene.accentColor,
                             }}>{scene.label}</span>
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', marginBottom: '6px', minHeight: '36px' }}>
                             {colors.slice(0, 2).map((color: string, i: number) => (
                               <span key={i} style={{
-                                fontFamily: 'Outfit', fontSize: '10px', color: '#666',
+                                fontFamily: 'Outfit', fontSize: '0.63remrem', color: '#666',
                                 lineHeight: 1.4,
                               }}>
                                 {renderColorSuggestion(color)}
@@ -2481,13 +2475,13 @@ export default function HomePage() {
                               boxShadow: `0 0 4px ${elementColors[scene.element]}60`,
                             }} />
                             <span style={{
-                              fontFamily: 'Outfit', fontSize: '10px',
+                              fontFamily: 'Outfit', fontSize: '0.63remrem',
                               color: elementColors[scene.element], fontWeight: 600,
                             }}>{elementNames[scene.element]}属性</span>
                             <span style={{
                               marginLeft: 'auto',
                               fontFamily: 'Outfit',
-                              fontSize: '9px',
+                              fontSize: '0.56remrem',
                               color: '#A0A8C0',
                               letterSpacing: '0.2px',
                             }}>高级渐变感</span>
@@ -2508,15 +2502,15 @@ export default function HomePage() {
                     <div style={{ display: 'flex', gap: '12px', alignItems: 'stretch', background: `linear-gradient(135deg, ${PALETTE.coralLight}, ${PALETTE.orangeLight})`, borderRadius: '14px', padding: '12px 14px', border: `1px solid ${PALETTE.coral}25`, marginBottom: '12px' }}>
                       <div style={{ width: '44px', height: '44px', borderRadius: '10px', flexShrink: 0, background: '#FFFFFF', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                         {(outfitRec as any).weatherInfo?.weather?.includes('晴') ? <Sun style={{ width: '20px', height: '20px', color: '#FF9D6B' }} /> : (outfitRec as any).weatherInfo?.weather?.includes('雨') ? <CloudRain style={{ width: '20px', height: '20px', color: '#6BD4FF' }} /> : (outfitRec as any).weatherInfo?.weather?.includes('阴') ? <Cloud style={{ width: '20px', height: '20px', color: '#94A3B8' }} /> : <Wind style={{ width: '20px', height: '20px', color: '#6BD4FF' }} />}
-                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', fontWeight: 700, color: '#1A1A2E' }}>{(outfitRec as any).weatherInfo?.temperature || '--'}°</span>
+                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', fontWeight: 700, color: '#1A1A2E' }}>{(outfitRec as any).weatherInfo?.temperature || '--'}°</span>
                       </div>
                       <div style={{ flex: 1 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px', flexWrap: 'wrap' }}>
                           <MapPin style={{ width: '10px', height: '10px', color: '#6B7280' }} />
-                          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600, color: '#1A1A2E' }}>{(outfitRec as any).weatherInfo?.city || userLocation?.city || '未设置'}</span>
-                          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#6B7280' }}>{(outfitRec as any).weatherInfo?.weather || '加载中...'}</span>
+                          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', fontWeight: 600, color: '#1A1A2E' }}>{(outfitRec as any).weatherInfo?.city || userLocation?.city || '未设置'}</span>
+                          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#6B7280' }}>{(outfitRec as any).weatherInfo?.weather || '加载中...'}</span>
                         </div>
-                        <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#6B7280', margin: 0 }}>今日五行：<span style={{ color: PALETTE.coral, fontWeight: 600 }}>{(outfitRec as any).weatherInfo?.wuxing || '加载中'}</span></p>
+                        <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#6B7280', margin: 0 }}>今日五行：<span style={{ color: PALETTE.coral, fontWeight: 600 }}>{(outfitRec as any).weatherInfo?.wuxing || '加载中'}</span></p>
                         <div style={{ marginTop: '7px' }}>
                           <div style={{
                             display: 'inline-flex',
@@ -2542,7 +2536,7 @@ export default function HomePage() {
                                 background: !locationLocked ? `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange})` : 'transparent',
                                 cursor: 'pointer',
                                 fontFamily: 'Outfit, sans-serif',
-                                fontSize: '10px',
+                                fontSize: '0.63remrem',
                                 fontWeight: 700,
                                 color: !locationLocked ? '#FFFFFF' : '#7A809E',
                                 transition: UI_EASE,
@@ -2566,7 +2560,7 @@ export default function HomePage() {
                                 background: locationLocked ? `linear-gradient(135deg, ${PALETTE.purple}, ${PALETTE.blue})` : 'transparent',
                                 cursor: 'pointer',
                                 fontFamily: 'Outfit, sans-serif',
-                                fontSize: '10px',
+                                fontSize: '0.63remrem',
                                 fontWeight: 700,
                                 color: locationLocked ? '#FFFFFF' : '#7A809E',
                                 transition: UI_EASE,
@@ -2578,11 +2572,11 @@ export default function HomePage() {
                             </motion.button>
                           </div>
                           <div style={{ display: 'flex', gap: '6px', marginTop: '6px', alignItems: 'center' }}>
-                            <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '9px', color: '#9AA0BE' }}>
+                            <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.56remrem', color: '#9AA0BE' }}>
                               当前方式：{locationLocked ? '手动城市' : '自动定位'}
                             </span>
                             {userLocation?.city && (
-                              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '9px', color: '#7A809E' }}>
+                              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.56remrem', color: '#7A809E' }}>
                                 城市：{userLocation.city}
                               </span>
                             )}
@@ -2596,7 +2590,7 @@ export default function HomePage() {
                           padding: '4px 10px',
                           borderRadius: '999px',
                           fontFamily: 'Outfit, sans-serif',
-                          fontSize: '10px',
+                          fontSize: '0.63remrem',
                           fontWeight: 600,
                           color: '#7A3F90',
                           background: `linear-gradient(135deg, ${PALETTE.purple}12, ${PALETTE.blue}12)`,
@@ -2615,7 +2609,7 @@ export default function HomePage() {
                           {scenes.map((scene: any) => (
                             <motion.button key={scene.id} onClick={() => setActiveScene(activeScene === scene.id ? null : scene.id)} whileHover={{ y: -2, scale: 1.03 }} whileTap={{ y: 0, scale: 0.97 }} style={{ padding: '8px 6px', borderRadius: '10px', background: activeScene === scene.id ? `${scene.accentColor}20` : `${scene.accentColor}08`, border: `1.5px solid ${activeScene === scene.id ? scene.accentColor : `${scene.accentColor}25`}`, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', transition: 'all 0.2s', boxShadow: activeScene === scene.id ? `0 10px 18px ${scene.accentColor}33` : `0 6px 12px ${scene.accentColor}18` }}>
                               <div style={{ color: scene.accentColor }}>{getSceneIcon(scene.icon)}</div>
-                              <span style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 700, color: scene.accentColor }}>{scene.label}</span>
+                              <span style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', fontWeight: 700, color: scene.accentColor }}>{scene.label}</span>
                             </motion.button>
                           ))}
                         </div>
@@ -2636,19 +2630,19 @@ export default function HomePage() {
                               <Star style={{ width: '14px', height: '14px', color: '#FFFFFF' }} />
                             </div>
                             <div>
-                              <p style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{scene.label}</p>
-                              <p style={{ fontFamily: 'Outfit', fontSize: '10px', color: '#A0A8C0', margin: '1px 0 0' }}>{scene.element}属性 · {scene.weatherTip?.slice(0, 12) || ''}</p>
+                              <p style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{scene.label}</p>
+                              <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', color: '#A0A8C0', margin: '1px 0 0' }}>{scene.element}属性 · {scene.weatherTip?.slice(0, 12) || ''}</p>
                             </div>
                           </div>
                           {scene.colors && <div style={{ marginBottom: '10px' }}>
-                            <p style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 600, color: '#6B7280', marginBottom: '4px' }}>推荐颜色</p>
+                            <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', fontWeight: 600, color: '#6B7280', marginBottom: '4px' }}>推荐颜色</p>
                             <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                              {scene.colors.map((c: string, i: number) => <span key={i} style={{ padding: '3px 8px', borderRadius: '6px', background: `${scene.accentColor}12`, border: `1px solid ${scene.accentColor}25`, fontFamily: 'Outfit', fontSize: '10px', color: '#1A1A2E' }}>{c}</span>)}
+                              {scene.colors.map((c: string, i: number) => <span key={i} style={{ padding: '3px 8px', borderRadius: '6px', background: `${scene.accentColor}12`, border: `1px solid ${scene.accentColor}25`, fontFamily: 'Outfit', fontSize: '0.63remrem', color: '#1A1A2E' }}>{c}</span>)}
                             </div>
                           </div>}
                           <div style={{ padding: '8px', background: '#FFFFFF', borderRadius: '8px', border: `1px solid ${scene.accentColor}20` }}>
                             <Lightbulb style={{ width: '12px', height: '12px', color: scene.accentColor, marginBottom: '4px' }} />
-                            <p style={{ fontFamily: 'Outfit', fontSize: '10px', color: '#6B7280', lineHeight: 1.6, margin: 0 }}>{scene.explanation}</p>
+                            <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', color: '#6B7280', lineHeight: 1.6, margin: 0 }}>{scene.explanation}</p>
                         </div>
                       </motion.div>
                       );
@@ -2672,10 +2666,10 @@ export default function HomePage() {
                     }}>
                       <Star style={{ width: '28px', height: '28px', color: PALETTE.coral }} />
                     </div>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 700, color: '#1A1A2E', marginBottom: '8px' }}>
+                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', fontWeight: 700, color: '#1A1A2E', marginBottom: '8px' }}>
                       {!selectedRecord ? '选择一位命主，开始测算' : '正在加载命盘数据…'}
                     </p>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', color: '#A0A8C0' }}>
+                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', color: '#A0A8C0' }}>
                       {!selectedRecord ? '录入或选择用户后，可查看命盘、今日运势与穿搭/手串建议' : '请稍候'}
                     </p>
                     {selectedRecord && <Loader2 style={{ width: '22px', height: '22px', color: PALETTE.coral, animation: 'spin 1s linear infinite', margin: '16px auto 0' }} />}
@@ -2700,8 +2694,8 @@ export default function HomePage() {
                         <Gem style={{ width: '16px', height: '16px', color: '#FFFFFF' }} />
                       </div>
                       <div>
-                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 900, color: '#1A1A2E' }}>今日手串推荐</span>
-                        <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#9A9FC2', margin: '1px 0 0' }}>能量材质 · 高级渐变系</p>
+                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', fontWeight: 900, color: '#1A1A2E' }}>今日手串推荐</span>
+                        <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#9A9FC2', margin: '1px 0 0' }}>能量材质 · 高级渐变系</p>
                       </div>
                       <motion.button
                         onClick={() => setActiveTab(activeTab === 'bracelet' ? null : 'bracelet')}
@@ -2711,7 +2705,7 @@ export default function HomePage() {
                           marginLeft: 'auto', padding: '6px 14px', borderRadius: '9999px',
                           background: activeTab === 'bracelet' ? `linear-gradient(135deg, ${PALETTE.purple}, ${PALETTE.blue})` : `${PALETTE.purple}08`,
                           border: `1.5px solid ${activeTab === 'bracelet' ? PALETTE.purple : `${PALETTE.purple}30`}`,
-                          cursor: 'pointer', fontFamily: 'Outfit, sans-serif', fontSize: '12px',
+                          cursor: 'pointer', fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem',
                           fontWeight: 600, color: activeTab === 'bracelet' ? '#FFFFFF' : PALETTE.purple, transition: UI_EASE,
                           boxShadow: activeTab === 'bracelet' ? `0 10px 20px ${PALETTE.purple}3a` : `0 6px 12px ${PALETTE.purple}1a`,
                         }}
@@ -2747,10 +2741,10 @@ export default function HomePage() {
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                               <Sparkles style={{ width: '14px', height: '14px', color: PALETTE.purple }} />
-                              <span style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700, color: '#1A1A2E' }}>命理分析</span>
+                              <span style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', fontWeight: 700, color: '#1A1A2E' }}>命理分析</span>
                             </div>
                             <div style={{ padding: '3px 10px', borderRadius: '8px', background: summary.fortuneLevel === '极佳' ? `${PALETTE.green}15` : summary.fortuneLevel === '上佳' ? `${PALETTE.blue}15` : summary.fortuneLevel === '平稳' ? `${PALETTE.yellow}15` : `${PALETTE.orange}15`, border: `1px solid ${summary.fortuneLevel === '极佳' ? PALETTE.green : summary.fortuneLevel === '上佳' ? PALETTE.blue : summary.fortuneLevel === '平稳' ? PALETTE.yellow : PALETTE.orange}30` }}>
-                              <span style={{ fontFamily: 'Outfit', fontSize: '10px', fontWeight: 700, color: summary.fortuneLevel === '极佳' ? PALETTE.green : summary.fortuneLevel === '上佳' ? PALETTE.blue : summary.fortuneLevel === '平稳' ? PALETTE.yellow : PALETTE.orange }}>{summary.fortuneLevel}运势</span>
+                              <span style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', fontWeight: 700, color: summary.fortuneLevel === '极佳' ? PALETTE.green : summary.fortuneLevel === '上佳' ? PALETTE.blue : summary.fortuneLevel === '平稳' ? PALETTE.yellow : PALETTE.orange }}>{summary.fortuneLevel}运势</span>
                             </div>
                           </div>
                           
@@ -2758,20 +2752,20 @@ export default function HomePage() {
                           {summary.wuxingDiagram && (
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px', background: `linear-gradient(135deg, ${PALETTE.purple}08, ${PALETTE.blue}08)`, borderRadius: '12px', border: `1px solid ${PALETTE.purple}15`, marginBottom: '10px' }}>
                               <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: `linear-gradient(135deg, ${PALETTE.purple}, ${PALETTE.blue})`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                                <span style={{ fontFamily: 'Outfit', fontSize: '16px', fontWeight: 800, color: '#FFFFFF' }}>{summary.wuxingDiagram.primaryName}</span>
+                                <span style={{ fontFamily: 'Outfit', fontSize: '1remrem', fontWeight: 800, color: '#FFFFFF' }}>{summary.wuxingDiagram.primaryName}</span>
                               </div>
                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '3px', padding: '2px 6px', borderRadius: '4px', background: `${PALETTE.green}10` }}>
                                   <TrendingUp style={{ width: '10px', height: '10px', color: PALETTE.green }} />
-                                  <span style={{ fontFamily: 'Outfit', fontSize: '9px', color: PALETTE.green, fontWeight: 700 }}>{summary.wuxingDiagram.sheng}</span>
+                                  <span style={{ fontFamily: 'Outfit', fontSize: '0.56remrem', color: PALETTE.green, fontWeight: 700 }}>{summary.wuxingDiagram.sheng}</span>
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '3px', padding: '2px 6px', borderRadius: '4px', background: `${PALETTE.orange}10` }}>
                                   <TrendingUp style={{ width: '10px', height: '10px', color: PALETTE.orange, transform: 'rotate(180deg)' }} />
-                                  <span style={{ fontFamily: 'Outfit', fontSize: '9px', color: PALETTE.orange, fontWeight: 700 }}>{summary.wuxingDiagram.ke}</span>
+                                  <span style={{ fontFamily: 'Outfit', fontSize: '0.56remrem', color: PALETTE.orange, fontWeight: 700 }}>{summary.wuxingDiagram.ke}</span>
                                 </div>
                               </div>
                               <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: `${PALETTE.blue}15`, border: `1.5px solid ${PALETTE.blue}40`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                                <span style={{ fontFamily: 'Outfit', fontSize: '14px', fontWeight: 700, color: '#1A1A2E' }}>{summary.wuxingDiagram.secondaryName}</span>
+                                <span style={{ fontFamily: 'Outfit', fontSize: '0.88remrem', fontWeight: 700, color: '#1A1A2E' }}>{summary.wuxingDiagram.secondaryName}</span>
                               </div>
                             </div>
                           )}
@@ -2780,7 +2774,7 @@ export default function HomePage() {
                           {summary.overallAdvice && (
                             <div style={{ padding: '8px 10px', background: `linear-gradient(145deg, ${PALETTE.purple}08, #FFFFFF)`, borderRadius: '10px', border: `1px solid ${PALETTE.purple}24` }}>
                               <Lightbulb style={{ width: '12px', height: '12px', color: PALETTE.purple, marginBottom: '4px' }} />
-                              <p style={{ fontFamily: 'Outfit', fontSize: '10px', color: '#6B7280', margin: 0, lineHeight: 1.5 }}>{summary.overallAdvice}</p>
+                              <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', color: '#6B7280', margin: 0, lineHeight: 1.5 }}>{summary.overallAdvice}</p>
                             </div>
                           )}
                         </div>
@@ -2803,8 +2797,8 @@ export default function HomePage() {
                                     <Gem style={{ width: '20px', height: '20px', color: '#FFFFFF' }} />
                                   </div>
                                   <div>
-                                    <p style={{ fontFamily: 'Outfit', fontSize: '16px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{material}</p>
-                                    <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#A0A8C0', margin: '2px 0 0' }}>{primary.color || ''} · 首选推荐</p>
+                                    <p style={{ fontFamily: 'Outfit', fontSize: '1remrem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{material}</p>
+                                    <p style={{ fontFamily: 'Outfit', fontSize: '0.69remrem', color: '#A0A8C0', margin: '2px 0 0' }}>{primary.color || ''} · 首选推荐</p>
                                   </div>
                                 </div>
                                 {primary.element && <ElementBadge el={primary.element} />}
@@ -2813,28 +2807,28 @@ export default function HomePage() {
                               <div style={{ padding: '12px', background: `linear-gradient(135deg, ${PALETTE.purple}08, ${PALETTE.blue}08)`, borderRadius: '12px', border: `1px solid ${PALETTE.purple}15`, marginBottom: '12px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
                                   <Sparkles style={{ width: '14px', height: '14px', color: PALETTE.purple }} />
-                                  <p style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700, color: PALETTE.purple, margin: 0 }}>今日运势搭配</p>
+                                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', fontWeight: 700, color: PALETTE.purple, margin: 0 }}>今日运势搭配</p>
                                 </div>
-                                <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#6B7280', margin: 0, lineHeight: 1.7 }}>
+                                <p style={{ fontFamily: 'Outfit', fontSize: '0.69remrem', color: '#6B7280', margin: 0, lineHeight: 1.7 }}>
                                   {primary.whyRecommended || `今日${(braceletRec as any).summary?.tenGod || '流日'}当令，${material}五行属${primary.element || ''}，与日主${(braceletRec as any).bodyStrength?.type === 'strong' ? '身强' : (braceletRec as any).bodyStrength?.type === 'weak' ? '身弱' : '中性'}格局相宜，${primary.effect || '可增强运势'}`}
                                 </p>
                               </div>
 
                               {primary.effect && (
                                 <div style={{ padding: '10px 12px', background: `${PALETTE.purple}08`, borderRadius: '10px', border: `1px solid ${PALETTE.purple}15`, marginBottom: '10px' }}>
-                                  <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 600, color: PALETTE.purple, marginBottom: '4px' }}>推荐功效</p>
-                                  <p style={{ fontFamily: 'Outfit', fontSize: '12px', color: '#6B7280', margin: 0, lineHeight: 1.6 }}>{primary.effect}</p>
+                                  <p style={{ fontFamily: 'Outfit', fontSize: '0.69remrem', fontWeight: 600, color: PALETTE.purple, marginBottom: '4px' }}>推荐功效</p>
+                                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', color: '#6B7280', margin: 0, lineHeight: 1.6 }}>{primary.effect}</p>
                                 </div>
                               )}
 
                               {primary.suitableScenes && primary.suitableScenes.length > 0 && (
                                 <div style={{ marginBottom: '10px' }}>
-                                  <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 600, color: '#1A1A2E', marginBottom: '8px' }}>适合场景</p>
+                                  <p style={{ fontFamily: 'Outfit', fontSize: '0.69remrem', fontWeight: 600, color: '#1A1A2E', marginBottom: '8px' }}>适合场景</p>
                                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                                     {primary.suitableScenes.map((scene: any, idx: number) => (
                                       <div key={idx} style={{ padding: '6px 10px', borderRadius: '8px', background: `${PALETTE.green}10`, border: `1px solid ${PALETTE.green}25`, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                        <span style={{ fontSize: '12px' }}>{scene.icon || '✦'}</span>
-                                        <span style={{ fontFamily: 'Outfit', fontSize: '10px', color: PALETTE.green, fontWeight: 600 }}>{scene.name || scene.scene}</span>
+                                        <span style={{ fontSize: '0.75remrem' }}>{scene.icon || '✦'}</span>
+                                        <span style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', color: PALETTE.green, fontWeight: 600 }}>{scene.name || scene.scene}</span>
                                       </div>
                                     ))}
                                   </div>
@@ -2845,15 +2839,15 @@ export default function HomePage() {
                                 <>
                                   {details.description && (
                                     <div style={{ padding: '10px 12px', background: `linear-gradient(145deg, ${PALETTE.blue}06, #FFFFFF)`, borderRadius: '10px', border: `1px solid ${PALETTE.blue}24`, marginBottom: '8px' }}>
-                                      <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 600, color: PALETTE.blue, marginBottom: '4px' }}>手串简介</p>
-                                      <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#6B7280', margin: 0, lineHeight: 1.6 }}>{details.description}</p>
+                                      <p style={{ fontFamily: 'Outfit', fontSize: '0.69remrem', fontWeight: 600, color: PALETTE.blue, marginBottom: '4px' }}>手串简介</p>
+                                      <p style={{ fontFamily: 'Outfit', fontSize: '0.69remrem', color: '#6B7280', margin: 0, lineHeight: 1.6 }}>{details.description}</p>
                                     </div>
                                   )}
                                   {details.effects && details.effects.length > 0 && (
                                     <div style={{ padding: '10px 12px', background: `linear-gradient(145deg, ${PALETTE.green}06, #FFFFFF)`, borderRadius: '10px', border: `1px solid ${PALETTE.green}24`, marginBottom: '8px' }}>
-                                      <p style={{ fontFamily: 'Outfit', fontSize: '11px', fontWeight: 600, color: PALETTE.green, marginBottom: '6px' }}>功效作用</p>
+                                      <p style={{ fontFamily: 'Outfit', fontSize: '0.69remrem', fontWeight: 600, color: PALETTE.green, marginBottom: '6px' }}>功效作用</p>
                                       {details.effects.map((eff, idx) => (
-                                        <p key={idx} style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#6B7280', margin: '2px 0', paddingLeft: '10px', lineHeight: 1.5 }}>
+                                        <p key={idx} style={{ fontFamily: 'Outfit', fontSize: '0.69remrem', color: '#6B7280', margin: '2px 0', paddingLeft: '10px', lineHeight: 1.5 }}>
                                           · {eff}
                                         </p>
                                       ))}
@@ -2862,7 +2856,7 @@ export default function HomePage() {
                                   {details.occasions && details.occasions.length > 0 && (
                                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
                                       {details.occasions.map((occ, idx) => (
-                                        <span key={idx} style={{ padding: '4px 10px', borderRadius: '8px', background: `${PALETTE.coral}10`, border: `1px solid ${PALETTE.coral}25`, fontFamily: 'Outfit', fontSize: '10px', color: PALETTE.coral }}>{occ}</span>
+                                        <span key={idx} style={{ padding: '4px 10px', borderRadius: '8px', background: `${PALETTE.coral}10`, border: `1px solid ${PALETTE.coral}25`, fontFamily: 'Outfit', fontSize: '0.63remrem', color: PALETTE.coral }}>{occ}</span>
                                       ))}
                                     </div>
                                   )}
@@ -2877,7 +2871,7 @@ export default function HomePage() {
                           <div style={{ marginBottom: '4px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
                               <Sparkles style={{ width: '14px', height: '14px', color: PALETTE.purple }} />
-                              <p style={{ fontFamily: 'Outfit', fontSize: '13px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>次选推荐</p>
+                              <p style={{ fontFamily: 'Outfit', fontSize: '0.81remrem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>次选推荐</p>
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                               {(braceletRec as any).secondaryBracelets.map((sec: any, idx: number) => {
@@ -2891,21 +2885,21 @@ export default function HomePage() {
                                       </div>
                                       <div style={{ flex: 1 }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-                                          <p style={{ fontFamily: 'Outfit', fontSize: '13px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{secMaterial}</p>
+                                          <p style={{ fontFamily: 'Outfit', fontSize: '0.81remrem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{secMaterial}</p>
                                           {sec.element && <ElementBadge el={sec.element} />}
                                         </div>
-                                        <p style={{ fontFamily: 'Outfit', fontSize: '11px', color: '#6B7280', margin: 0, lineHeight: 1.4 }}>{sec.effect || secDetails?.description?.slice(0, 50) || ''}</p>
+                                        <p style={{ fontFamily: 'Outfit', fontSize: '0.69remrem', color: '#6B7280', margin: 0, lineHeight: 1.4 }}>{sec.effect || secDetails?.description?.slice(0, 50) || ''}</p>
                                       </div>
                                     </div>
                                     {sec.whyRecommended && (
                                       <div style={{ padding: '8px 10px', background: `${PALETTE.purple}06`, borderRadius: '8px', border: `1px solid ${PALETTE.purple}12` }}>
-                                        <p style={{ fontFamily: 'Outfit', fontSize: '10px', color: PALETTE.purple, margin: 0, lineHeight: 1.5 }}>💫 {sec.whyRecommended}</p>
+                                        <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', color: PALETTE.purple, margin: 0, lineHeight: 1.5 }}>💫 {sec.whyRecommended}</p>
                                       </div>
                                     )}
                                     {sec.suitableScenes && sec.suitableScenes.length > 0 && (
                                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                                         {sec.suitableScenes.slice(0, 3).map((scene: any, sIdx: number) => (
-                                          <span key={sIdx} style={{ padding: '3px 8px', borderRadius: '6px', background: `${PALETTE.green}10`, border: `1px solid ${PALETTE.green}25`, fontFamily: 'Outfit', fontSize: '9px', color: PALETTE.green }}>{scene.name || scene.scene}</span>
+                                          <span key={sIdx} style={{ padding: '3px 8px', borderRadius: '6px', background: `${PALETTE.green}10`, border: `1px solid ${PALETTE.green}25`, fontFamily: 'Outfit', fontSize: '0.56remrem', color: PALETTE.green }}>{scene.name || scene.scene}</span>
                                         ))}
                                       </div>
                                     )}
@@ -2943,7 +2937,7 @@ export default function HomePage() {
             backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <h3 style={{ fontFamily: 'Outfit', fontSize: '16px', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>选择城市</h3>
+              <h3 style={{ fontFamily: 'Outfit', fontSize: '1remrem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>选择城市</h3>
               <button onClick={() => setShowCityDropdown(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
                 <X style={{ width: '20px', height: '20px', color: '#6B7280' }} />
               </button>
@@ -2957,7 +2951,7 @@ export default function HomePage() {
               style={{
                 width: '100%', padding: '10px 14px', borderRadius: '10px',
                 border: `1.5px solid ${PALETTE.purple}30`, outline: 'none',
-                fontFamily: 'Outfit', fontSize: '13px', marginBottom: '12px',
+                fontFamily: 'Outfit', fontSize: '0.81remrem', marginBottom: '12px',
                 boxSizing: 'border-box',
                 background: 'linear-gradient(145deg, #FFFFFF, #F6F3FF)',
                 boxShadow: '0 8px 16px rgba(90,63,160,0.1)',
@@ -2974,7 +2968,7 @@ export default function HomePage() {
                   onClick={() => selectCity(city)}
                   style={{
                     padding: '10px 12px', borderRadius: '8px', cursor: 'pointer',
-                    fontFamily: 'Outfit', fontSize: '13px', color: '#1A1A2E',
+                    fontFamily: 'Outfit', fontSize: '0.81remrem', color: '#1A1A2E',
                     transition: 'background 0.15s, transform 0.15s',
                   }}
                   onMouseEnter={(e) => { e.currentTarget.style.background = `${PALETTE.purple}10`; e.currentTarget.style.transform = 'translateX(2px)'; }}

@@ -287,7 +287,7 @@ function ScoreRing({ score, label, color, size = 96 }: { score: number; label: s
         alignItems: 'center', justifyContent: 'center',
       }}>
         <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: size < 90 ? '18px' : '22px', fontWeight: 900, color }}>{score}</span>
-        {size >= 96 && <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: css.textMuted, marginTop: '-2px' }}>{label}</span>}
+        {size >= 96 && <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: css.textMuted, marginTop: '-2px' }}>{label}</span>}
       </div>
     </div>
   );
@@ -363,7 +363,7 @@ function EditUserModal({ userInfo, onSave, onClose }: { userInfo: UserBirthInfo;
               }}>
                 <Edit2 style={{ width: '18px', height: '18px', color: css.accent }} />
               </div>
-              <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '18px', fontWeight: 800, color: css.text }}>编辑个人信息</h3>
+              <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.13remrem', fontWeight: 800, color: css.text }}>编辑个人信息</h3>
             </div>
             <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: css.textMuted, padding: '4px' }}>
               <X style={{ width: '20px', height: '20px' }} />
@@ -372,14 +372,14 @@ function EditUserModal({ userInfo, onSave, onClose }: { userInfo: UserBirthInfo;
 
           {/* 姓名 */}
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: css.textSecondary, display: 'block', marginBottom: '6px' }}>姓名</label>
+            <label style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700, color: css.textSecondary, display: 'block', marginBottom: '6px' }}>姓名</label>
             <input
               type="text" value={form.name}
               onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
               style={{
                 width: '100%', padding: '12px 16px', borderRadius: '14px',
                 border: '1.5px solid #F0F1F8', background: '#F8F9FC',
-                fontFamily: 'Outfit, sans-serif', fontSize: '15px', color: css.text,
+                fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', color: css.text,
                 outline: 'none', boxSizing: 'border-box',
               }}
               placeholder="请输入姓名"
@@ -388,18 +388,18 @@ function EditUserModal({ userInfo, onSave, onClose }: { userInfo: UserBirthInfo;
 
           {/* 出生日期 */}
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: css.textSecondary, display: 'block', marginBottom: '6px' }}>出生日期</label>
+            <label style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700, color: css.textSecondary, display: 'block', marginBottom: '6px' }}>出生日期</label>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px' }}>
               <select value={form.birthYear} onChange={e => setForm(f => ({ ...f, birthYear: Number(e.target.value) }))}
-                style={{ padding: '10px 12px', borderRadius: '12px', border: '1.5px solid #F0F1F8', background: '#F8F9FC', fontFamily: 'Outfit, sans-serif', fontSize: '14px', color: css.text, outline: 'none' }}>
+                style={{ padding: '10px 12px', borderRadius: '12px', border: '1.5px solid #F0F1F8', background: '#F8F9FC', fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', color: css.text, outline: 'none' }}>
                 {years.map(y => <option key={y} value={y}>{y}年</option>)}
               </select>
               <select value={form.birthMonth} onChange={e => setForm(f => ({ ...f, birthMonth: Number(e.target.value) }))}
-                style={{ padding: '10px 12px', borderRadius: '12px', border: '1.5px solid #F0F1F8', background: '#F8F9FC', fontFamily: 'Outfit, sans-serif', fontSize: '14px', color: css.text, outline: 'none' }}>
+                style={{ padding: '10px 12px', borderRadius: '12px', border: '1.5px solid #F0F1F8', background: '#F8F9FC', fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', color: css.text, outline: 'none' }}>
                 {months.map(m => <option key={m} value={m}>{m}月</option>)}
               </select>
               <select value={form.birthDay} onChange={e => setForm(f => ({ ...f, birthDay: Number(e.target.value) }))}
-                style={{ padding: '10px 12px', borderRadius: '12px', border: '1.5px solid #F0F1F8', background: '#F8F9FC', fontFamily: 'Outfit, sans-serif', fontSize: '14px', color: css.text, outline: 'none' }}>
+                style={{ padding: '10px 12px', borderRadius: '12px', border: '1.5px solid #F0F1F8', background: '#F8F9FC', fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', color: css.text, outline: 'none' }}>
                 {days.map(d => <option key={d} value={d}>{d}日</option>)}
               </select>
             </div>
@@ -407,9 +407,9 @@ function EditUserModal({ userInfo, onSave, onClose }: { userInfo: UserBirthInfo;
 
           {/* 出生时辰 */}
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: css.textSecondary, display: 'block', marginBottom: '6px' }}>出生时辰</label>
+            <label style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700, color: css.textSecondary, display: 'block', marginBottom: '6px' }}>出生时辰</label>
             <select value={form.birthHour} onChange={e => setForm(f => ({ ...f, birthHour: Number(e.target.value) }))}
-              style={{ width: '100%', padding: '12px 16px', borderRadius: '14px', border: '1.5px solid #F0F1F8', background: '#F8F9FC', fontFamily: 'Outfit, sans-serif', fontSize: '14px', color: css.text, outline: 'none' }}>
+              style={{ width: '100%', padding: '12px 16px', borderRadius: '14px', border: '1.5px solid #F0F1F8', background: '#F8F9FC', fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', color: css.text, outline: 'none' }}>
               {Array.from({ length: 24 }, (_, i) => i).map(h => (
                 <option key={h} value={h}>{h.toString().padStart(2, '0')}:00 — {(h + 1).toString().padStart(2, '0')}:00</option>
               ))}
@@ -418,7 +418,7 @@ function EditUserModal({ userInfo, onSave, onClose }: { userInfo: UserBirthInfo;
 
           {/* 性别 */}
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: css.textSecondary, display: 'block', marginBottom: '8px' }}>性别</label>
+            <label style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700, color: css.textSecondary, display: 'block', marginBottom: '8px' }}>性别</label>
             <div style={{ display: 'flex', gap: '10px' }}>
               {(['male', 'female'] as const).map(g => (
                 <motion.button key={g} onClick={() => setForm(f => ({ ...f, gender: g }))}
@@ -426,7 +426,7 @@ function EditUserModal({ userInfo, onSave, onClose }: { userInfo: UserBirthInfo;
                   style={{
                     flex: 1, padding: '12px', borderRadius: '14px',
                     cursor: 'pointer', fontFamily: 'Outfit, sans-serif',
-                    fontSize: '14px', fontWeight: 700,
+                    fontSize: '0.88remrem', fontWeight: 700,
                     background: form.gender === g ? `${css.accent}18` : '#F8F9FC',
                     color: form.gender === g ? css.accent : css.textMuted,
                     border: `1.5px solid ${form.gender === g ? css.accent : '#F0F1F8'}`,
@@ -440,7 +440,7 @@ function EditUserModal({ userInfo, onSave, onClose }: { userInfo: UserBirthInfo;
 
           {/* 历法 */}
           <div style={{ marginBottom: '20px' }}>
-            <label style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: css.textSecondary, display: 'block', marginBottom: '8px' }}>历法</label>
+            <label style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700, color: css.textSecondary, display: 'block', marginBottom: '8px' }}>历法</label>
             <div style={{ display: 'flex', gap: '10px' }}>
               {(['solar', 'lunar'] as const).map(c => (
                 <motion.button key={c} onClick={() => setForm(f => ({ ...f, calendarType: c }))}
@@ -448,7 +448,7 @@ function EditUserModal({ userInfo, onSave, onClose }: { userInfo: UserBirthInfo;
                   style={{
                     flex: 1, padding: '12px', borderRadius: '14px',
                     cursor: 'pointer', fontFamily: 'Outfit, sans-serif',
-                    fontSize: '14px', fontWeight: 700,
+                    fontSize: '0.88remrem', fontWeight: 700,
                     background: form.calendarType === c ? `${css.accent}18` : '#F8F9FC',
                     color: form.calendarType === c ? css.accent : css.textMuted,
                     border: `1.5px solid ${form.calendarType === c ? css.accent : '#F0F1F8'}`,
@@ -460,11 +460,11 @@ function EditUserModal({ userInfo, onSave, onClose }: { userInfo: UserBirthInfo;
             </div>
           </div>
 
-          {error && <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', color: '#FF6B6B', marginBottom: '12px', textAlign: 'center' }}>{error}</p>}
+          {error && <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', color: '#FF6B6B', marginBottom: '12px', textAlign: 'center' }}>{error}</p>}
 
           <div style={{ display: 'flex', gap: '10px' }}>
             <button onClick={onClose}
-              style={{ flex: 1, padding: '14px', borderRadius: '14px', background: '#F8F9FC', border: '1.5px solid #F0F1F8', cursor: 'pointer', fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: css.textMuted }}>
+              style={{ flex: 1, padding: '14px', borderRadius: '14px', background: '#F8F9FC', border: '1.5px solid #F0F1F8', cursor: 'pointer', fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 700, color: css.textMuted }}>
               取消
             </button>
             <motion.button
@@ -473,7 +473,7 @@ function EditUserModal({ userInfo, onSave, onClose }: { userInfo: UserBirthInfo;
                 flex: 2, padding: '14px', borderRadius: '14px',
                 background: `linear-gradient(135deg, ${css.accent}, ${PALETTE.orange})`,
                 border: 'none', cursor: 'pointer',
-                fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 800,
+                fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 800,
                 color: '#FFFFFF', boxShadow: `0 4px 16px rgba(255,107,157,0.35)`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
               }}>
@@ -545,7 +545,7 @@ function ElementBadge({ el }: { el: string }) {
     <span style={{
       display: 'inline-flex', alignItems: 'center',
       padding: '4px 12px', borderRadius: '9999px',
-      fontSize: '13px', fontWeight: 700,
+      fontSize: '0.81remrem', fontWeight: 700,
       fontFamily: 'Outfit, sans-serif',
       background: hex + '15', color: hex,
       border: `1px solid ${hex}30`,
@@ -1132,9 +1132,9 @@ function FortuneCard({ cardKey, label, text, color, icon, dayMaster, dayElement,
           }}>
             {icon}
           </div>
-          <h5 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '16px', fontWeight: 700, color: css.text }}>{label}</h5>
+          <h5 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1remrem', fontWeight: 700, color: css.text }}>{label}</h5>
         </div>
-        <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', lineHeight: 1.8, color: css.textSecondary }}>{text}</p>
+        <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', lineHeight: 1.8, color: css.textSecondary }}>{text}</p>
         
         {/* 婚姻感情总结描述 */}
         {marriageSummary && (
@@ -1145,10 +1145,10 @@ function FortuneCard({ cardKey, label, text, color, icon, dayMaster, dayElement,
             background: `linear-gradient(135deg, ${CARD_COLORS.marriage?.hex || '#9B6BFF'}15, ${CARD_COLORS.marriage?.hex || '#9B6BFF'}08)`,
             border: `1.5px solid ${CARD_COLORS.marriage?.hex || '#9B6BFF'}30`,
           }}>
-            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 600, color: CARD_COLORS.marriage?.hex || '#9B6BFF', margin: '0 0 4px 0' }}>
+            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 600, color: CARD_COLORS.marriage?.hex || '#9B6BFF', margin: '0 0 4px 0' }}>
               💡 大运总结
             </p>
-            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', lineHeight: 1.6, color: css.textSecondary, margin: 0 }}>
+            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', lineHeight: 1.6, color: css.textSecondary, margin: 0 }}>
               {marriageSummary}
             </p>
           </div>
@@ -1168,7 +1168,7 @@ function FortuneCard({ cardKey, label, text, color, icon, dayMaster, dayElement,
               background: `linear-gradient(135deg, ${(CARD_COLORS[cardKey]?.hex || css.accent)}14, #FFFFFF)`,
               color: CARD_COLORS[cardKey]?.hex || css.accent,
               fontFamily: 'Outfit, sans-serif',
-              fontSize: '13px',
+              fontSize: '0.81remrem',
               fontWeight: 600,
               cursor: 'pointer',
               display: 'flex',
@@ -1200,13 +1200,13 @@ function FortuneCard({ cardKey, label, text, color, icon, dayMaster, dayElement,
                 {/* 有利事项 */}
                 <div style={{ marginBottom: '14px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                    <span style={{ fontSize: '14px' }}>✅</span>
-                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#059669' }}>有利事项</span>
+                    <span style={{ fontSize: '0.88remrem' }}>✅</span>
+                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700, color: '#059669' }}>有利事项</span>
                   </div>
                   {details.favorable.map((item, i) => (
                     <div key={i} style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-                      <span style={{ color: '#059669', fontSize: '12px', flexShrink: 0 }}>•</span>
-                      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', lineHeight: 1.6, color: css.textSecondary, margin: 0 }}>{item}</p>
+                      <span style={{ color: '#059669', fontSize: '0.75remrem', flexShrink: 0 }}>•</span>
+                      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', lineHeight: 1.6, color: css.textSecondary, margin: 0 }}>{item}</p>
                     </div>
                   ))}
                 </div>
@@ -1214,13 +1214,13 @@ function FortuneCard({ cardKey, label, text, color, icon, dayMaster, dayElement,
                 {/* 注意事项 */}
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                    <span style={{ fontSize: '14px' }}>⚠️</span>
-                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#DC2626' }}>注意事项</span>
+                    <span style={{ fontSize: '0.88remrem' }}>⚠️</span>
+                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700, color: '#DC2626' }}>注意事项</span>
                   </div>
                   {details.precautions.map((item, i) => (
                     <div key={i} style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-                      <span style={{ color: '#DC2626', fontSize: '12px', flexShrink: 0 }}>•</span>
-                      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', lineHeight: 1.6, color: css.textSecondary, margin: 0 }}>{item}</p>
+                      <span style={{ color: '#DC2626', fontSize: '0.75remrem', flexShrink: 0 }}>•</span>
+                      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', lineHeight: 1.6, color: css.textSecondary, margin: 0 }}>{item}</p>
                     </div>
                   ))}
                 </div>
@@ -1547,10 +1547,10 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
       {/* ── 标题栏 ── */}
       <div style={{ padding: '16px 16px 8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '18px', fontWeight: 700, color: '#333333' }}>
+          <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.13remrem', fontWeight: 700, color: '#333333' }}>
             大运走势K线图
           </div>
-          <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#999999', marginTop: '4px' }}>
+          <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: '#999999', marginTop: '4px' }}>
             起运年龄: {Math.round(startAge)}岁 · 每步大运10年
           </div>
         </div>
@@ -1559,7 +1559,7 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
           padding: '6px 12px', background: 'linear-gradient(135deg, #ECFDF5, #F0F9FF)', borderRadius: '16px', border: '1px solid #A7F3D0'
         }}>
           <div style={{ width: '8px', height: '8px', background: '#52C41A', borderRadius: '50%' }} />
-          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#52C41A' }}>已解锁</span>
+          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: '#52C41A' }}>已解锁</span>
         </div>
       </div>
 
@@ -1659,7 +1659,7 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
 
       {/* ── 大运详解列表（横向对齐） ── */}
       <div style={{ padding: '16px', borderTop: '1px solid #F0F0F0' }}>
-        <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '16px', fontWeight: 700, color: '#333333', marginBottom: '12px' }}>
+        <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1remrem', fontWeight: 700, color: '#333333', marginBottom: '12px' }}>
           大运详解
         </div>
         {/* 横向滚动卡片列表 */}
@@ -1694,20 +1694,20 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
                 }}
               >
                 {/* 年龄范围 */}
-                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 700, color: isFuture ? '#AAAAAA' : '#333333', marginBottom: '2px' }}>
+                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 700, color: isFuture ? '#AAAAAA' : '#333333', marginBottom: '2px' }}>
                   {Math.round(d.age)}-{Math.round(d.endAge)}岁
                 </div>
                 {/* 干支 */}
-                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: isFuture ? '#CCCCCC' : '#999999', marginBottom: '6px' }}>
+                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: isFuture ? '#CCCCCC' : '#999999', marginBottom: '6px' }}>
                   {d.ganZhi}
                 </div>
                 {/* 年份 */}
-                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#BBBBBB', marginBottom: '8px' }}>
+                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#BBBBBB', marginBottom: '8px' }}>
                   {d.year}-{d.yearEnd}年
                 </div>
                 {/* 分数 */}
                 <div style={{
-                  fontFamily: 'Outfit, sans-serif', fontSize: '18px', fontWeight: 800,
+                  fontFamily: 'Outfit, sans-serif', fontSize: '1.13remrem', fontWeight: 800,
                   color: isFuture ? '#CCCCCC' : color,
                   marginBottom: '6px',
                 }}>
@@ -1715,7 +1715,7 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
                 </div>
                 {/* 详情 */}
                 <div style={{
-                  fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#999999',
+                  fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: '#999999',
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between'
                 }}>
                   <span>{isFuture ? '待解锁' : (isSelected ? '收起' : '详情')}</span>
@@ -1738,10 +1738,10 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
               <div>
-                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 700, color: '#333333' }}>
+                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', fontWeight: 700, color: '#333333' }}>
                   {selectedDayun.ganZhi} 大运 · 每年流年走势
                 </div>
-                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#999999', marginTop: '4px' }}>
+                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: '#999999', marginTop: '4px' }}>
                   {selectedDayun.year}-{selectedDayun.yearEnd}年 · 点击查看详情
                 </div>
               </div>
@@ -1753,7 +1753,7 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
                   border: 'none',
                   borderRadius: '16px',
                   fontFamily: 'Outfit, sans-serif',
-                  fontSize: '12px',
+                  fontSize: '0.75remrem',
                   color: '#666666',
                   cursor: 'pointer',
                 }}
@@ -1770,10 +1770,10 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
               border: '1px solid rgba(255,107,157,0.15)',
               marginBottom: '16px'
             }}>
-              <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#FF6B9D', marginBottom: '8px' }}>
+              <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700, color: '#FF6B9D', marginBottom: '8px' }}>
                 📊 这十年运势总评
               </div>
-              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#666666', lineHeight: 1.8, margin: 0 }}>
+              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: '#666666', lineHeight: 1.8, margin: 0 }}>
                 {(() => {
                   if (yearlyData.length === 0) return '暂无十年运势数据';
                   const avgScore = yearlyData.reduce((sum, y) => sum + y.yearScore, 0) / yearlyData.length;
@@ -1805,8 +1805,8 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
             {/* 每年详细分析 - 四维卡片 */}
             <div style={{ marginTop: '16px', padding: '14px', background: 'linear-gradient(135deg, #F8F9FC 0%, #F0F4FF 100%)', borderRadius: '14px', border: '1px solid #E8EAF0' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: '#6366F1' }}>📅 每年详细运势</span>
-                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#999999' }}>点击卡片展开详情</span>
+                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 700, color: '#6366F1' }}>📅 每年详细运势</span>
+                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: '#999999' }}>点击卡片展开详情</span>
               </div>
               
               {/* 十年概览网格 */}
@@ -1830,8 +1830,8 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
                       }}
                       onClick={() => setSelectedYear(selectedYear === idx ? null : idx)}
                     >
-                      <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600, color: '#333' }}>{year.year || 2020}</div>
-                      <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 700, color: isGoodYear ? '#E74C3C' : '#27AE60' }}>{yearScore}</div>
+                      <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', fontWeight: 600, color: '#333' }}>{year.year || 2020}</div>
+                      <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 700, color: isGoodYear ? '#E74C3C' : '#27AE60' }}>{yearScore}</div>
                     </div>
                   );
                 })}
@@ -1855,9 +1855,9 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '18px', fontWeight: 700, color: '#333' }}>{year.year}年</span>
+                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.13remrem', fontWeight: 700, color: '#333' }}>{year.year}年</span>
                         <span style={{ 
-                          padding: '4px 10px', borderRadius: '9999px', fontSize: '12px', fontWeight: 600,
+                          padding: '4px 10px', borderRadius: '9999px', fontSize: '0.75remrem', fontWeight: 600,
                           background: isGoodYear ? '#FFEBEE' : '#E8F5E9', 
                           color: isGoodYear ? '#E74C3C' : '#27AE60'
                         }}>{ganZhi}</span>
@@ -1880,18 +1880,18 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
                             border: `1px solid ${detailColors[key]}30`
                           }}>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-                              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 600, color: detailColors[key] }}>
+                              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 600, color: detailColors[key] }}>
                                 {detailLabels[key]}
                               </span>
                               <span style={{ 
-                                fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700,
+                                fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 700,
                                 color: isHigh ? '#2E7D32' : '#E65100'
                               }}>{isHigh ? '↑' : '↓'}</span>
                             </div>
-                            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#555', margin: '0 0 4px 0', lineHeight: 1.4 }}>
+                            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: '#555', margin: '0 0 4px 0', lineHeight: 1.4 }}>
                               {item.advice || '运势平稳，按部就班'}
                             </p>
-                            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#888', margin: 0, lineHeight: 1.4 }}>
+                            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#888', margin: 0, lineHeight: 1.4 }}>
                               💡 {item.tip || '保持当前节奏'}
                             </p>
                           </div>
@@ -1901,7 +1901,7 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
                     
                     {/* 年度总结 */}
                     <div style={{ marginTop: '12px', padding: '10px', background: '#F8F9FC', borderRadius: '8px' }}>
-                      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#333', margin: 0, lineHeight: 1.5 }}>
+                      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: '#333', margin: 0, lineHeight: 1.5 }}>
                         <strong>流年总结：</strong>{isGoodYear 
                           ? `此年流年${ganZhi}，五行流通，整体运势向好，把握机遇可有所突破` 
                           : `此年流年${ganZhi}，需稳扎稳打，低调行事，避免激进决策`
@@ -1913,7 +1913,7 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
               })()}
               
               {selectedYear === null && (
-                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#999', textAlign: 'center', margin: '8px 0 0 0' }}>
+                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: '#999', textAlign: 'center', margin: '8px 0 0 0' }}>
                   👆 点击上方年份卡片查看详细分析
                 </p>
               )}
@@ -1974,10 +1974,10 @@ function DecadeCard({ data, index }: { data: CandlestickData; index: number }) {
 
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-            <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '16px', fontWeight: 800, color: css.text }}>{data.ganZhi}</span>
+            <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1remrem', fontWeight: 800, color: css.text }}>{data.ganZhi}</span>
             <span style={{
               padding: '2px 8px', borderRadius: '9999px',
-              fontSize: '11px', fontWeight: 700,
+              fontSize: '0.69remrem', fontWeight: 700,
               background: ELEMENT_COLORS[data.element] + '18',
               color: ELEMENT_COLORS[data.element],
               border: `1px solid ${ELEMENT_COLORS[data.element]}30`,
@@ -1986,23 +1986,23 @@ function DecadeCard({ data, index }: { data: CandlestickData; index: number }) {
               {ELEMENT_NAMES[data.element]}
             </span>
           </div>
-          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', color: css.textMuted }}>
+          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', color: css.textMuted }}>
             {data.year}–{data.yearEnd}年 · {Math.round(data.age)}–{Math.round(data.endAge)}岁
           </span>
         </div>
 
         <div style={{ textAlign: 'right', flexShrink: 0 }}>
           <span style={{
-            fontFamily: 'Outfit, sans-serif', fontSize: '22px', fontWeight: 900,
+            fontFamily: 'Outfit, sans-serif', fontSize: '1.38remrem', fontWeight: 900,
             color, display: 'block',
           }}>
             {data.score}
           </span>
-          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: css.textMuted }}>分</span>
+          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: css.textMuted }}>分</span>
         </div>
 
         <motion.div animate={{ rotate: expanded ? 180 : 0 }} transition={{ duration: 0.2 }}
-          style={{ color: css.textMuted, fontSize: '16px', flexShrink: 0 }}>
+          style={{ color: css.textMuted, fontSize: '1remrem', flexShrink: 0 }}>
           ▼
         </motion.div>
       </button>
@@ -2018,14 +2018,14 @@ function DecadeCard({ data, index }: { data: CandlestickData; index: number }) {
           {/* 摘要标签 */}
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '12px' }}>
             <span style={{
-              padding: '5px 12px', borderRadius: '9999px', fontSize: '13px', fontWeight: 600,
+              padding: '5px 12px', borderRadius: '9999px', fontSize: '0.81remrem', fontWeight: 600,
               background: color + '18', color, border: `1px solid ${color}30`,
               fontFamily: 'Outfit, sans-serif',
             }}>
               {isUp ? '✦ 上升期' : '· 调整期'}
             </span>
             <span style={{
-              padding: '5px 12px', borderRadius: '9999px', fontSize: '13px', fontWeight: 600,
+              padding: '5px 12px', borderRadius: '9999px', fontSize: '0.81remrem', fontWeight: 600,
               background: '#F0F1F8', color: css.textMuted, border: '1px solid #E8EAF0',
               fontFamily: 'Outfit, sans-serif',
             }}>
@@ -2034,7 +2034,7 @@ function DecadeCard({ data, index }: { data: CandlestickData; index: number }) {
           </div>
 
           {/* 五行说明 */}
-          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', lineHeight: 1.8, color: css.textSecondary, marginBottom: '14px' }}>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', lineHeight: 1.8, color: css.textSecondary, marginBottom: '14px' }}>
             {data.desc}
           </p>
 
@@ -2052,10 +2052,10 @@ function DecadeCard({ data, index }: { data: CandlestickData; index: number }) {
                 border: '1px solid #F0F1F8',
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '5px' }}>
-                  <span style={{ fontSize: '13px' }}>{item.icon}</span>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: css.text }}>{item.label}</span>
+                  <span style={{ fontSize: '0.81remrem' }}>{item.icon}</span>
+                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700, color: css.text }}>{item.label}</span>
                 </div>
-                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', lineHeight: 1.6, color: css.textSecondary }}>{item.text}</p>
+                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', lineHeight: 1.6, color: css.textSecondary }}>{item.text}</p>
               </div>
             ))}
           </div>
@@ -2063,8 +2063,8 @@ function DecadeCard({ data, index }: { data: CandlestickData; index: number }) {
           {/* 每年详细分析 - 完整版 */}
           <div style={{ marginTop: '16px', padding: '14px', background: 'linear-gradient(135deg, #F8F9FC 0%, #F0F4FF 100%)', borderRadius: '14px', border: '1px solid #E8EAF0' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: '#6366F1' }}>📅 每年详细运势</span>
-              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#999999' }}>点击卡片展开详情</span>
+              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 700, color: '#6366F1' }}>📅 每年详细运势</span>
+              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: '#999999' }}>点击卡片展开详情</span>
             </div>
             
             {/* 十年概览网格 */}
@@ -2087,8 +2087,8 @@ function DecadeCard({ data, index }: { data: CandlestickData; index: number }) {
                     }}
                     onClick={() => setSelectedYear(selectedYear === idx ? null : idx)}
                   >
-                    <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600, color: '#333' }}>{String(year.year).slice(2)}</div>
-                    <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 700, color: isGoodYear ? '#2E7D32' : '#E65100' }}>{yearScore}</div>
+                    <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', fontWeight: 600, color: '#333' }}>{String(year.year).slice(2)}</div>
+                    <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 700, color: isGoodYear ? '#2E7D32' : '#E65100' }}>{yearScore}</div>
                   </div>
                 );
               })}
@@ -2112,9 +2112,9 @@ function DecadeCard({ data, index }: { data: CandlestickData; index: number }) {
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '18px', fontWeight: 700, color: '#333' }}>{year.year}年</span>
+                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.13remrem', fontWeight: 700, color: '#333' }}>{year.year}年</span>
                       <span style={{ 
-                        padding: '4px 10px', borderRadius: '9999px', fontSize: '12px', fontWeight: 600,
+                        padding: '4px 10px', borderRadius: '9999px', fontSize: '0.75remrem', fontWeight: 600,
                         background: isGoodYear ? '#E8F5E9' : '#FFF3E0', 
                         color: isGoodYear ? '#2E7D32' : '#E65100'
                       }}>{ganZhi}</span>
@@ -2137,18 +2137,18 @@ function DecadeCard({ data, index }: { data: CandlestickData; index: number }) {
                           border: `1px solid ${detailColors[key]}30`
                         }}>
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-                            <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 600, color: detailColors[key] }}>
+                            <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 600, color: detailColors[key] }}>
                               {detailLabels[key]}
                             </span>
                             <span style={{ 
-                              fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700,
+                              fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 700,
                               color: isHigh ? '#2E7D32' : '#E65100'
                             }}>{isHigh ? '↑' : '↓'}</span>
                           </div>
-                          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#555', margin: '0 0 4px 0', lineHeight: 1.4 }}>
+                          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: '#555', margin: '0 0 4px 0', lineHeight: 1.4 }}>
                             {item.advice || '运势平稳，按部就班'}
                           </p>
-                          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#888', margin: 0, lineHeight: 1.4 }}>
+                          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#888', margin: 0, lineHeight: 1.4 }}>
                             💡 {item.tip || '保持当前节奏'}
                           </p>
                         </div>
@@ -2158,7 +2158,7 @@ function DecadeCard({ data, index }: { data: CandlestickData; index: number }) {
                   
                   {/* 年度总结 */}
                   <div style={{ marginTop: '12px', padding: '10px', background: '#F8F9FC', borderRadius: '8px' }}>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: '#333', margin: 0, lineHeight: 1.5 }}>
+                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: '#333', margin: 0, lineHeight: 1.5 }}>
                       <strong>流年总结：</strong>{isGoodYear 
                         ? `此年流年${ganZhi}，五行流通，整体运势向好，把握机遇可有所突破` 
                         : `此年流年${ganZhi}，需稳扎稳打，低调行事，避免激进决策`
@@ -2170,7 +2170,7 @@ function DecadeCard({ data, index }: { data: CandlestickData; index: number }) {
             })()}
             
             {selectedYear === null && (
-              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: '#999', textAlign: 'center', margin: '8px 0 0 0' }}>
+              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: '#999', textAlign: 'center', margin: '8px 0 0 0' }}>
                 👆 点击上方年份卡片查看详细分析
               </p>
             )}
@@ -2178,8 +2178,8 @@ function DecadeCard({ data, index }: { data: CandlestickData; index: number }) {
           
           {/* 十年关键词 */}
           <div style={{ marginTop: '12px', padding: '10px 12px', background: `${color}10`, borderRadius: '10px', border: `1px solid ${color}20` }}>
-            <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: color, fontWeight: 600 }}>关键词</span>
-            <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: css.textSecondary, marginLeft: '8px' }}>
+            <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: color, fontWeight: 600 }}>关键词</span>
+            <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: css.textSecondary, marginLeft: '8px' }}>
               {isUp ? `${ELEMENT_NAMES[data.element]}气旺盛 · 主动出击 · 把握机遇` : `能量积累期 · 稳扎稳打 · 静待时机`}
             </span>
           </div>
@@ -2219,8 +2219,8 @@ function FiveElementTooltip({ active, payload, label }: any) {
   const color = ELEMENT_COLORS[elMap[label] || ''] || css.text;
   return (
     <div style={{ background: '#FFFFFF', border: '1px solid #F0F1F8', borderRadius: 12, padding: '10px 16px', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}>
-      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 700, color, marginBottom: '4px' }}>{label}</p>
-      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', color: css.textSecondary }}>{pct}%</p>
+      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', fontWeight: 700, color, marginBottom: '4px' }}>{label}</p>
+      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', color: css.textSecondary }}>{pct}%</p>
     </div>
   );
 }
@@ -2233,12 +2233,12 @@ function DayunTooltip({ active, payload }: any) {
   const score = d.score;
   return (
     <div style={{ background: '#FFFFFF', border: '1px solid #F0F1F8', borderRadius: 12, padding: '10px 16px', boxShadow: '0 4px 16px rgba(0,0,0,0.1)' }}>
-      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 700, color: css.text, marginBottom: '4px' }}>{d.ganZhi}</p>
-      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', color: css.textSecondary, lineHeight: 1.6 }}>
+      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', fontWeight: 700, color: css.text, marginBottom: '4px' }}>{d.ganZhi}</p>
+      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', color: css.textSecondary, lineHeight: 1.6 }}>
         年份: {d.year}–{d.yearEnd}<br />
         年龄: {Math.round(d.age)}–{Math.round(d.endAge)}岁
       </p>
-      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color, marginTop: '6px' }}>运势: {score}分</p>
+      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 700, color, marginTop: '6px' }}>运势: {score}分</p>
     </div>
   );
 }
@@ -2431,11 +2431,11 @@ export default function ResultPage() {
     <>
       {!userId ? (
         <div style={{ ...cardStyle({ padding: '40px 24px', borderRadius: 16 }), textAlign: 'center' }}>
-          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '16px', fontWeight: 700, color: css.text, marginBottom: '12px' }}>无效的页面链接</p>
-          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', color: css.textMuted, marginBottom: '20px' }}>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1remrem', fontWeight: 700, color: css.text, marginBottom: '12px' }}>无效的页面链接</p>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', color: css.textMuted, marginBottom: '20px' }}>
             请从首页命盘卡片中的「查看详细分析报告」进入；地址栏应为「#/result/用户ID」形式。
           </p>
-          <Link to="/" style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', color: css.accent, textDecoration: 'none', fontWeight: 600 }}>返回首页 →</Link>
+          <Link to="/" style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', color: css.accent, textDecoration: 'none', fontWeight: 600 }}>返回首页 →</Link>
         </div>
       ) : loading ? (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 20px', gap: '16px' }}>
@@ -2446,7 +2446,7 @@ export default function ResultPage() {
               width: '64px', height: '64px', borderRadius: '20px',
               background: `linear-gradient(135deg, ${css.accent}, ${PALETTE.orange})`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '32px', fontWeight: 900,
+              fontSize: '2remrem', fontWeight: 900,
               boxShadow: '0 8px 32px rgba(255,107,157,0.3)',
             }}>
             ☯
@@ -2454,30 +2454,30 @@ export default function ResultPage() {
           <motion.p
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ duration: 1.5, repeat: Infinity }}
-            style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', color: css.textMuted }}>
+            style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', color: css.textMuted }}>
             八字解读中...
           </motion.p>
         </div>
       ) : loadError ? (
         <div style={{ ...cardStyle({ padding: '48px 24px' }), textAlign: 'center', maxWidth: 440, margin: '0 auto' }}>
           <div style={{ fontSize: '48px', marginBottom: '16px' }}>⚠️</div>
-          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '18px', fontWeight: 700, color: css.text, marginBottom: '12px' }}>无法打开该报告</p>
-          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', color: css.textSecondary, lineHeight: 1.7, marginBottom: '20px' }}>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.13remrem', fontWeight: 700, color: css.text, marginBottom: '12px' }}>无法打开该报告</p>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', color: css.textSecondary, lineHeight: 1.7, marginBottom: '20px' }}>
             {loadError}
           </p>
-          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', color: css.textMuted, lineHeight: 1.6, marginBottom: '20px' }}>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', color: css.textMuted, lineHeight: 1.6, marginBottom: '20px' }}>
             若在手机浏览器打开：请确保开发机已运行前端（Vite）与后端（3001），且该记录在开发机数据库中存在；链接格式应为「#/result/记录ID」。
           </p>
-          <Link to="/" style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', color: css.accent, textDecoration: 'none', fontWeight: 600 }}>返回首页 →</Link>
+          <Link to="/" style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', color: css.accent, textDecoration: 'none', fontWeight: 600 }}>返回首页 →</Link>
         </div>
       ) : !userInfo || !userInfo.baziResult ? (
         <div style={{ ...cardStyle({ padding: '48px' }), textAlign: 'center' }}>
           <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔮</div>
-          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '18px', fontWeight: 700, color: css.text, marginBottom: '12px' }}>未找到完整命盘数据</p>
-          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', color: css.textSecondary, marginBottom: '16px' }}>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.13remrem', fontWeight: 700, color: css.text, marginBottom: '12px' }}>未找到完整命盘数据</p>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', color: css.textSecondary, marginBottom: '16px' }}>
             接口已返回记录，但缺少排盘结果。请回到首页重新保存生辰后再试。
           </p>
-          <Link to="/" style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', color: css.accent, textDecoration: 'none', fontWeight: 600 }}>返回首页 →</Link>
+          <Link to="/" style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', color: css.accent, textDecoration: 'none', fontWeight: 600 }}>返回首页 →</Link>
         </div>
       ) : (
         (() => {
@@ -2593,7 +2593,7 @@ export default function ResultPage() {
         <Link to="/" style={{
           display: 'flex', alignItems: 'center', gap: '8px', alignSelf: ios ? 'flex-start' : undefined,
           padding: ios ? '10px 14px' : '10px 20px', borderRadius: cardRadius,
-          fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 600,
+          fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 600,
           background: `linear-gradient(135deg, ${css.accent}12, ${PALETTE.orange}10, #FFFFFF)`, color: css.textSecondary,
           border: `1.5px solid ${css.accent}25`,
           textDecoration: 'none',
@@ -2621,14 +2621,14 @@ export default function ResultPage() {
               width: '44px', height: '44px', borderRadius: '14px',
               background: `linear-gradient(135deg, ${css.accent}, ${PALETTE.orange})`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '22px', fontWeight: 900,
+              fontSize: '1.38remrem', fontWeight: 900,
               boxShadow: '0 4px 16px rgba(255,107,157,0.3)',
             }}>
               ☯
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '17px', fontWeight: 700, color: css.text }}>{userInfo.name}</p>
+                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.06remrem', fontWeight: 700, color: css.text }}>{userInfo.name}</p>
                 {/* 用户切换下拉按钮 */}
                 {userList.length > 1 && (
                   <motion.button
@@ -2638,14 +2638,14 @@ export default function ResultPage() {
                       padding: '4px 10px', borderRadius: '8px',
                       background: `linear-gradient(135deg, ${css.accent}12, ${PALETTE.orange}10, #FFFFFF)`, border: `1px solid ${css.accent}20`,
                       cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px',
-                      fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600,
+                      fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', fontWeight: 600,
                       color: css.textSecondary,
                     }}>
                     <Users style={{ width: '12px', height: '12px' }} /> 切换
                   </motion.button>
                 )}
               </div>
-              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', color: css.textMuted, marginTop: '3px' }}>
+              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', color: css.textMuted, marginTop: '3px' }}>
                 {userInfo.birthYear}.{String(userInfo.birthMonth).padStart(2,'0')}.{String(userInfo.birthDay).padStart(2,'0')} · {userInfo.birthHour}:00 · {userInfo.gender === 'male' ? '男' : '女'}
               </p>
             </div>
@@ -2656,7 +2656,7 @@ export default function ResultPage() {
                 padding: '8px 14px', borderRadius: '12px',
                 background: `${css.accent}12`, border: `1px solid ${css.accent}30`,
                 cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px',
-                fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700,
+                fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700,
                 color: css.accent,
               }}>
               <Edit2 style={{ width: '14px', height: '14px' }} /> 编辑
@@ -2667,12 +2667,12 @@ export default function ResultPage() {
           {showUserDropdown && userList.length > 1 && (
             <div style={{
               position: 'absolute', top: '100%', right: 0, marginTop: '8px',
-              background: 'linear-gradient(145deg, rgba(91,92,255,0.09), rgba(44,203,255,0.08) 50%, #FFFFFF)', borderRadius: '12px', border: '1px solid rgba(91,92,255,0.2)',
+              background: '#FFFFFF', borderRadius: '12px', border: '1px solid rgba(91,92,255,0.2)',
               boxShadow: '0 10px 22px rgba(76,90,176,0.16)', overflow: 'hidden', zIndex: 100,
               minWidth: '240px',
             }}>
-              <div style={{ padding: '10px 14px', borderBottom: `1px solid ${css.accent}1F`, background: `linear-gradient(135deg, ${css.accent}0E, #FFFFFF)` }}>
-                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: css.textMuted, fontWeight: 600 }}>
+              <div style={{ padding: '10px 14px', borderBottom: `1px solid ${css.accent}1F`, background: '#F8F9FC' }}>
+                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: css.textMuted, fontWeight: 600 }}>
                   已录入用户 ({userList.length})
                 </span>
               </div>
@@ -2697,22 +2697,22 @@ export default function ResultPage() {
                         ? `linear-gradient(135deg, ${css.accent}, ${PALETTE.orange})`
                         : '#E8E8E8',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '14px', fontWeight: 700, color: u.id === userId ? '#FFFFFF' : '#999',
+                      fontSize: '0.88remrem', fontWeight: 700, color: u.id === userId ? '#FFFFFF' : '#999',
                     }}>
                       {u.name.charAt(0)}
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: css.text }}>
+                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 700, color: css.text }}>
                           {u.name}
                         </span>
                         {u.id === userId && (
-                          <span style={{ fontSize: '10px', padding: '2px 6px', background: `${css.accent}20`, color: css.accent, borderRadius: '4px', fontWeight: 600 }}>
+                          <span style={{ fontSize: '0.63remrem', padding: '2px 6px', background: `${css.accent}20`, color: css.accent, borderRadius: '4px', fontWeight: 600 }}>
                             当前
                           </span>
                         )}
                       </div>
-                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: css.textMuted }}>
+                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: css.textMuted }}>
                         {u.birthYear}.{String(u.birthMonth).padStart(2,'0')}.{String(u.birthDay).padStart(2,'0')} · {u.gender === 'male' ? '男' : '女'}
                       </span>
                     </div>
@@ -2748,10 +2748,10 @@ export default function ResultPage() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
             <Sparkles style={{ width: '16px', height: '16px', color: css.accent }} />
-            <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 700, color: css.text }}>
+            <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', fontWeight: 700, color: css.text }}>
               解读风格
             </span>
-            <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: css.textMuted }}>
+            <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: css.textMuted }}>
               选择后对下方所有解读生效
             </span>
           </div>
@@ -2783,7 +2783,7 @@ export default function ResultPage() {
           padding: '16px',
           marginBottom: '16px',
         }}>
-          <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 500, color: '#999999', marginBottom: '12px' }}>
+          <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 500, color: '#999999', marginBottom: '12px' }}>
             快捷导航
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
@@ -2811,9 +2811,9 @@ export default function ResultPage() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '14px',
+                fontSize: '0.88remrem',
               }}>☯</div>
-              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>四柱八字</span>
+              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 600, color: '#FFFFFF' }}>四柱八字</span>
             </motion.button>
             {/* 命格分析 */}
             <motion.button 
@@ -2839,9 +2839,9 @@ export default function ResultPage() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '14px',
+                fontSize: '0.88remrem',
               }}>✨</div>
-              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>命格分析</span>
+              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 600, color: '#FFFFFF' }}>命格分析</span>
             </motion.button>
             {/* 四维运势分析 */}
             <motion.button 
@@ -2867,9 +2867,9 @@ export default function ResultPage() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '14px',
+                fontSize: '0.88remrem',
               }}>📊</div>
-              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>四维运势分析</span>
+              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 600, color: '#FFFFFF' }}>四维运势分析</span>
             </motion.button>
             {/* 大运走势图 */}
             <motion.button 
@@ -2895,9 +2895,9 @@ export default function ResultPage() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '14px',
+                fontSize: '0.88remrem',
               }}>📈</div>
-              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 600, color: '#FFFFFF' }}>大运走势图</span>
+              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 600, color: '#FFFFFF' }}>大运走势图</span>
             </motion.button>
           </div>
         </div>
@@ -2905,7 +2905,7 @@ export default function ResultPage() {
 
       {/* ── 四柱八字 ── */}
       <motion.div {...fadeUp(0.05)} id="sec-bazi">
-        <SectionTitle icon={<span style={{ color: css.accent, fontSize: '16px' }}>☯</span>} compact={ios}>四柱八字</SectionTitle>
+        <SectionTitle icon={<span style={{ color: css.accent, fontSize: '1remrem' }}>☯</span>} compact={ios}>四柱八字</SectionTitle>
         <GlassCard style={{ padding: ios ? '16px' : '28px', borderRadius: cardRadius, background: `linear-gradient(145deg, ${css.accent}0A, ${PALETTE.orange}08 48%, #FFFFFF)`, border: `1px solid ${css.accent}20`, boxShadow: `0 14px 30px ${css.accent}16` }}>
           <div style={{ display: 'grid', gridTemplateColumns: ios ? 'repeat(2, minmax(0,1fr))' : 'repeat(4, 1fr)', gap: ios ? 10 : 12, marginBottom: ios ? 16 : 20 }}>
             <PillarCell label="年柱" pillar={bazi.yearPillar} shiShen={bazi.shiShen?.yearStem || bazi.shiShen?.year || '比肩'} compact={ios} />
@@ -2914,17 +2914,17 @@ export default function ResultPage() {
             <PillarCell label="时柱" pillar={bazi.hourPillar} shiShen={bazi.shiShen?.hourStem || bazi.shiShen?.hour || '食神'} compact={ios} />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '14px', paddingTop: '16px', borderTop: '1px solid #F0F1F8' }}>
-            <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', color: css.textMuted }}>日主</span>
-            <span style={{ fontSize: '28px', fontWeight: 900, color: css.accent, fontFamily: 'Outfit, sans-serif' }}>{bazi.dayMaster}</span>
+            <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', color: css.textMuted }}>日主</span>
+            <span style={{ fontSize: '1.75remrem', fontWeight: 900, color: css.accent, fontFamily: 'Outfit, sans-serif' }}>{bazi.dayMaster}</span>
             <ElementBadge el={bazi.dayMasterElement} />
           </div>
           {/* 日主命格解释 */}
           <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: `1px solid ${css.accent}20` }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
               <div style={{ width: '20px', height: '2px', background: css.accent, borderRadius: '1px' }} />
-              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: css.accent }}>日主解析</span>
+              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700, color: css.accent }}>日主解析</span>
             </div>
-            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', lineHeight: 1.8, color: css.textSecondary, margin: 0, padding: '12px 14px', background: `linear-gradient(135deg, ${css.accent}10, ${PALETTE.orange}0D, #FFFFFF)`, borderRadius: '12px', border: `1px solid ${css.accent}20` }}>
+            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', lineHeight: 1.8, color: css.textSecondary, margin: 0, padding: '12px 14px', background: `linear-gradient(135deg, ${css.accent}10, ${PALETTE.orange}0D, #FFFFFF)`, borderRadius: '12px', border: `1px solid ${css.accent}20` }}>
               <span style={{ fontWeight: 700, color: css.accent }}>{bazi.dayMaster}</span> 日主，出生于 
               <span style={{ fontWeight: 600 }}>{bazi.hourPillar}</span> 时辰，命带 
               <span style={{ fontWeight: 600 }}>{bazi.shiShen?.dayBranch || '正印'}</span> 护卫。
@@ -2942,13 +2942,13 @@ export default function ResultPage() {
       <motion.div {...fadeUp(0.1)}>
         <div onClick={() => setShowBaziExplanation(!showBaziExplanation)} style={{ cursor: 'pointer' }}>
           <SectionTitle 
-            icon={<span style={{ color: css.accent, fontSize: '16px' }}>📖</span>}
+            icon={<span style={{ color: css.accent, fontSize: '1remrem' }}>📖</span>}
             compact={ios}
             action={
               <motion.span 
                 animate={{ rotate: showBaziExplanation ? 90 : 0 }}
                 transition={{ duration: 0.2 }}
-                style={{ fontSize: '12px', color: css.textMuted, marginLeft: 'auto' }}
+                style={{ fontSize: '0.75remrem', color: css.textMuted, marginLeft: 'auto' }}
               >
                 {showBaziExplanation ? '收起' : '展开'}
               </motion.span>
@@ -2970,37 +2970,37 @@ export default function ResultPage() {
                 <div style={{ display: 'grid', gridTemplateColumns: ios ? '1fr' : 'repeat(2, 1fr)', gap: ios ? 12 : 16 }}>
                   <div style={{ padding: '16px', background: `linear-gradient(135deg, ${PALETTE.blue}10, #FFFFFF)`, borderRadius: '12px', border: `1px solid ${PALETTE.blue}1F` }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                      <span style={{ fontSize: '20px' }}>🌿</span>
-                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 700, color: css.text }}>年柱</span>
+                      <span style={{ fontSize: '1.25remrem' }}>🌿</span>
+                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', fontWeight: 700, color: css.text }}>年柱</span>
                     </div>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', lineHeight: 1.7, color: css.textSecondary, margin: 0 }}>
+                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', lineHeight: 1.7, color: css.textSecondary, margin: 0 }}>
                       <strong>{bazi.yearPillar}</strong> — 代表祖辈根基、童年环境、少年运势，影响先天禀赋与家庭背景。
                     </p>
                   </div>
                   <div style={{ padding: '16px', background: `linear-gradient(135deg, ${PALETTE.green}10, #FFFFFF)`, borderRadius: '12px', border: `1px solid ${PALETTE.green}1F` }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                      <span style={{ fontSize: '20px' }}>🌱</span>
-                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 700, color: css.text }}>月柱</span>
+                      <span style={{ fontSize: '1.25remrem' }}>🌱</span>
+                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', fontWeight: 700, color: css.text }}>月柱</span>
                     </div>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', lineHeight: 1.7, color: css.textSecondary, margin: 0 }}>
+                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', lineHeight: 1.7, color: css.textSecondary, margin: 0 }}>
                       <strong>{bazi.monthPillar}</strong> — 代表父母宫、青年运势，反映人际关系与事业发展潜力。
                     </p>
                   </div>
                   <div style={{ padding: '16px', background: 'linear-gradient(135deg, #FFF5F8 0%, #FFF 100%)', borderRadius: '12px', border: `1px solid ${css.accent}20` }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                      <span style={{ fontSize: '20px' }}>☀️</span>
-                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 700, color: css.accent }}>日柱</span>
+                      <span style={{ fontSize: '1.25remrem' }}>☀️</span>
+                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', fontWeight: 700, color: css.accent }}>日柱</span>
                     </div>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', lineHeight: 1.7, color: css.textSecondary, margin: 0 }}>
+                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', lineHeight: 1.7, color: css.textSecondary, margin: 0 }}>
                       <strong>{bazi.dayPillar}</strong> — 日主之柱，代表本人性格、本质能力与婚姻宫，是命盘核心。
                     </p>
                   </div>
                   <div style={{ padding: '16px', background: `linear-gradient(135deg, ${PALETTE.purple}10, #FFFFFF)`, borderRadius: '12px', border: `1px solid ${PALETTE.purple}1F` }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                      <span style={{ fontSize: '20px' }}>🌙</span>
-                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 700, color: css.text }}>时柱</span>
+                      <span style={{ fontSize: '1.25remrem' }}>🌙</span>
+                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', fontWeight: 700, color: css.text }}>时柱</span>
                     </div>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', lineHeight: 1.7, color: css.textSecondary, margin: 0 }}>
+                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', lineHeight: 1.7, color: css.textSecondary, margin: 0 }}>
                       <strong>{bazi.hourPillar}</strong> — 代表晚年运势、子女缘分、晚年福禄，影响人生后半程。
                     </p>
                   </div>
@@ -3009,9 +3009,9 @@ export default function ResultPage() {
                 <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: `1px solid ${css.accent}20` }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                     <div style={{ width: '16px', height: '2px', background: PALETTE.orange, borderRadius: '1px' }} />
-                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 700, color: PALETTE.orange }}>十天干 · 十二地支</span>
+                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 700, color: PALETTE.orange }}>十天干 · 十二地支</span>
                   </div>
-                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', lineHeight: 1.7, color: css.textSecondary, margin: 0 }}>
+                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', lineHeight: 1.7, color: css.textSecondary, margin: 0 }}>
                     <strong>天干</strong>（甲乙丙丁戊己庚辛壬癸）为天之气，主外在表现；<strong>地支</strong>（子丑寅卯辰巳午未申酉戌亥）为地之气，主内在根基。
                     天干与地支相配，构成年、月、日、时四柱，每柱一天干一地支，共成八个字，故称"八字"。
                   </p>
@@ -3045,11 +3045,11 @@ export default function ResultPage() {
             </motion.div>
             <div style={{ flex: 1 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '6px' }}>
-                <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '24px', fontWeight: 800, color: css.text }}>{mingGe.name}</h3>
+                <h3 style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1.5remrem', fontWeight: 800, color: css.text }}>{mingGe.name}</h3>
                 {mingGe.type === '从格' && (
                   <span style={{
                     padding: '4px 12px', borderRadius: '9999px',
-                    fontSize: '11px', fontWeight: 700,
+                    fontSize: '0.69remrem', fontWeight: 700,
                     background: `${css.accent}15`, color: css.accent,
                     border: `1px solid ${css.accent}30`,
                     fontFamily: 'Outfit, sans-serif', letterSpacing: '0.05em',
@@ -3059,7 +3059,7 @@ export default function ResultPage() {
                 )}
                 <span style={{
                   padding: '4px 10px', borderRadius: '8px',
-                  fontSize: '11px', fontWeight: 600,
+                  fontSize: '0.69remrem', fontWeight: 600,
                   background: `linear-gradient(135deg, ${css.accent}12, ${PALETTE.orange}10)`, color: css.textSecondary,
                   border: `1px solid ${css.accent}20`,
                   fontFamily: 'Outfit, sans-serif',
@@ -3067,7 +3067,7 @@ export default function ResultPage() {
                   {mingGe.type}
                 </span>
               </div>
-              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', lineHeight: 1.7, color: css.textSecondary }}>{mingGe.description || mingGe.desc}</p>
+              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', lineHeight: 1.7, color: css.textSecondary }}>{mingGe.description || mingGe.desc}</p>
               {/* 格局十神关系标签 */}
               {mingGe.mainGod && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px', flexWrap: 'wrap' }}>
@@ -3075,7 +3075,7 @@ export default function ResultPage() {
                     padding: '4px 12px', borderRadius: '9999px',
                     background: `linear-gradient(135deg, ${css.accent}18, ${PALETTE.orange}14)`,
                     border: `1px solid ${css.accent}30`,
-                    fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 700,
+                    fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 700,
                     color: css.accent,
                   }}>
                     {mingGe.mainGod}为格主
@@ -3085,7 +3085,7 @@ export default function ResultPage() {
                       padding: '4px 12px', borderRadius: '9999px',
                       background: `linear-gradient(135deg, ${PALETTE.orange}14, ${PALETTE.blue}10)`,
                       border: `1px solid ${PALETTE.orange}30`,
-                      fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 600,
+                      fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 600,
                       color: css.textSecondary,
                     }}>
                       配{mingGe.subGod}
@@ -3101,9 +3101,9 @@ export default function ResultPage() {
             <div style={{ padding: '16px', background: `linear-gradient(135deg, ${PALETTE.orange}0C, #FFFFFF)`, borderRadius: '12px', marginBottom: '16px', border: `1px solid ${PALETTE.orange}24` }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                 <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: PALETTE.orange }} />
-                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: css.text }}>格局特点</span>
+                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 700, color: css.text }}>格局特点</span>
               </div>
-              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', lineHeight: 1.7, color: css.textSecondary, margin: 0, paddingLeft: '14px' }}>
+              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', lineHeight: 1.7, color: css.textSecondary, margin: 0, paddingLeft: '14px' }}>
                 {mingGe.characteristics}
               </p>
             </div>
@@ -3114,10 +3114,10 @@ export default function ResultPage() {
             {mingGe.strengths && (
               <div style={{ padding: '14px', background: '#F0FFF4', borderRadius: '12px', border: '1px solid #D1FAE5' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
-                  <span style={{ fontSize: '14px' }}>💪</span>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#059669' }}>优势</span>
+                  <span style={{ fontSize: '0.88remrem' }}>💪</span>
+                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700, color: '#059669' }}>优势</span>
                 </div>
-                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', lineHeight: 1.6, color: '#065F46', margin: 0 }}>
+                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', lineHeight: 1.6, color: '#065F46', margin: 0 }}>
                   {mingGe.strengths}
                 </p>
               </div>
@@ -3125,10 +3125,10 @@ export default function ResultPage() {
             {mingGe.weaknesses && (
               <div style={{ padding: '14px', background: '#FFF7F7', borderRadius: '12px', border: '1px solid #FEE2E2' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
-                  <span style={{ fontSize: '14px' }}>⚠️</span>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#DC2626' }}>劣势</span>
+                  <span style={{ fontSize: '0.88remrem' }}>⚠️</span>
+                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700, color: '#DC2626' }}>劣势</span>
                 </div>
-                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', lineHeight: 1.6, color: '#991B1B', margin: 0 }}>
+                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', lineHeight: 1.6, color: '#991B1B', margin: 0 }}>
                   {mingGe.weaknesses}
                 </p>
               </div>
@@ -3140,15 +3140,15 @@ export default function ResultPage() {
             {mingGe && mingGe.suitableCareer && mingGe.suitableCareer.length > 0 && (
               <div style={{ padding: '14px', background: '#F0F9FF', borderRadius: '12px', border: '1px solid #BAE6FD' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
-                  <span style={{ fontSize: '14px' }}>✅</span>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#0284C7' }}>适合职业</span>
+                  <span style={{ fontSize: '0.88remrem' }}>✅</span>
+                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700, color: '#0284C7' }}>适合职业</span>
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                   {mingGe.suitableCareer.map((career: string, i: number) => (
                     <span key={i} style={{
                       padding: '4px 10px', borderRadius: '6px',
                       background: '#E0F2FE', color: '#0369A1',
-                      fontSize: '12px', fontFamily: 'Outfit, sans-serif',
+                      fontSize: '0.75remrem', fontFamily: 'Outfit, sans-serif',
                     }}>
                       {career}
                     </span>
@@ -3159,15 +3159,15 @@ export default function ResultPage() {
             {mingGe && mingGe.avoidCareer && mingGe.avoidCareer.length > 0 && (
               <div style={{ padding: '14px', background: '#FFFBEB', borderRadius: '12px', border: '1px solid #FDE68A' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
-                  <span style={{ fontSize: '14px' }}>❌</span>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#D97706' }}>不适合职业</span>
+                  <span style={{ fontSize: '0.88remrem' }}>❌</span>
+                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700, color: '#D97706' }}>不适合职业</span>
                 </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                   {mingGe.avoidCareer.map((career: string, i: number) => (
                     <span key={i} style={{
                       padding: '4px 10px', borderRadius: '6px',
                       background: '#FEF3C7', color: '#B45309',
-                      fontSize: '12px', fontFamily: 'Outfit, sans-serif',
+                      fontSize: '0.75remrem', fontFamily: 'Outfit, sans-serif',
                     }}>
                       {career}
                     </span>
@@ -3181,10 +3181,10 @@ export default function ResultPage() {
           {mingGe.luckTips && (
             <div style={{ padding: '16px', background: 'linear-gradient(135deg, #FFF8F0 0%, #FFF 100%)', borderRadius: '12px', border: '1px solid #FFD591' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <span style={{ fontSize: '16px' }}>🌟</span>
-                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: '#D97706' }}>运势提示</span>
+                <span style={{ fontSize: '1remrem' }}>🌟</span>
+                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 700, color: '#D97706' }}>运势提示</span>
               </div>
-              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', lineHeight: 1.7, color: '#92400E', margin: 0, paddingLeft: '24px' }}>
+              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', lineHeight: 1.7, color: '#92400E', margin: 0, paddingLeft: '24px' }}>
                 {mingGe.luckTips}
               </p>
             </div>
@@ -3216,11 +3216,11 @@ export default function ResultPage() {
       {/* ── 五行分析 ── */}
       {(analysis || mingpanAnalysis) && (
         <motion.div {...fadeUp(0.3)} id="sec-elements">
-          <SectionTitle icon={<span style={{ color: css.accent, fontSize: '16px' }}>✦</span>} compact={ios}>五行分析</SectionTitle>
+          <SectionTitle icon={<span style={{ color: css.accent, fontSize: '1remrem' }}>✦</span>} compact={ios}>五行分析</SectionTitle>
           <div style={{ display: 'grid', gridTemplateColumns: ios ? '1fr' : 'repeat(3, 1fr)', gap: 12 }}>
             {/* 十神占比（最左边新增） */}
             <GlassCard style={{ padding: ios ? '16px' : '20px', borderRadius: cardRadius, background: `linear-gradient(145deg, ${css.accent}0A, #FFFFFF)`, border: `1px solid ${css.accent}20` }}>
-              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: css.accent, marginBottom: '16px' }}>十神分布</p>
+              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 700, color: css.accent, marginBottom: '16px' }}>十神分布</p>
               {(() => {
                 // 获取日柱天干作为日主
                 const dayPillar = bazi.dayPillar || '';
@@ -3354,7 +3354,7 @@ export default function ResultPage() {
                           <div style={{
                             width: '32px', height: '32px', borderRadius: '8px',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: '13px', fontWeight: 700,
+                            fontSize: '0.81remrem', fontWeight: 700,
                             background: color + '18', 
                             color: color,
                             fontFamily: 'Outfit, sans-serif',
@@ -3363,8 +3363,8 @@ export default function ResultPage() {
                           </div>
                           <div style={{ flex: 1 }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2px' }}>
-                              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: css.text }}>{shiShenNames[ss]}</span>
-                              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: color, fontWeight: 600 }}>{pct}%</span>
+                              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: css.text }}>{shiShenNames[ss]}</span>
+                              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: color, fontWeight: 600 }}>{pct}%</span>
                             </div>
                             <div style={{ height: '4px', borderRadius: '2px', background: '#F0F1F8', overflow: 'hidden' }}>
                               <div style={{ 
@@ -3380,7 +3380,7 @@ export default function ResultPage() {
                       );
                     })}
                     {activeShiShen.length === 0 && (
-                      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: css.textMuted, textAlign: 'center', padding: '20px 0' }}>
+                      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: css.textMuted, textAlign: 'center', padding: '20px 0' }}>
                         暂无十神数据
                       </p>
                     )}
@@ -3391,14 +3391,14 @@ export default function ResultPage() {
 
             <GlassCard style={{ padding: ios ? '16px' : '24px', borderRadius: cardRadius, background: `linear-gradient(145deg, ${PALETTE.blue}0A, #FFFFFF)`, border: `1px solid ${PALETTE.blue}20` }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
-                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 700, color: css.accent }}>得令状态</span>
+                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', fontWeight: 700, color: css.accent }}>得令状态</span>
               </div>
-              <p style={{ fontSize: '24px', fontWeight: 800, marginBottom: '8px', color: css.text, fontFamily: 'Outfit, sans-serif' }}>
+              <p style={{ fontSize: '1.5remrem', fontWeight: 800, marginBottom: '8px', color: css.text, fontFamily: 'Outfit, sans-serif' }}>
                 {mingpanAnalysis?.bodyStrengthText || analysis?.bodyStrengthAnalysis?.bodyStrengthText || mingGe.name}
               </p>
               {(mingpanAnalysis?.bodyStrengthScore != null || analysis?.bodyStrengthAnalysis?.totalScore != null) && (
                 <div style={{ marginTop: '14px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '13px', marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.81remrem', marginBottom: '8px' }}>
                     <span style={{ fontFamily: 'Outfit, sans-serif', color: css.textMuted }}>身强弱评分</span>
                     <span style={{ fontFamily: 'Outfit, sans-serif', fontWeight: 700, color: css.accent }}>{mingpanAnalysis?.bodyStrengthScore || analysis?.bodyStrengthAnalysis?.totalScore}分</span>
                   </div>
@@ -3417,7 +3417,7 @@ export default function ResultPage() {
               )}
               {/* 五行占比信息 */}
               <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid #F0F1F8' }}>
-                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 600, color: css.textMuted, marginBottom: '10px' }}>五行占比</p>
+                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 600, color: css.textMuted, marginBottom: '10px' }}>五行占比</p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                   {chartData.map(el => (
                     <div key={el.name} style={{
@@ -3425,8 +3425,8 @@ export default function ResultPage() {
                       padding: '4px 10px', borderRadius: '9999px',
                       background: el.color + '12',
                     }}>
-                      <span style={{ fontSize: '12px' }}>{el.name}</span>
-                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 700, color: el.color }}>{Math.round(el.pct)}%</span>
+                      <span style={{ fontSize: '0.75remrem' }}>{el.name}</span>
+                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', fontWeight: 700, color: el.color }}>{Math.round(el.pct)}%</span>
                     </div>
                   ))}
                 </div>
@@ -3434,7 +3434,7 @@ export default function ResultPage() {
             </GlassCard>
 
             <GlassCard style={{ padding: ios ? '16px' : '24px', borderRadius: cardRadius, background: `linear-gradient(145deg, ${PALETTE.orange}0A, #FFFFFF)`, border: `1px solid ${PALETTE.orange}20` }}>
-              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '15px', fontWeight: 700, color: css.accent, marginBottom: '14px' }}>用神策略</p>
+              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', fontWeight: 700, color: css.accent, marginBottom: '14px' }}>用神策略</p>
               {(() => {
                 // 获取日主信息用于测算说明
                 const dayPillar = bazi.dayPillar || '';
@@ -3490,7 +3490,7 @@ export default function ResultPage() {
                           <div style={{
                             width: '36px', height: '36px', borderRadius: '12px',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: '16px', fontWeight: 900,
+                            fontSize: '1remrem', fontWeight: 900,
                             background: ELEMENT_COLORS[el] + '18', color: ELEMENT_COLORS[el],
                             fontFamily: 'Outfit, sans-serif',
                           }}>
@@ -3498,10 +3498,10 @@ export default function ResultPage() {
                           </div>
                           <div style={{ flex: 1 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: ELEMENT_COLORS[el] }}>喜用神</p>
-                              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: css.textMuted }}>{ELEMENT_NAMES[el]}行</span>
+                              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 700, color: ELEMENT_COLORS[el] }}>喜用神</p>
+                              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: css.textMuted }}>{ELEMENT_NAMES[el]}行</span>
                             </div>
-                            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: css.textMuted, margin: 0, lineHeight: 1.5 }}>
+                            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: css.textMuted, margin: 0, lineHeight: 1.5 }}>
                               {getFavorableReason(el, dayStem, monthStem)}
                             </p>
                           </div>
@@ -3514,7 +3514,7 @@ export default function ResultPage() {
                           <div style={{
                             width: '36px', height: '36px', borderRadius: '12px',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: '14px', fontWeight: 700,
+                            fontSize: '0.88remrem', fontWeight: 700,
                             background: `${PALETTE.coral}18`, color: PALETTE.coral,
                             fontFamily: 'Outfit, sans-serif',
                           }}>
@@ -3522,10 +3522,10 @@ export default function ResultPage() {
                           </div>
                           <div style={{ flex: 1 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '14px', fontWeight: 700, color: css.textMuted }}>忌用神</p>
-                              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', color: css.textMuted }}>{ELEMENT_NAMES[el]}行</span>
+                              <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 700, color: css.textMuted }}>忌用神</p>
+                              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: css.textMuted }}>{ELEMENT_NAMES[el]}行</span>
                             </div>
-                            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: css.textMuted, margin: 0, lineHeight: 1.5 }}>
+                            <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: css.textMuted, margin: 0, lineHeight: 1.5 }}>
                               {getUnfavorableReason(el, dayStem, monthStem)}
                             </p>
                           </div>
