@@ -1767,7 +1767,7 @@ export default function HomePage() {
         )}
 
         {/* ​—​ 第二行：用户详情 + 命盘信息 + 今日运势（选中用户时显示） —​ */}
-        {selectedRecord && (
+        {(activeSection === 'mingpan' || activeSection === 'fortune' || activeSection === null) && selectedRecord && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1790,7 +1790,7 @@ export default function HomePage() {
               background: 'linear-gradient(145deg, rgba(91,92,255,0.11) 0%, rgba(44,203,255,0.08) 42%, rgba(255,255,255,0.95) 100%)', borderRadius: '24px', padding: navWideLayout ? '20px' : '14px',
               boxShadow: '0 16px 30px rgba(74,86,152,0.14)', border: '1px solid rgba(91,92,255,0.22)',
               backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
-              display: 'flex', flexDirection: 'column',
+              display: (activeSection === 'mingpan' || activeSection === null) ? 'flex' : 'none', flexDirection: 'column',
               overflow: 'hidden',
               minWidth: 0,
               maxWidth: '100%',
@@ -2067,7 +2067,7 @@ export default function HomePage() {
               background: 'linear-gradient(145deg, rgba(255,92,168,0.1) 0%, rgba(91,92,255,0.1) 42%, rgba(255,255,255,0.95) 100%)', borderRadius: '24px', padding: navWideLayout ? '20px' : '14px',
               boxShadow: '0 16px 30px rgba(74,86,152,0.14)', border: '1px solid rgba(255,92,168,0.2)',
               backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
-              display: 'flex', flexDirection: 'column',
+              display: activeSection === 'fortune' ? 'flex' : 'none', flexDirection: 'column',
               overflow: 'hidden',
               minWidth: 0,
               maxWidth: '100%',
