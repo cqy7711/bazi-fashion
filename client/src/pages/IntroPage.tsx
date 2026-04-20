@@ -13,29 +13,29 @@ const GRADIENT = {
 const FEATURES = [
   {
     icon: <Sparkles size={28} />,
-    title: '命盘深度解析',
-    desc: '录入生辰后自动生成命盘，快速识别日主与五行强弱',
+    title: '八字命盘 · 精准解读',
+    desc: '输入生辰，一键生成专属命盘。五行强弱、日主特质、格局判断，全部可视化呈现',
     color: '#FF7A5C',
     bg: 'rgba(255,122,92,0.1)',
   },
   {
     icon: <Palette size={28} />,
-    title: '每日色彩策略',
-    desc: '结合流日与天气给出场景配色，支持通勤/约会/聚会切换',
+    title: '今日色彩 · 天天不同',
+    desc: '结合当天流日五行 + 实时天气，给出职场/约会/聚会的精准配色方案，穿对颜色事半功倍',
     color: '#FF9D6B',
     bg: 'rgba(255,157,107,0.1)',
   },
   {
     icon: <Gem size={28} />,
-    title: '开运手串建议',
-    desc: '按当日能量给出主推荐与次推荐，附功效与场景建议',
+    title: '开运手串 · 精选推荐',
+    desc: '根据身强/身弱和今日能量，智能推荐最适合的石头手串，附功效解释与适合场景',
     color: '#9D6BFF',
     bg: 'rgba(157,107,255,0.1)',
   },
   {
     icon: <Shirt size={28} />,
-    title: 'AI 命理问答',
-    desc: '支持自然语言追问，获得更细的事业、感情、健康建议',
+    title: 'AI 命理 · 随时追问',
+    desc: '专属 AI 助理随时在线，事业、感情、财运、健康，用自然语言聊出你想知道的一切',
     color: '#6BD4FF',
     bg: 'rgba(107,212,255,0.1)',
   },
@@ -140,7 +140,7 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                 fontFamily: 'Outfit, sans-serif',
               }}
             >
-              东方美学 × 时尚穿搭 × 命理智慧
+              八字命理 × 今日穿搭 × AI 开运
             </motion.p>
           </motion.div>
         )}
@@ -174,7 +174,7 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                     fontFamily: 'Outfit, sans-serif',
                   }}
                 >
-                  用东方智慧，开启你的专属时尚密码
+                  用你的生辰，解锁专属你的每日穿搭密码
                 </motion.p>
 
                 {/* 五行图示 */}
@@ -234,13 +234,13 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                     fontSize: '18px', fontWeight: 700, marginBottom: '12px',
                     fontFamily: 'Outfit, sans-serif',
                   }}>
-                    为什么先看这页？
+                    不只是算命，更是生活指南
                   </h3>
                   <p style={{
                     fontSize: '14px', lineHeight: 1.7, color: 'rgba(255,255,255,0.7)',
                     fontFamily: 'Outfit, sans-serif',
                   }}>
-                    我们会把八字信息转成每天可执行的穿搭与饰品建议，目标不是玄学堆叠，而是让你<span style={{ color: '#FF7A5C' }}>每天知道该怎么搭、为什么这么搭</span>。
+                    基于你的八字五行，每天生成<span style={{ color: '#FF7A5C' }}>可直接执行的穿搭配色</span>，结合实时天气和流日运势，让你每出门一次，都是恰到好处的状态。
                   </p>
                 </motion.div>
               </div>
@@ -258,7 +258,7 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                     fontFamily: 'Outfit, sans-serif',
                   }}
                 >
-                  四大核心功能，全方位提升你的运势
+                  四大核心功能，让命理真正融入你的日常
                 </motion.p>
 
                 {/* 功能卡片 */}
@@ -325,10 +325,10 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
                     <Compass size={14} color="#6BD4FF" />
-                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 700, color: '#DCE8FF' }}>定位联动</span>
+                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 700, color: '#DCE8FF' }}>实时天气联动</span>
                   </div>
                   <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '11px', lineHeight: 1.5, color: 'rgba(255,255,255,0.65)', margin: 0 }}>
-                    支持自动定位与手动选城，天气和流日会实时影响今日推荐结果。
+                    自动获取你所在城市的实时天气，天气五行会影响今日推荐结果，晴天/雨天/阴天推荐各有不同。
                   </p>
                 </motion.div>
               </div>
@@ -366,11 +366,11 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                     fontFamily: 'Outfit, sans-serif',
                   }}
                 >
-                  准备好开启你的
+                  你的专属运势指南
+                  <br />
                   <span style={{ background: GRADIENT.primary, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-                    五行色彩之旅
+                    只需 30 秒
                   </span>
-                  了吗？
                 </motion.h2>
 
                 <motion.p
@@ -378,18 +378,19 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5 }}
                   style={{
-                    fontSize: '14px', color: 'rgba(255,255,255,0.6)',
-                    marginBottom: '40px', fontFamily: 'Outfit, sans-serif',
+                    fontSize: '13px', color: 'rgba(255,255,255,0.55)',
+                    marginBottom: '28px', fontFamily: 'Outfit, sans-serif',
+                    lineHeight: 1.6,
                   }}
                 >
-                  立即体验专属你的开运穿搭指南
+                  输入生辰，立刻获得今日穿搭配色、开运手串和 AI 运势分析
                 </motion.p>
 
-                <div style={{ display: 'grid', gap: '10px', marginTop: '20px', textAlign: 'left' }}>
+                <div style={{ display: 'grid', gap: '10px', marginTop: '8px', textAlign: 'left' }}>
                   {[
-                    { step: '01', title: '录入生辰信息', desc: '姓名、出生时间、出生地（省市）' },
-                    { step: '02', title: '生成命盘与运势', desc: '自动完成五行分析与日运评分' },
-                    { step: '03', title: '查看穿搭与手串建议', desc: '拿到可直接执行的今日方案' },
+                    { step: '01', title: '填写生辰八字', desc: '姓名、出生年月日时、性别，2 分钟搞定', color: '#FF7A5C' },
+                    { step: '02', title: '查看今日运势', desc: '五行分析、日运评分、人生大运 K 线图', color: '#FF9D6B' },
+                    { step: '03', title: '拿走今日方案', desc: '配色穿搭 + 开运手串 + AI 追问，随取随用', color: '#9D6BFF' },
                   ].map((item, i) => (
                     <motion.div
                       key={item.step}
@@ -397,35 +398,62 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.55 + i * 0.08 }}
                       style={{
-                        padding: '10px 12px',
-                        borderRadius: '12px',
-                        border: '1px solid rgba(255,255,255,0.2)',
-                        background: 'linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05))',
+                        padding: '12px 14px',
+                        borderRadius: '14px',
+                        border: `1px solid ${item.color}30`,
+                        background: `linear-gradient(145deg, ${item.color}12, rgba(255,255,255,0.04))`,
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '10px',
+                        gap: '12px',
                       }}
                     >
                       <span style={{
-                        width: '30px',
-                        height: '30px',
+                        width: '32px',
+                        height: '32px',
                         borderRadius: '999px',
-                        background: 'rgba(255,255,255,0.16)',
+                        background: `${item.color}28`,
                         display: 'inline-flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontFamily: 'Outfit, sans-serif',
                         fontSize: '11px',
                         fontWeight: 800,
-                        color: '#FFD9EA',
+                        color: item.color,
+                        flexShrink: 0,
                       }}>{item.step}</span>
                       <div>
-                        <p style={{ margin: 0, fontFamily: 'Outfit, sans-serif', fontSize: '12px', fontWeight: 700, color: '#FFFFFF' }}>{item.title}</p>
-                        <p style={{ margin: '2px 0 0', fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: 'rgba(255,255,255,0.65)' }}>{item.desc}</p>
+                        <p style={{ margin: 0, fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#FFFFFF' }}>{item.title}</p>
+                        <p style={{ margin: '2px 0 0', fontFamily: 'Outfit, sans-serif', fontSize: '11px', color: 'rgba(255,255,255,0.6)' }}>{item.desc}</p>
                       </div>
                     </motion.div>
                   ))}
                 </div>
+
+                {/* 信任标签 */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.85 }}
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    gap: '10px',
+                    marginTop: '18px',
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  {['免费使用', '无需注册', '数据不外传'].map((tag) => (
+                    <span key={tag} style={{
+                      padding: '4px 12px',
+                      borderRadius: '20px',
+                      background: 'rgba(255,255,255,0.1)',
+                      border: '1px solid rgba(255,255,255,0.2)',
+                      fontSize: '11px',
+                      color: 'rgba(255,255,255,0.7)',
+                      fontFamily: 'Outfit, sans-serif',
+                    }}>{tag}</span>
+                  ))}
+                </motion.div>
               </div>
             )}
           </motion.div>
