@@ -1795,17 +1795,24 @@ export default function HomePage() {
               minWidth: 0,
               maxWidth: '100%',
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: navWideLayout ? '16px' : '12px' }}>
-                <div style={{
-                  width: navWideLayout ? '26px' : '22px', height: navWideLayout ? '26px' : '22px', borderRadius: '8px',
-                  background: `linear-gradient(135deg, ${PALETTE.purple}20, ${PALETTE.blue}20)`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  <Star style={{ width: navWideLayout ? '14px' : '12px', height: navWideLayout ? '14px' : '12px', color: PALETTE.purple }} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: navWideLayout ? '16px' : '12px' }}>
+                <div style={{ position: 'relative', flexShrink: 0 }}>
+                  <div style={{
+                    width: navWideLayout ? '36px' : '30px', height: navWideLayout ? '36px' : '30px', borderRadius: '50%',
+                    background: `linear-gradient(135deg, ${PALETTE.purple}, ${PALETTE.blue})`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: `0 4px 16px ${PALETTE.purple}50, inset 0 1px 0 rgba(255,255,255,0.25)`,
+                  }}>
+                    <Star style={{ width: navWideLayout ? '17px' : '14px', height: navWideLayout ? '17px' : '14px', color: '#fff' }} />
+                  </div>
+                  <div style={{
+                    position: 'absolute', inset: '-3px', borderRadius: '50%',
+                    border: `1.5px solid ${PALETTE.purple}30`,
+                  }} />
                 </div>
-                <div>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '14px' : '13px', fontWeight: 800, color: '#1A1A2E' }}>命盘信息</span>
-                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#959CC0', margin: '2px 0 0' }}>核心命盘</p>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '15px' : '13px', fontWeight: 800, color: '#1A1A2E', letterSpacing: '0.02em' }}>命盘信息</span>
+                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#959CC0', margin: '1px 0 0' }}>核心命盘</p>
                 </div>
               </div>
 
@@ -1860,19 +1867,19 @@ export default function HomePage() {
                 const elementNames: Record<string, string> = { wood: '木', fire: '火', earth: '土', metal: '金', water: '水' };
                 const elementColors: Record<string, string> = { wood: PALETTE.green, fire: '#FF6B6B', earth: '#D4A000', metal: '#7B8FA8', water: '#00A8E8' };
                 // 天干对应的自然意象（SVG 图示）
-                const stemIcons: Record<string, { emoji: string; label: string; desc: string }> = {
-                  '甲': { emoji: '🌳', label: '参天大树', desc: '如参天大树，挺拔向上' },
-                  '乙': { emoji: '🌿', label: '花草藤蔓', desc: '如花草藤蔓，柔韧生长' },
-                  '丙': { emoji: '☀️', label: '太阳之火', desc: '如太阳高照，光芒万丈' },
-                  '丁': { emoji: '🕯️', label: '灯火烛光', desc: '如灯火温暖，照亮四周' },
-                  '戊': { emoji: '⛰️', label: '巍峨高山', desc: '如高山厚土，承载万物' },
-                  '己': { emoji: '🌾', label: '田园沃土', desc: '如田园之土，孕育生长' },
-                  '庚': { emoji: '⚔️', label: '宝剑精钢', desc: '如宝剑出鞘，刚毅果断' },
-                  '辛': { emoji: '💎', label: '珍珠美玉', desc: '如珍珠美玉，温润精致' },
-                  '壬': { emoji: '🌊', label: '江河大海', desc: '如江河奔腾，气势磅礴' },
-                  '癸': { emoji: '💧', label: '雨露甘泉', desc: '如雨露甘泉，润物无声' },
+                const stemIcons: Record<string, { svg: string; label: string; desc: string; bgGrad: string[] }> = {
+                  '甲': { svg: '<path d="M12 3v3M12 18v3M5.6 6.6l2.1 2.1M16.3 15.3l2.1 2.1M3 12h3M18 12h3M5.6 17.4l2.1-2.1M16.3 8.7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="2" fill="currentColor"/>', label: '参天大树', desc: '如参天大树，挺拔向上', bgGrad: ['#2D6A4F', '#40916C'] },
+                  '乙': { svg: '<path d="M7 20c0-4 3-8 5-10s4-4 4-7M12 10c-1 2-3 4-5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="1.5" fill="currentColor" opacity="0.6"/><circle cx="14" cy="5" r="1" fill="currentColor" opacity="0.6"/>', label: '花草藤蔓', desc: '如花草藤蔓，柔韧生长', bgGrad: ['#52B788', '#74C69D'] },
+                  '丙': { svg: '<circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>', label: '太阳之火', desc: '如太阳高照，光芒万丈', bgGrad: ['#E85D04', '#F48C06'] },
+                  '丁': { svg: '<path d="M9 18h6M10 14h4M11 10h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 6v1M10 6h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 2c-1 2 0 3 1 3s2-1 1-3" fill="currentColor" opacity="0.7"/>', label: '灯火烛光', desc: '如灯火温暖，照亮四周', bgGrad: ['#DC6B19', '#F4A261'] },
+                  '戊': { svg: '<path d="M2 20L12 4l10 16H2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/><path d="M7 20l5-8 5 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>', label: '巍峨高山', desc: '如高山厚土，承载万物', bgGrad: ['#7B6D4E', '#A68A64'] },
+                  '己': { svg: '<path d="M3 16c2-4 4-6 9-6s7 2 9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M6 16h12M8 19h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7 13l2-2M12 10v-2M17 13l-2-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>', label: '田园沃土', desc: '如田园之土，孕育生长', bgGrad: ['#8B7355', '#B8A080'] },
+                  '庚': { svg: '<path d="M4 4l4 4m8 0l4 4M4 12l4-4m8 8l4-4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="1" opacity="0.3"/>', label: '宝剑精钢', desc: '如宝剑出鞘，刚毅果断', bgGrad: ['#6C757D', '#ADB5BD'] },
+                  '辛': { svg: '<path d="M12 2l2.5 6.5L21 10l-6.5 1.5L12 18l-2.5-6.5L3 10l6.5-1.5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/><circle cx="12" cy="10" r="2" fill="currentColor" opacity="0.5"/>', label: '珍珠美玉', desc: '如珍珠美玉，温润精致', bgGrad: ['#7B8FA8', '#B0BEC5'] },
+                  '壬': { svg: '<path d="M2 12c2-4 5-6 10-6s8 2 10 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M4 16c2-2 4-3 8-3s6 1 8 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/><path d="M6 20c2-1 3-2 6-2s4 1 6 2" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.3"/>', label: '江河大海', desc: '如江河奔腾，气势磅礴', bgGrad: ['#0077B6', '#00A8E8'] },
+                  '癸': { svg: '<path d="M12 22c-3-4-6-8-6-12a6 6 0 0112 0c0 4-3 8-6 12z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="12" cy="10" r="2" fill="currentColor" opacity="0.4"/><path d="M10 8c0 1 1 2 2 2" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>', label: '雨露甘泉', desc: '如雨露甘泉，润物无声', bgGrad: ['#0096C7', '#48CAE4'] },
                 };
-                const stemInfo = stemIcons[dm] || { emoji: '🌟', label: `${dm}${elementNames[dmEl]}`, desc: '' };
+                const stemInfo = stemIcons[dm] || { svg: '<circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2" fill="none"/>', label: `${dm}${elementNames[dmEl]}`, desc: '', bgGrad: [elementColors[dmEl], elementColors[dmEl]] };
                 const elementDesc: Record<string, string> = {
                   wood: '木命人仁慈温和，富有创造力和同情心，适合文化创意、教育、农业等行业。',
                   fire: '火命人热情奔放，积极进取，适合销售、演讲、政治、娱乐等行业。',
@@ -1889,19 +1896,23 @@ export default function HomePage() {
                     overflow: 'hidden',
                     minWidth: 0,
                   }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px', flexWrap: 'wrap' }}>
-                      {/* 天干意象图示 */}
-                      <div style={{
-                        width: navWideLayout ? '48px' : '42px', height: navWideLayout ? '48px' : '42px',
-                        borderRadius: '14px',
-                        background: `linear-gradient(145deg, ${elementColors[dmEl]}20, ${elementColors[dmEl]}10)`,
-                        border: `1.5px solid ${elementColors[dmEl]}35`,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontSize: navWideLayout ? '24px' : '20px',
-                        flexShrink: 0,
-                        boxShadow: `0 4px 12px ${elementColors[dmEl]}18`,
-                      }}>
-                        {stemInfo.emoji}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                      {/* 天干意象图示 - 精致 SVG 图标 */}
+                      <div style={{ position: 'relative', flexShrink: 0 }}>
+                        <div style={{
+                          width: navWideLayout ? '56px' : '48px', height: navWideLayout ? '56px' : '48px',
+                          borderRadius: '16px',
+                          background: `linear-gradient(145deg, ${stemInfo.bgGrad[0]}, ${stemInfo.bgGrad[1]})`,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          boxShadow: `0 8px 24px ${elementColors[dmEl]}35, inset 0 1px 0 rgba(255,255,255,0.2)`,
+                        }}>
+                          <svg width={navWideLayout ? '30' : '26'} height={navWideLayout ? '30' : '26'} viewBox="0 0 24 24" fill="none" style={{ color: '#fff' }} dangerouslySetInnerHTML={{ __html: stemInfo.svg }} />
+                        </div>
+                        <div style={{
+                          position: 'absolute', inset: '-2px', borderRadius: '18px',
+                          border: `1.5px solid ${elementColors[dmEl]}25`,
+                          pointerEvents: 'none',
+                        }} />
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
@@ -1943,9 +1954,10 @@ export default function HomePage() {
                       <div style={{
                         padding: '5px 12px', borderRadius: '999px',
                         background: `linear-gradient(135deg, #E8F5E9, #F1F8E9)`, border: '1px solid #66BB6A40',
-                        display: 'inline-flex', alignItems: 'center', gap: '4px',
+                        display: 'inline-flex', alignItems: 'center', gap: '5px',
                         boxShadow: '0 4px 10px rgba(76,175,80,0.12)',
                       }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01z" fill="#43A047" stroke="#2E7D32" stroke-width="1"/></svg>
                         <span style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 800, color: '#2E7D32' }}>喜</span>
                         <span style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 600, color: '#388E3C' }}>
                           {favEls.map((e: string) => elementNames[e] || e).join(' · ')}
@@ -1956,9 +1968,10 @@ export default function HomePage() {
                       <div style={{
                         padding: '5px 12px', borderRadius: '999px',
                         background: `linear-gradient(135deg, #FFF3E0, #FFEBEE)`, border: '1px solid #EF9A9A40',
-                        display: 'inline-flex', alignItems: 'center', gap: '4px',
+                        display: 'inline-flex', alignItems: 'center', gap: '5px',
                         boxShadow: '0 4px 10px rgba(239,154,154,0.12)',
                       }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#C62828" stroke-width="2"/><path d="M12 7v5l3 3" stroke="#C62828" stroke-width="2" stroke-linecap="round"/></svg>
                         <span style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 800, color: '#C62828' }}>忌</span>
                         <span style={{ fontFamily: 'Outfit', fontSize: '12px', fontWeight: 600, color: '#D32F2F' }}>
                           {unfavEls.map((e: string) => elementNames[e] || e).join(' · ')}
@@ -2000,7 +2013,13 @@ export default function HomePage() {
                     boxShadow: `0 6px 14px ${PALETTE.purple}14`,
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '7px' }}>
-                      <TrendingUp style={{ width: '13px', height: '13px', color: PALETTE.purple }} />
+                      <div style={{
+                        width: '20px', height: '20px', borderRadius: '6px',
+                        background: `linear-gradient(135deg, ${PALETTE.purple}30, ${PALETTE.blue}25)`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        <Sparkles style={{ width: '12px', height: '12px', color: PALETTE.purple }} />
+                      </div>
                       <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '13px' : '11px', fontWeight: 700, color: '#2D2D5A' }}>命格总结</span>
                       {patName && (
                         <span style={{
@@ -2055,7 +2074,7 @@ export default function HomePage() {
                   window.location.hash = `#/result/${encodeURIComponent(id)}`;
                 }}
                 style={{
-                  width: '100%', padding: '12px',
+                  width: '100%', padding: '13px',
                   borderRadius: '14px',
                   background: `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange}, ${PALETTE.yellow})`,
                   border: 'none', cursor: 'pointer',
@@ -2070,9 +2089,21 @@ export default function HomePage() {
                   zIndex: 2,
                 }}
               >
-                <TrendingUp style={{ width: '15px', height: '15px' }} />
+                <div style={{
+                  width: '24px', height: '24px', borderRadius: '50%',
+                  background: 'rgba(255,255,255,0.2)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <BookOpen style={{ width: '13px', height: '13px', color: '#fff' }} />
+                </div>
                 查看详细分析报告
-                <ArrowRight style={{ width: '14px', height: '14px' }} />
+                <div style={{
+                  width: '22px', height: '22px', borderRadius: '50%',
+                  background: 'rgba(255,255,255,0.2)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <ArrowRight style={{ width: '12px', height: '12px', color: '#fff' }} />
+                </div>
               </button>
             </div>
           ) : (
