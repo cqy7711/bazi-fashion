@@ -1809,24 +1809,76 @@ export default function HomePage() {
                 </div>
               </div>
 
+              {/* 用户基本信息 */}
+              {(() => {
+                const genderText = selectedRecord.gender === 'male' ? '男' : '女';
+                const calendarText = selectedRecord.calendarType === 'lunar' ? '农历' : '公历';
+                const birthDate = `${selectedRecord.birthYear}.${String(selectedRecord.birthMonth).padStart(2,'0')}.${String(selectedRecord.birthDay).padStart(2,'0')} ${String(selectedRecord.birthHour).padStart(2,'0')}时`;
+                const location = selectedRecord.birthLocation || '';
+                return (
+                  <div style={{
+                    display: 'flex', gap: '6px', marginBottom: '12px', flexWrap: 'wrap',
+                  }}>
+                    <span style={{
+                      padding: '3px 10px', borderRadius: '8px',
+                      background: 'rgba(91,92,255,0.08)', border: '1px solid rgba(91,92,255,0.15)',
+                      fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600, color: '#4A4A7A',
+                    }}>
+                      {selectedRecord.name}
+                    </span>
+                    <span style={{
+                      padding: '3px 10px', borderRadius: '8px',
+                      background: 'rgba(255,107,157,0.08)', border: '1px solid rgba(255,107,157,0.15)',
+                      fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600, color: PALETTE.coral,
+                    }}>
+                      {genderText}
+                    </span>
+                    <span style={{
+                      padding: '3px 10px', borderRadius: '8px',
+                      background: 'rgba(217,119,6,0.08)', border: '1px solid rgba(217,119,6,0.15)',
+                      fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600, color: '#B45309',
+                    }}>
+                      {calendarText} {birthDate}
+                    </span>
+                    {location && (
+                      <span style={{
+                        padding: '3px 10px', borderRadius: '8px',
+                        background: 'rgba(0,168,232,0.08)', border: '1px solid rgba(0,168,232,0.15)',
+                        fontFamily: 'Outfit, sans-serif', fontSize: '11px', fontWeight: 600, color: '#0088BB',
+                      }}>
+                        📍{location}
+                      </span>
+                    )}
+                  </div>
+                );
+              })()}
+
               {/* 日主属性 - 重点显示 */}
               {(() => {
                 const dmEl = previewInfo.baziResult.dayMasterElement || 'earth';
+                const dm = previewInfo.baziResult.dayMaster || '';
                 const elementNames: Record<string, string> = { wood: '木', fire: '火', earth: '土', metal: '金', water: '水' };
                 const elementColors: Record<string, string> = { wood: PALETTE.green, fire: '#FF6B6B', earth: '#D4A000', metal: '#7B8FA8', water: '#00A8E8' };
+                // 天干对应的自然意象（SVG 图示）
+                const stemIcons: Record<string, { emoji: string; label: string; desc: string }> = {
+                  '甲': { emoji: '🌳', label: '参天大树', desc: '如参天大树，挺拔向上' },
+                  '乙': { emoji: '🌿', label: '花草藤蔓', desc: '如花草藤蔓，柔韧生长' },
+                  '丙': { emoji: '☀️', label: '太阳之火', desc: '如太阳高照，光芒万丈' },
+                  '丁': { emoji: '🕯️', label: '灯火烛光', desc: '如灯火温暖，照亮四周' },
+                  '戊': { emoji: '⛰️', label: '巍峨高山', desc: '如高山厚土，承载万物' },
+                  '己': { emoji: '🌾', label: '田园沃土', desc: '如田园之土，孕育生长' },
+                  '庚': { emoji: '⚔️', label: '宝剑精钢', desc: '如宝剑出鞘，刚毅果断' },
+                  '辛': { emoji: '💎', label: '珍珠美玉', desc: '如珍珠美玉，温润精致' },
+                  '壬': { emoji: '🌊', label: '江河大海', desc: '如江河奔腾，气势磅礴' },
+                  '癸': { emoji: '💧', label: '雨露甘泉', desc: '如雨露甘泉，润物无声' },
+                };
+                const stemInfo = stemIcons[dm] || { emoji: '🌟', label: `${dm}${elementNames[dmEl]}`, desc: '' };
                 const elementDesc: Record<string, string> = {
                   wood: '木命人仁慈温和，富有创造力和同情心，适合文化创意、教育、农业等行业。',
                   fire: '火命人热情奔放，积极进取，适合销售、演讲、政治、娱乐等行业。',
                   earth: '土命人稳重踏实，诚实守信，适合建筑、农业、管理、仓储等行业。',
                   metal: '金命人果断坚定，正义感强，适合金融、科技、法律、外交等行业。',
                   water: '水命人聪明灵活，适应力强，适合贸易、物流、媒体、服务等行业。',
-                };
-                const mingGeDesc: Record<string, string> = {
-                  wood: '木气旺盛，创造力强，需火来生土，土来生金，金来生水，水来生木，形成流通。',
-                  fire: '火势猛烈，行动力强，需土来泄火之气，金来助身，水来制火，木来生火相助。',
-                  earth: '土气厚重，稳定性强，需金来生水，水来生木，木来生火，火来生土相生。',
-                  metal: '金气清刚，决策力强，需土来生金，水来木来生木，木来生火，火来制金。',
-                  water: '水气流通，智慧性强，需金来生水，火来水来温养，木来生火，火来水制。',
                 };
                 return (
                   <div style={{
@@ -1837,24 +1889,41 @@ export default function HomePage() {
                     overflow: 'hidden',
                     minWidth: 0,
                   }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px', flexWrap: 'wrap' }}>
-                      <span style={{
-                        padding: '4px 12px', borderRadius: '8px',
-                        background: elementColors[dmEl],
-                        fontFamily: 'Outfit', fontSize: navWideLayout ? '14px' : '12px', fontWeight: 800, color: '#fff',
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                      {/* 天干意象图示 */}
+                      <div style={{
+                        width: navWideLayout ? '48px' : '42px', height: navWideLayout ? '48px' : '42px',
+                        borderRadius: '14px',
+                        background: `linear-gradient(145deg, ${elementColors[dmEl]}20, ${elementColors[dmEl]}10)`,
+                        border: `1.5px solid ${elementColors[dmEl]}35`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: navWideLayout ? '24px' : '20px',
+                        flexShrink: 0,
+                        boxShadow: `0 4px 12px ${elementColors[dmEl]}18`,
                       }}>
-                        {(previewInfo.baziResult as any).dayPillar}
-                      </span>
-                      <div>
-                        <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '13px' : '12px', fontWeight: 700, color: elementColors[dmEl], margin: 0 }}>
-                          日主{elementNames[dmEl]}命
-                        </p>
-                        <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#A0A8C0', margin: 0 }}>
-                          {previewInfo.baziResult.dayMaster || dmEl}属性
-                        </p>
+                        {stemInfo.emoji}
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                          <span style={{
+                            padding: '3px 10px', borderRadius: '6px',
+                            background: elementColors[dmEl],
+                            fontFamily: 'Outfit', fontSize: navWideLayout ? '13px' : '12px', fontWeight: 800, color: '#fff',
+                          }}>
+                            {dm}{elementNames[dmEl]}
+                          </span>
+                          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '11px' : '10px', color: '#8A8ABB', fontWeight: 500 }}>
+                            {stemInfo.label}
+                          </span>
+                        </div>
+                        {stemInfo.desc && (
+                          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#9A9FC2', margin: '3px 0 0' }}>
+                            {stemInfo.desc}
+                          </p>
+                        )}
                       </div>
                     </div>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '11px' : '10px', color: '#6B7280', lineHeight: 1.5, marginBottom: '8px', overflow: 'hidden' }}>
+                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '11px' : '10px', color: '#6B7280', lineHeight: 1.5, marginBottom: 0, overflow: 'hidden' }}>
                       {elementDesc[dmEl]}
                     </p>
 
@@ -1924,101 +1993,7 @@ export default function HomePage() {
                 );
               })()}
 
-              {/* 五行分布 - 横向进度条 */}
-              {previewInfo.fiveElements && (
-                (() => {
-                  const fe = previewInfo.fiveElements;
-                  const elements = [
-                    { key: 'wood',  name: '木', color: '#4CAF50' },
-                    { key: 'fire',  name: '火', color: '#FF5252' },
-                    { key: 'earth', name: '土', color: '#FFC107' },
-                    { key: 'metal', name: '金', color: '#90A4AE' },
-                    { key: 'water', name: '水', color: '#42A5F5' },
-                  ];
-                  const vals = elements.map(el => (fe[el.key as keyof typeof fe] as number) || 0);
-                  const total = vals.reduce((a, b) => a + b, 0) || 1;
-                  const pcts = vals.map(v => Math.round((v / total) * 100));
-                  // 确保合计=100（调整最大项误差）
-                  const diff = 100 - pcts.reduce((a, b) => a + b, 0);
-                  if (diff !== 0) {
-                    const maxIdx = pcts.indexOf(Math.max(...pcts));
-                    pcts[maxIdx] += diff;
-                  }
-                  const elementNames: Record<string, string> = { wood: '木', fire: '火', earth: '土', metal: '金', water: '水' };
-                  return (
-                    <div style={{ marginBottom: '10px', minWidth: 0, overflow: 'hidden' }}>
-                      {/* 标题行 */}
-                      <div style={{
-                        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                        marginBottom: '8px',
-                        flexWrap: 'wrap',
-                        gap: '4px',
-                      }}>
-                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '13px', fontWeight: 700, color: '#333' }}>
-                          五行分布
-                        </span>
-                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '10px', color: '#888', flexShrink: 0 }}>
-                          {elements.map((el, i) => `${el.name}:${vals[i]}`).join(' ')}
-                        </span>
-                      </div>
-
-                      {/* 横向分段进度条 */}
-                      <div style={{
-                        display: 'flex', width: '100%', height: '12px',
-                        borderRadius: '5px', overflow: 'hidden', gap: '1px',
-                        boxShadow: 'inset 0 1px 3px rgba(44,31,90,0.15)',
-                      }}>
-                        {elements.map((el, i) => pcts[i] > 0 && (
-                          <div key={el.key} style={{
-                            width: `${pcts[i]}%`,
-                            background: el.color,
-                            borderRadius: i === 0 ? '5px 0 0 5px' : i === elements.length - 1 ? '0 5px 5px 0' : '0',
-                            transition: 'width 0.6s ease',
-                          }} />
-                        ))}
-                      </div>
-
-                      {/* 图例 */}
-                      <div style={{
-                        display: 'flex', gap: '12px', marginTop: '8px', flexWrap: 'wrap',
-                      }}>
-                        {elements.map((el, i) => (
-                          <div key={el.key} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            <div style={{
-                              width: '8px', height: '8px', borderRadius: '50%',
-                              background: el.color, flexShrink: 0,
-                            }} />
-                            <span style={{
-                              fontFamily: 'Outfit, sans-serif', fontSize: '12px',
-                              color: '#555', fontWeight: 500,
-                            }}>{el.name}</span>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* 喜用神标签 */}
-                      {(previewInfo.favorableElements || [])?.length > 0 && (
-                        <div style={{
-                          marginTop: '8px', padding: '5px 12px', borderRadius: '999px',
-                          background: `linear-gradient(135deg, ${PALETTE.coral}18, ${PALETTE.orange}16)`, border: `1px solid ${PALETTE.coral}32`,
-                          display: 'inline-block',
-                          boxShadow: `0 6px 12px ${PALETTE.coral}22`,
-                        }}>
-                          <span style={{
-                            fontFamily: 'Outfit', fontSize: '12px', fontWeight: 700,
-                            color: '#5D4037',
-                          }}>
-                            喜用：{previewInfo.favorableElements?.map(
-                              (e: string) => elementNames[e] || e).join(' · ')}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })()
-              )}
-
-              {/* Native button + hash fallback: framer motion buttons can fail to fire click on some mobile WebViews */}
+              {/* Native button + hash fallback */}
               <button
                 type="button"
                 onClick={() => {
