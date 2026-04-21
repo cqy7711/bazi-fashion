@@ -558,7 +558,7 @@ export default function AiChatPage() {
     master: 0,
   });
   const accentGradient = 'from-indigo-500 to-violet-500';
-  const shellClass = 'max-w-3xl mx-auto rounded-[28px] border border-indigo-200/45 bg-gradient-to-br from-[#f8fbff]/92 to-white/80 backdrop-blur-md p-4 md:p-5';
+  const shellClass = 'max-w-3xl mx-auto rounded-[28px] border border-indigo-200/45 bg-gradient-to-br from-[#f8fbff]/92 to-white/80 backdrop-blur-md p-4 md:p-5 relative overflow-hidden';
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // 加载用户列表
@@ -830,61 +830,148 @@ export default function AiChatPage() {
 
   return (
     <div className={shellClass} style={{ boxShadow: SHADOW_TOKENS.glassCard }}>
-      {/* 顶部用户信息栏 - 支持切换 */}
-      {userInfo && (
-        <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
-          className="mb-4 px-4 py-2.5 bg-gradient-to-r from-amber-50/95 to-orange-50/95 rounded-2xl border border-amber-200/80 shadow-[0_10px_24px_rgba(255,166,77,0.16)] relative backdrop-blur-sm">
-          <div className="flex items-center gap-3">
-            <Sparkles className="w-4 h-4 text-primary shrink-0" />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm text-foreground font-medium truncate">
-                基于：{userInfo.name} · {userInfo.baziResult?.yearBranch}年{userInfo.baziResult?.monthBranch}月{userInfo.baziResult?.dayBranch}日{userInfo.baziResult?.hourBranch}时 · 日主{userInfo.baziResult?.dayMaster}
-              </p>
-            </div>
-            {/* 用户切换按钮 */}
-            {userList.length > 1 && (
-              <button 
-                onClick={() => setShowUserDropdown(!showUserDropdown)}
-                className="flex items-center gap-1 px-2 py-1 text-xs text-primary hover:bg-amber-100 rounded-lg transition-colors">
-                <Users className="w-3 h-3" />
-                <ChevronDown className={`w-3 h-3 transition-transform ${showUserDropdown ? 'rotate-180' : ''}`} />
-              </button>
-            )}
-          </div>
-          
-          {/* 用户下拉列表 */}
-          {showUserDropdown && userList.length > 1 && (
-            <motion.div 
-              initial={{ opacity: 0, y: -5 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl border border-amber-100 shadow-lg z-50 overflow-hidden">
-              <div className="px-3 py-2 text-xs text-amber-600 font-medium border-b border-amber-100 bg-amber-50">
-                已录入用户 ({userList.length})
-              </div>
-              <div className="max-h-48 overflow-y-auto">
-                {userList.map((u) => (
-                  <button
-                    key={u.id}
-                    onClick={() => switchUser(u.id)}
-                    className={`w-full px-3 py-2.5 text-left flex items-center gap-3 hover:bg-amber-50 transition-colors ${u.id === currentUserId ? 'bg-amber-50' : ''}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${u.id === currentUserId ? 'bg-primary text-white' : 'bg-amber-100 text-amber-700'}`}>
-                      {u.name.charAt(0)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">{u.name}</p>
-                      <p className="text-xs text-muted-foreground">{u.birthYear}年{u.birthMonth}月{u.birthDay}日 {u.birthHour}时</p>
-                    </div>
-                    {u.id === currentUserId && (
-                      <span className="text-xs text-primary font-medium">当前</span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </motion.div>
-      )}
+      <style>{`
+        @keyframes aiScan {
+          0% { transform: translateX(-45%); opacity: 0.0; }
+          18% { opacity: 0.9; }
+          50% { transform: translateX(35%); opacity: 0.35; }
+          100% { transform: translateX(60%); opacity: 0.0; }
+        }
+      `}</style>
+      {/* Tech background: subtle grid + glow (color palette unchanged) */}
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          inset: 0,
+          pointerEvents: 'none',
+          background:
+            'radial-gradient(circle at 14% 0%, rgba(99,102,241,0.16), transparent 40%), radial-gradient(circle at 92% 10%, rgba(168,85,247,0.14), transparent 44%), radial-gradient(circle at 50% 110%, rgba(255,92,168,0.08), transparent 46%)',
+          opacity: 1,
+        }}
+      />
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute',
+          inset: 0,
+          pointerEvents: 'none',
+          backgroundImage:
+            'linear-gradient(rgba(99,102,241,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,0.06) 1px, transparent 1px)',
+          backgroundSize: '26px 26px',
+          maskImage: 'radial-gradient(circle at 45% 18%, rgba(0,0,0,0.95), transparent 62%)',
+          WebkitMaskImage: 'radial-gradient(circle at 45% 18%, rgba(0,0,0,0.95), transparent 62%)',
+          opacity: 0.8,
+        }}
+      />
 
+      {/* HUD top bar */}
+      <motion.div
+        initial={{ opacity: 0, y: -6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.25 }}
+        className="mb-4 flex items-center justify-between gap-3 px-3 py-2 rounded-2xl border border-indigo-200/50 bg-white/65 backdrop-blur-md shadow-[0_10px_22px_rgba(76,90,176,0.10)] relative"
+      >
+        <div className="flex items-center gap-2 min-w-0">
+          <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${accentGradient} text-white flex items-center justify-center shadow-[0_10px_18px_rgba(92,99,255,0.22)]`}>
+            <Sparkles className="w-4 h-4" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-foreground truncate">AI 解读</p>
+            <p className="text-[10px] text-muted-foreground/70 truncate">
+              {loading ? '正在生成解读…' : '输入 / 查看快捷指令'}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          {/* Compact user switch on top-right */}
+          {userInfo && (
+            <div className="relative">
+              <button
+                onClick={() => userList.length > 1 && setShowUserDropdown(!showUserDropdown)}
+                className={cn(
+                  'flex items-center gap-1.5 px-2 py-1 rounded-xl border bg-white/70 backdrop-blur-md transition-colors',
+                  userList.length > 1 ? 'border-indigo-200/60 hover:bg-indigo-50' : 'border-indigo-100/50',
+                )}
+                title={userList.length > 1 ? '切换用户' : '当前用户'}
+              >
+                <span className={`w-5 h-5 rounded-lg bg-gradient-to-br ${accentGradient} text-white flex items-center justify-center text-[10px] font-black shadow-[0_8px_14px_rgba(92,99,255,0.18)]`}>
+                  {userInfo.name?.charAt(0) || '我'}
+                </span>
+                <span className="text-[10px] font-semibold text-foreground max-w-[84px] truncate">
+                  {userInfo.name}
+                </span>
+                {userList.length > 1 && (
+                  <>
+                    <Users className="w-3 h-3 text-indigo-600/80" />
+                    <ChevronDown className={`w-3 h-3 text-indigo-600/80 transition-transform ${showUserDropdown ? 'rotate-180' : ''}`} />
+                  </>
+                )}
+              </button>
+
+              {/* Dropdown anchored to top-right */}
+              {showUserDropdown && userList.length > 1 && (
+                <motion.div
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="absolute right-0 top-full mt-2 w-[260px] bg-white rounded-2xl border border-indigo-100 shadow-[0_18px_30px_rgba(76,90,176,0.16)] z-50 overflow-hidden"
+                >
+                  <div className="px-3 py-2 text-[10px] text-indigo-600 font-semibold border-b border-indigo-100 bg-gradient-to-r from-indigo-50 to-violet-50">
+                    已录入用户 ({userList.length})
+                  </div>
+                  <div className="max-h-56 overflow-y-auto">
+                    {userList.map((u) => (
+                      <button
+                        key={u.id}
+                        onClick={() => switchUser(u.id)}
+                        className={cn(
+                          'w-full px-3 py-2.5 text-left flex items-center gap-3 hover:bg-indigo-50 transition-colors',
+                          u.id === currentUserId && 'bg-indigo-50',
+                        )}
+                      >
+                        <div className={cn(
+                          'w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black',
+                          u.id === currentUserId ? `bg-gradient-to-br ${accentGradient} text-white` : 'bg-indigo-100 text-indigo-700',
+                        )}>
+                          {u.name.charAt(0)}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-foreground truncate">{u.name}</p>
+                          <p className="text-[10px] text-muted-foreground">{u.birthYear}年{u.birthMonth}月{u.birthDay}日 {u.birthHour}时</p>
+                        </div>
+                        {u.id === currentUserId && (
+                          <span className="text-[10px] text-indigo-600 font-semibold">当前</span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </div>
+          )}
+          <span className="text-[10px] px-2 py-1 rounded-xl border border-indigo-200/60 bg-gradient-to-br from-indigo-50/80 to-violet-50/60 text-indigo-700">
+            风格：{CHAT_STYLES.find(s => s.id === currentStyle)?.name}
+          </span>
+          <button
+            onClick={() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' })}
+            className="px-2 py-1 rounded-xl border border-indigo-200/60 bg-white/70 text-[10px] text-indigo-700 hover:bg-indigo-50 transition-colors"
+            title="跳到最新"
+          >
+            最新
+          </button>
+          {messages.length > 1 && (
+            <button
+              onClick={clearChat}
+              className="px-2 py-1 rounded-xl border border-rose-200/70 bg-white/70 text-[10px] text-rose-700 hover:bg-rose-50 transition-colors"
+              title="清空聊天"
+            >
+              清空
+            </button>
+          )}
+        </div>
+      </motion.div>
+
+      <div style={{ position: 'relative', zIndex: 1 }}>
       {!userInfo && (
         <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}
           className="mb-4 px-4 py-3 bg-gradient-to-r from-amber-50/95 to-rose-50/90 rounded-2xl border border-amber-200/80 shadow-[0_10px_20px_rgba(255,166,77,0.14)] flex items-center gap-3">
@@ -929,11 +1016,39 @@ export default function AiChatPage() {
                 {msg.role === 'user' ? '我' : '☯'}
               </div>
               <div className={cn('flex-1 max-w-[80%]', msg.role === 'user' && 'text-right')}>
-                <div className={cn('inline-block px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap text-left',
-                  msg.role === 'user'
-                    ? `bg-gradient-to-br ${accentGradient} text-white rounded-tr-sm shadow-[0_10px_20px_rgba(92,99,255,0.24)]`
-                    : 'bg-gradient-to-br from-[#f8fbff] to-white border border-indigo-100/80 rounded-tl-sm shadow-[0_8px_16px_rgba(76,90,176,0.1)]')}>
-                  {msg.content}
+                {/* Sci-fi bubble: gradient rim + scan highlight (no palette shift) */}
+                <div
+                  className={cn(
+                    'inline-block rounded-2xl p-[1px]',
+                    msg.role === 'user'
+                      ? `bg-gradient-to-br ${accentGradient}`
+                      : 'bg-gradient-to-br from-indigo-200/60 via-violet-200/35 to-rose-200/25',
+                  )}
+                >
+                  <div
+                    className={cn(
+                      'relative px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap text-left overflow-hidden',
+                      msg.role === 'user'
+                        ? 'bg-gradient-to-br from-indigo-500/92 to-violet-500/90 text-white rounded-tr-sm shadow-[0_12px_22px_rgba(92,99,255,0.22)]'
+                        : 'bg-gradient-to-br from-white/92 to-[#f8fbff]/92 text-foreground rounded-tl-sm shadow-[0_10px_18px_rgba(76,90,176,0.09)]',
+                    )}
+                    style={{ backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
+                  >
+                    <div
+                      aria-hidden
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        pointerEvents: 'none',
+                        background:
+                          'linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.35) 18%, transparent 38%)',
+                        opacity: msg.role === 'user' ? 0.22 : 0.18,
+                        transform: 'translateX(-35%)',
+                        animation: 'aiScan 2.8s ease-in-out infinite',
+                      }}
+                    />
+                    {msg.content}
+                  </div>
                 </div>
                 
                 {/* AI回复底部：显示风格标签 + 切换按钮 */}
@@ -980,10 +1095,16 @@ export default function AiChatPage() {
         {loading && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-secondary border border-border flex items-center justify-center text-sm font-black shrink-0">☯</div>
-            <div className="inline-block px-4 py-3 rounded-2xl rounded-tl-sm bg-white border border-border shadow-sm">
-              <div className="flex items-center gap-1">
-                {[0, 1, 2].map(i => (
-                  <div key={i} className="w-2 h-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: `${i * 0.15}s` }} />
+            <div className="inline-block px-4 py-3 rounded-2xl rounded-tl-sm bg-white/92 border border-indigo-100/80 shadow-[0_10px_18px_rgba(76,90,176,0.10)] backdrop-blur-sm">
+              <div className="flex items-end gap-1.5 h-4">
+                {[0, 1, 2, 3, 4].map(i => (
+                  <motion.div
+                    key={i}
+                    initial={{ height: 4, opacity: 0.55 }}
+                    animate={{ height: [4, 12, 6, 10, 4], opacity: [0.55, 1, 0.7, 0.95, 0.55] }}
+                    transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.08, ease: 'easeInOut' }}
+                    className={`w-1 rounded-full bg-gradient-to-b ${accentGradient}`}
+                  />
                 ))}
               </div>
             </div>
@@ -1032,18 +1153,16 @@ export default function AiChatPage() {
       {/* 输入框 */}
       <div className={cn(
         'rounded-2xl p-3 flex gap-2 items-end',
-        'bg-gradient-to-br from-[#f8fbff] to-white border border-indigo-100/80 shadow-[0_14px_28px_rgba(76,90,176,0.12)]'
+        'bg-gradient-to-br from-[#f8fbff]/92 to-white/85 border border-indigo-100/80 shadow-[0_18px_34px_rgba(76,90,176,0.12)] backdrop-blur-sm'
       )}>
-        {messages.length > 1 && (
-          <button onClick={clearChat} className="p-2 rounded-xl hover:bg-secondary/50 text-muted-foreground transition-colors shrink-0" title="清空聊天">
-            <Trash2 className="w-4 h-4" />
-          </button>
-        )}
+        <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${accentGradient} text-white flex items-center justify-center shrink-0 shadow-[0_10px_18px_rgba(92,99,255,0.18)]`}>
+          <Send className="w-4 h-4 opacity-90" />
+        </div>
         <textarea
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(input); } }}
-          placeholder={`以${CHAT_STYLES.find(s => s.id === currentStyle)?.name || ''}风格提问...`}
+          placeholder={`以${CHAT_STYLES.find(s => s.id === currentStyle)?.name || ''}风格提问…（Enter发送，Shift+Enter换行）`}
           rows={1}
           className="flex-1 resize-none text-sm bg-transparent focus:outline-none max-h-32 placeholder:text-muted-foreground/60"
         />
@@ -1053,6 +1172,7 @@ export default function AiChatPage() {
         </button>
       </div>
       <p className="text-[10px] text-muted-foreground/60 text-center mt-2">AI助手基于您的八字信息提供参考建议，内容仅供参考</p>
+      </div>
       </div>
     </div>
   );
