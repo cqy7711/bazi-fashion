@@ -541,6 +541,7 @@ ${foods[dm] || foods.earth!}
 }
 
 export default function AiChatPage() {
+  const CURRENT_RECORD_KEY = 'wuxing-current-record-id';
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -569,7 +570,14 @@ export default function AiChatPage() {
       .then(data => {
         if (data.items?.length > 0) {
           setUserList(data.items);
-          const latest = data.items[0];
+          let latest = data.items[0];
+          try {
+            const saved = sessionStorage.getItem(CURRENT_RECORD_KEY);
+            const match = saved ? data.items.find((u: any) => u.id === saved) : null;
+            if (match) latest = match;
+          } catch {
+            // ignore
+          }
           setCurrentUserId(latest.id);
           fetch(`/api/users/${USER_ID}/birth-info/${latest.id}`)
             .then(r => r.json())
@@ -602,6 +610,12 @@ export default function AiChatPage() {
       if (!info.error) {
         setUserInfo(info);
         setCurrentUserId(recordId);
+        try {
+          sessionStorage.setItem(CURRENT_RECORD_KEY, recordId);
+          window.dispatchEvent(new Event('wuxing-current-record-changed'));
+        } catch {
+          // ignore
+        }
         // 清空聊天记录
         setMessages([{
           id: 'user-switch-' + Date.now(),

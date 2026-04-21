@@ -10,6 +10,8 @@ import {
   Users, BookOpen, Moon, Activity
 } from 'lucide-react';
 import type { UserBirthInfoListItem, UserBirthInfo, OutfitRecommendation, BraceletRecommendation, DailyFortune } from './types';
+import type { LanguageStyle } from '../shared/types';
+import { getFortuneAnalysis } from './ResultPage';
 
 // ── 多巴胺配色系统 ──
 const PALETTE = {
@@ -828,8 +830,15 @@ function ElementBadge({ el }: { el: string }) {
 }
 
 export default function HomePage() {
+  const CURRENT_RECORD_KEY = 'wuxing-current-record-id';
   const [records, setRecords] = useState<UserBirthInfoListItem[]>([]);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(() => {
+    try {
+      return sessionStorage.getItem(CURRENT_RECORD_KEY);
+    } catch {
+      return null;
+    }
+  });
   const [showForm, setShowForm] = useState(false);
   const [activeTab, setActiveTab] = useState<'outfit' | 'bracelet' | null>(null);
   const [activeSection, setActiveSection] = useState<'mingpan' | 'fortune' | 'outfit' | 'bracelet' | null>('mingpan');
@@ -861,6 +870,7 @@ export default function HomePage() {
   const [braceletRec, setBraceletRec] = useState<BraceletRecommendation | null>(null);
   const [previewInfo, setPreviewInfo] = useState<UserBirthInfo | null>(null);
   const [dailyFortune, setDailyFortune] = useState<DailyFortune | null>(null);
+  const [mingpanAnalysis, setMingpanAnalysis] = useState<any>(null);
 
   // 地理位置状态（从 localStorage 恢复缓存，避免每次弹出定位弹窗）
   const savedLocation = (() => { try { const s = localStorage.getItem('bazi_user_location'); return s ? JSON.parse(s) : null; } catch { return null; } })();
@@ -990,6 +1000,12 @@ export default function HomePage() {
   async function selectRecord(id: string) {
     setSelectedId(id);
     setActiveTab(null);  // 默认不展开推荐内容
+    try {
+      sessionStorage.setItem(CURRENT_RECORD_KEY, id);
+      window.dispatchEvent(new Event('wuxing-current-record-changed'));
+    } catch {
+      // ignore sessionStorage errors
+    }
     await fetchRecommendations(id);
 
     // 移动端：自动滚动到命盘信息区域
@@ -1006,16 +1022,18 @@ export default function HomePage() {
     const city = cityOverride ?? userLocation?.city;
     const cityParam = city ? `&city=${encodeURIComponent(city)}` : '';
     try {
-      const [or, br, info, fortune] = await Promise.all([
+      const [or, br, info, fortune, mpAna] = await Promise.all([
         fetch(`/api/users/${USER_ID}/outfit-recommendation?recordId=${id}${cityParam}`).then(r => r.json() as Promise<OutfitRecommendation | { error: string }>),
         fetch(`/api/users/${USER_ID}/bracelet-recommendation?recordId=${id}`).then(r => r.json() as Promise<BraceletRecommendation | { error: string }>),
         fetch(`/api/users/${USER_ID}/birth-info/${id}`).then(r => r.json() as Promise<UserBirthInfo | { error: string }>),
         fetch(`/api/users/${USER_ID}/daily-fortune?recordId=${id}`).then(r => r.json() as Promise<DailyFortune | { error: string }>),
+        fetch(`/api/users/${USER_ID}/mingpan-analysis?recordId=${id}`).then(r => r.json() as Promise<any>),
       ]);
       setOutfitRec(or && 'error' in or ? null : or as OutfitRecommendation);
       setBraceletRec(br && 'error' in br ? null : br as BraceletRecommendation);
       setPreviewInfo(info && 'error' in info ? null : info as UserBirthInfo);
       setDailyFortune(fortune && 'error' in fortune ? null : fortune as DailyFortune);
+      setMingpanAnalysis(mpAna && !mpAna.error ? mpAna : null);
     } catch (e) { console.error('fetchRecommendations error:', e); }
   }
 
@@ -1029,9 +1047,26 @@ export default function HomePage() {
   async function handleDelete(id: string) {
     if (!confirm('确认删除这条记录？')) return;
     await fetch(`/api/users/${USER_ID}/birth-info/${id}`, { method: 'DELETE' });
-    if (selectedId === id) { setSelectedId(null); setOutfitRec(null); setBraceletRec(null); setPreviewInfo(null); setDailyFortune(null); }
+    if (selectedId === id) { setSelectedId(null); setOutfitRec(null); setBraceletRec(null); setPreviewInfo(null); setDailyFortune(null); setMingpanAnalysis(null); }
     fetchRecords();
   }
+
+  // Ensure a coherent default selection after records load.
+  useEffect(() => {
+    if (!records.length) return;
+    if (selectedId && records.some(r => r.id === selectedId)) return;
+    try {
+      const saved = sessionStorage.getItem(CURRENT_RECORD_KEY);
+      if (saved && records.some(r => r.id === saved)) {
+        selectRecord(saved);
+        return;
+      }
+    } catch {
+      // ignore
+    }
+    if (records[0]?.id) selectRecord(records[0].id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [records.length]);
 
   // 编辑用户记录
   function handleEdit(record: UserBirthInfoListItem) {
@@ -1171,39 +1206,24 @@ export default function HomePage() {
   // 动态生成「今日配色主张」文案
   const getColorAdvice = (): string => {
     if (!outfitRec) return '';
-    const { primaryColor, secondaryColor, avoidColor, primaryDesc, secondaryDesc, avoidDesc } = outfitRec;
+    const { primaryColor, secondaryColor, avoidColor } = outfitRec;
     const wuxing = (outfitRec as any)?.weatherInfo?.wuxing || '';
-    const weather = (outfitRec as any)?.weatherInfo?.weather || '';
     const scenes: any[] = (outfitRec as any)?.sceneRecommendations || [];
-
-    // 五行主线
-    let mainLine = '';
-    if (wuxing) mainLine = `今日五行「${wuxing}」主导配色`;
-
-    // 主色策略
-    let colorStrategy = '';
-    if (primaryColor && secondaryColor) {
-      colorStrategy = `以${primaryColor}为主色大面积铺底，${secondaryColor}作为点缀色提升层次`;
-    } else if (primaryColor) {
-      colorStrategy = `以${primaryColor}为主色贯穿整体搭配`;
-    }
-
-    // 避色提醒
-    let avoidTip = '';
-    if (avoidColor) avoidTip = `避免大面积使用${avoidColor}`;
-
-    // 天气适配
-    let weatherTip = '';
-    if (weather?.includes('晴')) weatherTip = '晴天可适当增加亮色比重';
-    else if (weather?.includes('雨')) weatherTip = '雨天建议深色为主，加亮色配饰点缀';
-    else if (weather?.includes('阴')) weatherTip = '阴天可加入暖色调提亮整体';
-
-    // 场景提示
-    let sceneTip = '';
-    if (scenes.length >= 3) sceneTip = `${scenes.length}个场景各有侧重，切换查看详细搭配`;
-
-    const parts = [mainLine, colorStrategy, avoidTip, weatherTip, sceneTip].filter(Boolean);
-    return parts.join('。') + (parts.length ? '。' : '');
+    const mainLine = wuxing ? `今日${wuxing}气主导` : '今日推荐已更新';
+    const colorLine = primaryColor && secondaryColor
+      ? `主色${primaryColor}，辅色${secondaryColor}`
+      : primaryColor
+        ? `主色${primaryColor}`
+        : '按场景推荐配色';
+    const avoidLine = avoidColor ? `避色${avoidColor}` : '';
+    const sceneNames = scenes
+      .map((s: any) => s?.sceneName || s?.scene || s?.name)
+      .filter(Boolean)
+      .slice(0, 3)
+      .join('、');
+    const sceneLine = sceneNames ? `重点场景：${sceneNames}` : '';
+    const parts = [mainLine, colorLine, avoidLine, sceneLine].filter(Boolean);
+    return `${parts.join('，')}。`;
   };
 
   const renderInsightBlock = (
@@ -1950,10 +1970,7 @@ export default function HomePage() {
               }}>
               {/* 用户档案卡片：玻璃拟态 + 网格布局 */}
               {(() => {
-                const genderText = selectedRecord.gender === 'male' ? '男' : '女';
-                const calendarText = selectedRecord.calendarType === 'lunar' ? '农历' : '公历';
-                const birthDate = `${selectedRecord.birthYear}.${String(selectedRecord.birthMonth).padStart(2,'0')}.${String(selectedRecord.birthDay).padStart(2,'0')} ${String(selectedRecord.birthHour).padStart(2,'0')}时`;
-                const location = selectedRecord.birthLocation || '';
+                const birthDate = `${selectedRecord.birthYear}.${String(selectedRecord.birthMonth).padStart(2,'0')}.${String(selectedRecord.birthDay).padStart(2,'0')}`;
                 const trueSolarTime = (previewInfo?.baziResult as any)?.trueSolarTime;
                 const trueSolarHour = typeof trueSolarTime?.hour === 'number' ? trueSolarTime.hour : selectedRecord.birthHour;
                 const trueSolarMinute = typeof trueSolarTime?.minute === 'number' ? trueSolarTime.minute : 0;
@@ -1971,7 +1988,7 @@ export default function HomePage() {
                     zIndex: 1,
                     position: 'relative',
                   }}>
-                    {/* 姓名 + 性别：横向排列 */}
+                    {/* 姓名 */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '10px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         {/* 头像：渐变背景 + 首字母 */}
@@ -1989,23 +2006,12 @@ export default function HomePage() {
                           {selectedRecord.name}
                         </span>
                       </div>
-                      <div style={{
-                        display: 'inline-flex', alignItems: 'center', gap: '4px',
-                        padding: '3px 10px', borderRadius: '999px',
-                        background: selectedRecord.gender === 'male' ? 'rgba(99,102,241,0.1)' : 'rgba(255,107,157,0.1)',
-                        border: '1px solid rgba(99,102,241,0.15)',
-                      }}>
-                        <Users size={11} strokeWidth={2.5} color={selectedRecord.gender === 'male' ? '#6366F1' : PALETTE.coral} />
-                        <span style={{ fontSize: '0.69rem', fontWeight: 700, color: selectedRecord.gender === 'male' ? '#5B5E8A' : '#8A5F72' }}>
-                          {genderText}
-                        </span>
-                      </div>
                     </div>
 
-                    {/* 日期 / 时辰 / 地点：3列网格 */}
+                    {/* 用户信息：仅出生年月日 + 真太阳时 */}
                     <div style={{
                       display: 'grid',
-                      gridTemplateColumns: location ? '1fr 1fr 1fr' : '1fr 1fr',
+                      gridTemplateColumns: '1fr 1fr',
                       gap: '6px',
                     }}>
                       <div style={{
@@ -2016,7 +2022,7 @@ export default function HomePage() {
                       }}>
                         <Calendar size={11} color="#7B7BB3" strokeWidth={2} />
                         <span style={{ fontSize: '0.63rem', color: '#5F627A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          {calendarText} {birthDate}
+                          {birthDate}
                         </span>
                       </div>
 
@@ -2035,19 +2041,6 @@ export default function HomePage() {
                         </div>
                       </div>
 
-                      {location && (
-                        <div style={{
-                          display: 'flex', alignItems: 'center', gap: '5px',
-                          padding: '6px 9px', borderRadius: '10px',
-                          background: 'rgba(255,255,255,0.72)',
-                          border: '1px solid rgba(180,172,206,0.2)',
-                        }}>
-                          <MapPin size={11} color="#7B7BB3" strokeWidth={2} />
-                          <span style={{ fontSize: '0.63rem', color: '#5F627A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            {location}
-                          </span>
-                        </div>
-                      )}
                     </div>
                   </div>
                 );
@@ -2133,9 +2126,6 @@ export default function HomePage() {
                           }}>
                             日主核心
                           </span>
-                          <span style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#7D86A8', fontWeight: 500 }}>
-                            {stemInfo.label}
-                          </span>
                         </div>
                         {stemInfo.desc && (
                           <p style={{ fontFamily: 'Outfit', fontSize: '0.69rem', color: '#8E95B4', margin: '3px 0 0' }}>
@@ -2172,6 +2162,183 @@ export default function HomePage() {
                         </span>
                       </div>
                     )}
+                  </div>
+                );
+              })()}
+
+              {/* 命格简述 + 运势总结（精简版） */}
+              {(() => {
+                const pat = mingpanAnalysis?.pattern;
+                const patName: string | undefined = pat?.name;
+                const patDesc: string | undefined = pat?.description || pat?.desc;
+
+                const buildPatternOneLiner = () => {
+                  if (patDesc) return patDesc.length > 46 ? `${patDesc.slice(0, 46)}…` : patDesc;
+                  if (!patName) return '暂无命格总结，建议查看详细报告获取完整分析。';
+                  const map: Record<string, string> = {
+                    '官印相生': '主贵气与体系资源，宜稳扎稳打，靠专业与平台上升。',
+                    '伤官配印': '才华与学习力并行，宜以作品/证书背书，少刚多柔。',
+                    '食神生财': '财路多来自技能与产品化，长期主义更容易积累。',
+                    '财官双美': '事业与财运相互助力，适合在规则中放大优势。',
+                    '比劫旺': '行动力强但竞争也强，合作需立边界，财务要分账。',
+                  };
+                  const hit = Object.keys(map).find(k => patName.includes(k));
+                  return hit ? map[hit] : '命格以结构平衡为要，补不足、泄有余，抓住强项发力。';
+                };
+
+                const style: LanguageStyle = ((selectedRecord as any)?.languageStyle || (previewInfo as any)?.languageStyle || 'normal') as LanguageStyle;
+                const dmEl = (previewInfo as any)?.baziResult?.dayMasterElement || 'wood';
+                const fav = (previewInfo as any)?.favorableElements || [];
+                const unfav = (previewInfo as any)?.unfavorableElements || [];
+                const fortuneText = getFortuneAnalysis(style, dmEl, fav, unfav);
+                const fe = (previewInfo as any)?.fiveElements || { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
+                const elementOrder = ['wood', 'fire', 'earth', 'metal', 'water'] as const;
+                const elementNameMap: Record<string, string> = { wood: '木', fire: '火', earth: '土', metal: '金', water: '水' };
+                const strongestEl = elementOrder.reduce((a, b) => (fe[a] >= fe[b] ? a : b), 'wood');
+                const weakestEl = elementOrder.reduce((a, b) => (fe[a] <= fe[b] ? a : b), 'wood');
+                const getScoreTone = (score?: number) => {
+                  if (typeof score !== 'number') return '平稳';
+                  if (score >= 75) return '偏强';
+                  if (score >= 60) return '稳中向上';
+                  if (score >= 45) return '中性偏稳';
+                  return '偏弱宜守';
+                };
+
+                const buildCareerSummary = () => {
+                  const tone = getScoreTone(dailyFortune?.careerScore);
+                  const favorHint = fav.includes(dmEl) ? '日主得势' : '需借外力';
+                  const sourceHint = (fortuneText.career.split('。')[0] || '').slice(0, 8);
+                  return `事业${tone}，${favorHint}，${sourceHint || '重在执行与复盘'}。`;
+                };
+                const buildWealthSummary = () => {
+                  const tone = getScoreTone(dailyFortune?.wealthScore);
+                  const favorHint = fav.includes('metal') || fav.includes('water') ? '财星有助' : '控风险为先';
+                  const sourceHint = (fortuneText.fortune.split('。')[0] || '').slice(0, 8);
+                  return `财运${tone}，${favorHint}，${sourceHint || '宜稳健理财'}。`;
+                };
+                const buildLoveSummary = () => {
+                  const tone = getScoreTone(dailyFortune?.loveScore);
+                  const source = fortuneText.marriage || fortuneText.investment || '';
+                  const sourceHint = (source.split('。')[0] || '').slice(0, 8);
+                  return `感情${tone}，沟通优先，${sourceHint || '避免情绪内耗'}。`;
+                };
+                const buildHealthSummary = () => {
+                  const tone = getScoreTone(dailyFortune?.healthScore);
+                  const sourceHint = (fortuneText.health.split('。')[0] || '').slice(0, 8);
+                  return `健康${tone}，重在作息，${sourceHint || `${elementNameMap[weakestEl]}弱需调养`}。`;
+                };
+
+                const dims = [
+                  { key: 'career', label: '事业', text: buildCareerSummary() },
+                  { key: 'wealth', label: '财运', text: buildWealthSummary() },
+                  { key: 'love', label: '感情', text: buildLoveSummary() },
+                  { key: 'health', label: '健康', text: buildHealthSummary() },
+                ];
+                const keepFirstTwoClauses = (text: string) => {
+                  const normalized = text.replace(/。+$/, '');
+                  const parts = normalized.split('，').filter(Boolean);
+                  if (parts.length <= 2) return `${normalized}。`;
+                  return `${parts.slice(0, 2).join('，')}。`;
+                };
+
+                return (
+                  <div style={{ marginBottom: '12px', position: 'relative', zIndex: 1 }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '10px' }}>
+                      <div style={{
+                        padding: 0,
+                        borderRadius: 0,
+                        background: 'transparent',
+                        border: 'none',
+                        boxShadow: 'none',
+                        position: 'relative',
+                        overflow: 'hidden',
+                      }}>
+                        <div style={{
+                          position: 'absolute', inset: 0, pointerEvents: 'none',
+                          background: `radial-gradient(circle at 92% -6%, ${PALETTE.purple}12, transparent 44%)`,
+                        }} />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '7px', position: 'relative', zIndex: 1 }}>
+                          <div style={{
+                            width: '22px', height: '22px', borderRadius: '8px',
+                            background: `linear-gradient(135deg, ${PALETTE.purple}, ${PALETTE.blue})`,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            boxShadow: '0 3px 10px rgba(139,92,246,0.28)',
+                          }}>
+                            <Star style={{ width: '12px', height: '12px', color: '#fff' }} />
+                          </div>
+                          <span style={{ fontFamily: 'Outfit', fontSize: '0.81rem', fontWeight: 700, color: '#2D2D5A' }}>命格简述</span>
+                          {patName && (
+                            <span style={{
+                              fontFamily: 'Outfit', fontSize: '0.63rem', fontWeight: 600,
+                              padding: '1px 8px', borderRadius: '9999px',
+                              background: `linear-gradient(135deg, ${PALETTE.purple}18, ${PALETTE.blue}12)`,
+                              border: `1px solid ${PALETTE.purple}30`,
+                              color: '#5B4BA0',
+                            }}>
+                              {patName}
+                            </span>
+                          )}
+                        </div>
+                        <p style={{
+                          fontFamily: 'Outfit',
+                          fontSize: '0.75rem',
+                          color: '#535A7B',
+                          marginBottom: 0,
+                          lineHeight: 1.55,
+                          position: 'relative',
+                          zIndex: 1,
+                        }}>
+                          {buildPatternOneLiner()}
+                        </p>
+                      </div>
+
+                      <div style={{
+                        padding: 0,
+                        borderRadius: 0,
+                        background: 'transparent',
+                        border: 'none',
+                        boxShadow: 'none',
+                        position: 'relative',
+                        overflow: 'hidden',
+                      }}>
+                        <div style={{
+                          position: 'absolute', inset: 0, pointerEvents: 'none',
+                          background: `radial-gradient(circle at 92% -6%, ${PALETTE.coral}12, transparent 44%)`,
+                        }} />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '7px', position: 'relative', zIndex: 1 }}>
+                          <div style={{
+                            width: '22px', height: '22px', borderRadius: '8px',
+                            background: `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange})`,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            boxShadow: '0 3px 10px rgba(255,107,157,0.28)',
+                          }}>
+                            <Sparkles style={{ width: '12px', height: '12px', color: '#fff' }} />
+                          </div>
+                          <span style={{ fontFamily: 'Outfit', fontSize: '0.81rem', fontWeight: 700, color: '#2D2D5A' }}>运势总结</span>
+                          <span style={{ fontFamily: 'Outfit', fontSize: '0.63rem', color: '#6D7294', marginLeft: 'auto', fontWeight: 600 }}>
+                            {elementNameMap[strongestEl]}旺 · {elementNameMap[weakestEl]}弱
+                          </span>
+                        </div>
+                        <div style={{
+                          display: 'grid',
+                          gridTemplateColumns: '1fr',
+                          gap: '6px',
+                          position: 'relative',
+                          zIndex: 1,
+                        }}>
+                          {dims.map((d) => (
+                            <div key={d.key} style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                              <span style={{ fontFamily: 'Outfit', fontSize: '0.75rem', fontWeight: 700, color: '#4B516D', minWidth: '36px' }}>
+                                {d.label}
+                              </span>
+                              <span style={{ fontFamily: 'Outfit', fontSize: '0.72rem', color: '#6D7294', lineHeight: 1.5, flex: 1 }}>
+                                {d.text ? keepFirstTwoClauses(d.text) : '—'}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 );
               })()}
@@ -2537,7 +2704,6 @@ export default function HomePage() {
                   </div>
                   <div>
                     <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94rem', fontWeight: 900, color: '#1A1A2E' }}>今日色彩搭配</span>
-                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69rem', color: '#8F97B5', marginLeft: '6px' }}>多巴胺精选</span>
                     <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63rem', color: '#A0A8C0', margin: '2px 0 0' }}>渐变质感配色，按场景自动推荐</p>
                   </div>
                   <motion.button

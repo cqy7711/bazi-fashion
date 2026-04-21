@@ -716,8 +716,8 @@ function getMingGe(monthStem: string, monthBranch: string): MingGeType {
   };
 }
 
-interface DayunData { age: number; endAge: number; ganZhi: string; element: string; score: number; year: number; yearEnd: number; favorableElements?: string[]; }
-function generateDayunData(userInfo: UserBirthInfo): DayunData[] {
+export interface DayunData { age: number; endAge: number; ganZhi: string; element: string; score: number; year: number; yearEnd: number; favorableElements?: string[]; }
+export function generateDayunData(userInfo: UserBirthInfo): DayunData[] {
   const bazi = userInfo.baziResult;
   if (!bazi) return [];
   const stems = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
@@ -762,7 +762,7 @@ function generateDayunData(userInfo: UserBirthInfo): DayunData[] {
   return data;
 }
 
-function getFortuneAnalysis(style: LanguageStyle, dmEl: string, fav: string[], unfav: string[]) {
+export function getFortuneAnalysis(style: LanguageStyle, dmEl: string, fav: string[], unfav: string[]) {
   const favN = fav.map(e => ELEMENT_NAMES[e]).join('、');
   const unfavN = unfav.map(e => ELEMENT_NAMES[e]).join('、');
   const dm = ELEMENT_NAMES[dmEl] || '木';
@@ -1327,7 +1327,7 @@ function getYearDetailAnalysis(
   };
 }
 
-function generateCandlestickData(dayunData: DayunData[], dayMaster?: string, dayElement?: string, favorableElements?: string[]): CandlestickData[] {
+export function generateCandlestickData(dayunData: DayunData[], dayMaster?: string, dayElement?: string, favorableElements?: string[]): CandlestickData[] {
   return dayunData.map((d, i) => {
     const prev = i > 0 ? dayunData[i - 1].score : d.score;
     const open = Math.min(prev, d.score);
@@ -1376,7 +1376,7 @@ function getLiuNianGanZhi(year: number): string {
 }
 
 // 参考图样式K线图组件
-function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favorableElements }: { 
+export function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favorableElements }: { 
   data: CandlestickData[]; startAge: number; userInfo: UserBirthInfo;
   dayMaster?: string; dayElement?: string; favorableElements?: string[];
 }) {
@@ -2249,7 +2249,6 @@ const RESULT_PAGE_SECTION_IDS = [
   'sec-mingge',
   'sec-fortune',
   'sec-elements',
-  'sec-dayun',
 ] as const;
 
 /** HashRouter navigation without useNavigate — RR7 useNavigate toggles stable/unstable implementations (different hook counts). */
@@ -2263,6 +2262,7 @@ function replaceHashRoute(pathWithLeadingSlash: string): void {
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function ResultPage() {
+  const CURRENT_RECORD_KEY = 'wuxing-current-record-id';
   // HashRouter兼容的userId获取
   const userId = useHashResultUserId();
   const navigate = useNavigate();
@@ -2416,6 +2416,12 @@ export default function ResultPage() {
           else console.error('获取五行分析失败:', ana);
           if (!mpAna.error) setMingpanAnalysis(mpAna);
           else console.error('获取命盘分析失败:', mpAna);
+          try {
+            sessionStorage.setItem(CURRENT_RECORD_KEY, recordId);
+            window.dispatchEvent(new Event('wuxing-current-record-changed'));
+          } catch {
+            // ignore
+          }
           navigate(`/result/${recordId}`);
         }
       } catch (err) {
@@ -2616,14 +2622,6 @@ export default function ResultPage() {
       bodyGrad: 'linear-gradient(118deg, #9BBCEE 0%, #89AEE6 38%, #789EDB 72%, #6A8DCC 100%)',
       dropShadow: '0 6px 18px rgba(90, 120, 200, 0.2)',
       pulseGlow: ['rgba(100,130,210,0)', 'rgba(100,130,210,0.24)', 'rgba(100,130,210,0)'],
-    },
-    {
-      id: 'sec-dayun',
-      label: '大运',
-      icon: <Coins style={{ width: '14px', height: '14px', strokeWidth: 2.1 }} />,
-      bodyGrad: 'linear-gradient(118deg, #A9D8B0 0%, #98CFA7 38%, #85C29A 72%, #75B78F 100%)',
-      dropShadow: '0 6px 18px rgba(90, 150, 120, 0.2)',
-      pulseGlow: ['rgba(110,180,140,0)', 'rgba(110,180,140,0.24)', 'rgba(110,180,140,0)'],
     },
   ] as const;
 
@@ -3142,34 +3140,6 @@ export default function ResultPage() {
                 fontSize: '0.88remrem',
               }}>📊</div>
               <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 600, color: '#FFFFFF' }}>四维运势分析</span>
-            </motion.button>
-            {/* 大运走势图 */}
-            <motion.button 
-              onClick={() => document.getElementById('sec-dayun')?.scrollIntoView({ behavior: 'smooth' })}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              style={{
-                padding: '10px 12px',
-                borderRadius: 9999,
-                background: 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px',
-              }}
-            >
-              <div style={{
-                width: '28px',
-                height: '28px',
-                borderRadius: '50%',
-                background: 'rgba(255,255,255,0.25)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '0.88remrem',
-              }}>📈</div>
-              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 600, color: '#FFFFFF' }}>大运走势图</span>
             </motion.button>
           </div>
         </div>
@@ -3811,17 +3781,6 @@ export default function ResultPage() {
           </div>
         </motion.div>
       )}
-
-      {/* ── 人生大运 K线图（参考图样式） ── */}
-      {dayunData.length > 0 && (() => {
-        const candlestickData = generateCandlestickData(dayunData, bazi.dayMaster, bazi.dayMasterElement, userInfo.favorableElements || []);
-        const startAge = candlestickData[0]?.age || 3;
-        return (
-          <motion.div {...fadeUp(0.35)} id="sec-dayun">
-            <DayunKLineChart data={candlestickData} startAge={startAge} userInfo={userInfo} dayMaster={bazi.dayMaster} dayElement={bazi.dayMasterElement} favorableElements={userInfo.favorableElements || []} />
-          </motion.div>
-        );
-      })()}
 
     </div>
           );

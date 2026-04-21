@@ -6,10 +6,11 @@ import AdminPage from './pages/AdminPage';
 import AiChatPage from './pages/AiChatPage';
 import IntroPage from './pages/IntroPage';
 import FeedbackPage from './pages/FeedbackPage';
+import DayunTrendPage from './pages/DayunTrendPage';
 import { startSession, endSession, trackEvent, EventTypes } from './utils/analytics';
 import { useEffect, useState } from 'react';
 import { COLOR_TOKENS, RADIUS_TOKENS, SHADOW_TOKENS, MOTION_TOKENS, IOS_TOKENS } from './theme/designTokens';
-import { Home, Sparkles, Settings, MessageSquare, PanelBottomClose, PanelBottomOpen } from 'lucide-react';
+import { Home, Sparkles, Settings, MessageSquare, PanelBottomClose, PanelBottomOpen, LineChart } from 'lucide-react';
 
 const VISUAL_PRESET = {
   accent: COLOR_TOKENS.brand.coral,
@@ -45,6 +46,14 @@ export default function App() {
       return true;
     }
   });
+  const CURRENT_RECORD_KEY = 'wuxing-current-record-id';
+  const [currentRecordId, setCurrentRecordId] = useState<string | null>(() => {
+    try {
+      return sessionStorage.getItem(CURRENT_RECORD_KEY);
+    } catch {
+      return null;
+    }
+  });
 
   const handleEnterHome = () => {
     setShowIntro(false);
@@ -77,17 +86,38 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    const sync = () => {
+      try {
+        setCurrentRecordId(sessionStorage.getItem(CURRENT_RECORD_KEY));
+      } catch {
+        // ignore
+      }
+    };
+    window.addEventListener('wuxing-current-record-changed', sync as EventListener);
+    window.addEventListener('hashchange', sync);
+    return () => {
+      window.removeEventListener('wuxing-current-record-changed', sync as EventListener);
+      window.removeEventListener('hashchange', sync);
+    };
+  }, []);
+
   // 高级导航组件
   const NavLinks = () => {
     const location = useLocation();
     const navItems = [
       { to: '/', label: '首页', Icon: Home, gradient: ['#FF6B9D', '#C084FC'], glowColor: 'rgba(255,107,157,0.35)' },
       { to: '/ai-chat', label: 'AI 解读', Icon: Sparkles, gradient: ['#818CF8', '#C084FC'], glowColor: 'rgba(129,140,248,0.35)' },
+      { to: currentRecordId ? `/dayun/${encodeURIComponent(currentRecordId)}` : '/dayun', label: '大运走势', Icon: LineChart, gradient: ['#F59E0B', '#FBBF24'], glowColor: 'rgba(245,158,11,0.35)' },
       // 新增“反馈”入口，方便用户在导航栏中快速提交建议。
       { to: '/feedback', label: '反馈', Icon: MessageSquare, gradient: ['#34D399', '#60A5FA'], glowColor: 'rgba(52,211,153,0.35)' },
       { to: '/admin', label: '管理', Icon: Settings, gradient: ['#6366F1', '#818CF8'], glowColor: 'rgba(99,102,241,0.35)' },
     ];
-    const activeItem = navItems.find(({ to }) => location.pathname === to || (to === '/' && location.pathname === '')) ?? navItems[0];
+    const activeItem = navItems.find(({ to }) => (
+      to === '/dayun'
+        ? location.pathname.startsWith('/dayun')
+        : location.pathname === to || (to === '/' && location.pathname === '')
+    )) ?? navItems[0];
 
     return (
       <motion.nav
@@ -179,7 +209,9 @@ export default function App() {
         ) : (
           <>
             {navItems.map(({ to, label, Icon, gradient, glowColor }) => {
-              const isActive = location.pathname === to || (to === '/' && location.pathname === '');
+              const isActive = to === '/dayun'
+                ? location.pathname.startsWith('/dayun')
+                : location.pathname === to || (to === '/' && location.pathname === '');
               return (
                 <Link key={to} to={to}
                   style={{
@@ -411,6 +443,8 @@ export default function App() {
             <Route path="/result/:userId" element={<ResultPage />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/ai-chat" element={<AiChatPage />} />
+            <Route path="/dayun" element={<DayunTrendPage />} />
+            <Route path="/dayun/:userId" element={<DayunTrendPage />} />
             <Route path="/feedback" element={<FeedbackPage />} />
           </Routes>
         </main>
