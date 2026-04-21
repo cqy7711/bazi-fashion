@@ -870,9 +870,16 @@ export default function AiChatPage() {
         initial={{ opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25 }}
-        className="mb-4 flex items-center justify-between gap-3 px-3 py-2 rounded-2xl border border-indigo-200/50 bg-white/65 backdrop-blur-md shadow-[0_10px_22px_rgba(76,90,176,0.10)] relative"
+        className="mb-4 flex items-center justify-between gap-2 px-3 py-2.5 rounded-2xl border border-indigo-200/50 bg-white/65 backdrop-blur-md shadow-[0_10px_22px_rgba(76,90,176,0.10)] relative"
       >
         <div className="flex items-center gap-2 min-w-0">
+          <button
+            onClick={() => window.history.back()}
+            className="w-8 h-8 rounded-xl border border-indigo-200/60 bg-white/75 flex items-center justify-center text-indigo-700 hover:bg-indigo-50 transition-colors"
+            title="返回"
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </button>
           <div className={`w-8 h-8 rounded-xl bg-gradient-to-br ${accentGradient} text-white flex items-center justify-center shadow-[0_10px_18px_rgba(92,99,255,0.22)]`}>
             <Sparkles className="w-4 h-4" />
           </div>
@@ -949,7 +956,7 @@ export default function AiChatPage() {
               )}
             </div>
           )}
-          <span className="text-[10px] px-2 py-1 rounded-xl border border-indigo-200/60 bg-gradient-to-br from-indigo-50/80 to-violet-50/60 text-indigo-700">
+          <span className="text-[10px] px-2 py-1 rounded-xl border border-indigo-200/60 bg-gradient-to-br from-indigo-50/80 to-violet-50/60 text-indigo-700 hidden sm:inline-flex">
             风格：{CHAT_STYLES.find(s => s.id === currentStyle)?.name}
           </span>
           <button

@@ -1424,25 +1424,25 @@ export default function HomePage() {
             style={{
             background: `linear-gradient(155deg, ${PALETTE.coralLight} 0%, rgba(255,255,255,0.82) 48%, ${PALETTE.blueLight} 100%)`,
             borderRadius: '24px',
-            padding: '20px',
+            padding: navWideLayout ? '20px' : '16px',
             boxShadow: '0 2px 10px rgba(72, 64, 88, 0.04)',
             border: '1px solid rgba(180, 172, 198, 0.16)',
             backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{
-                  width: '28px', height: '28px', borderRadius: '8px',
+                  width: '30px', height: '30px', borderRadius: '10px',
                   background: `${PALETTE.coral}15`, display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>
-                  <Star style={{ width: '14px', height: '14px', color: PALETTE.coral }} />
+                  <Star style={{ width: '15px', height: '15px', color: PALETTE.coral }} />
                 </div>
-                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.8rem' : '0.88rem', fontWeight: 700, color: '#1A1A2E' }}>我的生辰</span>
+                <span style={{ fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", sans-serif', fontSize: isIOSCompact ? '0.88rem' : '0.94rem', fontWeight: 700, color: '#1A1A2E' }}>我的生辰</span>
                 {records.length > 0 && (
                   <span style={{
-                    fontFamily: 'Outfit', fontSize: isIOSCompact ? '0.62rem' : '0.69rem', fontWeight: 600,
+                    fontFamily: 'Outfit', fontSize: isIOSCompact ? '0.66rem' : '0.72rem', fontWeight: 600,
                     color: PALETTE.coral, background: `${PALETTE.coral}10`,
-                    padding: '2px 8px', borderRadius: '9999px',
+                    padding: '3px 9px', borderRadius: '9999px',
                   }}>{records.length}人</span>
                 )}
               </div>
@@ -1456,7 +1456,7 @@ export default function HomePage() {
                 whileHover={{ y: -2, scale: 1.06 }}
                 whileTap={{ y: 0, scale: 0.95 }}
                 style={{
-                  width: '28px', height: '28px',
+                  width: '44px', height: '44px',
                   borderRadius: '50%', border: `2px solid ${showForm ? PALETTE.coral : `${PALETTE.coral}50`}`,
                   background: showForm ? `${PALETTE.coral}20` : `${PALETTE.coral}10`, cursor: 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -1464,7 +1464,7 @@ export default function HomePage() {
                   boxShadow: showForm ? `0 10px 18px ${PALETTE.coral}33` : `0 7px 14px ${PALETTE.coral}1f`,
                 }}
               >
-                {showForm ? <X style={{ width: '14px', height: '14px', color: PALETTE.coral }} /> : <Plus style={{ width: '14px', height: '14px', color: PALETTE.coral }} />}
+                {showForm ? <X style={{ width: '18px', height: '18px', color: PALETTE.coral }} /> : <Plus style={{ width: '18px', height: '18px', color: PALETTE.coral }} />}
               </motion.button>
             </div>
 

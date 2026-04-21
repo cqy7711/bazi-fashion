@@ -233,7 +233,7 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
               }}>WUXING · COLOR</p>
               <p style={{
                 fontFamily: 'Outfit, Noto Sans SC, sans-serif',
-                fontSize: '0.94remrem', fontWeight: 800,
+                fontSize: '0.94rem', fontWeight: 800,
                 color: '#FFFFFF', letterSpacing: '-0.02em', lineHeight: 1.1,
               }}>五行·色彩·运势</p>
             </div>
@@ -288,7 +288,7 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
               border: '1px solid rgba(255,255,255,0.18)',
               borderRadius: '20px',
               color: 'rgba(255,255,255,0.5)',
-              fontSize: '0.75remrem', cursor: 'pointer',
+              fontSize: '0.75rem', cursor: 'pointer',
               fontFamily: 'Outfit, sans-serif',
               backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
               zIndex: 10,
@@ -319,14 +319,14 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                   style={{ textAlign: 'center', marginBottom: '28px' }}
                 >
                   <h2 style={{
-                    fontSize: '1.75remrem', fontWeight: 800, marginBottom: '10px',
+                    fontSize: '1.75rem', fontWeight: 800, marginBottom: '10px',
                     fontFamily: 'Outfit, Noto Sans SC, sans-serif',
                     background: GRADIENT.primary,
                     WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
                     lineHeight: 1.2,
                   }}>用色彩读懂你的命理</h2>
                   <p style={{
-                    fontSize: '0.81remrem', color: 'rgba(255,255,255,0.45)',
+                    fontSize: '0.81rem', color: 'rgba(255,255,255,0.45)',
                     fontFamily: 'Outfit, sans-serif', lineHeight: 1.5,
                   }}>
                     基于八字五行，每日生成<span style={{ color: '#FF9D6B' }}>可执行的穿搭方案</span>
@@ -361,11 +361,11 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                         cursor: 'default',
                       }}
                     >
-                      <span style={{ fontSize: '0.75remrem', marginBottom: '3px' }}>{el.symbol}</span>
-                      <span style={{ fontSize: '1.38remrem', fontWeight: 900, color: el.color, lineHeight: 1, fontFamily: 'Outfit, sans-serif' }}>
+                      <span style={{ fontSize: '0.75rem', marginBottom: '3px' }}>{el.symbol}</span>
+                      <span style={{ fontSize: '1.38rem', fontWeight: 900, color: el.color, lineHeight: 1, fontFamily: 'Outfit, sans-serif' }}>
                         {el.name}
                       </span>
-                      <span style={{ fontSize: '0.56remrem', color: 'rgba(255,255,255,0.5)', marginTop: '3px', fontFamily: 'Outfit' }}>
+                      <span style={{ fontSize: '0.56rem', color: 'rgba(255,255,255,0.5)', marginTop: '3px', fontFamily: 'Outfit' }}>
                         {el.desc}
                       </span>
                     </motion.div>
@@ -387,12 +387,12 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
                     <Heart size={16} color="#FF7A5C" />
-                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 700, color: '#FFE0CC' }}>
+                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88rem', fontWeight: 700, color: '#FFE0CC' }}>
                       不只是算命，是生活指南
                     </span>
                   </div>
                   <p style={{
-                    fontSize: '0.81remrem', lineHeight: 1.8, color: 'rgba(255,255,255,0.6)',
+                    fontSize: '0.81rem', lineHeight: 1.8, color: 'rgba(255,255,255,0.6)',
                     fontFamily: 'Outfit, Noto Sans SC, sans-serif', margin: 0,
                   }}>
                     每天结合你的<span style={{ color: '#FF7A5C' }}>八字命理</span>、<span style={{ color: '#FFD93D' }}>流日五行</span>和<span style={{ color: '#6BD4FF' }}>实时天气</span>，生成精准穿搭配色方案和开运手串推荐。人生大运K线图一目了然，AI命理师随时为你解读。
@@ -409,7 +409,7 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.1 }}
                   style={{
-                    fontSize: '0.75remrem', color: 'rgba(255,255,255,0.4)',
+                    fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)',
                     textAlign: 'center', marginBottom: '16px',
                     fontFamily: 'Outfit, sans-serif',
                   }}
@@ -445,11 +445,11 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
                           <h4 style={{
-                            fontSize: '0.88remrem', fontWeight: 700, margin: 0,
+                            fontSize: '0.88rem', fontWeight: 700, margin: 0,
                             fontFamily: 'Outfit, Noto Sans SC, sans-serif', color: '#FFFFFF',
                           }}>{f.title}</h4>
                           <span style={{
-                            fontSize: '0.56remrem', fontWeight: 600, padding: '1px 6px',
+                            fontSize: '0.56rem', fontWeight: 600, padding: '1px 6px',
                             borderRadius: '6px',
                             background: `${f.color}22`,
                             color: f.color,
@@ -458,7 +458,7 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                           }}>{f.badge}</span>
                         </div>
                         <p style={{
-                          fontSize: '0.69remrem', color: 'rgba(255,255,255,0.5)',
+                          fontSize: '0.69rem', color: 'rgba(255,255,255,0.5)',
                           lineHeight: 1.4, fontFamily: 'Outfit, Noto Sans SC, sans-serif', margin: 0,
                         }}>
                           {f.desc}
@@ -480,12 +480,12 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                   style={{ textAlign: 'center', marginBottom: '24px' }}
                 >
                   <h3 style={{
-                    fontSize: '1.25remrem', fontWeight: 800, marginBottom: '6px',
+                    fontSize: '1.25rem', fontWeight: 800, marginBottom: '6px',
                     fontFamily: 'Outfit, Noto Sans SC, sans-serif',
                     color: '#FFFFFF',
                   }}>每一处细节都经过打磨</h3>
                   <p style={{
-                    fontSize: '0.75remrem', color: 'rgba(255,255,255,0.4)',
+                    fontSize: '0.75rem', color: 'rgba(255,255,255,0.4)',
                     fontFamily: 'Outfit, sans-serif',
                   }}>专业命理算法 + 现代设计体验</p>
                 </motion.div>
@@ -517,11 +517,11 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                         </div>
                         <div>
                           <h4 style={{
-                            fontSize: '0.88remrem', fontWeight: 700, marginBottom: '4px',
+                            fontSize: '0.88rem', fontWeight: 700, marginBottom: '4px',
                             fontFamily: 'Outfit, Noto Sans SC, sans-serif', color: '#FFFFFF', margin: 0,
                           }}>{h.title}</h4>
                           <p style={{
-                            fontSize: '0.75remrem', lineHeight: 1.6,
+                            fontSize: '0.75rem', lineHeight: 1.6,
                             color: 'rgba(255,255,255,0.55)',
                             fontFamily: 'Outfit, Noto Sans SC, sans-serif', margin: 0,
                           }}>{h.desc}</p>
@@ -546,7 +546,7 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                       padding: '4px 10px', borderRadius: '8px',
                       background: 'rgba(255,255,255,0.06)',
                       border: '1px solid rgba(255,255,255,0.1)',
-                      fontSize: '0.63remrem', color: 'rgba(255,255,255,0.4)',
+                      fontSize: '0.63rem', color: 'rgba(255,255,255,0.4)',
                       fontFamily: 'Outfit, sans-serif',
                     }}>{tag}</span>
                   ))}
@@ -585,7 +585,7 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
                   style={{
-                    fontSize: '1.38remrem', fontWeight: 800, marginBottom: '8px',
+                    fontSize: '1.38rem', fontWeight: 800, marginBottom: '8px',
                     fontFamily: 'Outfit, Noto Sans SC, sans-serif',
                   }}
                 >
@@ -596,7 +596,7 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
                   style={{
-                    fontSize: '0.81remrem', color: 'rgba(255,255,255,0.45)',
+                    fontSize: '0.81rem', color: 'rgba(255,255,255,0.45)',
                     fontFamily: 'Outfit, sans-serif', marginBottom: '24px',
                     lineHeight: 1.5,
                   }}
@@ -630,10 +630,10 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                         {s.icon}
                       </div>
                       <div>
-                        <p style={{ margin: 0, fontFamily: 'Outfit, Noto Sans SC, sans-serif', fontSize: '0.81remrem', fontWeight: 700, color: '#FFFFFF' }}>
+                        <p style={{ margin: 0, fontFamily: 'Outfit, Noto Sans SC, sans-serif', fontSize: '0.81rem', fontWeight: 700, color: '#FFFFFF' }}>
                           {s.title}
                         </p>
-                        <p style={{ margin: '2px 0 0', fontFamily: 'Outfit, Noto Sans SC, sans-serif', fontSize: '0.69remrem', color: 'rgba(255,255,255,0.5)' }}>
+                        <p style={{ margin: '2px 0 0', fontFamily: 'Outfit, Noto Sans SC, sans-serif', fontSize: '0.69rem', color: 'rgba(255,255,255,0.5)' }}>
                           {s.desc}
                         </p>
                       </div>
@@ -660,7 +660,7 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                       padding: '5px 12px', borderRadius: '20px',
                       background: 'rgba(255,255,255,0.08)',
                       border: '1px solid rgba(255,255,255,0.15)',
-                      fontSize: '0.69remrem', color: 'rgba(255,255,255,0.6)',
+                      fontSize: '0.69rem', color: 'rgba(255,255,255,0.6)',
                       fontFamily: 'Outfit, Noto Sans SC, sans-serif',
                       display: 'inline-flex', alignItems: 'center', gap: '4px',
                     }}>
@@ -690,7 +690,7 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
           >
             {/* 页码 */}
             <p style={{
-              textAlign: 'center', fontSize: '0.69remrem', color: 'rgba(255,255,255,0.25)',
+              textAlign: 'center', fontSize: '0.69rem', color: 'rgba(255,255,255,0.25)',
               fontFamily: 'Outfit, sans-serif', marginBottom: '14px',
             }}>
               {currentSlide + 1} / {TOTAL_SLIDES}
@@ -708,7 +708,7 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                     padding: '16px', background: 'rgba(255,255,255,0.08)',
                     border: '1px solid rgba(255,255,255,0.15)',
                     borderRadius: '16px', color: 'rgba(255,255,255,0.7)',
-                    fontSize: '0.88remrem', cursor: 'pointer', display: 'flex',
+                    fontSize: '0.88rem', cursor: 'pointer', display: 'flex',
                     alignItems: 'center', justifyContent: 'center',
                     fontFamily: 'Outfit, sans-serif',
                     backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
@@ -724,7 +724,7 @@ export default function IntroPage({ onEnter }: { onEnter: () => void }) {
                   padding: '16px',
                   background: currentSlide === TOTAL_SLIDES - 1 ? GRADIENT.primary : GRADIENT.primary,
                   border: 'none', borderRadius: '16px',
-                  color: '#FFFFFF', fontSize: '0.94remrem', fontWeight: 700,
+                  color: '#FFFFFF', fontSize: '0.94rem', fontWeight: 700,
                   cursor: 'pointer', display: 'flex',
                   alignItems: 'center', justifyContent: 'center', gap: '8px',
                   fontFamily: 'Outfit, Noto Sans SC, sans-serif',

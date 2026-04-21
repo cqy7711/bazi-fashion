@@ -32,3 +32,33 @@ export const SHADOW_TOKENS = {
 export const MOTION_TOKENS = {
   uiEase: 'all 0.18s cubic-bezier(0.22, 1, 0.36, 1)',
 };
+
+export const IOS_TOKENS = {
+  spacing: {
+    xs: '6px',
+    sm: '10px',
+    md: '14px',
+    lg: '18px',
+    xl: '24px',
+  },
+  radius: {
+    card: '20px',
+    sheet: '24px',
+    control: '14px',
+    pill: '9999px',
+  },
+  typography: {
+    navLabel: '0.68rem',
+    title: '1.02rem',
+    subtitle: '0.74rem',
+    body: '0.88rem',
+    caption: '0.68rem',
+  },
+  blur: {
+    nav: 'blur(16px)',
+    card: 'blur(12px)',
+  },
+  safeArea: {
+    bottom: 'calc(78px + env(safe-area-inset-bottom))',
+  },
+} as const;

@@ -8,7 +8,7 @@ import IntroPage from './pages/IntroPage';
 import FeedbackPage from './pages/FeedbackPage';
 import { startSession, endSession, trackEvent, EventTypes } from './utils/analytics';
 import { useEffect, useState } from 'react';
-import { COLOR_TOKENS, RADIUS_TOKENS, SHADOW_TOKENS, MOTION_TOKENS } from './theme/designTokens';
+import { COLOR_TOKENS, RADIUS_TOKENS, SHADOW_TOKENS, MOTION_TOKENS, IOS_TOKENS } from './theme/designTokens';
 import { Home, Sparkles, Settings, MessageSquare } from 'lucide-react';
 
 const VISUAL_PRESET = {
@@ -93,17 +93,18 @@ export default function App() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
         style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+          display: 'flex',
+          justifyContent: 'space-between',
           alignItems: 'center',
-          gap: '8px',
+          gap: '6px',
           width: '100%',
-          maxWidth: '760px',
-          padding: '6px',
-          borderRadius: '16px',
-          background: 'linear-gradient(140deg, rgba(255,255,255,0.88), rgba(248,246,255,0.84))',
-          border: '1px solid rgba(156,148,185,0.2)',
-          boxShadow: '0 10px 28px rgba(84,70,124,0.12), inset 0 1px 0 rgba(255,255,255,0.75)',
+          padding: '8px 10px calc(8px + env(safe-area-inset-bottom))',
+          borderRadius: IOS_TOKENS.radius.sheet,
+          background: 'linear-gradient(145deg, rgba(255,255,255,0.86), rgba(246,244,252,0.8))',
+          border: '1px solid rgba(158,150,182,0.18)',
+          boxShadow: '0 12px 30px rgba(84,70,124,0.14), inset 0 1px 0 rgba(255,255,255,0.78)',
+          backdropFilter: IOS_TOKENS.blur.nav,
+          WebkitBackdropFilter: IOS_TOKENS.blur.nav,
         }}
       >
         {navItems.map(({ to, label, Icon, gradient, glowColor }) => {
@@ -115,37 +116,38 @@ export default function App() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '4px',
-                minHeight: '52px',
-                padding: '6px 8px',
-                borderRadius: '12px',
+                gap: '3px',
+                minHeight: '44px',
+                minWidth: '62px',
+                padding: '5px 7px',
+                borderRadius: IOS_TOKENS.radius.control,
                 textDecoration: 'none',
                 background: isActive
-                  ? `linear-gradient(135deg, ${gradient[0]}, ${gradient[1]})`
-                  : 'rgba(255,255,255,0.56)',
-                border: isActive ? 'none' : '1px solid rgba(140,132,152,0.16)',
+                  ? `linear-gradient(145deg, ${gradient[0]}24, ${gradient[1]}22)`
+                  : 'transparent',
+                border: isActive ? `1px solid ${gradient[0]}45` : '1px solid transparent',
                 boxShadow: isActive
-                  ? `0 8px 18px ${glowColor}, 0 1px 2px rgba(0,0,0,0.08)`
-                  : '0 2px 8px rgba(72,64,88,0.06)',
+                  ? `0 6px 16px ${glowColor.replace('0.35', '0.22')}`
+                  : 'none',
                 transition: 'all 0.25s cubic-bezier(0.25,0.46,0.45,0.94)',
                 cursor: 'pointer',
               }}
               onMouseEnter={e => {
                 const el = e.currentTarget as HTMLElement;
                 if (!isActive) {
-                  el.style.background = `linear-gradient(135deg, ${gradient[0]}18, ${gradient[1]}14)`;
-                  el.style.borderColor = `${gradient[0]}30`;
+                  el.style.background = `linear-gradient(145deg, ${gradient[0]}14, ${gradient[1]}12)`;
+                  el.style.borderColor = `${gradient[0]}22`;
                   el.style.transform = 'translateY(-1px)';
-                  el.style.boxShadow = `0 6px 20px ${glowColor.replace('0.35', '0.18')}`;
+                  el.style.boxShadow = `0 6px 16px ${glowColor.replace('0.35', '0.15')}`;
                 }
               }}
               onMouseLeave={e => {
                 const el = e.currentTarget as HTMLElement;
                 if (!isActive) {
-                  el.style.background = 'rgba(255,255,255,0.7)';
-                  el.style.borderColor = 'rgba(140,132,152,0.12)';
+                  el.style.background = 'transparent';
+                  el.style.borderColor = 'transparent';
                   el.style.transform = 'translateY(0)';
-                  el.style.boxShadow = '0 2px 8px rgba(72,64,88,0.05)';
+                  el.style.boxShadow = 'none';
                 }
               }}
             >
@@ -153,17 +155,17 @@ export default function App() {
               <div style={{
                 width: '24px', height: '24px', borderRadius: '8px',
                 background: isActive
-                  ? 'rgba(255,255,255,0.25)'
-                  : `linear-gradient(135deg, ${gradient[0]}, ${gradient[1]})`,
+                  ? `linear-gradient(145deg, ${gradient[0]}, ${gradient[1]})`
+                  : `linear-gradient(145deg, ${gradient[0]}D9, ${gradient[1]}D9)`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: isActive ? 'none' : `0 2px 8px ${glowColor.replace('0.35', '0.2')}`,
+                boxShadow: isActive ? `0 4px 12px ${glowColor.replace('0.35', '0.24')}` : `0 3px 8px ${glowColor.replace('0.35', '0.18')}`,
               }}>
                 <Icon size={14} strokeWidth={2.2} color={isActive ? '#fff' : '#fff'} />
               </div>
               <span style={{
                 fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif',
-                fontSize: '0.7rem', fontWeight: isActive ? 700 : 600,
-                color: isActive ? '#fff' : '#3D3A45',
+                fontSize: IOS_TOKENS.typography.navLabel, fontWeight: isActive ? 700 : 600,
+                color: isActive ? '#3F3656' : '#4D4860',
                 letterSpacing: '-0.01em',
                 whiteSpace: 'nowrap',
               }}>
@@ -262,7 +264,7 @@ export default function App() {
           }}
         />
 
-        {/* 顶部导航 */}
+        {/* iOS-style top bar */}
         <header style={{
           position: 'sticky', top: 0, zIndex: 100,
           background: 'linear-gradient(180deg, rgba(252,250,253,0.94) 0%, rgba(248,245,250,0.9) 100%)',
@@ -274,15 +276,23 @@ export default function App() {
           paddingRight: 'max(14px, env(safe-area-inset-right))',
           paddingTop: 'env(safe-area-inset-top)',
         }}>
-          <div className="max-w-[1200px] mx-auto px-1 sm:px-3 md:px-6 flex items-center justify-center min-h-14 md:min-h-16 py-2">
-            {/* 导航 — 高级矢量图标按钮 */}
-            <NavLinks />
+          <div className="max-w-[1200px] mx-auto px-1 sm:px-3 md:px-6 flex items-center justify-between min-h-12 md:min-h-14 py-2">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{
+                width: '26px', height: '26px', borderRadius: '8px',
+                background: `linear-gradient(135deg, ${TINTS.coral}, ${TINTS.purple})`,
+                color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '0.8rem', fontWeight: 700,
+              }}>☯</div>
+              <span style={{ fontSize: IOS_TOKENS.typography.title, fontWeight: 700, color: '#2F2B40' }}>五行 App</span>
+            </div>
+            <span style={{ fontSize: IOS_TOKENS.typography.caption, color: '#8E88A6' }}>iOS Edition</span>
           </div>
         </header>
 
         {/* 主内容 */}
         <main
-          className="max-w-[1200px] w-[calc(100%-0.75rem)] sm:w-[calc(100%-1rem)] md:w-auto mx-auto px-3 sm:px-4 md:px-10 py-4 sm:py-6 md:py-12 pb-[max(5rem,env(safe-area-inset-bottom))] md:pb-24 relative z-10"
+          className="max-w-[1200px] w-[calc(100%-0.75rem)] sm:w-[calc(100%-1rem)] md:w-auto mx-auto px-3 sm:px-4 md:px-10 py-4 sm:py-6 md:py-10 pb-[max(6.5rem,env(safe-area-inset-bottom))] md:pb-24 relative z-10"
           style={{
             background: 'linear-gradient(165deg, rgba(255,255,255,0.82) 0%, rgba(252,249,251,0.72) 45%, rgba(248,246,252,0.78) 100%)',
             backgroundBlendMode: 'normal',
@@ -310,10 +320,24 @@ export default function App() {
           </Routes>
         </main>
 
+        {/* iOS bottom tab bar */}
+        <div style={{
+          position: 'fixed',
+          left: 'max(10px, env(safe-area-inset-left))',
+          right: 'max(10px, env(safe-area-inset-right))',
+          bottom: 0,
+          zIndex: 120,
+          paddingBottom: 'max(8px, env(safe-area-inset-bottom))',
+        }}>
+          <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+            <NavLinks />
+          </div>
+        </div>
+
         {/* 底部 */}
         <footer style={{
           borderTop: '1px solid rgba(255,255,255,0.75)',
-          padding: '20px max(16px, env(safe-area-inset-left)) calc(24px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-right))',
+          padding: '20px max(16px, env(safe-area-inset-left)) calc(106px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-right))',
           maxWidth: '1200px', margin: '0 auto',
           position: 'relative', zIndex: 1,
           borderRadius: `${RADIUS_TOKENS.xl} ${RADIUS_TOKENS.xl} 0 0`,

@@ -2584,16 +2584,41 @@ export default function ResultPage() {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
+  const sectionTabs = [
+    { id: 'sec-bazi', label: '八字' },
+    { id: 'sec-mingge', label: '命格' },
+    { id: 'sec-fortune', label: '运势' },
+    { id: 'sec-elements', label: '五行' },
+    { id: 'sec-dayun', label: '大运' },
+  ] as const;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: sectionGap, paddingBottom: ios ? 32 : 48, paddingTop: 0 }}>
 
       {/* ── Header ── */}
-      <motion.div {...fadeUp(0)} style={{ display: 'flex', flexDirection: ios ? 'column' : 'row', alignItems: ios ? 'stretch' : 'center', gap: ios ? 10 : 12, position: 'static' }}>
+      <motion.div
+        {...fadeUp(0)}
+        style={{
+          display: 'flex',
+          flexDirection: ios ? 'column' : 'row',
+          alignItems: ios ? 'stretch' : 'center',
+          gap: ios ? 10 : 12,
+          position: 'sticky',
+          top: ios ? '8px' : '10px',
+          zIndex: 60,
+          padding: ios ? '10px' : '12px',
+          borderRadius: 18,
+          background: 'linear-gradient(145deg, rgba(255,255,255,0.9), rgba(247,245,252,0.86))',
+          border: '1px solid rgba(170,162,192,0.2)',
+          boxShadow: '0 12px 26px rgba(82,72,112,0.12)',
+          backdropFilter: 'blur(14px)',
+          WebkitBackdropFilter: 'blur(14px)',
+        }}
+      >
         <Link to="/" style={{
           display: 'flex', alignItems: 'center', gap: '8px', alignSelf: ios ? 'flex-start' : undefined,
           padding: ios ? '10px 14px' : '10px 20px', borderRadius: cardRadius,
-          fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 600,
+          fontFamily: 'Outfit, sans-serif', fontSize: '0.88rem', fontWeight: 600,
           background: `linear-gradient(135deg, ${css.accent}12, ${PALETTE.orange}10, #FFFFFF)`, color: css.textSecondary,
           border: `1.5px solid ${css.accent}25`,
           textDecoration: 'none',
@@ -2602,8 +2627,88 @@ export default function ResultPage() {
         }}>
           <ArrowLeft style={{ width: '16px', height: '16px' }} /> 返回
         </Link>
-        {!ios && <div style={{ flex: 1 }} />}
-        {/* 用户切换卡片 */}
+        <div style={{ flex: 1 }} />
+        {ios ? (
+          <div style={{ position: 'relative' }}>
+            <motion.button
+              onClick={() => setShowUserDropdown(!showUserDropdown)}
+              whileTap={{ scale: 0.96 }}
+              style={{
+                width: '44px',
+                height: '44px',
+                borderRadius: '14px',
+                border: `1px solid ${css.accent}28`,
+                background: `linear-gradient(135deg, ${css.accent}14, ${PALETTE.orange}10, #FFFFFF)`,
+                color: css.textSecondary,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: `0 8px 18px ${css.accent}1F`,
+                cursor: 'pointer',
+              }}
+              aria-label="切换用户"
+            >
+              <Users style={{ width: '18px', height: '18px' }} />
+            </motion.button>
+            {showUserDropdown && userList.length > 1 && (
+              <div style={{
+                position: 'absolute', top: '100%', right: 0, marginTop: '8px',
+                background: '#FFFFFF', borderRadius: '12px', border: '1px solid rgba(91,92,255,0.2)',
+                boxShadow: '0 10px 22px rgba(76,90,176,0.16)', overflow: 'hidden', zIndex: 100,
+                minWidth: '240px',
+              }}>
+                <div style={{ padding: '10px 14px', borderBottom: `1px solid ${css.accent}1F`, background: '#F8F9FC' }}>
+                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75rem', color: css.textMuted, fontWeight: 600 }}>
+                    已录入用户 ({userList.length})
+                  </span>
+                </div>
+                {userList.map((u) => (
+                  <div
+                    key={u.id}
+                    onClick={() => switchUser(u.id)}
+                    style={{
+                      padding: '12px 14px',
+                      cursor: 'pointer',
+                      background: u.id === userId ? `${css.accent}08` : 'transparent',
+                      borderBottom: '1px solid #F8F8F8',
+                      transition: 'background 0.15s',
+                    }}
+                    onMouseEnter={(e) => { if (u.id !== userId) (e.target as HTMLElement).style.background = '#F8F8F8'; }}
+                    onMouseLeave={(e) => { if (u.id !== userId) (e.target as HTMLElement).style.background = 'transparent'; }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div style={{
+                        width: '32px', height: '32px', borderRadius: '10px',
+                        background: u.id === userId
+                          ? `linear-gradient(135deg, ${css.accent}, ${PALETTE.orange})`
+                          : '#E8E8E8',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontSize: '0.88rem', fontWeight: 700, color: u.id === userId ? '#FFFFFF' : '#999',
+                      }}>
+                        {u.name.charAt(0)}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88rem', fontWeight: 700, color: css.text }}>
+                            {u.name}
+                          </span>
+                          {u.id === userId && (
+                            <span style={{ fontSize: '0.63rem', padding: '2px 6px', background: `${css.accent}20`, color: css.accent, borderRadius: '4px', fontWeight: 600 }}>
+                              当前
+                            </span>
+                          )}
+                        </div>
+                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69rem', color: css.textMuted }}>
+                          {u.birthYear}.{String(u.birthMonth).padStart(2,'0')}.{String(u.birthDay).padStart(2,'0')} · {u.gender === 'male' ? '男' : '女'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
         <div style={{
           ...cardStyle({
             borderRadius: cardRadius,
@@ -2722,6 +2827,47 @@ export default function ResultPage() {
             </div>
           )}
         </div>
+        )}
+      </motion.div>
+
+      {/* ── iOS section tabs ── */}
+      <motion.div {...fadeUp(0.01)} style={{ marginTop: ios ? '-2px' : 0 }}>
+        <div
+          style={{
+            display: 'flex',
+            gap: '8px',
+            overflowX: 'auto',
+            padding: '2px 2px 4px',
+            scrollbarWidth: 'none',
+          }}
+        >
+          {sectionTabs.map((tab) => {
+            const active = activeSection === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => jumpToSection(tab.id)}
+                style={{
+                  borderRadius: 9999,
+                  border: active ? `1px solid ${css.accent}50` : '1px solid rgba(182,174,204,0.26)',
+                  background: active
+                    ? `linear-gradient(135deg, ${css.accent}1A, ${PALETTE.orange}12)`
+                    : 'rgba(255,255,255,0.72)',
+                  color: active ? css.accent : '#696580',
+                  fontFamily: 'Outfit, sans-serif',
+                  fontSize: '0.72rem',
+                  fontWeight: active ? 700 : 600,
+                  padding: ios ? '7px 12px' : '8px 14px',
+                  whiteSpace: 'nowrap',
+                  cursor: 'pointer',
+                  boxShadow: active ? `0 6px 14px ${css.accent}22` : 'none',
+                }}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
       </motion.div>
 
       {/* 编辑弹窗 */}
@@ -2774,8 +2920,8 @@ export default function ResultPage() {
         </div>
       </motion.div>
 
-      {/* ── 快速导航 ── */}
-      <motion.div {...fadeUp(0.03)}>
+      {/* ── 快速导航（桌面保留） ── */}
+      {!ios && <motion.div {...fadeUp(0.03)}>
         <div style={{
           background: '#FFFFFF',
           borderRadius: 16,
@@ -2901,7 +3047,7 @@ export default function ResultPage() {
             </motion.button>
           </div>
         </div>
-      </motion.div>
+      </motion.div>}
 
       {/* ── 四柱八字 ── */}
       <motion.div {...fadeUp(0.05)} id="sec-bazi">
