@@ -1380,6 +1380,7 @@ export function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElemen
   data: CandlestickData[]; startAge: number; userInfo: UserBirthInfo;
   dayMaster?: string; dayElement?: string; favorableElements?: string[];
 }) {
+  const isIOSCompact = typeof navigator !== 'undefined' && /iP(hone|od|ad)/i.test(navigator.userAgent);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [showYearlyChart, setShowYearlyChart] = useState(false);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
@@ -1521,11 +1522,11 @@ export function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElemen
   // K线图与卡片横向对齐的参数
   const itemWidth = 100;     // 每个大运项宽度（蜡烛+下方卡片一致）
   const gap = 16;            // 间距
-  const chartHeight = 200;    // K线图高度
+  const chartHeight = 240;    // K线图高度
   const paddingLeft = 20;     // 左边距
   const paddingRight = 20;    // 右边距
-  const paddingTop = 20;
-  const paddingBottom = 50;   // 底部给标签留空间
+  const paddingTop = 28;
+  const paddingBottom = 64;   // 底部给标签留空间
   const minScore = 0;         // Y轴0-100
   const maxScore = 100;
 
@@ -1564,11 +1565,13 @@ export function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElemen
       </div>
 
       {/* ── K线图 ── */}
-      <div style={{ width: '100%', overflowX: 'auto', padding: '8px 16px' }}>
+      <div style={{ width: '100%', overflowX: isIOSCompact ? 'hidden' : 'auto', overflowY: 'visible', padding: '10px 16px 12px' }}>
         <svg
-          width={totalWidth}
+          width={isIOSCompact ? '100%' : totalWidth}
           height={chartHeight}
-          style={{ display: 'block', minWidth: totalWidth }}
+          viewBox={isIOSCompact ? `0 0 ${totalWidth} ${chartHeight}` : undefined}
+          preserveAspectRatio={isIOSCompact ? 'xMidYMid meet' : undefined}
+          style={{ display: 'block', minWidth: isIOSCompact ? undefined : totalWidth, overflow: 'visible' }}
         >
           {/* ── 网格线（横向虚线） ── */}
           {[0, 25, 50, 75, 100].map(v => (
@@ -1763,15 +1766,26 @@ export function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElemen
             </div>
 
             {/* 十年综合运势总结 */}
-            <div style={{ 
-              padding: '16px 20px', 
-              background: 'linear-gradient(135deg, rgba(255,107,157,0.08) 0%, rgba(255,157,107,0.08) 100%)',
-              borderRadius: '16px', 
-              border: '1px solid rgba(255,107,157,0.15)',
+            <div style={{
+              padding: '16px 20px',
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(252,247,255,0.92) 100%)',
+              borderRadius: '16px',
+              border: '1px solid rgba(170,162,192,0.2)',
+              boxShadow: '0 8px 18px rgba(108,96,146,0.08)',
               marginBottom: '16px'
             }}>
-              <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700, color: '#FF6B9D', marginBottom: '8px' }}>
-                📊 这十年运势总评
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <div style={{
+                  width: '22px', height: '22px', borderRadius: '8px',
+                  background: 'linear-gradient(135deg, rgba(255,107,157,0.9), rgba(255,157,107,0.9))',
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: '0 4px 10px rgba(255,107,157,0.24)',
+                }}>
+                  <TrendingUp style={{ width: '12px', height: '12px', color: '#fff' }} />
+                </div>
+                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700, color: '#FF6B9D' }}>
+                  这十年运势总评
+                </div>
               </div>
               <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: '#666666', lineHeight: 1.8, margin: 0 }}>
                 {(() => {
@@ -1803,9 +1817,12 @@ export function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElemen
             </div>
 
             {/* 每年详细分析 - 四维卡片 */}
-            <div style={{ marginTop: '16px', padding: '14px', background: 'linear-gradient(135deg, #F8F9FC 0%, #F0F4FF 100%)', borderRadius: '14px', border: '1px solid #E8EAF0' }}>
+            <div style={{ marginTop: '16px', padding: '14px', background: 'linear-gradient(135deg, #FCFCFF 0%, #F3F6FF 100%)', borderRadius: '14px', border: '1px solid #E8EAF0', boxShadow: '0 6px 14px rgba(108,118,162,0.06)' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 700, color: '#6366F1' }}>📅 每年详细运势</span>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 700, color: '#6366F1' }}>
+                  <Sparkles style={{ width: '14px', height: '14px' }} />
+                  每年详细运势
+                </span>
                 <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: '#999999' }}>点击卡片展开详情</span>
               </div>
               
@@ -1845,7 +1862,13 @@ export function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElemen
                 const yearScore = year.yearScore || 50;
                 const isGoodYear = yearScore >= 55;
                 const detailColors: Record<string, string> = { career: '#FF9D6B', fortune: '#D4A000', marriage: '#FF6B9D', health: '#00C47A' };
-                const detailLabels: Record<string, string> = { career: '📈 事业', fortune: '💰 财运投资', marriage: '❤️ 婚姻感情', health: '💪 健康身体' };
+                const detailLabels: Record<string, string> = { career: '事业', fortune: '财运投资', marriage: '婚姻感情', health: '健康身体' };
+                const detailIcons: Record<string, React.ReactNode> = {
+                  career: <TrendingUp style={{ width: '13px', height: '13px' }} />,
+                  fortune: <Coins style={{ width: '13px', height: '13px' }} />,
+                  marriage: <Heart style={{ width: '13px', height: '13px' }} />,
+                  health: <Activity style={{ width: '13px', height: '13px' }} />,
+                };
                 
                 return (
                   <div style={{ 
@@ -1874,13 +1897,15 @@ export function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElemen
                         const item = (year as any)[key] || { score: 50, advice: '', tip: '' };
                         const isHigh = item.score > 50;
                         return (
-                          <div key={key} style={{ 
+                          <div key={key} style={{
                             padding: '12px', borderRadius: '10px',
-                            background: `${detailColors[key]}10`,
-                            border: `1px solid ${detailColors[key]}30`
+                            background: `linear-gradient(145deg, #FFFFFF, ${detailColors[key]}0D)`,
+                            border: `1px solid ${detailColors[key]}2E`,
+                            boxShadow: `0 4px 12px ${detailColors[key]}18`,
                           }}>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-                              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 600, color: detailColors[key] }}>
+                              <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 700, color: detailColors[key] }}>
+                                {detailIcons[key]}
                                 {detailLabels[key]}
                               </span>
                               <span style={{ 
@@ -1892,7 +1917,7 @@ export function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElemen
                               {item.advice || '运势平稳，按部就班'}
                             </p>
                             <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#888', margin: 0, lineHeight: 1.4 }}>
-                              💡 {item.tip || '保持当前节奏'}
+                              {item.tip || '保持当前节奏'}
                             </p>
                           </div>
                         );

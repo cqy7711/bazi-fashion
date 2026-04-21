@@ -37,6 +37,7 @@ export default function App() {
   const preset = VISUAL_PRESET;
   const ACCENT = preset.accent;
   const TINTS = preset.tints;
+  const isIOSDevice = typeof navigator !== 'undefined' && /iP(hone|od|ad)/i.test(navigator.userAgent);
   const [tabBarCollapsed, setTabBarCollapsed] = useState(false);
 
   const [showIntro, setShowIntro] = useState(() => {
@@ -131,8 +132,8 @@ export default function App() {
           gap: tabBarCollapsed ? '8px' : '6px',
           width: tabBarCollapsed ? '168px' : '100%',
           padding: tabBarCollapsed
-            ? '8px 10px calc(8px + env(safe-area-inset-bottom))'
-            : '8px 10px calc(8px + env(safe-area-inset-bottom))',
+            ? (isIOSDevice ? '5px 9px calc(5px + env(safe-area-inset-bottom))' : '8px 10px calc(8px + env(safe-area-inset-bottom))')
+            : (isIOSDevice ? '5px 9px calc(5px + env(safe-area-inset-bottom))' : '8px 10px calc(8px + env(safe-area-inset-bottom))'),
           borderRadius: tabBarCollapsed ? '24px' : IOS_TOKENS.radius.sheet,
           background: tabBarCollapsed
             ? 'linear-gradient(145deg, rgba(255,255,255,0.93), rgba(247,244,253,0.9))'
@@ -155,8 +156,8 @@ export default function App() {
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
-                minHeight: '38px',
-                padding: '6px 10px',
+                minHeight: isIOSDevice ? '33px' : '38px',
+                padding: isIOSDevice ? '4px 9px' : '6px 10px',
                 borderRadius: '14px',
                 textDecoration: 'none',
                 background: `linear-gradient(145deg, ${activeItem.gradient[0]}20, ${activeItem.gradient[1]}1A)`,
@@ -165,15 +166,15 @@ export default function App() {
               }}
             >
               <div style={{
-                width: '20px',
-                height: '20px',
+                width: isIOSDevice ? '18px' : '20px',
+                height: isIOSDevice ? '18px' : '20px',
                 borderRadius: '7px',
                 background: `linear-gradient(145deg, ${activeItem.gradient[0]}, ${activeItem.gradient[1]})`,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
               }}>
-                <activeItem.Icon size={12} strokeWidth={2.2} color="#fff" />
+                <activeItem.Icon size={isIOSDevice ? 11 : 12} strokeWidth={2.2} color="#fff" />
               </div>
               <span style={{
                 fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif',
@@ -203,7 +204,7 @@ export default function App() {
                 cursor: 'pointer',
               }}
             >
-              <PanelBottomOpen size={14} />
+              <PanelBottomOpen size={isIOSDevice ? 13 : 14} />
             </button>
           </>
         ) : (
@@ -220,9 +221,9 @@ export default function App() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     gap: '3px',
-                    minHeight: '44px',
-                    minWidth: '62px',
-                    padding: '6px 8px',
+                    minHeight: isIOSDevice ? '38px' : '44px',
+                    minWidth: isIOSDevice ? '56px' : '62px',
+                    padding: isIOSDevice ? '4px 8px' : '6px 8px',
                     borderRadius: IOS_TOKENS.radius.control,
                     textDecoration: 'none',
                     background: isActive
@@ -255,8 +256,8 @@ export default function App() {
                   }}
                 >
                   <div style={{
-                    width: '24px',
-                    height: '24px',
+                    width: isIOSDevice ? '22px' : '24px',
+                    height: isIOSDevice ? '22px' : '24px',
                     borderRadius: '8px',
                     background: isActive
                       ? `linear-gradient(145deg, ${gradient[0]}, ${gradient[1]})`
@@ -264,11 +265,11 @@ export default function App() {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     boxShadow: isActive ? `0 4px 12px ${glowColor.replace('0.35', '0.24')}` : `0 3px 8px ${glowColor.replace('0.35', '0.18')}`,
                   }}>
-                    <Icon size={14} strokeWidth={2.2} color="#fff" />
+                    <Icon size={isIOSDevice ? 13 : 14} strokeWidth={2.2} color="#fff" />
                   </div>
                   <span style={{
                     fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif',
-                    fontSize: '0.64rem', fontWeight: isActive ? 700 : 600,
+                    fontSize: isIOSDevice ? '0.61rem' : '0.64rem', fontWeight: isActive ? 700 : 600,
                     color: isActive ? '#3F3656' : '#4D4860',
                     letterSpacing: '-0.01em',
                     whiteSpace: 'nowrap',
@@ -296,7 +297,7 @@ export default function App() {
                 cursor: 'pointer',
               }}
             >
-              <PanelBottomClose size={14} />
+              <PanelBottomClose size={isIOSDevice ? 13 : 14} />
             </button>
           </>
         )}
@@ -429,7 +430,9 @@ export default function App() {
             WebkitBackdropFilter: 'blur(14px)',
             marginTop: '12px',
             marginBottom: '20px',
-            paddingBottom: tabBarCollapsed ? 'max(5rem, env(safe-area-inset-bottom))' : 'max(6.5rem, env(safe-area-inset-bottom))',
+            paddingBottom: tabBarCollapsed
+              ? (isIOSDevice ? 'max(4.2rem, env(safe-area-inset-bottom))' : 'max(5rem, env(safe-area-inset-bottom))')
+              : (isIOSDevice ? 'max(5.3rem, env(safe-area-inset-bottom))' : 'max(6.5rem, env(safe-area-inset-bottom))'),
           }}
         >
           <Routes>
@@ -456,7 +459,9 @@ export default function App() {
           right: 'max(10px, env(safe-area-inset-right))',
           bottom: 0,
           zIndex: 120,
-          paddingBottom: tabBarCollapsed ? 'max(6px, env(safe-area-inset-bottom))' : 'max(8px, env(safe-area-inset-bottom))',
+          paddingBottom: tabBarCollapsed
+            ? (isIOSDevice ? 'max(4px, env(safe-area-inset-bottom))' : 'max(6px, env(safe-area-inset-bottom))')
+            : (isIOSDevice ? 'max(6px, env(safe-area-inset-bottom))' : 'max(8px, env(safe-area-inset-bottom))'),
           transition: 'all 0.24s ease',
         }}>
           <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', justifyContent: 'center' }}>

@@ -1827,8 +1827,8 @@ export default function HomePage() {
                 label: '命盘信息',
                 icon: (s: number) => <Star style={{ width: s, height: s, strokeWidth: 2.1 }} />,
                 iconColor: '#ECE5FF',
-                bodyGrad: 'linear-gradient(118deg, #B8AFE8 0%, #A399DD 38%, #8F86CE 72%, #7D74BA 100%)',
-                dropShadow: '0 6px 18px rgba(110, 95, 190, 0.22), 0 1px 4px rgba(70, 60, 120, 0.1)',
+                bodyGrad: 'linear-gradient(118deg, #9C8FF0 0%, #8778E6 38%, #7464D7 72%, #6252C3 100%)',
+                dropShadow: '0 6px 18px rgba(93, 78, 186, 0.26), 0 1px 4px rgba(60, 50, 120, 0.12)',
                 pulseGlow: ['rgba(130,115,200,0)', 'rgba(130,115,200,0.28)', 'rgba(130,115,200,0)'],
               },
               {
@@ -1836,8 +1836,8 @@ export default function HomePage() {
                 label: '今日运势',
                 icon: (s: number) => <Sparkles style={{ width: s, height: s, strokeWidth: 2.1 }} />,
                 iconColor: '#FFE6F2',
-                bodyGrad: 'linear-gradient(118deg, #E9A8C8 0%, #DD98BC 38%, #D08AAC 72%, #C27A9E 100%)',
-                dropShadow: '0 6px 18px rgba(200, 110, 150, 0.22), 0 1px 4px rgba(130, 70, 100, 0.1)',
+                bodyGrad: 'linear-gradient(118deg, #E78AB7 0%, #DA7DAA 38%, #CC6E9A 72%, #BD5F8B 100%)',
+                dropShadow: '0 6px 18px rgba(196, 92, 142, 0.26), 0 1px 4px rgba(120, 60, 92, 0.12)',
                 pulseGlow: ['rgba(210,130,160,0)', 'rgba(210,130,160,0.26)', 'rgba(210,130,160,0)'],
               },
               {
@@ -1845,8 +1845,8 @@ export default function HomePage() {
                 label: '今日色彩',
                 icon: (s: number) => <Palette style={{ width: s, height: s, strokeWidth: 2.1 }} />,
                 iconColor: '#FFEBD9',
-                bodyGrad: 'linear-gradient(118deg, #E8C49A 0%, #E0AE8E 38%, #D99A9A 72%, #CF8FA8 100%)',
-                dropShadow: '0 6px 18px rgba(200, 130, 120, 0.2), 0 1px 4px rgba(140, 90, 90, 0.09)',
+                bodyGrad: 'linear-gradient(118deg, #E3B37A 0%, #D89673 38%, #CF7E85 72%, #C26F96 100%)',
+                dropShadow: '0 6px 18px rgba(194, 116, 110, 0.24), 0 1px 4px rgba(120, 76, 78, 0.12)',
                 pulseGlow: ['rgba(210,140,130,0)', 'rgba(210,140,130,0.26)', 'rgba(210,140,130,0)'],
               },
               {
@@ -1854,14 +1854,14 @@ export default function HomePage() {
                 label: '今日手串',
                 icon: (s: number) => <Gem style={{ width: s, height: s, strokeWidth: 2.1 }} />,
                 iconColor: '#E1EEFF',
-                bodyGrad: 'linear-gradient(118deg, #9BBCEE 0%, #89AEE6 38%, #789EDB 72%, #6A8DCC 100%)',
-                dropShadow: '0 6px 18px rgba(90, 120, 200, 0.22), 0 1px 4px rgba(60, 80, 140, 0.1)',
+                bodyGrad: 'linear-gradient(118deg, #82AAEA 0%, #7199E2 38%, #618AD7 72%, #5478C8 100%)',
+                dropShadow: '0 6px 18px rgba(78, 112, 195, 0.26), 0 1px 4px rgba(56, 78, 136, 0.12)',
                 pulseGlow: ['rgba(100,130,210,0)', 'rgba(100,130,210,0.28)', 'rgba(100,130,210,0)'],
               },
             ] as const).map((item) => {
               const iconPx = navWideLayout ? 18 : 19;
               const boxPx = navWideLayout ? 36 : 34;
-              const glossTop = 'linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.06) 28%, transparent 50%)';
+              const glossTop = 'linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.03) 24%, transparent 44%)';
               const glassIcon =
                 'linear-gradient(145deg, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.08) 100%)';
               return (
@@ -1970,14 +1970,14 @@ export default function HomePage() {
             <div style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '5px',
-              padding: '4px 7px',
+              gap: '1px',
+              padding: '1px 2px',
               borderRadius: '999px',
-              background: 'linear-gradient(145deg, rgba(255,255,255,0.72), rgba(244,241,252,0.56))',
-              border: '1px solid rgba(176, 168, 206, 0.28)',
+              background: 'linear-gradient(145deg, rgba(255,255,255,0.64), rgba(244,241,252,0.5))',
+              border: '1px solid rgba(176, 168, 206, 0.2)',
               backdropFilter: 'blur(8px)',
               WebkitBackdropFilter: 'blur(8px)',
-              boxShadow: '0 4px 10px rgba(86, 78, 132, 0.1), inset 0 1px 0 rgba(255,255,255,0.6)',
+              boxShadow: '0 1px 3px rgba(86, 78, 132, 0.08), inset 0 1px 0 rgba(255,255,255,0.5)',
             }}>
               {sectionOrder.map((sec) => {
                 const active = activeSection === sec;
@@ -1994,14 +1994,14 @@ export default function HomePage() {
                     onClick={() => switchSection(sec)}
                     aria-label={`切换到${labels[sec]}`}
                     style={{
-                      width: active ? '10px' : '4px',
-                      height: '4px',
+                      width: active ? '4px' : '1px',
+                      height: active ? '2px' : '1px',
                       borderRadius: '999px',
                       border: 'none',
                       background: active
                         ? 'linear-gradient(135deg, rgba(143,104,255,0.95), rgba(44,203,255,0.95))'
-                        : 'rgba(164, 160, 186, 0.34)',
-                      boxShadow: active ? '0 1px 5px rgba(95, 102, 190, 0.24)' : 'none',
+                        : 'rgba(164, 160, 186, 0.18)',
+                      boxShadow: active ? '0 1px 3px rgba(95, 102, 190, 0.2)' : 'none',
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
                       padding: 0,
