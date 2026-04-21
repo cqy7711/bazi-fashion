@@ -887,61 +887,68 @@ function generateSceneExplanation(
   flowDay: FlowDayTenGodAnalysis | null,
   gender: 'male' | 'female',
   outfit: OutfitDetail
-): string {
-  const temp = weather?.temperature ? `${weather.temperature}度` : '当前温度';
-  const weatherDesc = weather?.weather || '适宜';
+): { points: { label: string; text: string }[] } {
+  const temp = weather?.temperature ? `${weather.temperature}°` : '';
+  const weatherStr = weather?.weather || '';
   const elementName = ELEMENT_NAMES[element];
   const secondaryName = ELEMENT_NAMES[secondaryElement];
-  const tenGodIntro = flowDay ? `今日流日${today.dayPillar}，${flowDay.tenGod}当令` : `今日流日五行${liuriElementNames[today.dayElement]}`;
+  const tenGodLabel = flowDay?.tenGod || '流日';
+  const flowDesc = flowDay?.description.replace('今日', '') || '';
 
-  // 根据场景生成个性化描述
-  const sceneConfigs = {
+  // 天气标签
+  const weatherTag = temp && weatherStr ? `${temp} ${weatherStr}` : '';
+
+  // 根据场景生成分点建议
+  const sceneConfigs: Record<string, { points: { label: string; text: string }[] }> = {
     work: {
-      title: gender === 'male' ? '职场' : '职场',
-      intro: `${temp}${weatherDesc}的天气，`,
-      recommendation: gender === 'male'
-        ? `${tenGodIntro}，${flowDay?.description.replace('今日', '') || '职场运势平稳'}。职场穿搭建议选择${elementName}色系为主色调。`
-        : `${tenGodIntro}，${flowDay?.description.replace('今日', '') || '职场运势平稳'}。职场穿搭建议选择${elementName}色系为主色调。`,
-      outfit: `${outfit.top}，搭配${outfit.bottom}，配上${outfit.shoes}，整体呈现${STYLE_DB[element].style.split('、')[0]}的风格。`,
-      accessories: `配饰方面推荐${outfit.accessories.slice(0, 2).join('和')}，材质建议选择${outfit.material.includes('[') ? '舒适面料' : outfit.material.split('或')[0]}。`
+      points: [
+        ...(weatherTag ? [{ label: '环境', text: weatherTag }] : []),
+        { label: '运势', text: `流日${today.dayPillar}，${tenGodLabel}当令，${flowDesc || '职场运势平稳'}` },
+        { label: '主色调', text: `${elementName}色系为主，${secondaryName}色辅助过渡` },
+        { label: '穿搭', text: `${outfit.top} + ${outfit.bottom} + ${outfit.shoes}` },
+        { label: '配饰', text: `${outfit.accessories.slice(0, 2).join('、')}` },
+        { label: '风格', text: STYLE_DB[element].style.split('、')[0] },
+      ]
     },
     casual: {
-      title: gender === 'male' ? '日常休闲' : '日常休闲',
-      intro: `${temp}${weatherDesc}的天气，`,
-      recommendation: gender === 'male'
-        ? `今日日常休闲场景，${flowDay?.description.replace('今日', '') || '日常运势平稳'}，`
-        : `今日日常休闲场景，${flowDay?.description.replace('今日', '') || '日常运势平稳'}，`,
-      outfit: gender === 'male'
-        ? `适合穿${outfit.top}搭配${outfit.bottom}，脚踩${outfit.shoes}。`
-        : `适合穿${outfit.top}搭配${outfit.bottom}，脚踩${outfit.shoes}。`,
-      accessories: `可搭配${outfit.accessories[0]}或${outfit.accessories[1] || outfit.accessories[0]}作为点缀，整体风格${STYLE_DB[secondaryElement].style.split('、')[0]}。`
+      points: [
+        ...(weatherTag ? [{ label: '环境', text: weatherTag }] : []),
+        { label: '运势', text: `${flowDesc || '日常运势平稳'}` },
+        { label: '主色调', text: `${elementName}色系轻松随性` },
+        { label: '穿搭', text: `${outfit.top} + ${outfit.bottom} + ${outfit.shoes}` },
+        { label: '配饰', text: `${outfit.accessories[0]}${outfit.accessories[1] ? ' 或 ' + outfit.accessories[1] : ''}` },
+        { label: '风格', text: STYLE_DB[secondaryElement].style.split('、')[0] },
+      ]
     },
     party: {
-      title: gender === 'male' ? '好友聚会' : '好友聚会',
-      intro: `${temp}${weatherDesc}的天气，`,
-      recommendation: liuriBoost > 0
-        ? `今日${flowDay?.tenGod || '流日'}运势上佳！好友聚会场景非常适合展现个人魅力，建议以${elementName}色系为主打。`
-        : `好友聚会场景，虽然今日${flowDay?.tenGod || '流日'}运势稍弱，但穿搭得体依然可以让你成为焦点，建议以${elementName}色系搭配${secondaryName}色系。`,
-      outfit: gender === 'male'
-        ? `可以选择${outfit.top}搭配${outfit.bottom}，再配上${outfit.shoes}，尽显绅士风度。`
-        : `可以选择${outfit.top}搭配${outfit.bottom}，再配上${outfit.shoes}，优雅大方。`,
-      accessories: `配饰推荐${outfit.accessories.slice(0, 3).join('、')}，${gender === 'male' ? '银色袖扣或手表能提升整体质感' : '精致耳饰和手拿包是加分项'}。`
+      points: [
+        ...(weatherTag ? [{ label: '环境', text: weatherTag }] : []),
+        { label: '运势', text: liuriBoost > 0
+          ? `${tenGodLabel}运势上佳，适合展现个人魅力`
+          : `${tenGodLabel}运势平稳，穿搭得体即可出彩` },
+        { label: '主色调', text: liuriBoost > 0
+          ? `${elementName}色系主打，大胆用色`
+          : `${elementName}×${secondaryName}双色搭配，稳妥不出错` },
+        { label: '穿搭', text: `${outfit.top} + ${outfit.bottom} + ${outfit.shoes}` },
+        { label: '配饰', text: `${outfit.accessories.slice(0, 3).join('、')}` },
+        { label: '风格', text: gender === 'male' ? '绅士风度' : '优雅大方' },
+      ]
     },
     festival: {
-      title: gender === 'male' ? '特殊节日' : '特殊节日',
-      intro: `${temp}${weatherDesc}的天气，`,
-      recommendation: liuriBoost > 0
-        ? `今日运势极佳！节日庆典场合建议以${elementName}色系为主打，喜庆又不失格调。`
-        : `节日庆典场合，建议以稳重的${elementName}色系为主，搭配适当的喜庆元素。`,
-      outfit: gender === 'male'
-        ? `${outfit.top}搭配${outfit.bottom}，配上${outfit.shoes}，${gender === 'male' ? '尽显绅士风度' : '优雅大方又不失节日氛围'}。`
-        : `${outfit.top}搭配${outfit.bottom}，配上${outfit.shoes}，优雅大方又不失节日氛围。`,
-      accessories: `节日配饰推荐${outfit.accessories.slice(0, 2).join('和')}，${gender === 'male' ? '金色配饰能增添喜庆氛围' : '金色或红色元素能提升节日感'}。`
+      points: [
+        ...(weatherTag ? [{ label: '环境', text: weatherTag }] : []),
+        { label: '运势', text: liuriBoost > 0
+          ? '今日运势极佳，宜高调'
+          : '稳中求进，低调有质感' },
+        { label: '主色调', text: `${elementName}色系${liuriBoost > 0 ? '为主打，喜庆有格调' : '稳重为主，点缀喜庆元素'}` },
+        { label: '穿搭', text: `${outfit.top} + ${outfit.bottom} + ${outfit.shoes}` },
+        { label: '配饰', text: `${outfit.accessories.slice(0, 2).join('、')}` },
+        { label: '风格', text: gender === 'male' ? '绅士风度' : '优雅大方' },
+      ]
     }
   };
 
-  const config = sceneConfigs[scene];
-  return `${config.intro}${config.recommendation}${config.outfit}${config.accessories}`;
+  return sceneConfigs[scene] || { points: [] };
 }
 
 // 天气适应建议

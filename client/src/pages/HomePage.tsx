@@ -44,7 +44,7 @@ const DOPAMINE_COLORS = [
   { label: '木', color: '#4ADE80', icon: <Leaf style={{ width: '12px', height: '12px' }} /> },
   { label: '火', color: '#FF6B6B', icon: <Flame style={{ width: '12px', height: '12px' }} /> },
   { label: '土', color: '#D4A000', icon: <Mountain style={{ width: '12px', height: '12px' }} /> },
-  { label: '金', color: '#7B8FA8', icon: <CircleDot style={{ width: '12px', height: '12px' }} /> },
+  { label: '金', color: '#B7791F', icon: <CircleDot style={{ width: '12px', height: '12px' }} /> },
   { label: '水', color: '#00A8E8', icon: <Droplets style={{ width: '12px', height: '12px' }} /> },
 ];
 
@@ -797,7 +797,7 @@ function HighlightColors({ text, baseColor }: { text: string; baseColor: string 
               }} />
               <span style={{
                 fontFamily: 'Outfit, sans-serif',
-                fontSize: '0.69remrem',
+                fontSize: '0.69rem',
                 fontWeight: 600,
                 color: colorInfo.hex,
               }}>{colorInfo.color}</span>
@@ -812,7 +812,7 @@ function HighlightColors({ text, baseColor }: { text: string; baseColor: string 
 
 // 彩色徽章
 function ElementBadge({ el }: { el: string }) {
-  const colors: Record<string, string> = { wood: '#4ADE80', fire: '#FF6B6B', earth: '#D4A000', metal: '#7B8FA8', water: '#00A8E8' };
+  const colors: Record<string, string> = { wood: '#4ADE80', fire: '#FF6B6B', earth: '#D4A000', metal: '#B7791F', water: '#00A8E8' };
   const names: Record<string, string> = { wood: '木', fire: '火', earth: '土', metal: '金', water: '水' };
   const color = colors[el] || '#A0A8C0';
   return (
@@ -822,7 +822,7 @@ function ElementBadge({ el }: { el: string }) {
       background: `${color}18`, border: `1px solid ${color}35`,
     }}>
       <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: color }} />
-      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 600, color }}>{names[el] || el}</span>
+      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75rem', fontWeight: 600, color }}>{names[el] || el}</span>
     </div>
   );
 }
@@ -872,6 +872,8 @@ export default function HomePage() {
   const [locationLocked, setLocationLocked] = useState(!!savedLocation); // 有缓存就锁定
   /** 快捷导航：大屏四列横排图标+文字；小屏 2×2 上图下文 */
   const [navWideLayout, setNavWideLayout] = useState(false);
+  // iOS 移动端字体兼容开关：用于“我的生辰”区域做更紧凑字号。
+  const isIOSCompact = !navWideLayout && typeof navigator !== 'undefined' && /iP(hone|od|ad)/i.test(navigator.userAgent);
   useEffect(() => {
     if (!activeSection) return;
     requestAnimationFrame(() => {
@@ -1126,6 +1128,84 @@ export default function HomePage() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '6px', marginBottom: '10px' }}>
       </div>
   );
+  // 动态生成「今日运势主张」文案
+  const getFortuneAdvice = (): string => {
+    if (!dailyFortune) return '';
+    const { totalScore, totalLabel, dayRelation, mainTip, luckyColor, luckyDirection, luckyTime, careerScore, wealthScore, loveScore, healthScore } = dailyFortune;
+    const dims = [
+      { name: '事业', score: careerScore },
+      { name: '财运', score: wealthScore },
+      { name: '感情', score: loveScore },
+      { name: '健康', score: healthScore },
+    ].sort((a, b) => b.score - a.score);
+    const best = dims[0];
+    const worst = dims[dims.length - 1];
+
+    // 运势基调
+    let tone = '';
+    if (totalScore >= 85) tone = '今日整体运势极佳，诸事顺遂';
+    else if (totalScore >= 70) tone = '今日运势向好，把握节奏';
+    else if (totalScore >= 55) tone = '今日运势平稳，宜守不宜攻';
+    else tone = '今日运势偏弱，宜低调蓄力';
+
+    // 策略
+    let strategy = '';
+    if (best.score - worst.score >= 25) {
+      strategy = `${best.name}运突出（${best.score}分），可重点发力；${worst.name}运偏弱（${worst.score}分），需谨慎应对。`;
+    } else {
+      strategy = `各维度较为均衡（${best.name}${best.score}分 / ${worst.name}${worst.score}分），可稳步推进。`;
+    }
+
+    // 流日提示
+    const relationTip = dayRelation ? `流日${dayRelation}，${mainTip?.slice(0, 20) || ''}` : '';
+
+    // 幸运要素
+    const luckyStr = luckyColor?.name ? `幸运色${luckyColor.name}` : '';
+    const dirStr = luckyDirection ? `吉利方位${luckyDirection}` : '';
+    const timeStr = luckyTime ? `旺时${luckyTime}` : '';
+    const luckyParts = [luckyStr, dirStr, timeStr].filter(Boolean);
+
+    return `${tone}。${strategy}${relationTip ? ' ' + relationTip + '。' : ''}${luckyParts.length ? ' · ' + luckyParts.join('·') : ''}`;
+  };
+
+  // 动态生成「今日配色主张」文案
+  const getColorAdvice = (): string => {
+    if (!outfitRec) return '';
+    const { primaryColor, secondaryColor, avoidColor, primaryDesc, secondaryDesc, avoidDesc } = outfitRec;
+    const wuxing = (outfitRec as any)?.weatherInfo?.wuxing || '';
+    const weather = (outfitRec as any)?.weatherInfo?.weather || '';
+    const scenes: any[] = (outfitRec as any)?.sceneRecommendations || [];
+
+    // 五行主线
+    let mainLine = '';
+    if (wuxing) mainLine = `今日五行「${wuxing}」主导配色`;
+
+    // 主色策略
+    let colorStrategy = '';
+    if (primaryColor && secondaryColor) {
+      colorStrategy = `以${primaryColor}为主色大面积铺底，${secondaryColor}作为点缀色提升层次`;
+    } else if (primaryColor) {
+      colorStrategy = `以${primaryColor}为主色贯穿整体搭配`;
+    }
+
+    // 避色提醒
+    let avoidTip = '';
+    if (avoidColor) avoidTip = `避免大面积使用${avoidColor}`;
+
+    // 天气适配
+    let weatherTip = '';
+    if (weather?.includes('晴')) weatherTip = '晴天可适当增加亮色比重';
+    else if (weather?.includes('雨')) weatherTip = '雨天建议深色为主，加亮色配饰点缀';
+    else if (weather?.includes('阴')) weatherTip = '阴天可加入暖色调提亮整体';
+
+    // 场景提示
+    let sceneTip = '';
+    if (scenes.length >= 3) sceneTip = `${scenes.length}个场景各有侧重，切换查看详细搭配`;
+
+    const parts = [mainLine, colorStrategy, avoidTip, weatherTip, sceneTip].filter(Boolean);
+    return parts.join('。') + (parts.length ? '。' : '');
+  };
+
   const renderInsightBlock = (
     title: string,
     content: string,
@@ -1139,10 +1219,10 @@ export default function HomePage() {
       background: tone.background,
       border: `1.5px solid ${tone.border}`,
     }}>
-      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 800, color: tone.title, margin: 0 }}>
+      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75rem', fontWeight: 800, color: tone.title, margin: 0 }}>
         {title}
       </p>
-      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: '#5E6788', margin: '4px 0 0', lineHeight: 1.6 }}>
+      <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75rem', color: '#5E6788', margin: '4px 0 0', lineHeight: 1.6 }}>
         {content}
       </p>
     </div>
@@ -1168,20 +1248,20 @@ export default function HomePage() {
           <Gem style={{ width: '20px', height: '20px', color: '#FFFFFF' }} />
         </div>
         <div style={{ flex: 1 }}>
-          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{material}</p>
-          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: '#A0A8C0', margin: '2px 0 0' }}>{primary.color || ''} · {details?.description?.slice(0, 30) || ''}</p>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88rem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{material}</p>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69rem', color: '#A0A8C0', margin: '2px 0 0' }}>{primary.color || ''} · {details?.description?.slice(0, 30) || ''}</p>
           <div style={{ display: 'flex', gap: '6px', marginTop: '6px' }}>
             <span style={{ width: '20px', height: '6px', borderRadius: '999px', background: `linear-gradient(90deg, ${PALETTE.purple}, ${PALETTE.blue})` }} />
             <span style={{ width: '20px', height: '6px', borderRadius: '999px', background: `linear-gradient(90deg, ${PALETTE.coral}, ${PALETTE.orange})` }} />
           </div>
-          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#8F97B5', margin: '5px 0 0' }}>
+          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63rem', color: '#8F97B5', margin: '5px 0 0' }}>
             推荐风格：通勤轻奢 · 柔光高级感
           </p>
         </div>
         <span style={{
           padding: '4px 10px', borderRadius: '8px',
           background: `linear-gradient(135deg, ${PALETTE.purple}, ${PALETTE.blue})`,
-          fontSize: '0.63remrem', fontWeight: 700, color: '#FFFFFF',
+          fontSize: '0.63rem', fontWeight: 700, color: '#FFFFFF',
           fontFamily: 'Outfit, sans-serif',
         }}>{badgeText}</span>
       </div>
@@ -1190,6 +1270,7 @@ export default function HomePage() {
 
   return (
     <div
+      id="home-page-shell"
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -1341,12 +1422,12 @@ export default function HomePage() {
             whileHover={{ y: -3 }}
             transition={{ duration: 0.2 }}
             style={{
-            background: 'linear-gradient(155deg, rgba(249,252,255,0.95), rgba(255,255,255,0.9))',
+            background: `linear-gradient(155deg, ${PALETTE.coralLight} 0%, rgba(255,255,255,0.82) 48%, ${PALETTE.blueLight} 100%)`,
             borderRadius: '24px',
             padding: '20px',
-            boxShadow: '0 14px 28px rgba(74,86,152,0.1)',
-            border: '1px solid rgba(91,92,255,0.18)',
-            backdropFilter: 'blur(7px)', WebkitBackdropFilter: 'blur(7px)',
+            boxShadow: '0 2px 10px rgba(72, 64, 88, 0.04)',
+            border: '1px solid rgba(180, 172, 198, 0.16)',
+            backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -1356,10 +1437,10 @@ export default function HomePage() {
                 }}>
                   <Star style={{ width: '14px', height: '14px', color: PALETTE.coral }} />
                 </div>
-                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.88remrem', fontWeight: 700, color: '#1A1A2E' }}>我的生辰</span>
+                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.8rem' : '0.88rem', fontWeight: 700, color: '#1A1A2E' }}>我的生辰</span>
                 {records.length > 0 && (
                   <span style={{
-                    fontFamily: 'Outfit', fontSize: '0.69remrem', fontWeight: 600,
+                    fontFamily: 'Outfit', fontSize: isIOSCompact ? '0.62rem' : '0.69rem', fontWeight: 600,
                     color: PALETTE.coral, background: `${PALETTE.coral}10`,
                     padding: '2px 8px', borderRadius: '9999px',
                   }}>{records.length}人</span>
@@ -1400,35 +1481,35 @@ export default function HomePage() {
                   <div style={{ paddingTop: '16px', borderTop: `1px solid ${PALETTE.coral}15`, marginTop: '14px' }}>
                     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                       <div>
-                        <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: '#6B7280', marginBottom: '6px', fontWeight: 500 }}>姓名</label>
+                        <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.68rem' : '0.75rem', color: '#6B7280', marginBottom: '6px', fontWeight: 500 }}>姓名</label>
                         <input
                           value={form.name}
                           onChange={e => setForm({ ...form, name: e.target.value })}
                           placeholder="给自己起个名字"
-                          style={{ width: '100%', padding: '12px 14px', fontSize: '0.88remrem', borderRadius: '12px', border: '1.5px solid #E8EAF6', background: 'linear-gradient(145deg, #FFFFFF, #F8F9FC)', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E', boxSizing: 'border-box', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.8), 0 6px 14px rgba(99,74,176,0.08)', transition: 'all 0.2s ease' }}
+                          style={{ width: '100%', padding: '12px 14px', fontSize: isIOSCompact ? '0.8rem' : '0.88rem', borderRadius: '12px', border: '1.5px solid #E8EAF6', background: 'linear-gradient(145deg, #FFFFFF, #F8F9FC)', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E', boxSizing: 'border-box', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.8), 0 6px 14px rgba(99,74,176,0.08)', transition: 'all 0.2s ease' }}
                           onFocus={e => { (e.target as HTMLElement).style.borderColor = PALETTE.coral; (e.target as HTMLElement).style.boxShadow = `0 0 0 3px ${PALETTE.coral}22, 0 10px 18px rgba(255,107,157,0.12)`; }}
                           onBlur={e => { (e.target as HTMLElement).style.borderColor = '#E8EAF6'; (e.target as HTMLElement).style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.8), 0 6px 14px rgba(99,74,176,0.08)'; }}
                         />
                       </div>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                         <div>
-                          <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: '#6B7280', marginBottom: '6px', fontWeight: 500 }}>出生省份</label>
+                          <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.68rem' : '0.75rem', color: '#6B7280', marginBottom: '6px', fontWeight: 500 }}>出生省份</label>
                           <input
                             value={form.birthProvince}
                             onChange={e => setForm({ ...form, birthProvince: e.target.value })}
                             placeholder="例如：广东省"
-                            style={{ width: '100%', padding: '12px 14px', fontSize: '0.88remrem', borderRadius: '12px', border: '1.5px solid #E8EAF6', background: 'linear-gradient(145deg, #FFFFFF, #F8F9FC)', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E', boxSizing: 'border-box', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.8), 0 6px 14px rgba(99,74,176,0.08)', transition: UI_EASE }}
+                            style={{ width: '100%', padding: '12px 14px', fontSize: isIOSCompact ? '0.8rem' : '0.88rem', borderRadius: '12px', border: '1.5px solid #E8EAF6', background: 'linear-gradient(145deg, #FFFFFF, #F8F9FC)', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E', boxSizing: 'border-box', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.8), 0 6px 14px rgba(99,74,176,0.08)', transition: UI_EASE }}
                             onFocus={e => { (e.target as HTMLElement).style.borderColor = PALETTE.coral; (e.target as HTMLElement).style.boxShadow = `0 0 0 3px ${PALETTE.coral}22, 0 10px 18px rgba(255,107,157,0.12)`; }}
                             onBlur={e => { (e.target as HTMLElement).style.borderColor = '#E8EAF6'; (e.target as HTMLElement).style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.8), 0 6px 14px rgba(99,74,176,0.08)'; }}
                           />
                         </div>
                         <div>
-                          <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: '#6B7280', marginBottom: '6px', fontWeight: 500 }}>出生市区</label>
+                          <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.68rem' : '0.75rem', color: '#6B7280', marginBottom: '6px', fontWeight: 500 }}>出生市区</label>
                           <input
                             value={form.birthCity}
                             onChange={e => setForm({ ...form, birthCity: e.target.value })}
                             placeholder="例如：深圳市南山区"
-                            style={{ width: '100%', padding: '12px 14px', fontSize: '0.88remrem', borderRadius: '12px', border: '1.5px solid #E8EAF6', background: 'linear-gradient(145deg, #FFFFFF, #F8F9FC)', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E', boxSizing: 'border-box', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.8), 0 6px 14px rgba(99,74,176,0.08)', transition: UI_EASE }}
+                            style={{ width: '100%', padding: '12px 14px', fontSize: isIOSCompact ? '0.8rem' : '0.88rem', borderRadius: '12px', border: '1.5px solid #E8EAF6', background: 'linear-gradient(145deg, #FFFFFF, #F8F9FC)', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E', boxSizing: 'border-box', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.8), 0 6px 14px rgba(99,74,176,0.08)', transition: UI_EASE }}
                             onFocus={e => { (e.target as HTMLElement).style.borderColor = PALETTE.coral; (e.target as HTMLElement).style.boxShadow = `0 0 0 3px ${PALETTE.coral}22, 0 10px 18px rgba(255,107,157,0.12)`; }}
                             onBlur={e => { (e.target as HTMLElement).style.borderColor = '#E8EAF6'; (e.target as HTMLElement).style.boxShadow = 'inset 0 1px 0 rgba(255,255,255,0.8), 0 6px 14px rgba(99,74,176,0.08)'; }}
                           />
@@ -1442,11 +1523,11 @@ export default function HomePage() {
                           { label: '出生时', value: form.birthHour, options: HOUR_OPTIONS, key: 'birthHour' as const },
                         ].map(({ label, value, options, key }) => (
                           <div key={key}>
-                            <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#A0A8C0', marginBottom: '4px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{label}</label>
+                            <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.56rem' : '0.63rem', color: '#A0A8C0', marginBottom: '4px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{label}</label>
                             <select
                               value={value}
                               onChange={e => setForm({ ...form, [key]: +e.target.value })}
-                              style={{ width: '100%', padding: '10px 12px', fontSize: '0.81remrem', borderRadius: '12px', border: '1.5px solid #E8EAF6', background: 'linear-gradient(145deg, #FFFFFF, #F8F9FC)', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E', boxShadow: '0 6px 14px rgba(99,74,176,0.07)', transition: 'all 0.2s ease' }}
+                              style={{ width: '100%', padding: '10px 12px', fontSize: isIOSCompact ? '0.74rem' : '0.81rem', borderRadius: '12px', border: '1.5px solid #E8EAF6', background: 'linear-gradient(145deg, #FFFFFF, #F8F9FC)', outline: 'none', fontFamily: 'Outfit, sans-serif', color: '#1A1A2E', boxShadow: '0 6px 14px rgba(99,74,176,0.07)', transition: 'all 0.2s ease' }}
                               onFocus={e => { (e.target as HTMLElement).style.borderColor = PALETTE.coral; (e.target as HTMLElement).style.boxShadow = `0 0 0 3px ${PALETTE.coral}22, 0 10px 18px rgba(255,107,157,0.12)`; }}
                               onBlur={e => { (e.target as HTMLElement).style.borderColor = '#E8EAF6'; (e.target as HTMLElement).style.boxShadow = '0 6px 14px rgba(99,74,176,0.07)'; }}
                             >
@@ -1456,7 +1537,7 @@ export default function HomePage() {
                         ))}
                       </div>
                       <div>
-                        <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#A0A8C0', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>性别</label>
+                        <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.56rem' : '0.63rem', color: '#A0A8C0', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>性别</label>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                           {[{ v: 'male', l: '男 ♂', color: PALETTE.blue }, { v: 'female', l: '女 ♀', color: PALETTE.purple }].map(({ v, l, color }) => (
                             <button key={v} type="button"
@@ -1464,7 +1545,7 @@ export default function HomePage() {
                               style={{
                                 padding: '10px', borderRadius: '12px', border: `2px solid ${form.gender === v ? color : '#E8EAF6'}`,
                                 background: form.gender === v ? `${color}12` : 'linear-gradient(145deg, #FFFFFF, #FAFBFF)', cursor: 'pointer',
-                                fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 600, color: form.gender === v ? color : '#A0A8C0',
+                                fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.74rem' : '0.81rem', fontWeight: 600, color: form.gender === v ? color : '#A0A8C0',
                                 transition: 'all 0.2s',
                                 boxShadow: form.gender === v ? `0 8px 18px ${color}22` : '0 6px 12px rgba(99,74,176,0.06)',
                               }}
@@ -1473,7 +1554,7 @@ export default function HomePage() {
                         </div>
                       </div>
                       <div>
-                        <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#A0A8C0', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>历法</label>
+                        <label style={{ display: 'block', fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.56rem' : '0.63rem', color: '#A0A8C0', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>历法</label>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                           {[{ v: 'solar', l: '公历（新历）' }, { v: 'lunar', l: '农历（旧历）' }].map(({ v, l }) => (
                             <button key={v} type="button"
@@ -1481,7 +1562,7 @@ export default function HomePage() {
                               style={{
                                 padding: '10px', borderRadius: '12px', border: `2px solid ${form.calendarType === v ? PALETTE.coral : '#E8EAF6'}`,
                                 background: form.calendarType === v ? `${PALETTE.coral}12` : 'linear-gradient(145deg, #FFFFFF, #FAFBFF)', cursor: 'pointer',
-                                fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 600, color: form.calendarType === v ? PALETTE.coral : '#A0A8C0',
+                                fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.68rem' : '0.75rem', fontWeight: 600, color: form.calendarType === v ? PALETTE.coral : '#A0A8C0',
                                 transition: 'all 0.2s',
                                 boxShadow: form.calendarType === v ? `0 8px 18px ${PALETTE.coral}22` : '0 6px 12px rgba(99,74,176,0.06)',
                               }}
@@ -1492,14 +1573,14 @@ export default function HomePage() {
                       <div style={{ display: 'flex', gap: '10px', paddingTop: '4px' }}>
                         <button type="button" onClick={() => setShowForm(false)}
                           style={{
-                            flex: 1, padding: '12px', fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 600,
+                            flex: 1, padding: '12px', fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.74rem' : '0.81rem', fontWeight: 600,
                             background: 'linear-gradient(145deg, #FFFFFF, #F3F6FF)', border: '1.5px solid #E8EAF6', color: '#7F8AA8', borderRadius: '12px', cursor: 'pointer',
                             boxShadow: '0 8px 16px rgba(86,73,140,0.08)',
                           }}
                         >取消</button>
                         <button type="submit" disabled={submitting}
                           style={{
-                            flex: 2, padding: '12px', fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700,
+                            flex: 2, padding: '12px', fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.74rem' : '0.81rem', fontWeight: 700,
                             background: `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange})`,
                             border: 'none', color: '#FFFFFF', borderRadius: '12px', cursor: 'pointer',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
@@ -1530,7 +1611,7 @@ export default function HomePage() {
                 }}>
                   <Star style={{ width: '22px', height: '22px', color: PALETTE.coral }} />
                 </div>
-                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: '#A0A8C0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75rem', color: '#A0A8C0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                   还没有记录，点击上方 + 新建
                   <Sparkles style={{ width: '12px', height: '12px', color: PALETTE.coral }} />
                 </p>
@@ -1547,7 +1628,7 @@ export default function HomePage() {
                     whileHover={{ y: -2 }}
                     whileTap={{ scale: 0.96 }}
                     style={{
-                      flexShrink: 0, width: '110px', padding: '12px 10px',
+                      flexShrink: 0, width: '124px', padding: '13px 10px',
                       textAlign: 'center', borderRadius: '14px',
                       border: selectedId === r.id ? `2px solid ${PALETTE.coral}` : '1.5px solid #F0F1F8',
                       background: selectedId === r.id ? `${PALETTE.coral}08` : '#FFFFFF',
@@ -1591,28 +1672,28 @@ export default function HomePage() {
                     </div>
 
                     <div style={{
-                      width: '36px', height: '36px', margin: '0 auto 6px', borderRadius: '50%',
+                      width: '42px', height: '42px', margin: '0 auto 7px', borderRadius: '50%',
                       background: selectedId === r.id ? PALETTE.coral : `${PALETTE.coral}15`,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
-                      <span style={{ fontFamily: 'Outfit', fontSize: '0.88remrem', fontWeight: 800, color: selectedId === r.id ? '#fff' : PALETTE.coral }}>
+                      <span style={{ fontFamily: 'Outfit', fontSize: '0.98rem', fontWeight: 800, color: selectedId === r.id ? '#fff' : PALETTE.coral }}>
                         {r.name.charAt(0)}
                       </span>
                     </div>
                     <p style={{
-                      fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 800,
+                      fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.78rem' : '0.86rem', fontWeight: 800,
                       color: selectedId === r.id ? PALETTE.coral : '#1A1A2E',
-                      marginBottom: '2px',
+                      marginBottom: '3px',
                       whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                     }}>{r.name}</p>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#A0A8C0', lineHeight: 1.4 }}>
+                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.66rem' : '0.72rem', color: '#8B92A8', lineHeight: 1.4 }}>
                       {r.birthYear}.{String(r.birthMonth).padStart(2,'0')}.{String(r.birthDay).padStart(2,'0')}
                     </p>
                     {selectedId === r.id && (
                       <div style={{
-                        marginTop: '4px', paddingTop: '3px',
+                        marginTop: '5px', paddingTop: '4px',
                         borderTop: `1px solid ${PALETTE.coralLight}`,
-                        fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: PALETTE.coral, fontWeight: 600,
+                        fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.64rem' : '0.7rem', color: PALETTE.coral, fontWeight: 600,
                       }}>已选中 ✓</div>
                     )}
                   </motion.div>
@@ -1631,12 +1712,12 @@ export default function HomePage() {
             style={{
               width: '100%',
               padding: '10px',
-              borderRadius: '18px',
-              background: 'linear-gradient(165deg, rgba(236, 234, 240, 0.55) 0%, rgba(252, 251, 253, 0.95) 100%)',
-              border: '1px solid rgba(110, 106, 120, 0.1)',
-              boxShadow: '0 8px 22px rgba(62, 58, 72, 0.06)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(10px)',
+              borderRadius: '20px',
+              background: 'linear-gradient(165deg, rgba(255,255,255,0.92) 0%, rgba(248,246,255,0.88) 50%, rgba(255,252,254,0.9) 100%)',
+              border: '1px solid rgba(180, 172, 198, 0.18)',
+              boxShadow: '0 4px 18px rgba(100, 90, 130, 0.06)',
+              backdropFilter: 'blur(14px)',
+              WebkitBackdropFilter: 'blur(14px)',
               boxSizing: 'border-box',
               overflow: 'hidden',
             }}
@@ -1649,11 +1730,10 @@ export default function HomePage() {
             }}>
               <span style={{
                 fontFamily: 'Outfit, sans-serif',
-                fontSize: '0.69remrem',
-                fontWeight: 700,
-                color: '#9490A0',
-                letterSpacing: '0.06em',
-                textTransform: 'uppercase',
+                fontSize: '0.94rem',
+                fontWeight: 800,
+                color: '#6B6578',
+                letterSpacing: '0.04em',
               }}>快捷导航</span>
             </div>
             <div style={{
@@ -1668,97 +1748,128 @@ export default function HomePage() {
                 id: 'mingpan-section',
                 label: '命盘信息',
                 icon: (s: number) => <Star style={{ width: s, height: s, strokeWidth: 2.1 }} />,
-                iconBg: 'linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)',
-                iconShadow: '0 8px 20px rgba(139, 92, 246, 0.45)',
-                iconColor: '#FFFFFF',
-                cardBg: 'linear-gradient(165deg, rgba(232, 213, 249, 0.5) 0%, rgba(250, 249, 251, 0.98) 58%, #FAFAF9 100%)',
-                border: 'rgba(139, 92, 246, 0.25)',
-                labelColor: '#7C3AED',
+                bodyGrad: 'linear-gradient(118deg, #B8AFE8 0%, #A399DD 38%, #8F86CE 72%, #7D74BA 100%)',
+                dropShadow: '0 6px 18px rgba(110, 95, 190, 0.22), 0 1px 4px rgba(70, 60, 120, 0.1)',
+                pulseGlow: ['rgba(130,115,200,0)', 'rgba(130,115,200,0.28)', 'rgba(130,115,200,0)'],
               },
               {
                 id: 'fortune-section',
                 label: '今日运势',
                 icon: (s: number) => <Sparkles style={{ width: s, height: s, strokeWidth: 2.1 }} />,
-                iconBg: 'linear-gradient(135deg, #EC4899 0%, #F472B6 100%)',
-                iconShadow: '0 8px 20px rgba(236, 72, 153, 0.45)',
-                iconColor: '#FFFFFF',
-                cardBg: 'linear-gradient(165deg, rgba(255, 213, 229, 0.5) 0%, rgba(252, 249, 248, 0.98) 55%, #FAF8F7 100%)',
-                border: 'rgba(236, 72, 153, 0.25)',
-                labelColor: '#DB2777',
+                bodyGrad: 'linear-gradient(118deg, #E9A8C8 0%, #DD98BC 38%, #D08AAC 72%, #C27A9E 100%)',
+                dropShadow: '0 6px 18px rgba(200, 110, 150, 0.22), 0 1px 4px rgba(130, 70, 100, 0.1)',
+                pulseGlow: ['rgba(210,130,160,0)', 'rgba(210,130,160,0.26)', 'rgba(210,130,160,0)'],
               },
               {
                 id: 'outfit-section',
                 label: '今日色彩搭配',
                 icon: (s: number) => <Palette style={{ width: s, height: s, strokeWidth: 2.1 }} />,
-                iconBg: 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)',
-                iconShadow: '0 8px 20px rgba(245, 158, 11, 0.45)',
-                iconColor: '#FFFFFF',
-                cardBg: 'linear-gradient(165deg, rgba(254, 243, 199, 0.5) 0%, rgba(250, 249, 246, 0.98) 55%, #F9F8F5 100%)',
-                border: 'rgba(217, 119, 6, 0.25)',
-                labelColor: '#B45309',
+                bodyGrad: 'linear-gradient(118deg, #E8C49A 0%, #E0AE8E 38%, #D99A9A 72%, #CF8FA8 100%)',
+                dropShadow: '0 6px 18px rgba(200, 130, 120, 0.2), 0 1px 4px rgba(140, 90, 90, 0.09)',
+                pulseGlow: ['rgba(210,140,130,0)', 'rgba(210,140,130,0.26)', 'rgba(210,140,130,0)'],
               },
               {
                 id: 'bracelet-section',
                 label: '今日手串推荐',
                 icon: (s: number) => <Gem style={{ width: s, height: s, strokeWidth: 2.1 }} />,
-                iconBg: 'linear-gradient(135deg, #4F46E5 0%, #818CF8 100%)',
-                iconShadow: '0 8px 20px rgba(79, 70, 229, 0.45)',
-                iconColor: '#FFFFFF',
-                cardBg: 'linear-gradient(165deg, rgba(199, 210, 254, 0.5) 0%, rgba(247, 249, 250, 0.98) 58%, #F7F8F9 100%)',
-                border: 'rgba(79, 70, 229, 0.25)',
-                labelColor: '#4338CA',
+                bodyGrad: 'linear-gradient(118deg, #9BBCEE 0%, #89AEE6 38%, #789EDB 72%, #6A8DCC 100%)',
+                dropShadow: '0 6px 18px rgba(90, 120, 200, 0.22), 0 1px 4px rgba(60, 80, 140, 0.1)',
+                pulseGlow: ['rgba(100,130,210,0)', 'rgba(100,130,210,0.28)', 'rgba(100,130,210,0)'],
               },
             ] as const).map((item) => {
-              const iconPx = navWideLayout ? 18 : 20;
-              const boxPx = navWideLayout ? 42 : 46;
+              const iconPx = navWideLayout ? 18 : 19;
+              const boxPx = navWideLayout ? 36 : 34;
+              const glossTop = 'linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.06) 28%, transparent 50%)';
+              const glassIcon =
+                'linear-gradient(145deg, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.08) 100%)';
               return (
               <motion.button
                 key={item.id}
-                whileHover={{ y: -1, boxShadow: '0 10px 22px rgba(62, 58, 68, 0.07)' }}
-                whileTap={{ scale: 0.97 }}
+                whileHover={{ y: -2, boxShadow: `${item.dropShadow}, 0 10px 24px rgba(80, 70, 120, 0.08)` }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => jumpToCard(item.id)}
                 style={{
                   width: '100%',
                   minWidth: 0,
-                  border: `1px solid ${item.border}`,
-                  background: item.cardBg,
-                  borderRadius: navWideLayout ? '999px' : '16px',
-                  padding: navWideLayout ? '10px 12px' : '12px 8px',
+                  border: 'none',
+                  backgroundImage: `${glossTop}, ${item.bodyGrad}`,
+                  backgroundColor: 'transparent',
+                  borderRadius: '16px',
+                  padding: navWideLayout ? '10px 12px' : '10px 10px',
                   cursor: 'pointer',
                   display: 'flex',
-                  flexDirection: navWideLayout ? 'row' : 'column',
+                  flexDirection: 'row',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: navWideLayout ? '10px' : '8px',
-                  fontFamily: 'Outfit, sans-serif',
-                  fontSize: navWideLayout ? '0.81rem' : '0.75rem',
+                  justifyContent: 'flex-start',
+                  gap: '10px',
+                  fontSize: navWideLayout ? '0.94rem' : '0.9rem',
                   fontWeight: 700,
-                  color: item.labelColor,
-                  boxShadow: '0 6px 18px rgba(62, 58, 68, 0.05)',
+                  color: '#FFFFFF',
+                  textShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                  boxShadow: `${item.dropShadow}, inset 0 1px 0 rgba(255,255,255,0.22)`,
                   transition: UI_EASE,
-                  lineHeight: navWideLayout ? 1.2 : 1.25,
-                  textAlign: 'center',
+                  lineHeight: 1.25,
+                  textAlign: 'left',
+                  boxSizing: 'border-box',
+                  touchAction: 'manipulation',
+                  WebkitTapHighlightColor: 'transparent',
                 }}
               >
                 <span
                   style={{
                     width: boxPx,
                     height: boxPx,
-                    borderRadius: navWideLayout ? '14px' : '14px',
-                    background: item.iconBg,
+                    borderRadius: '12px',
+                    background: glassIcon,
+                    backdropFilter: 'blur(10px)',
+                    WebkitBackdropFilter: 'blur(10px)',
+                    border: 'none',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4)',
                     display: 'inline-flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     flexShrink: 0,
-                    boxShadow: item.iconShadow,
-                    border: '1px solid rgba(255,255,255,0.55)',
+                    boxSizing: 'border-box',
                   }}
                 >
-                  <span style={{ color: item.iconColor, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', filter: 'drop-shadow(0 1px 1px rgba(0,0,0,0.15))' }}>
                     {item.icon(iconPx)}
                   </span>
                 </span>
-                <span style={{ display: 'block', flex: navWideLayout ? 1 : undefined, minWidth: 0 }}>{item.label}</span>
+                <span style={{ display: 'block', flex: 1, minWidth: 0 }}>{item.label}</span>
+                <motion.span
+                  style={{
+                    width: '26px',
+                    height: '26px',
+                    borderRadius: '12px',
+                    background: 'linear-gradient(145deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.1) 100%)',
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)',
+                    border: 'none',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.45)',
+                  }}
+                  animate={{
+                    scale: [1, 1.07, 1],
+                    boxShadow: [
+                      `0 0 0 0 ${item.pulseGlow[0]}`,
+                      `0 4px 14px ${item.pulseGlow[1]}`,
+                      `0 0 0 0 ${item.pulseGlow[2]}`,
+                    ],
+                  }}
+                  transition={{ duration: 1.45, repeat: Infinity, ease: 'easeInOut' }}
+                >
+                  <motion.span
+                    animate={{ x: [0, 3, 0] }}
+                    transition={{ duration: 1.05, repeat: Infinity, ease: 'easeInOut' }}
+                    style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+                  >
+                    <ArrowRight style={{ width: '12px', height: '12px', color: '#FFFFFF', opacity: 0.95 }} />
+                  </motion.span>
+                </motion.span>
               </motion.button>
               );
             })}
@@ -1787,79 +1898,208 @@ export default function HomePage() {
           {selectedRecord && previewInfo && previewInfo.baziResult ? (
             <div id="mingpan-section" style={{
               flex: 1,
-              background: 'linear-gradient(145deg, rgba(91,92,255,0.11) 0%, rgba(44,203,255,0.08) 42%, rgba(255,255,255,0.95) 100%)', borderRadius: '24px', padding: navWideLayout ? '20px' : '14px',
-              boxShadow: '0 16px 30px rgba(74,86,152,0.14)', border: '1px solid rgba(91,92,255,0.22)',
-              backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
+              background: `linear-gradient(165deg, ${PALETTE.coralLight} 0%, rgba(255,255,255,0.88) 40%, ${PALETTE.purpleLight} 52%, ${PALETTE.blueLight} 100%)`,
+              borderRadius: '22px', padding: navWideLayout ? '20px' : '15px',
+              boxShadow: '0 2px 12px rgba(72, 64, 88, 0.05)',
+              border: '1px solid rgba(180, 172, 198, 0.16)',
+              backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
               display: (activeSection === 'mingpan' || activeSection === null) ? 'flex' : 'none', flexDirection: 'column',
               overflow: 'hidden',
               minWidth: 0,
               maxWidth: '100%',
+              position: 'relative',
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: navWideLayout ? '16px' : '12px' }}>
+              {/* 背景光效层：与首页同系低饱和柔光 */}
+              <div style={{
+                position: 'absolute',
+                inset: 0,
+                pointerEvents: 'none',
+                background: `radial-gradient(circle at 10% 0%, ${PALETTE.blueLight}, transparent 42%), radial-gradient(circle at 92% 4%, ${PALETTE.coralLight}, transparent 38%), radial-gradient(circle at 50% 108%, ${PALETTE.purpleLight}, transparent 48%)`,
+              }} />
+              {/* 命盘信息头部：参考“今日手串推荐”的简洁标题结构 */}
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: '10px', marginBottom: navWideLayout ? '18px' : '14px',
+                zIndex: 1,
+              }}>
                 <div style={{
                   width: navWideLayout ? '32px' : '28px', height: navWideLayout ? '32px' : '28px', borderRadius: '10px', flexShrink: 0,
-                  background: `linear-gradient(135deg, ${PALETTE.purple}, ${PALETTE.blue})`,
+                  background: `linear-gradient(135deg, ${PALETTE.purpleLight}, ${PALETTE.blueLight})`,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  boxShadow: `0 3px 10px rgba(139,92,246,0.3)`,
+                  border: '1px solid rgba(143, 104, 255, 0.14)',
+                  boxShadow: '0 1px 6px rgba(72, 64, 88, 0.05)',
+                  position: 'relative',
+                  zIndex: 1,
                 }}>
-                  <Star style={{ width: navWideLayout ? '16px' : '14px', height: navWideLayout ? '16px' : '14px', color: '#FFFFFF' }} />
+                  <Compass style={{ width: navWideLayout ? '16px' : '14px', height: navWideLayout ? '16px' : '14px', color: '#6B6588' }} />
                 </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '15px' : '13px', fontWeight: 800, color: '#1A1A2E', letterSpacing: '0.02em' }}>命盘信息</span>
-                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#959CC0', margin: '1px 0 0' }}>核心命盘</p>
+                <div style={{ flex: 1, minWidth: 0, position: 'relative', zIndex: 1 }}>
+                  <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94rem', fontWeight: 900, color: '#1A1A2E' }}>命盘信息</span>
+                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63rem', color: '#9A9FC2', margin: '1px 0 0' }}>
+                    日主结构 · 喜忌平衡 · 命格概要
+                  </p>
                 </div>
               </div>
 
-              {/* 用户基本信息 */}
+              {/* 命主档案：简洁布局，突出关键身份与出生信息 */}
               {(() => {
                 const genderText = selectedRecord.gender === 'male' ? '男' : '女';
                 const calendarText = selectedRecord.calendarType === 'lunar' ? '农历' : '公历';
                 const birthDate = `${selectedRecord.birthYear}.${String(selectedRecord.birthMonth).padStart(2,'0')}.${String(selectedRecord.birthDay).padStart(2,'0')} ${String(selectedRecord.birthHour).padStart(2,'0')}时`;
                 const location = selectedRecord.birthLocation || '';
+                const trueSolarTime = (previewInfo?.baziResult as any)?.trueSolarTime;
+                const trueSolarHour = typeof trueSolarTime?.hour === 'number' ? trueSolarTime.hour : selectedRecord.birthHour;
+                const trueSolarMinute = typeof trueSolarTime?.minute === 'number' ? trueSolarTime.minute : 0;
+                const trueSolarOffset = typeof trueSolarTime?.offsetMinutes === 'number' ? trueSolarTime.offsetMinutes : null;
+                const trueSolarLabel = `${String(trueSolarHour).padStart(2, '0')}:${String(trueSolarMinute).padStart(2, '0')}`;
                 return (
                   <div style={{
-                    display: 'flex', gap: '6px', marginBottom: '12px', flexWrap: 'wrap',
+                    marginBottom: '14px',
+                    padding: navWideLayout ? '11px 12px' : '9px 10px',
+                    borderRadius: '14px',
+                    background: 'linear-gradient(152deg, rgba(255,255,255,0.9) 0%, rgba(252,251,254,0.88) 100%)',
+                    border: '1px solid rgba(180, 172, 198, 0.14)',
+                    boxShadow: '0 1px 6px rgba(72, 64, 88, 0.04)',
+                    backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+                    zIndex: 1,
                   }}>
-                    <span style={{
-                      padding: '3px 10px', borderRadius: '8px',
-                      background: 'rgba(91,92,255,0.08)', border: '1px solid rgba(91,92,255,0.15)',
-                      fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', fontWeight: 600, color: '#4A4A7A',
-                    }}>
-                      {selectedRecord.name}
-                    </span>
-                    <span style={{
-                      padding: '3px 10px', borderRadius: '8px',
-                      background: 'rgba(255,107,157,0.08)', border: '1px solid rgba(255,107,157,0.15)',
-                      fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', fontWeight: 600, color: PALETTE.coral,
-                    }}>
-                      {genderText}
-                    </span>
-                    <span style={{
-                      padding: '3px 10px', borderRadius: '8px',
-                      background: 'rgba(217,119,6,0.08)', border: '1px solid rgba(217,119,6,0.15)',
-                      fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', fontWeight: 600, color: '#B45309',
-                    }}>
-                      {calendarText} {birthDate}
-                    </span>
-                    {location && (
-                      <span style={{
-                        padding: '3px 10px', borderRadius: '8px',
-                        background: 'rgba(0,168,232,0.08)', border: '1px solid rgba(0,168,232,0.15)',
-                        fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', fontWeight: 600, color: '#0088BB',
-                      }}>
-                        📍{location}
-                      </span>
-                    )}
+                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px' }}>
+                      <div style={{ position: 'relative', flexShrink: 0 }}>
+                        <div style={{
+                          width: navWideLayout ? '38px' : '34px', height: navWideLayout ? '38px' : '34px',
+                          borderRadius: '11px',
+                          background: `linear-gradient(145deg, ${PALETTE.purpleLight}, ${PALETTE.blueLight})`,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          border: '1px solid rgba(143, 104, 255, 0.14)',
+                          boxShadow: '0 1px 6px rgba(72, 64, 88, 0.04)',
+                        }}>
+                          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '0.82rem' : '0.76rem', fontWeight: 750, color: '#5C5470' }}>
+                            {selectedRecord.name?.charAt(0) || '?'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', flexWrap: 'wrap' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+                            <span style={{ fontSize: navWideLayout ? '0.9rem' : '0.84rem', fontWeight: 800, color: '#1A1A2E', letterSpacing: '-0.01em', whiteSpace: 'nowrap' }}>
+                              {selectedRecord.name}
+                            </span>
+                          </div>
+                          <div style={{
+                            display: 'inline-flex', alignItems: 'center', gap: '4px',
+                            padding: '2px 8px', borderRadius: '999px',
+                            background: selectedRecord.gender === 'male' ? 'rgba(99,102,241,0.1)' : `${PALETTE.coralLight}`,
+                            border: selectedRecord.gender === 'male' ? '1px solid rgba(129,140,248,0.22)' : '1px solid rgba(255, 92, 168, 0.16)',
+                          }}>
+                            <Users size={11} strokeWidth={2} color={selectedRecord.gender === 'male' ? '#6366A8' : '#B8688A'} />
+                            <span style={{
+                              fontSize: '0.64rem', fontWeight: 700,
+                              color: selectedRecord.gender === 'male' ? '#5B5E8A' : '#8A5F72',
+                            }}>
+                              {selectedRecord.gender === 'male' ? '男' : '女'}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div style={{
+                          display: 'grid',
+                          gridTemplateColumns: navWideLayout ? (location ? 'repeat(3, minmax(0, 1fr))' : 'repeat(2, minmax(0, 1fr))') : '1fr',
+                          gap: '7px',
+                          marginTop: '8px',
+                        }}>
+                          <div style={{
+                            display: 'flex', alignItems: 'center', gap: '6px',
+                            padding: '7px 9px', borderRadius: '10px',
+                            background: 'rgba(255,255,255,0.82)',
+                            border: '1px solid rgba(180,172,206,0.22)',
+                          }}>
+                            <Calendar size={12} color="#7B7BB3" strokeWidth={2} />
+                            <span style={{ fontSize: navWideLayout ? '0.72rem' : '0.66rem', color: '#5F627A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {calendarText} {birthDate}
+                            </span>
+                          </div>
+
+                          <div style={{
+                            display: 'flex', alignItems: 'center', gap: '6px',
+                            padding: '7px 9px', borderRadius: '10px',
+                            background: 'rgba(255,255,255,0.82)',
+                            border: '1px solid rgba(180,172,206,0.22)',
+                          }}>
+                            <Clock size={12} color="#7B7BB3" strokeWidth={2} />
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                              <span style={{ fontSize: navWideLayout ? '0.72rem' : '0.66rem', color: '#5F627A' }}>
+                                真太阳时 {trueSolarLabel}
+                                {trueSolarOffset !== null ? `（校正${trueSolarOffset >= 0 ? '+' : ''}${trueSolarOffset}分）` : ''}
+                              </span>
+                              {/* 真太阳时说明弹层：点击 i 图标后展开说明，兼容移动端交互。 */}
+                              <details style={{ position: 'relative' }}>
+                                <summary
+                                  style={{
+                                    listStyle: 'none',
+                                    cursor: 'pointer',
+                                    width: '15px',
+                                    height: '15px',
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    background: 'rgba(255,255,255,0.9)',
+                                    border: '1px solid rgba(189,201,240,0.6)',
+                                    color: '#6574A8',
+                                    fontSize: '0.56rem',
+                                    fontWeight: 700,
+                                    lineHeight: 1,
+                                  }}
+                                >
+                                  i
+                                </summary>
+                                <div style={{
+                                  position: 'absolute',
+                                  top: '20px',
+                                  right: 0,
+                                  minWidth: '190px',
+                                  maxWidth: '230px',
+                                  padding: '8px 10px',
+                                  borderRadius: '10px',
+                                  background: 'linear-gradient(145deg, rgba(255,255,255,0.96), rgba(242,246,255,0.96))',
+                                  border: '1px solid rgba(166,181,228,0.45)',
+                                  boxShadow: '0 10px 20px rgba(75,86,130,0.24)',
+                                  color: '#4E5A80',
+                                  fontSize: navWideLayout ? '0.66rem' : '0.62rem',
+                                  lineHeight: 1.45,
+                                  zIndex: 30,
+                                }}>
+                                  真太阳时会结合出生地经度对北京时间做校正，更接近当时当地真实太阳位置。
+                                </div>
+                              </details>
+                            </div>
+                          </div>
+                          {location && (
+                            <div style={{
+                              display: 'flex', alignItems: 'center', gap: '6px',
+                              padding: '7px 9px', borderRadius: '10px',
+                              background: 'rgba(255,255,255,0.82)',
+                              border: '1px solid rgba(180,172,206,0.22)',
+                            }}>
+                              <MapPin size={12} color="#7B7BB3" strokeWidth={2} />
+                              <span style={{ fontSize: navWideLayout ? '0.72rem' : '0.66rem', color: '#5F627A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {location}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 );
               })()}
 
-              {/* 日主属性 - 重点显示 */}
+              {/* 日主属性高级卡片：与用户画像总览共用统一的渐变、胶囊、光晕视觉语言 */}
               {(() => {
                 const dmEl = previewInfo.baziResult.dayMasterElement || 'earth';
                 const dm = previewInfo.baziResult.dayMaster || '';
                 const elementNames: Record<string, string> = { wood: '木', fire: '火', earth: '土', metal: '金', water: '水' };
-                const elementColors: Record<string, string> = { wood: PALETTE.green, fire: '#FF6B6B', earth: '#D4A000', metal: '#7B8FA8', water: '#00A8E8' };
+                const elementColors: Record<string, string> = { wood: PALETTE.green, fire: '#FF6B6B', earth: '#D4A000', metal: '#B7791F', water: '#00A8E8' };
                 // 天干对应的自然意象（SVG 图示）
                 const stemIcons: Record<string, { svg: string; label: string; desc: string; bgGrad: string[] }> = {
                   '甲': { svg: '<path d="M12 3v3M12 18v3M5.6 6.6l2.1 2.1M16.3 15.3l2.1 2.1M3 12h3M18 12h3M5.6 17.4l2.1-2.1M16.3 8.7l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="2" fill="currentColor"/>', label: '参天大树', desc: '如参天大树，挺拔向上', bgGrad: ['#2D6A4F', '#40916C'] },
@@ -1868,8 +2108,8 @@ export default function HomePage() {
                   '丁': { svg: '<path d="M9 18h6M10 14h4M11 10h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M12 6v1M10 6h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 2c-1 2 0 3 1 3s2-1 1-3" fill="currentColor" opacity="0.7"/>', label: '灯火烛光', desc: '如灯火温暖，照亮四周', bgGrad: ['#DC6B19', '#F4A261'] },
                   '戊': { svg: '<path d="M2 20L12 4l10 16H2z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/><path d="M7 20l5-8 5 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>', label: '巍峨高山', desc: '如高山厚土，承载万物', bgGrad: ['#7B6D4E', '#A68A64'] },
                   '己': { svg: '<path d="M3 16c2-4 4-6 9-6s7 2 9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M6 16h12M8 19h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7 13l2-2M12 10v-2M17 13l-2-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>', label: '田园沃土', desc: '如田园之土，孕育生长', bgGrad: ['#8B7355', '#B8A080'] },
-                  '庚': { svg: '<path d="M4 4l4 4m8 0l4 4M4 12l4-4m8 8l4-4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="1" opacity="0.3"/>', label: '宝剑精钢', desc: '如宝剑出鞘，刚毅果断', bgGrad: ['#6C757D', '#ADB5BD'] },
-                  '辛': { svg: '<path d="M12 2l2.5 6.5L21 10l-6.5 1.5L12 18l-2.5-6.5L3 10l6.5-1.5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/><circle cx="12" cy="10" r="2" fill="currentColor" opacity="0.5"/>', label: '珍珠美玉', desc: '如珍珠美玉，温润精致', bgGrad: ['#7B8FA8', '#B0BEC5'] },
+                  '庚': { svg: '<path d="M4 4l4 4m8 0l4 4M4 12l4-4m8 8l4-4" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="1" opacity="0.3"/>', label: '宝剑精钢', desc: '如宝剑出鞘，刚毅果断', bgGrad: ['#A16207', '#D97706'] },
+                  '辛': { svg: '<path d="M12 2l2.5 6.5L21 10l-6.5 1.5L12 18l-2.5-6.5L3 10l6.5-1.5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/><circle cx="12" cy="10" r="2" fill="currentColor" opacity="0.5"/>', label: '珍珠美玉', desc: '如珍珠美玉，温润精致', bgGrad: ['#B7791F', '#D69E2E'] },
                   '壬': { svg: '<path d="M2 12c2-4 5-6 10-6s8 2 10 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" fill="none"/><path d="M4 16c2-2 4-3 8-3s6 1 8 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/><path d="M6 20c2-1 3-2 6-2s4 1 6 2" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.3"/>', label: '江河大海', desc: '如江河奔腾，气势磅礴', bgGrad: ['#0077B6', '#00A8E8'] },
                   '癸': { svg: '<path d="M12 22c-3-4-6-8-6-12a6 6 0 0112 0c0 4-3 8-6 12z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="12" cy="10" r="2" fill="currentColor" opacity="0.4"/><path d="M10 8c0 1 1 2 2 2" stroke="currentColor" stroke-width="1" stroke-linecap="round"/>', label: '雨露甘泉', desc: '如雨露甘泉，润物无声', bgGrad: ['#0096C7', '#48CAE4'] },
                 };
@@ -1884,21 +2124,29 @@ export default function HomePage() {
                 return (
                   <div style={{
                     padding: navWideLayout ? '14px' : '12px', borderRadius: '16px',
-                    background: `linear-gradient(145deg, ${elementColors[dmEl]}14, ${elementColors[dmEl]}08)`, border: `1px solid ${elementColors[dmEl]}30`,
+                    background: `linear-gradient(150deg, rgba(255,255,255,0.9) 0%, ${elementColors[dmEl]}0D 55%, rgba(248,250,255,0.92) 100%)`,
+                    border: '1px solid rgba(180, 172, 198, 0.14)',
                     marginBottom: '14px',
-                    boxShadow: `0 10px 22px ${elementColors[dmEl]}20`,
+                    boxShadow: '0 1px 8px rgba(72, 64, 88, 0.04)',
                     overflow: 'hidden',
                     minWidth: 0,
+                    position: 'relative',
+                    zIndex: 1,
                   }}>
+                    {/* 背景光晕：与首页同系低饱和 */}
+                    <div style={{
+                      position: 'absolute', inset: 0, pointerEvents: 'none',
+                      background: `radial-gradient(circle at 88% 12%, ${elementColors[dmEl]}14, transparent 44%)`,
+                    }} />
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px', flexWrap: 'wrap' }}>
                       {/* 天干意象图示 - 精致 SVG 图标 */}
-                      <div style={{ position: 'relative', flexShrink: 0 }}>
+                      <div style={{ position: 'relative', flexShrink: 0, zIndex: 1 }}>
                         <div style={{
                           width: navWideLayout ? '56px' : '48px', height: navWideLayout ? '56px' : '48px',
                           borderRadius: '16px',
-                          background: `linear-gradient(145deg, ${stemInfo.bgGrad[0]}, ${stemInfo.bgGrad[1]})`,
+                          background: `linear-gradient(145deg, ${stemInfo.bgGrad[0]}CC, ${stemInfo.bgGrad[1]}B8)`,
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          boxShadow: `0 8px 24px ${elementColors[dmEl]}35, inset 0 1px 0 rgba(255,255,255,0.2)`,
+                          boxShadow: `0 4px 14px ${elementColors[dmEl]}22, inset 0 1px 0 rgba(255,255,255,0.25)`,
                         }}>
                           <svg width={navWideLayout ? '30' : '26'} height={navWideLayout ? '30' : '26'} viewBox="0 0 24 24" fill="none" style={{ color: '#fff' }} dangerouslySetInnerHTML={{ __html: stemInfo.svg }} />
                         </div>
@@ -1908,27 +2156,36 @@ export default function HomePage() {
                           pointerEvents: 'none',
                         }} />
                       </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ flex: 1, minWidth: 0, zIndex: 1 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
                           <span style={{
-                            padding: '3px 10px', borderRadius: '6px',
-                            background: elementColors[dmEl],
-                            fontFamily: 'Outfit', fontSize: navWideLayout ? '13px' : '12px', fontWeight: 800, color: '#fff',
+                            padding: '3px 10px', borderRadius: '8px',
+                            background: `${elementColors[dmEl]}18`,
+                            border: `1px solid ${elementColors[dmEl]}30`,
+                            fontFamily: 'Outfit', fontSize: navWideLayout ? '14px' : '12px', fontWeight: 750, color: '#4A4A5C',
                           }}>
                             {dm}{elementNames[dmEl]}
                           </span>
-                          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '11px' : '10px', color: '#8A8ABB', fontWeight: 500 }}>
+                          <span style={{
+                            padding: '3px 9px', borderRadius: '999px',
+                            background: 'rgba(255,255,255,0.72)',
+                            border: `1px solid ${elementColors[dmEl]}3A`,
+                            fontFamily: 'Outfit, sans-serif', fontSize: '0.63rem', fontWeight: 700, color: '#4B516D',
+                          }}>
+                            日主核心
+                          </span>
+                          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '12px' : '10px', color: '#7D86A8', fontWeight: 500 }}>
                             {stemInfo.label}
                           </span>
                         </div>
                         {stemInfo.desc && (
-                          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#9A9FC2', margin: '3px 0 0' }}>
+                          <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '0.7rem' : '0.63rem', color: '#8E95B4', margin: '3px 0 0' }}>
                             {stemInfo.desc}
                           </p>
                         )}
                       </div>
                     </div>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '11px' : '10px', color: '#6B7280', lineHeight: 1.5, marginBottom: 0, overflow: 'hidden' }}>
+                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '0.74rem' : '0.68rem', color: '#5A607E', lineHeight: 1.55, marginBottom: 0, overflow: 'hidden', position: 'relative', zIndex: 1 }}>
                       {elementDesc[dmEl]}
                     </p>
 
@@ -1943,31 +2200,31 @@ export default function HomePage() {
                 const unfavEls = previewInfo.unfavorableElements || [];
                 if (favEls.length === 0 && unfavEls.length === 0) return null;
                 return (
-                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', position: 'relative', zIndex: 1 }}>
                     {favEls.length > 0 && (
                       <div style={{
-                        padding: '5px 12px', borderRadius: '999px',
-                        background: `linear-gradient(135deg, #E8F5E9, #F1F8E9)`, border: '1px solid #66BB6A40',
+                        padding: '4px 10px', borderRadius: '999px',
+                        background: `linear-gradient(135deg, rgba(72,201,127,0.12), rgba(182,248,203,0.1))`, border: '1px solid rgba(128,200,160,0.22)',
                         display: 'inline-flex', alignItems: 'center', gap: '5px',
-                        boxShadow: '0 4px 10px rgba(76,175,80,0.12)',
+                        boxShadow: '0 1px 5px rgba(40,100,72,0.06)',
                       }}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01z" fill="#43A047" stroke="#2E7D32" stroke-width="1"/></svg>
-                        <span style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', fontWeight: 800, color: '#2E7D32' }}>喜</span>
-                        <span style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', fontWeight: 600, color: '#388E3C' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01z" fill="#43A047" stroke="#2E7D32" stroke-width="1"/></svg>
+                        <span style={{ fontFamily: 'Outfit', fontSize: '0.66rem', fontWeight: 800, color: '#2E7D32' }}>喜</span>
+                        <span style={{ fontFamily: 'Outfit', fontSize: '0.66rem', fontWeight: 600, color: '#388E3C' }}>
                           {favEls.map((e: string) => elementNames[e] || e).join(' · ')}
                         </span>
                       </div>
                     )}
                     {unfavEls.length > 0 && (
                       <div style={{
-                        padding: '5px 12px', borderRadius: '999px',
-                        background: `linear-gradient(135deg, #FFF3E0, #FFEBEE)`, border: '1px solid #EF9A9A40',
+                        padding: '4px 10px', borderRadius: '999px',
+                        background: `linear-gradient(135deg, rgba(255,170,154,0.12), rgba(255,105,144,0.08))`, border: '1px solid rgba(230,160,170,0.22)',
                         display: 'inline-flex', alignItems: 'center', gap: '5px',
-                        boxShadow: '0 4px 10px rgba(239,154,154,0.12)',
+                        boxShadow: '0 1px 5px rgba(120,70,80,0.06)',
                       }}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#C62828" stroke-width="2"/><path d="M12 7v5l3 3" stroke="#C62828" stroke-width="2" stroke-linecap="round"/></svg>
-                        <span style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', fontWeight: 800, color: '#C62828' }}>忌</span>
-                        <span style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', fontWeight: 600, color: '#D32F2F' }}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="#C62828" stroke-width="2"/><path d="M12 7v5l3 3" stroke="#C62828" stroke-width="2" stroke-linecap="round"/></svg>
+                        <span style={{ fontFamily: 'Outfit', fontSize: '0.66rem', fontWeight: 800, color: '#C62828' }}>忌</span>
+                        <span style={{ fontFamily: 'Outfit', fontSize: '0.66rem', fontWeight: 600, color: '#D32F2F' }}>
                           {unfavEls.map((e: string) => elementNames[e] || e).join(' · ')}
                         </span>
                       </div>
@@ -1976,14 +2233,14 @@ export default function HomePage() {
                 );
               })()}
 
-              {/* 五行命格总结 */}
+              {/* 五行命格总结高级卡片：强化图标层次、信息胶囊与分布可视化 */}
               {(() => {
                 const fe = previewInfo.fiveElements || { wood: 0, fire: 0, earth: 0, metal: 0, water: 0 };
                 const vals = [fe.wood || 0, fe.fire || 0, fe.earth || 0, fe.metal || 0, fe.water || 0];
                 const total = vals.reduce((a, b) => a + b, 0) || 1;
                 const elNames = ['木', '火', '土', '金', '水'];
                 const elKeys = ['wood', 'fire', 'earth', 'metal', 'water'];
-                const elColors = ['#4CAF50', '#FF5252', '#FFC107', '#90A4AE', '#42A5F5'];
+                const elColors = ['#4CAF50', '#FF5252', '#FFC107', '#B7791F', '#42A5F5'];
                 const maxVal = Math.max(...vals);
                 const minVal = Math.min(...vals);
                 const strongest = elKeys[vals.indexOf(maxVal)];
@@ -1999,25 +2256,34 @@ export default function HomePage() {
                   earth: '宜金生水气，忌土气过盛', metal: '宜火制金，忌金气过刚',
                   water: '宜木来生火，忌水势过泛',
                 };
+                const strongestColor = elColors[vals.indexOf(maxVal)] || PALETTE.purple;
                 return (
                   <div style={{
-                    padding: navWideLayout ? '10px 12px' : '8px 10px', borderRadius: '12px',
-                    background: `linear-gradient(135deg, ${PALETTE.purple}0E, ${PALETTE.blue}08)`,
-                    marginBottom: '12px', border: `1px solid ${PALETTE.purple}22`,
-                    boxShadow: `0 6px 14px ${PALETTE.purple}14`,
+                    padding: navWideLayout ? '12px 12px' : '10px 10px', borderRadius: '14px',
+                    background: `linear-gradient(150deg, rgba(255,255,255,0.9) 0%, ${strongestColor}0D 52%, rgba(244,246,252,0.92) 100%)`,
+                    marginBottom: '12px', border: '1px solid rgba(180, 172, 198, 0.14)',
+                    boxShadow: '0 1px 8px rgba(72, 64, 88, 0.04)',
+                    position: 'relative', overflow: 'hidden',
+                    zIndex: 1,
                   }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '7px' }}>
+                    <div style={{
+                      position: 'absolute', inset: 0, pointerEvents: 'none',
+                      background: `radial-gradient(circle at 92% -6%, ${strongestColor}14, transparent 44%)`,
+                    }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '7px', position: 'relative', zIndex: 1 }}>
                       <div style={{
-                        width: '20px', height: '20px', borderRadius: '6px',
-                        background: `linear-gradient(135deg, ${PALETTE.purple}30, ${PALETTE.blue}25)`,
+                        width: '22px', height: '22px', borderRadius: '8px',
+                        background: `linear-gradient(135deg, ${PALETTE.purpleLight}, ${PALETTE.blueLight})`,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        border: '1px solid rgba(143, 104, 255, 0.12)',
+                        boxShadow: '0 1px 5px rgba(72, 64, 88, 0.05)',
                       }}>
-                        <Sparkles style={{ width: '12px', height: '12px', color: PALETTE.purple }} />
+                        <Sparkles style={{ width: '12px', height: '12px', color: '#6B6588' }} />
                       </div>
-                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '13px' : '11px', fontWeight: 700, color: '#2D2D5A' }}>命格总结</span>
+                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '14px' : '12px', fontWeight: 700, color: '#2D2D5A' }}>命格总结</span>
                       {patName && (
                         <span style={{
-                          fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', fontWeight: 600,
+                          fontFamily: 'Outfit, sans-serif', fontSize: '0.63rem', fontWeight: 600,
                           padding: '1px 8px', borderRadius: '9999px',
                           background: `linear-gradient(135deg, ${PALETTE.purple}18, ${PALETTE.blue}12)`,
                           border: `1px solid ${PALETTE.purple}30`,
@@ -2026,14 +2292,14 @@ export default function HomePage() {
                           {patName}{patMainGod ? ` · ${patMainGod}为格主` : ''}{patSubGod ? ` 配${patSubGod}` : ''}
                         </span>
                       )}
-                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#8A8ABB', marginLeft: 'auto' }}>
+                      <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '0.69rem' : '0.63rem', color: '#6D7294', marginLeft: 'auto' }}>
                         {elNames[vals.indexOf(maxVal)]}气最旺 · {elNames[vals.indexOf(minVal)]}气最弱
                       </span>
                     </div>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '11px' : '10px', color: '#5A5A8A', marginBottom: '8px', lineHeight: '1.5' }}>
+                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '0.74rem' : '0.68rem', color: '#535A7B', marginBottom: '8px', lineHeight: '1.55', position: 'relative', zIndex: 1 }}>
                       {mingGeTips[strongest] || '五行平衡为宜，补不足而泄有余'}
                     </p>
-                    <div style={{ display: 'flex', gap: '3px', height: '6px', borderRadius: '3px', overflow: 'hidden' }}>
+                    <div style={{ display: 'flex', gap: '3px', height: '7px', borderRadius: '4px', overflow: 'hidden', position: 'relative', zIndex: 1 }}>
                       {elKeys.map((k, i) => (
                         <div key={k} style={{
                           flex: vals[i], minWidth: 0,
@@ -2043,12 +2309,16 @@ export default function HomePage() {
                         }} />
                       ))}
                     </div>
-                    <div style={{ display: 'flex', gap: '8px', marginTop: '5px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', gap: '8px', marginTop: '7px', flexWrap: 'wrap', position: 'relative', zIndex: 1 }}>
                       {elKeys.map((k, i) => (
                         <span key={k} style={{
-                          fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem',
+                          fontFamily: 'Outfit, sans-serif', fontSize: navWideLayout ? '0.56rem' : '0.52rem',
                           color: vals[i] === maxVal ? elColors[i] : '#888',
-                          fontWeight: vals[i] === maxVal ? 700 : 400,
+                          fontWeight: vals[i] === maxVal ? 700 : 500,
+                          padding: '1px 5px',
+                          borderRadius: '999px',
+                          background: vals[i] === maxVal ? `${elColors[i]}30` : 'rgba(255,255,255,0.18)',
+                          border: vals[i] === maxVal ? `1px solid ${elColors[i]}78` : '1px solid rgba(210,221,255,0.24)',
                         }}>
                           {elNames[i]}: {Math.round((vals[i] / total) * 100)}%
                         </span>
@@ -2069,12 +2339,12 @@ export default function HomePage() {
                 }}
                 style={{
                   width: '100%', padding: '13px',
-                  borderRadius: '14px',
-                  background: `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange}, ${PALETTE.yellow})`,
-                  border: 'none', cursor: 'pointer',
+                  borderRadius: '16px',
+                  background: 'linear-gradient(135deg, rgba(255,112,192,0.72), rgba(139,118,255,0.72), rgba(75,194,255,0.72))',
+                  border: '1px solid rgba(255,255,255,0.22)', cursor: 'pointer',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                  fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', fontWeight: 700, color: '#FFFFFF',
-                  boxShadow: `0 14px 26px ${PALETTE.coral}4A`,
+                  fontFamily: 'Outfit, sans-serif', fontSize: '0.81rem', fontWeight: 700, color: '#FFFFFF',
+                  boxShadow: '0 8px 16px rgba(96,86,220,0.16), inset 0 1px 0 rgba(255,255,255,0.4)',
                   transition: 'transform 0.2s ease, box-shadow 0.2s ease',
                   boxSizing: 'border-box',
                   touchAction: 'manipulation',
@@ -2108,7 +2378,7 @@ export default function HomePage() {
                 backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
               }}>
                 <Loader2 style={{ width: '22px', height: '22px', color: PALETTE.coral, animation: 'spin 1s linear infinite', margin: '0 auto 10px' }} />
-                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: '#A0A8C0' }}>正在加载命盘信息…</p>
+                <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75rem', color: '#A0A8C0' }}>正在加载命盘信息…</p>
               </div>
             )
           )}
@@ -2116,8 +2386,8 @@ export default function HomePage() {
           {dailyFortune && selectedRecord && previewInfo && previewInfo.baziResult && (
             <div id="fortune-section" style={{
               flex: 1,
-              background: 'linear-gradient(145deg, rgba(255,92,168,0.1) 0%, rgba(91,92,255,0.1) 42%, rgba(255,255,255,0.95) 100%)', borderRadius: '24px', padding: navWideLayout ? '20px' : '14px',
-              boxShadow: '0 16px 30px rgba(74,86,152,0.14)', border: '1px solid rgba(255,92,168,0.2)',
+              background: 'linear-gradient(145deg, rgba(255,92,168,0.06) 0%, rgba(91,92,255,0.06) 42%, rgba(255,255,255,0.8) 100%)', borderRadius: '24px', padding: navWideLayout ? '20px' : '14px',
+              boxShadow: '0 6px 14px rgba(74,86,152,0.08)', border: '1px solid rgba(180, 172, 198, 0.16)',
               backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
               display: activeSection === 'fortune' ? 'flex' : 'none', flexDirection: 'column',
               overflow: 'hidden',
@@ -2140,12 +2410,12 @@ export default function HomePage() {
                       {new Date().getMonth() + 1}月{new Date().getDate()}日
                     </span>
                   </div>
-                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#8F97B5', margin: '2px 0 0' }}>当日能量总览</p>
+                  <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63rem', color: '#8F97B5', margin: '2px 0 0' }}>当日能量总览</p>
                 </div>
               </div>
               {renderInsightBlock(
                 '今日运势主张',
-                `总分 ${dailyFortune.totalScore}，建议采用「主色稳定 + 局部提亮」策略，先稳节奏再放表现力。`,
+                getFortuneAdvice(),
                 {
                   title: PALETTE.coral,
                   border: `${PALETTE.orange}30`,
@@ -2170,9 +2440,9 @@ export default function HomePage() {
                   <text x="36" y="33" textAnchor="middle" dominantBaseline="middle"
                     style={{ fontFamily: 'Outfit', fontSize: navWideLayout ? '22px' : '20px', fontWeight: 900, fill: getScoreColor(dailyFortune.totalScore) }}>{dailyFortune.totalScore}</text>
                   <text x="36" y="50" textAnchor="middle" dominantBaseline="middle"
-                    style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', fill: '#B0A8C0' }}>总分</text>
+                    style={{ fontFamily: 'Outfit', fontSize: '0.63rem', fill: '#B0A8C0' }}>总分</text>
                 </svg>
-                <span style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', color: getScoreColor(dailyFortune.totalScore), fontWeight: 700, marginTop: '2px' }}>{dailyFortune.totalLabel}</span>
+                <span style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: getScoreColor(dailyFortune.totalScore), fontWeight: 700, marginTop: '2px' }}>{dailyFortune.totalLabel}</span>
               </div>
 
               {/* ===== 六宫格：事业/财运/感情/健康/人际/专注（3行×2列） ===== */}
@@ -2221,8 +2491,8 @@ export default function HomePage() {
                     background: dailyFortune.luckyColor.hex,
                     boxShadow: '0 1.5px 6px rgba(255,107,157,0.22)',
                   }} />
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', fontWeight: 700, color: '#555', lineHeight: 1.2 }}>幸运色</p>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.66remrem', fontWeight: 800, color: '#00C47A' }}>{dailyFortune.luckyColor.name}</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.63rem', fontWeight: 700, color: '#555', lineHeight: 1.2 }}>幸运色</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.66rem', fontWeight: 800, color: '#00C47A' }}>{dailyFortune.luckyColor.name}</p>
                 </div>
                 {/* 幸运数字 */}
                 <div style={{
@@ -2231,8 +2501,8 @@ export default function HomePage() {
                   background: `linear-gradient(135deg, #FF6B9D06, #FF6B9D02)`, border: '1px solid #FF6B9D12',
                   textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
                 }}>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '1.31remrem', fontWeight: 900, color: '#FF6B9D', lineHeight: 1.1, marginBottom: '2px' }}>{dailyFortune.luckyNumber}</p>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', fontWeight: 700, color: '#555', lineHeight: 1.2 }}>幸运数字</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '1.31rem', fontWeight: 900, color: '#FF6B9D', lineHeight: 1.1, marginBottom: '2px' }}>{dailyFortune.luckyNumber}</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.63rem', fontWeight: 700, color: '#555', lineHeight: 1.2 }}>幸运数字</p>
                 </div>
                 {/* 吉时 */}
                 <div style={{
@@ -2242,8 +2512,8 @@ export default function HomePage() {
                   textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
                 }}>
                   <Clock style={{ width: '16px', height: '16px', color: '#999', marginBottom: '2px' }} />
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', fontWeight: 700, color: '#555', lineHeight: 1.2 }}>吉时</p>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', fontWeight: 800, color: '#00C47A' }}>{timeToBeijing(dailyFortune.luckyTime.split('·')[0])}</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.63rem', fontWeight: 700, color: '#555', lineHeight: 1.2 }}>吉时</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.63rem', fontWeight: 800, color: '#00C47A' }}>{timeToBeijing(dailyFortune.luckyTime.split('·')[0])}</p>
                 </div>
                 {/* 吉祥方位 */}
                 <div style={{
@@ -2253,8 +2523,8 @@ export default function HomePage() {
                   textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'
                 }}>
                   <Compass style={{ width: '16px', height: '16px', color: '#999', marginBottom: '2px' }} />
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', fontWeight: 700, color: '#555', lineHeight: 1.2 }}>吉祥方位</p>
-                  <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', fontWeight: 800, color: '#FF6B9D' }}>{dailyFortune.avoidDirection.split('·')[0]}<span style={{ fontSize: '0.56remrem', color: '#AAA', marginLeft: '2px' }}>({dailyFortune.relationDescription.slice(0, 2)})</span></p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.63rem', fontWeight: 700, color: '#555', lineHeight: 1.2 }}>吉祥方位</p>
+                  <p style={{ fontFamily: 'Outfit', fontSize: '0.63rem', fontWeight: 800, color: '#FF6B9D' }}>{dailyFortune.avoidDirection.split('·')[0]}<span style={{ fontSize: '0.56rem', color: '#AAA', marginLeft: '2px' }}>({dailyFortune.relationDescription.slice(0, 2)})</span></p>
                 </div>
               </div>
 
@@ -2267,8 +2537,8 @@ export default function HomePage() {
                 display: 'flex', alignItems: 'center', gap: '6px',
               }}>
                 <Lightbulb style={{ width: '13px', height: '13px', color: getScoreColor(dailyFortune.totalScore), flexShrink: 0 }} />
-                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: '#777', lineHeight: 1.45, flex: 1 }}>{dailyFortune.mainTip}</span>
-                <span style={{ fontFamily: 'Outfit', fontSize: '0.59remrem', color: getScoreColor(dailyFortune.totalScore), opacity: 0.55, whiteSpace: 'nowrap', flexShrink: 0 }}>{dailyFortune.totalLabel}</span>
+                <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69rem', color: '#777', lineHeight: 1.45, flex: 1 }}>{dailyFortune.mainTip}</span>
+                <span style={{ fontFamily: 'Outfit', fontSize: '0.59rem', color: getScoreColor(dailyFortune.totalScore), opacity: 0.55, whiteSpace: 'nowrap', flexShrink: 0 }}>{dailyFortune.totalLabel}</span>
               </div>
 
               {/* 宜/不宜事项（保留，精简间距） */}
@@ -2276,7 +2546,7 @@ export default function HomePage() {
                 <div style={{ flex: 1, padding: '7px 10px', borderRadius: '10px', background: `${PALETTE.green}08`, border: `1px solid ${PALETTE.green}20`, display: 'flex', alignItems: 'center', gap: '5px', minWidth: 0 }}>
                   <Check style={{ width: '11px', height: '11px', color: PALETTE.green, flexShrink: 0 }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', fontWeight: 700, color: PALETTE.green, marginBottom: '1.5px' }}>宜</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', fontWeight: 700, color: PALETTE.green, marginBottom: '1.5px' }}>宜</p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px' }}>
                       {dailyFortune.goodThings.slice(0, 3).map((g: string) => (
                         <span key={g} style={{ padding: '1px 5px', borderRadius: '4px', background: `${PALETTE.green}12`, fontFamily: 'Outfit', fontSize: navWideLayout ? '11px' : '10px', color: PALETTE.green }}>{g}</span>
@@ -2287,7 +2557,7 @@ export default function HomePage() {
                 <div style={{ flex: 1, padding: '7px 10px', borderRadius: '10px', background: `${PALETTE.coral}08`, border: `1px solid ${PALETTE.coral}20`, display: 'flex', alignItems: 'center', gap: '5px', minWidth: 0 }}>
                   <X style={{ width: '11px', height: '11px', color: PALETTE.coral, flexShrink: 0 }} />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', fontWeight: 700, color: PALETTE.coral, marginBottom: '1.5px' }}>不宜</p>
+                    <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', fontWeight: 700, color: PALETTE.coral, marginBottom: '1.5px' }}>不宜</p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px' }}>
                       {dailyFortune.avoidThings.slice(0, 3).map((a: string) => (
                         <span key={a} style={{ padding: '1px 5px', borderRadius: '4px', background: `${PALETTE.coral}12`, fontFamily: 'Outfit', fontSize: navWideLayout ? '11px' : '10px', color: PALETTE.coral }}>{a}</span>
@@ -2310,7 +2580,7 @@ export default function HomePage() {
               flex: 1,
               background: `linear-gradient(140deg, ${PALETTE.coral}0D 0%, ${PALETTE.orange}0A 35%, #FFFFFF 100%)`,
               borderRadius: '22px', padding: '18px',
-              boxShadow: '0 12px 30px rgba(255,107,157,0.12)',
+              boxShadow: '0 6px 14px rgba(255,107,157,0.08)',
               border: `1px solid ${PALETTE.coral}22`,
               display: 'flex', flexDirection: 'column',
             }}>
@@ -2325,9 +2595,9 @@ export default function HomePage() {
                     <Palette style={{ width: '18px', height: '18px', color: '#FFFFFF' }} />
                   </div>
                   <div>
-                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', fontWeight: 900, color: '#1A1A2E' }}>今日色彩搭配</span>
-                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: '#8F97B5', marginLeft: '6px' }}>多巴胺精选</span>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#A0A8C0', margin: '2px 0 0' }}>渐变质感配色，按场景自动推荐</p>
+                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94rem', fontWeight: 900, color: '#1A1A2E' }}>今日色彩搭配</span>
+                    <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69rem', color: '#8F97B5', marginLeft: '6px' }}>多巴胺精选</span>
+                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63rem', color: '#A0A8C0', margin: '2px 0 0' }}>渐变质感配色，按场景自动推荐</p>
                   </div>
                   <motion.button
                     onClick={() => setActiveTab(activeTab === 'outfit' ? null : 'outfit')}
@@ -2337,7 +2607,7 @@ export default function HomePage() {
                       marginLeft: 'auto', padding: '5px 12px', borderRadius: '20px',
                       background: activeTab === 'outfit' ? `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange})` : 'rgba(255,107,157,0.08)',
                       border: `1.5px solid ${activeTab === 'outfit' ? PALETTE.coral : 'rgba(255,107,157,0.2)'}`,
-                      cursor: 'pointer', fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem',
+                      cursor: 'pointer', fontFamily: 'Outfit, sans-serif', fontSize: '0.69rem',
                       fontWeight: 600, color: activeTab === 'outfit' ? '#FFF' : PALETTE.coral, transition: UI_EASE,
                       boxShadow: activeTab === 'outfit' ? `0 10px 20px ${PALETTE.coral}3a` : `0 6px 12px ${PALETTE.coral}1a`,
                     }}
@@ -2348,7 +2618,7 @@ export default function HomePage() {
                 </div>
                 {renderInsightBlock(
                   '今日配色主张',
-                  `今日以「${(outfitRec as any)?.weatherInfo?.wuxing || '平衡五行'}」为配色主线：先定主色，再用一件点缀色提升层次，避免堆叠过多高饱和颜色。`,
+                  getColorAdvice(),
                   {
                     title: PALETTE.coral,
                     border: `${PALETTE.coral}1F`,
@@ -2362,7 +2632,7 @@ export default function HomePage() {
                   {(() => {
                     const scenes = (outfitRec as any).sceneRecommendations || [];
                     const elementColors: Record<string, string> = {
-                      wood: '#4CAF50', fire: '#FF5252', earth: '#FFC107', metal: '#78909C', water: '#42A5F5',
+                      wood: '#4CAF50', fire: '#FF5252', earth: '#FFC107', metal: '#B7791F', water: '#42A5F5',
                     };
                     const elementNames: Record<string, string> = {
                       wood: '木', fire: '火', earth: '土', metal: '金', water: '水',
@@ -2377,7 +2647,7 @@ export default function HomePage() {
                       '卡其': { bg: 'linear-gradient(135deg, #D1B893, #C4A77D)', text: '#422006', shadow: 'rgba(163,129,83,0.26)' },
                       '酒红': { bg: 'linear-gradient(135deg, #7F1D1D, #B91C1C)', text: '#FFFFFF', shadow: 'rgba(127,29,29,0.3)' },
                       '金色': { bg: 'linear-gradient(135deg, #CA8A04, #F59E0B)', text: '#FFFFFF', shadow: 'rgba(202,138,4,0.32)' },
-                      '银色': { bg: 'linear-gradient(135deg, #CBD5E1, #94A3B8)', text: '#1F2937', shadow: 'rgba(148,163,184,0.3)' },
+                      '银色': { bg: 'linear-gradient(135deg, #C0841A, #EAB308)', text: '#FFFFFF', shadow: 'rgba(192,132,26,0.32)' },
                       '红色': { bg: 'linear-gradient(135deg, #EF4444, #F87171)', text: '#FFFFFF', shadow: 'rgba(239,68,68,0.28)' },
                       '绿色': { bg: 'linear-gradient(135deg, #16A34A, #4ADE80)', text: '#FFFFFF', shadow: 'rgba(22,163,74,0.26)' },
                       '棕色': { bg: 'linear-gradient(135deg, #92400E, #C2410C)', text: '#FFFFFF', shadow: 'rgba(146,64,14,0.3)' },
@@ -2413,7 +2683,7 @@ export default function HomePage() {
                               background: colorInfo.bg,
                               color: colorInfo.text,
                               fontWeight: 700,
-                              fontSize: '0.63remrem',
+                              fontSize: '0.63rem',
                               margin: '0 2px',
                               boxShadow: `0 6px 12px ${(colorInfo as any).shadow || 'rgba(91,92,255,0.25)'}`,
                               border: '1px solid rgba(255,255,255,0.35)',
@@ -2454,14 +2724,14 @@ export default function HomePage() {
                               {getSceneIconSmall(scene.icon)}
                             </div>
                             <span style={{
-                              fontFamily: 'Outfit', fontSize: '0.69remrem', fontWeight: 700,
+                              fontFamily: 'Outfit', fontSize: '0.69rem', fontWeight: 700,
                               color: scene.accentColor,
                             }}>{scene.label}</span>
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', marginBottom: '6px', minHeight: '36px' }}>
                             {colors.slice(0, 2).map((color: string, i: number) => (
                               <span key={i} style={{
-                                fontFamily: 'Outfit', fontSize: '0.63remrem', color: '#666',
+                                fontFamily: 'Outfit', fontSize: '0.63rem', color: '#666',
                                 lineHeight: 1.4,
                               }}>
                                 {renderColorSuggestion(color)}
@@ -2475,13 +2745,13 @@ export default function HomePage() {
                               boxShadow: `0 0 4px ${elementColors[scene.element]}60`,
                             }} />
                             <span style={{
-                              fontFamily: 'Outfit', fontSize: '0.63remrem',
+                              fontFamily: 'Outfit', fontSize: '0.63rem',
                               color: elementColors[scene.element], fontWeight: 600,
                             }}>{elementNames[scene.element]}属性</span>
                             <span style={{
                               marginLeft: 'auto',
                               fontFamily: 'Outfit',
-                              fontSize: '0.56remrem',
+                              fontSize: '0.56rem',
                               color: '#A0A8C0',
                               letterSpacing: '0.2px',
                             }}>高级渐变感</span>
@@ -2497,20 +2767,20 @@ export default function HomePage() {
 
                 {/* 今日色彩详情展开 - 移入卡片内部 */}
                 {activeTab === 'outfit' && outfitRec && (
-                  <div style={{ marginTop: '12px', background: 'linear-gradient(155deg, #FFFFFF, #FFF8F9)', borderRadius: '18px', padding: '14px 16px', border: `1px solid ${PALETTE.coral}20`, boxShadow: '0 10px 20px rgba(255,107,157,0.1)' }}>
+                  <div style={{ marginTop: '12px', background: 'linear-gradient(155deg, rgba(255,255,255,0.88), rgba(255,248,249,0.84))', borderRadius: '18px', padding: '14px 16px', border: `1px solid ${PALETTE.coral}24`, boxShadow: '0 4px 10px rgba(255,107,157,0.06)' }}>
                     {/* 天气信息 */}
                     <div style={{ display: 'flex', gap: '12px', alignItems: 'stretch', background: `linear-gradient(135deg, ${PALETTE.coralLight}, ${PALETTE.orangeLight})`, borderRadius: '14px', padding: '12px 14px', border: `1px solid ${PALETTE.coral}25`, marginBottom: '12px' }}>
                       <div style={{ width: '44px', height: '44px', borderRadius: '10px', flexShrink: 0, background: '#FFFFFF', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                         {(outfitRec as any).weatherInfo?.weather?.includes('晴') ? <Sun style={{ width: '20px', height: '20px', color: '#FF9D6B' }} /> : (outfitRec as any).weatherInfo?.weather?.includes('雨') ? <CloudRain style={{ width: '20px', height: '20px', color: '#6BD4FF' }} /> : (outfitRec as any).weatherInfo?.weather?.includes('阴') ? <Cloud style={{ width: '20px', height: '20px', color: '#94A3B8' }} /> : <Wind style={{ width: '20px', height: '20px', color: '#6BD4FF' }} />}
-                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', fontWeight: 700, color: '#1A1A2E' }}>{(outfitRec as any).weatherInfo?.temperature || '--'}°</span>
+                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63rem', fontWeight: 700, color: '#1A1A2E' }}>{(outfitRec as any).weatherInfo?.temperature || '--'}°</span>
                       </div>
                       <div style={{ flex: 1 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '2px', flexWrap: 'wrap' }}>
                           <MapPin style={{ width: '10px', height: '10px', color: '#6B7280' }} />
-                          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', fontWeight: 600, color: '#1A1A2E' }}>{(outfitRec as any).weatherInfo?.city || userLocation?.city || '未设置'}</span>
-                          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#6B7280' }}>{(outfitRec as any).weatherInfo?.weather || '加载中...'}</span>
+                          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69rem', fontWeight: 600, color: '#1A1A2E' }}>{(outfitRec as any).weatherInfo?.city || userLocation?.city || '未设置'}</span>
+                          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63rem', color: '#6B7280' }}>{(outfitRec as any).weatherInfo?.weather || '加载中...'}</span>
                         </div>
-                        <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#6B7280', margin: 0 }}>今日五行：<span style={{ color: PALETTE.coral, fontWeight: 600 }}>{(outfitRec as any).weatherInfo?.wuxing || '加载中'}</span></p>
+                        <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63rem', color: '#6B7280', margin: 0 }}>今日五行：<span style={{ color: PALETTE.coral, fontWeight: 600 }}>{(outfitRec as any).weatherInfo?.wuxing || '加载中'}</span></p>
                         <div style={{ marginTop: '7px' }}>
                           <div style={{
                             display: 'inline-flex',
@@ -2536,7 +2806,7 @@ export default function HomePage() {
                                 background: !locationLocked ? `linear-gradient(135deg, ${PALETTE.coral}, ${PALETTE.orange})` : 'transparent',
                                 cursor: 'pointer',
                                 fontFamily: 'Outfit, sans-serif',
-                                fontSize: '0.63remrem',
+                                fontSize: '0.63rem',
                                 fontWeight: 700,
                                 color: !locationLocked ? '#FFFFFF' : '#7A809E',
                                 transition: UI_EASE,
@@ -2560,7 +2830,7 @@ export default function HomePage() {
                                 background: locationLocked ? `linear-gradient(135deg, ${PALETTE.purple}, ${PALETTE.blue})` : 'transparent',
                                 cursor: 'pointer',
                                 fontFamily: 'Outfit, sans-serif',
-                                fontSize: '0.63remrem',
+                                fontSize: '0.63rem',
                                 fontWeight: 700,
                                 color: locationLocked ? '#FFFFFF' : '#7A809E',
                                 transition: UI_EASE,
@@ -2572,11 +2842,11 @@ export default function HomePage() {
                             </motion.button>
                           </div>
                           <div style={{ display: 'flex', gap: '6px', marginTop: '6px', alignItems: 'center' }}>
-                            <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.56remrem', color: '#9AA0BE' }}>
+                            <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.56rem', color: '#9AA0BE' }}>
                               当前方式：{locationLocked ? '手动城市' : '自动定位'}
                             </span>
                             {userLocation?.city && (
-                              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.56remrem', color: '#7A809E' }}>
+                              <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.56rem', color: '#7A809E' }}>
                                 城市：{userLocation.city}
                               </span>
                             )}
@@ -2590,7 +2860,7 @@ export default function HomePage() {
                           padding: '4px 10px',
                           borderRadius: '999px',
                           fontFamily: 'Outfit, sans-serif',
-                          fontSize: '0.63remrem',
+                          fontSize: '0.63rem',
                           fontWeight: 600,
                           color: '#7A3F90',
                           background: `linear-gradient(135deg, ${PALETTE.purple}12, ${PALETTE.blue}12)`,
@@ -2609,7 +2879,7 @@ export default function HomePage() {
                           {scenes.map((scene: any) => (
                             <motion.button key={scene.id} onClick={() => setActiveScene(activeScene === scene.id ? null : scene.id)} whileHover={{ y: -2, scale: 1.03 }} whileTap={{ y: 0, scale: 0.97 }} style={{ padding: '8px 6px', borderRadius: '10px', background: activeScene === scene.id ? `${scene.accentColor}20` : `${scene.accentColor}08`, border: `1.5px solid ${activeScene === scene.id ? scene.accentColor : `${scene.accentColor}25`}`, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', transition: 'all 0.2s', boxShadow: activeScene === scene.id ? `0 10px 18px ${scene.accentColor}33` : `0 6px 12px ${scene.accentColor}18` }}>
                               <div style={{ color: scene.accentColor }}>{getSceneIcon(scene.icon)}</div>
-                              <span style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', fontWeight: 700, color: scene.accentColor }}>{scene.label}</span>
+                              <span style={{ fontFamily: 'Outfit', fontSize: '0.63rem', fontWeight: 700, color: scene.accentColor }}>{scene.label}</span>
                             </motion.button>
                           ))}
                         </div>
@@ -2630,19 +2900,19 @@ export default function HomePage() {
                               <Star style={{ width: '14px', height: '14px', color: '#FFFFFF' }} />
                             </div>
                             <div>
-                              <p style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{scene.label}</p>
-                              <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', color: '#A0A8C0', margin: '1px 0 0' }}>{scene.element}属性 · {scene.weatherTip?.slice(0, 12) || ''}</p>
+                              <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{scene.label}</p>
+                              <p style={{ fontFamily: 'Outfit', fontSize: '0.63rem', color: '#A0A8C0', margin: '1px 0 0' }}>{scene.element}属性 · {scene.weatherTip?.slice(0, 12) || ''}</p>
                             </div>
                           </div>
                           {scene.colors && <div style={{ marginBottom: '10px' }}>
-                            <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', fontWeight: 600, color: '#6B7280', marginBottom: '4px' }}>推荐颜色</p>
+                            <p style={{ fontFamily: 'Outfit', fontSize: '0.63rem', fontWeight: 600, color: '#6B7280', marginBottom: '4px' }}>推荐颜色</p>
                             <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
-                              {scene.colors.map((c: string, i: number) => <span key={i} style={{ padding: '3px 8px', borderRadius: '6px', background: `${scene.accentColor}12`, border: `1px solid ${scene.accentColor}25`, fontFamily: 'Outfit', fontSize: '0.63remrem', color: '#1A1A2E' }}>{c}</span>)}
+                              {scene.colors.map((c: string, i: number) => <span key={i} style={{ padding: '3px 8px', borderRadius: '6px', background: `${scene.accentColor}12`, border: `1px solid ${scene.accentColor}25`, fontFamily: 'Outfit', fontSize: '0.63rem', color: '#1A1A2E' }}>{c}</span>)}
                             </div>
                           </div>}
                           <div style={{ padding: '8px', background: '#FFFFFF', borderRadius: '8px', border: `1px solid ${scene.accentColor}20` }}>
                             <Lightbulb style={{ width: '12px', height: '12px', color: scene.accentColor, marginBottom: '4px' }} />
-                            <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', color: '#6B7280', lineHeight: 1.6, margin: 0 }}>{scene.explanation}</p>
+                            <p style={{ fontFamily: 'Outfit', fontSize: '0.63rem', color: '#6B7280', lineHeight: 1.6, margin: 0 }}>{scene.explanation}</p>
                         </div>
                       </motion.div>
                       );
@@ -2666,10 +2936,10 @@ export default function HomePage() {
                     }}>
                       <Star style={{ width: '28px', height: '28px', color: PALETTE.coral }} />
                     </div>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', fontWeight: 700, color: '#1A1A2E', marginBottom: '8px' }}>
+                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94rem', fontWeight: 700, color: '#1A1A2E', marginBottom: '8px' }}>
                       {!selectedRecord ? '选择一位命主，开始测算' : '正在加载命盘数据…'}
                     </p>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81remrem', color: '#A0A8C0' }}>
+                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.81rem', color: '#A0A8C0' }}>
                       {!selectedRecord ? '录入或选择用户后，可查看命盘、今日运势与穿搭/手串建议' : '请稍候'}
                     </p>
                     {selectedRecord && <Loader2 style={{ width: '22px', height: '22px', color: PALETTE.coral, animation: 'spin 1s linear infinite', margin: '16px auto 0' }} />}
@@ -2681,7 +2951,7 @@ export default function HomePage() {
                   <div id="bracelet-section" style={{
                     flex: 1,
                     background: `linear-gradient(145deg, ${PALETTE.purple}0E 0%, ${PALETTE.blue}08 45%, rgba(255,255,255,0.94) 100%)`, borderRadius: '24px', padding: '20px',
-                    boxShadow: '0 18px 38px rgba(103,76,185,0.18)', border: `1px solid ${PALETTE.purple}2A`,
+                    boxShadow: '0 8px 16px rgba(103,76,185,0.08)', border: `1px solid ${PALETTE.purple}2E`,
                     backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
                   }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '14px' }}>
@@ -2694,8 +2964,8 @@ export default function HomePage() {
                         <Gem style={{ width: '16px', height: '16px', color: '#FFFFFF' }} />
                       </div>
                       <div>
-                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94remrem', fontWeight: 900, color: '#1A1A2E' }}>今日手串推荐</span>
-                        <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#9A9FC2', margin: '1px 0 0' }}>能量材质 · 高级渐变系</p>
+                        <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.94rem', fontWeight: 900, color: '#1A1A2E' }}>今日手串推荐</span>
+                        <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63rem', color: '#9A9FC2', margin: '1px 0 0' }}>能量材质 · 高级渐变系</p>
                       </div>
                       <motion.button
                         onClick={() => setActiveTab(activeTab === 'bracelet' ? null : 'bracelet')}
@@ -2705,7 +2975,7 @@ export default function HomePage() {
                           marginLeft: 'auto', padding: '6px 14px', borderRadius: '9999px',
                           background: activeTab === 'bracelet' ? `linear-gradient(135deg, ${PALETTE.purple}, ${PALETTE.blue})` : `${PALETTE.purple}08`,
                           border: `1.5px solid ${activeTab === 'bracelet' ? PALETTE.purple : `${PALETTE.purple}30`}`,
-                          cursor: 'pointer', fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem',
+                          cursor: 'pointer', fontFamily: 'Outfit, sans-serif', fontSize: '0.75rem',
                           fontWeight: 600, color: activeTab === 'bracelet' ? '#FFFFFF' : PALETTE.purple, transition: UI_EASE,
                           boxShadow: activeTab === 'bracelet' ? `0 10px 20px ${PALETTE.purple}3a` : `0 6px 12px ${PALETTE.purple}1a`,
                         }}
@@ -2741,10 +3011,10 @@ export default function HomePage() {
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                               <Sparkles style={{ width: '14px', height: '14px', color: PALETTE.purple }} />
-                              <span style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', fontWeight: 700, color: '#1A1A2E' }}>命理分析</span>
+                              <span style={{ fontFamily: 'Outfit', fontSize: '0.75rem', fontWeight: 700, color: '#1A1A2E' }}>命理分析</span>
                             </div>
                             <div style={{ padding: '3px 10px', borderRadius: '8px', background: summary.fortuneLevel === '极佳' ? `${PALETTE.green}15` : summary.fortuneLevel === '上佳' ? `${PALETTE.blue}15` : summary.fortuneLevel === '平稳' ? `${PALETTE.yellow}15` : `${PALETTE.orange}15`, border: `1px solid ${summary.fortuneLevel === '极佳' ? PALETTE.green : summary.fortuneLevel === '上佳' ? PALETTE.blue : summary.fortuneLevel === '平稳' ? PALETTE.yellow : PALETTE.orange}30` }}>
-                              <span style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', fontWeight: 700, color: summary.fortuneLevel === '极佳' ? PALETTE.green : summary.fortuneLevel === '上佳' ? PALETTE.blue : summary.fortuneLevel === '平稳' ? PALETTE.yellow : PALETTE.orange }}>{summary.fortuneLevel}运势</span>
+                              <span style={{ fontFamily: 'Outfit', fontSize: '0.63rem', fontWeight: 700, color: summary.fortuneLevel === '极佳' ? PALETTE.green : summary.fortuneLevel === '上佳' ? PALETTE.blue : summary.fortuneLevel === '平稳' ? PALETTE.yellow : PALETTE.orange }}>{summary.fortuneLevel}运势</span>
                             </div>
                           </div>
                           
@@ -2752,20 +3022,20 @@ export default function HomePage() {
                           {summary.wuxingDiagram && (
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '10px', background: `linear-gradient(135deg, ${PALETTE.purple}08, ${PALETTE.blue}08)`, borderRadius: '12px', border: `1px solid ${PALETTE.purple}15`, marginBottom: '10px' }}>
                               <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: `linear-gradient(135deg, ${PALETTE.purple}, ${PALETTE.blue})`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                                <span style={{ fontFamily: 'Outfit', fontSize: '1remrem', fontWeight: 800, color: '#FFFFFF' }}>{summary.wuxingDiagram.primaryName}</span>
+                                <span style={{ fontFamily: 'Outfit', fontSize: '1rem', fontWeight: 800, color: '#FFFFFF' }}>{summary.wuxingDiagram.primaryName}</span>
                               </div>
                               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '3px', padding: '2px 6px', borderRadius: '4px', background: `${PALETTE.green}10` }}>
                                   <TrendingUp style={{ width: '10px', height: '10px', color: PALETTE.green }} />
-                                  <span style={{ fontFamily: 'Outfit', fontSize: '0.56remrem', color: PALETTE.green, fontWeight: 700 }}>{summary.wuxingDiagram.sheng}</span>
+                                  <span style={{ fontFamily: 'Outfit', fontSize: '0.56rem', color: PALETTE.green, fontWeight: 700 }}>{summary.wuxingDiagram.sheng}</span>
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '3px', padding: '2px 6px', borderRadius: '4px', background: `${PALETTE.orange}10` }}>
                                   <TrendingUp style={{ width: '10px', height: '10px', color: PALETTE.orange, transform: 'rotate(180deg)' }} />
-                                  <span style={{ fontFamily: 'Outfit', fontSize: '0.56remrem', color: PALETTE.orange, fontWeight: 700 }}>{summary.wuxingDiagram.ke}</span>
+                                  <span style={{ fontFamily: 'Outfit', fontSize: '0.56rem', color: PALETTE.orange, fontWeight: 700 }}>{summary.wuxingDiagram.ke}</span>
                                 </div>
                               </div>
                               <div style={{ width: '36px', height: '36px', borderRadius: '8px', background: `${PALETTE.blue}15`, border: `1.5px solid ${PALETTE.blue}40`, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                                <span style={{ fontFamily: 'Outfit', fontSize: '0.88remrem', fontWeight: 700, color: '#1A1A2E' }}>{summary.wuxingDiagram.secondaryName}</span>
+                                <span style={{ fontFamily: 'Outfit', fontSize: '0.88rem', fontWeight: 700, color: '#1A1A2E' }}>{summary.wuxingDiagram.secondaryName}</span>
                               </div>
                             </div>
                           )}
@@ -2774,7 +3044,7 @@ export default function HomePage() {
                           {summary.overallAdvice && (
                             <div style={{ padding: '8px 10px', background: `linear-gradient(145deg, ${PALETTE.purple}08, #FFFFFF)`, borderRadius: '10px', border: `1px solid ${PALETTE.purple}24` }}>
                               <Lightbulb style={{ width: '12px', height: '12px', color: PALETTE.purple, marginBottom: '4px' }} />
-                              <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', color: '#6B7280', margin: 0, lineHeight: 1.5 }}>{summary.overallAdvice}</p>
+                              <p style={{ fontFamily: 'Outfit', fontSize: '0.63rem', color: '#6B7280', margin: 0, lineHeight: 1.5 }}>{summary.overallAdvice}</p>
                             </div>
                           )}
                         </div>
@@ -2797,8 +3067,8 @@ export default function HomePage() {
                                     <Gem style={{ width: '20px', height: '20px', color: '#FFFFFF' }} />
                                   </div>
                                   <div>
-                                    <p style={{ fontFamily: 'Outfit', fontSize: '1remrem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{material}</p>
-                                    <p style={{ fontFamily: 'Outfit', fontSize: '0.69remrem', color: '#A0A8C0', margin: '2px 0 0' }}>{primary.color || ''} · 首选推荐</p>
+                                    <p style={{ fontFamily: 'Outfit', fontSize: '1rem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{material}</p>
+                                    <p style={{ fontFamily: 'Outfit', fontSize: '0.69rem', color: '#A0A8C0', margin: '2px 0 0' }}>{primary.color || ''} · 首选推荐</p>
                                   </div>
                                 </div>
                                 {primary.element && <ElementBadge el={primary.element} />}
@@ -2807,28 +3077,28 @@ export default function HomePage() {
                               <div style={{ padding: '12px', background: `linear-gradient(135deg, ${PALETTE.purple}08, ${PALETTE.blue}08)`, borderRadius: '12px', border: `1px solid ${PALETTE.purple}15`, marginBottom: '12px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
                                   <Sparkles style={{ width: '14px', height: '14px', color: PALETTE.purple }} />
-                                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', fontWeight: 700, color: PALETTE.purple, margin: 0 }}>今日运势搭配</p>
+                                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', fontWeight: 700, color: PALETTE.purple, margin: 0 }}>今日运势搭配</p>
                                 </div>
-                                <p style={{ fontFamily: 'Outfit', fontSize: '0.69remrem', color: '#6B7280', margin: 0, lineHeight: 1.7 }}>
+                                <p style={{ fontFamily: 'Outfit', fontSize: '0.69rem', color: '#6B7280', margin: 0, lineHeight: 1.7 }}>
                                   {primary.whyRecommended || `今日${(braceletRec as any).summary?.tenGod || '流日'}当令，${material}五行属${primary.element || ''}，与日主${(braceletRec as any).bodyStrength?.type === 'strong' ? '身强' : (braceletRec as any).bodyStrength?.type === 'weak' ? '身弱' : '中性'}格局相宜，${primary.effect || '可增强运势'}`}
                                 </p>
                               </div>
 
                               {primary.effect && (
                                 <div style={{ padding: '10px 12px', background: `${PALETTE.purple}08`, borderRadius: '10px', border: `1px solid ${PALETTE.purple}15`, marginBottom: '10px' }}>
-                                  <p style={{ fontFamily: 'Outfit', fontSize: '0.69remrem', fontWeight: 600, color: PALETTE.purple, marginBottom: '4px' }}>推荐功效</p>
-                                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75remrem', color: '#6B7280', margin: 0, lineHeight: 1.6 }}>{primary.effect}</p>
+                                  <p style={{ fontFamily: 'Outfit', fontSize: '0.69rem', fontWeight: 600, color: PALETTE.purple, marginBottom: '4px' }}>推荐功效</p>
+                                  <p style={{ fontFamily: 'Outfit', fontSize: '0.75rem', color: '#6B7280', margin: 0, lineHeight: 1.6 }}>{primary.effect}</p>
                                 </div>
                               )}
 
                               {primary.suitableScenes && primary.suitableScenes.length > 0 && (
                                 <div style={{ marginBottom: '10px' }}>
-                                  <p style={{ fontFamily: 'Outfit', fontSize: '0.69remrem', fontWeight: 600, color: '#1A1A2E', marginBottom: '8px' }}>适合场景</p>
+                                  <p style={{ fontFamily: 'Outfit', fontSize: '0.69rem', fontWeight: 600, color: '#1A1A2E', marginBottom: '8px' }}>适合场景</p>
                                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                                     {primary.suitableScenes.map((scene: any, idx: number) => (
                                       <div key={idx} style={{ padding: '6px 10px', borderRadius: '8px', background: `${PALETTE.green}10`, border: `1px solid ${PALETTE.green}25`, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                        <span style={{ fontSize: '0.75remrem' }}>{scene.icon || '✦'}</span>
-                                        <span style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', color: PALETTE.green, fontWeight: 600 }}>{scene.name || scene.scene}</span>
+                                        <span style={{ fontSize: '0.75rem' }}>{scene.icon || '✦'}</span>
+                                        <span style={{ fontFamily: 'Outfit', fontSize: '0.63rem', color: PALETTE.green, fontWeight: 600 }}>{scene.name || scene.scene}</span>
                                       </div>
                                     ))}
                                   </div>
@@ -2839,15 +3109,15 @@ export default function HomePage() {
                                 <>
                                   {details.description && (
                                     <div style={{ padding: '10px 12px', background: `linear-gradient(145deg, ${PALETTE.blue}06, #FFFFFF)`, borderRadius: '10px', border: `1px solid ${PALETTE.blue}24`, marginBottom: '8px' }}>
-                                      <p style={{ fontFamily: 'Outfit', fontSize: '0.69remrem', fontWeight: 600, color: PALETTE.blue, marginBottom: '4px' }}>手串简介</p>
-                                      <p style={{ fontFamily: 'Outfit', fontSize: '0.69remrem', color: '#6B7280', margin: 0, lineHeight: 1.6 }}>{details.description}</p>
+                                      <p style={{ fontFamily: 'Outfit', fontSize: '0.69rem', fontWeight: 600, color: PALETTE.blue, marginBottom: '4px' }}>手串简介</p>
+                                      <p style={{ fontFamily: 'Outfit', fontSize: '0.69rem', color: '#6B7280', margin: 0, lineHeight: 1.6 }}>{details.description}</p>
                                     </div>
                                   )}
                                   {details.effects && details.effects.length > 0 && (
                                     <div style={{ padding: '10px 12px', background: `linear-gradient(145deg, ${PALETTE.green}06, #FFFFFF)`, borderRadius: '10px', border: `1px solid ${PALETTE.green}24`, marginBottom: '8px' }}>
-                                      <p style={{ fontFamily: 'Outfit', fontSize: '0.69remrem', fontWeight: 600, color: PALETTE.green, marginBottom: '6px' }}>功效作用</p>
+                                      <p style={{ fontFamily: 'Outfit', fontSize: '0.69rem', fontWeight: 600, color: PALETTE.green, marginBottom: '6px' }}>功效作用</p>
                                       {details.effects.map((eff, idx) => (
-                                        <p key={idx} style={{ fontFamily: 'Outfit', fontSize: '0.69remrem', color: '#6B7280', margin: '2px 0', paddingLeft: '10px', lineHeight: 1.5 }}>
+                                        <p key={idx} style={{ fontFamily: 'Outfit', fontSize: '0.69rem', color: '#6B7280', margin: '2px 0', paddingLeft: '10px', lineHeight: 1.5 }}>
                                           · {eff}
                                         </p>
                                       ))}
@@ -2856,7 +3126,7 @@ export default function HomePage() {
                                   {details.occasions && details.occasions.length > 0 && (
                                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
                                       {details.occasions.map((occ, idx) => (
-                                        <span key={idx} style={{ padding: '4px 10px', borderRadius: '8px', background: `${PALETTE.coral}10`, border: `1px solid ${PALETTE.coral}25`, fontFamily: 'Outfit', fontSize: '0.63remrem', color: PALETTE.coral }}>{occ}</span>
+                                        <span key={idx} style={{ padding: '4px 10px', borderRadius: '8px', background: `${PALETTE.coral}10`, border: `1px solid ${PALETTE.coral}25`, fontFamily: 'Outfit', fontSize: '0.63rem', color: PALETTE.coral }}>{occ}</span>
                                       ))}
                                     </div>
                                   )}
@@ -2871,7 +3141,7 @@ export default function HomePage() {
                           <div style={{ marginBottom: '4px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
                               <Sparkles style={{ width: '14px', height: '14px', color: PALETTE.purple }} />
-                              <p style={{ fontFamily: 'Outfit', fontSize: '0.81remrem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>次选推荐</p>
+                              <p style={{ fontFamily: 'Outfit', fontSize: '0.81rem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>次选推荐</p>
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                               {(braceletRec as any).secondaryBracelets.map((sec: any, idx: number) => {
@@ -2885,21 +3155,21 @@ export default function HomePage() {
                                       </div>
                                       <div style={{ flex: 1 }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-                                          <p style={{ fontFamily: 'Outfit', fontSize: '0.81remrem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{secMaterial}</p>
+                                          <p style={{ fontFamily: 'Outfit', fontSize: '0.81rem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>{secMaterial}</p>
                                           {sec.element && <ElementBadge el={sec.element} />}
                                         </div>
-                                        <p style={{ fontFamily: 'Outfit', fontSize: '0.69remrem', color: '#6B7280', margin: 0, lineHeight: 1.4 }}>{sec.effect || secDetails?.description?.slice(0, 50) || ''}</p>
+                                        <p style={{ fontFamily: 'Outfit', fontSize: '0.69rem', color: '#6B7280', margin: 0, lineHeight: 1.4 }}>{sec.effect || secDetails?.description?.slice(0, 50) || ''}</p>
                                       </div>
                                     </div>
                                     {sec.whyRecommended && (
                                       <div style={{ padding: '8px 10px', background: `${PALETTE.purple}06`, borderRadius: '8px', border: `1px solid ${PALETTE.purple}12` }}>
-                                        <p style={{ fontFamily: 'Outfit', fontSize: '0.63remrem', color: PALETTE.purple, margin: 0, lineHeight: 1.5 }}>💫 {sec.whyRecommended}</p>
+                                        <p style={{ fontFamily: 'Outfit', fontSize: '0.63rem', color: PALETTE.purple, margin: 0, lineHeight: 1.5 }}>💫 {sec.whyRecommended}</p>
                                       </div>
                                     )}
                                     {sec.suitableScenes && sec.suitableScenes.length > 0 && (
                                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                                         {sec.suitableScenes.slice(0, 3).map((scene: any, sIdx: number) => (
-                                          <span key={sIdx} style={{ padding: '3px 8px', borderRadius: '6px', background: `${PALETTE.green}10`, border: `1px solid ${PALETTE.green}25`, fontFamily: 'Outfit', fontSize: '0.56remrem', color: PALETTE.green }}>{scene.name || scene.scene}</span>
+                                          <span key={sIdx} style={{ padding: '3px 8px', borderRadius: '6px', background: `${PALETTE.green}10`, border: `1px solid ${PALETTE.green}25`, fontFamily: 'Outfit', fontSize: '0.56rem', color: PALETTE.green }}>{scene.name || scene.scene}</span>
                                         ))}
                                       </div>
                                     )}
@@ -2937,7 +3207,7 @@ export default function HomePage() {
             backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-              <h3 style={{ fontFamily: 'Outfit', fontSize: '1remrem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>选择城市</h3>
+              <h3 style={{ fontFamily: 'Outfit', fontSize: '1rem', fontWeight: 700, color: '#1A1A2E', margin: 0 }}>选择城市</h3>
               <button onClick={() => setShowCityDropdown(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
                 <X style={{ width: '20px', height: '20px', color: '#6B7280' }} />
               </button>
@@ -2951,7 +3221,7 @@ export default function HomePage() {
               style={{
                 width: '100%', padding: '10px 14px', borderRadius: '10px',
                 border: `1.5px solid ${PALETTE.purple}30`, outline: 'none',
-                fontFamily: 'Outfit', fontSize: '0.81remrem', marginBottom: '12px',
+                fontFamily: 'Outfit', fontSize: '0.81rem', marginBottom: '12px',
                 boxSizing: 'border-box',
                 background: 'linear-gradient(145deg, #FFFFFF, #F6F3FF)',
                 boxShadow: '0 8px 16px rgba(90,63,160,0.1)',
@@ -2968,7 +3238,7 @@ export default function HomePage() {
                   onClick={() => selectCity(city)}
                   style={{
                     padding: '10px 12px', borderRadius: '8px', cursor: 'pointer',
-                    fontFamily: 'Outfit', fontSize: '0.81remrem', color: '#1A1A2E',
+                    fontFamily: 'Outfit', fontSize: '0.81rem', color: '#1A1A2E',
                     transition: 'background 0.15s, transform 0.15s',
                   }}
                   onMouseEnter={(e) => { e.currentTarget.style.background = `${PALETTE.purple}10`; e.currentTarget.style.transform = 'translateX(2px)'; }}
@@ -2982,6 +3252,13 @@ export default function HomePage() {
         </>
       )}
       <style>{`
+        #home-page-shell,
+        #home-page-shell * {
+          font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif !important;
+          -webkit-font-smoothing: antialiased;
+          text-rendering: optimizeLegibility;
+        }
+
         @keyframes dopaminePulse {
           0%, 100% { transform: scale(1); box-shadow: 0 4px 12px rgba(255,107,157,0.35); }
           50% { transform: scale(1.06); box-shadow: 0 10px 20px rgba(255,107,157,0.42); }

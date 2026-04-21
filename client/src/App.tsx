@@ -1,13 +1,15 @@
 import { motion } from 'framer-motion';
-import { HashRouter, Routes, Route, Link } from 'react-router-dom';
+import { HashRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ResultPage from './pages/ResultPage';
 import AdminPage from './pages/AdminPage';
 import AiChatPage from './pages/AiChatPage';
 import IntroPage from './pages/IntroPage';
+import FeedbackPage from './pages/FeedbackPage';
 import { startSession, endSession, trackEvent, EventTypes } from './utils/analytics';
 import { useEffect, useState } from 'react';
 import { COLOR_TOKENS, RADIUS_TOKENS, SHADOW_TOKENS, MOTION_TOKENS } from './theme/designTokens';
+import { Home, Sparkles, Settings, MessageSquare } from 'lucide-react';
 
 const VISUAL_PRESET = {
   accent: COLOR_TOKENS.brand.coral,
@@ -73,6 +75,106 @@ export default function App() {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
+
+  // 高级导航组件
+  const NavLinks = () => {
+    const location = useLocation();
+    const navItems = [
+      { to: '/', label: '首页', Icon: Home, gradient: ['#FF6B9D', '#C084FC'], glowColor: 'rgba(255,107,157,0.35)' },
+      { to: '/ai-chat', label: 'AI 解读', Icon: Sparkles, gradient: ['#818CF8', '#C084FC'], glowColor: 'rgba(129,140,248,0.35)' },
+      // 新增“反馈”入口，方便用户在导航栏中快速提交建议。
+      { to: '/feedback', label: '反馈', Icon: MessageSquare, gradient: ['#34D399', '#60A5FA'], glowColor: 'rgba(52,211,153,0.35)' },
+      { to: '/admin', label: '管理', Icon: Settings, gradient: ['#6366F1', '#818CF8'], glowColor: 'rgba(99,102,241,0.35)' },
+    ];
+
+    return (
+      <motion.nav
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+          alignItems: 'center',
+          gap: '8px',
+          width: '100%',
+          maxWidth: '760px',
+          padding: '6px',
+          borderRadius: '16px',
+          background: 'linear-gradient(140deg, rgba(255,255,255,0.88), rgba(248,246,255,0.84))',
+          border: '1px solid rgba(156,148,185,0.2)',
+          boxShadow: '0 10px 28px rgba(84,70,124,0.12), inset 0 1px 0 rgba(255,255,255,0.75)',
+        }}
+      >
+        {navItems.map(({ to, label, Icon, gradient, glowColor }) => {
+          const isActive = location.pathname === to || (to === '/' && location.pathname === '');
+          return (
+            <Link key={to} to={to}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '4px',
+                minHeight: '52px',
+                padding: '6px 8px',
+                borderRadius: '12px',
+                textDecoration: 'none',
+                background: isActive
+                  ? `linear-gradient(135deg, ${gradient[0]}, ${gradient[1]})`
+                  : 'rgba(255,255,255,0.56)',
+                border: isActive ? 'none' : '1px solid rgba(140,132,152,0.16)',
+                boxShadow: isActive
+                  ? `0 8px 18px ${glowColor}, 0 1px 2px rgba(0,0,0,0.08)`
+                  : '0 2px 8px rgba(72,64,88,0.06)',
+                transition: 'all 0.25s cubic-bezier(0.25,0.46,0.45,0.94)',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={e => {
+                const el = e.currentTarget as HTMLElement;
+                if (!isActive) {
+                  el.style.background = `linear-gradient(135deg, ${gradient[0]}18, ${gradient[1]}14)`;
+                  el.style.borderColor = `${gradient[0]}30`;
+                  el.style.transform = 'translateY(-1px)';
+                  el.style.boxShadow = `0 6px 20px ${glowColor.replace('0.35', '0.18')}`;
+                }
+              }}
+              onMouseLeave={e => {
+                const el = e.currentTarget as HTMLElement;
+                if (!isActive) {
+                  el.style.background = 'rgba(255,255,255,0.7)';
+                  el.style.borderColor = 'rgba(140,132,152,0.12)';
+                  el.style.transform = 'translateY(0)';
+                  el.style.boxShadow = '0 2px 8px rgba(72,64,88,0.05)';
+                }
+              }}
+            >
+              {/* 图标容器 */}
+              <div style={{
+                width: '24px', height: '24px', borderRadius: '8px',
+                background: isActive
+                  ? 'rgba(255,255,255,0.25)'
+                  : `linear-gradient(135deg, ${gradient[0]}, ${gradient[1]})`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: isActive ? 'none' : `0 2px 8px ${glowColor.replace('0.35', '0.2')}`,
+              }}>
+                <Icon size={14} strokeWidth={2.2} color={isActive ? '#fff' : '#fff'} />
+              </div>
+              <span style={{
+                fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif',
+                fontSize: '0.7rem', fontWeight: isActive ? 700 : 600,
+                color: isActive ? '#fff' : '#3D3A45',
+                letterSpacing: '-0.01em',
+                whiteSpace: 'nowrap',
+              }}>
+                {label}
+              </span>
+            </Link>
+          );
+        })}
+      </motion.nav>
+    );
+  };
 
   return (
     <HashRouter unstable_useTransitions={false}>
@@ -163,92 +265,18 @@ export default function App() {
         {/* 顶部导航 */}
         <header style={{
           position: 'sticky', top: 0, zIndex: 100,
-          background: 'linear-gradient(180deg, rgba(252,250,253,0.92) 0%, rgba(248,245,250,0.88) 100%)',
-          backdropFilter: 'blur(22px)',
-          WebkitBackdropFilter: 'blur(22px)',
-          borderBottom: '1px solid rgba(140, 132, 152, 0.12)',
-          boxShadow: '0 4px 24px rgba(72, 64, 88, 0.06)',
-          paddingLeft: 'max(20px, env(safe-area-inset-left))',
-          paddingRight: 'max(20px, env(safe-area-inset-right))',
+          background: 'linear-gradient(180deg, rgba(252,250,253,0.94) 0%, rgba(248,245,250,0.9) 100%)',
+          backdropFilter: 'blur(18px)',
+          WebkitBackdropFilter: 'blur(18px)',
+          borderBottom: '1px solid rgba(140, 132, 152, 0.14)',
+          boxShadow: '0 6px 20px rgba(72, 64, 88, 0.08)',
+          paddingLeft: 'max(14px, env(safe-area-inset-left))',
+          paddingRight: 'max(14px, env(safe-area-inset-right))',
           paddingTop: 'env(safe-area-inset-top)',
         }}>
-          <div className="max-w-[1200px] mx-auto px-3 sm:px-5 md:px-10 flex flex-wrap items-center justify-between gap-y-2.5 gap-x-2 min-h-14 md:min-h-16 py-2.5 md:py-0">
-            {/* Logo — 设计稿：英文副标 + 中文主标（移动端亦显示） */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="min-w-0 flex-1 sm:flex-initial"
-              style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}
-            >
-              <div style={{
-                width: '34px', height: '34px', borderRadius: '11px',
-                background: preset.logoGradient,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '1.06remrem',
-                boxShadow: '0 8px 18px rgba(200, 120, 140, 0.22)',
-              }}>
-                ✨
-              </div>
-              <div className="min-w-0">
-                <p style={{
-                  fontFamily: 'Space Grotesk, sans-serif',
-                  fontSize: '0.56remrem', letterSpacing: '0.18em',
-                  color: '#9B96A8', textTransform: 'uppercase',
-                  marginBottom: '2px',
-                  lineHeight: 1,
-                }}>
-                  WUXING · COLOR
-                </p>
-                <h1 style={{
-                  fontFamily: 'Outfit, Noto Sans SC, sans-serif',
-                  fontSize: '0.94remrem', fontWeight: 800,
-                  color: '#3D3A45', letterSpacing: '-0.02em',
-                  lineHeight: 1.15,
-                  margin: 0,
-                }}>
-                  五行·色彩·运势
-                </h1>
-              </div>
-            </motion.div>
-
-            {/* 导航 — Morandi 胶囊按钮 */}
-            <motion.nav
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="flex flex-wrap items-center justify-end gap-1.5 w-full sm:w-auto shrink-0"
-            >
-              {[
-                { to: '/', label: '首页', icon: '🏠', color: ACCENT },
-                { to: '/ai-chat', label: 'AI 解读', icon: '🤖', color: TINTS.purple },
-                { to: '/admin', label: '管理', icon: '⚙️', color: TINTS.indigo },
-              ].map(({ to, label, icon, color }) => (
-                <Link key={to} to={to}
-                  className="px-2.5 sm:px-3 md:px-5 py-1.5 sm:py-2 text-[11px] sm:text-xs md:text-sm font-semibold rounded-full sm:rounded-xl flex items-center gap-0.5 sm:gap-1 md:gap-2 transition-all whitespace-nowrap"
-                  style={{
-                    color: color,
-                    textDecoration: 'none',
-                    background: 'linear-gradient(180deg, rgba(255,255,255,0.94), rgba(248,246,250,0.88))',
-                    border: `1px solid rgba(130, 122, 142, 0.14)`,
-                    boxShadow: '0 6px 14px rgba(72, 64, 82, 0.06)',
-                  }}
-                  onMouseEnter={e => {
-                    const el = e.currentTarget as HTMLElement;
-                    el.style.background = `${color}14`;
-                    el.style.transform = 'translateY(-1px)';
-                    el.style.boxShadow = '0 12px 24px rgba(76,90,176,0.16)';
-                    el.style.transition = MOTION_TOKENS.uiEase;
-                  }}
-                  onMouseLeave={e => {
-                    const el = e.currentTarget as HTMLElement;
-                    el.style.background = 'rgba(255,255,255,0.72)';
-                    el.style.transform = 'translateY(0)';
-                    el.style.boxShadow = '0 8px 18px rgba(76,90,176,0.12)';
-                  }}
-                >
-                  <span>{icon}</span> <span>{label}</span>
-                </Link>
-              ))}
-            </motion.nav>
+          <div className="max-w-[1200px] mx-auto px-1 sm:px-3 md:px-6 flex items-center justify-center min-h-14 md:min-h-16 py-2">
+            {/* 导航 — 高级矢量图标按钮 */}
+            <NavLinks />
           </div>
         </header>
 
@@ -278,6 +306,7 @@ export default function App() {
             <Route path="/result/:userId" element={<ResultPage />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/ai-chat" element={<AiChatPage />} />
+            <Route path="/feedback" element={<FeedbackPage />} />
           </Routes>
         </main>
 

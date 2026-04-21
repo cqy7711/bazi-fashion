@@ -1734,7 +1734,7 @@ function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favo
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            style={{ marginTop: '20px', borderTop: '1px dashed #E8E8E8', paddingTop: '20px' }}
+            style={{ marginTop: '20px', borderTop: '1px solid #E8E8E8', paddingTop: '20px' }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
               <div>
