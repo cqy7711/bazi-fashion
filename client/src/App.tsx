@@ -9,7 +9,7 @@ import FeedbackPage from './pages/FeedbackPage';
 import { startSession, endSession, trackEvent, EventTypes } from './utils/analytics';
 import { useEffect, useState } from 'react';
 import { COLOR_TOKENS, RADIUS_TOKENS, SHADOW_TOKENS, MOTION_TOKENS, IOS_TOKENS } from './theme/designTokens';
-import { Home, Sparkles, Settings, MessageSquare } from 'lucide-react';
+import { Home, Sparkles, Settings, MessageSquare, PanelBottomClose, PanelBottomOpen } from 'lucide-react';
 
 const VISUAL_PRESET = {
   accent: COLOR_TOKENS.brand.coral,
@@ -36,6 +36,7 @@ export default function App() {
   const preset = VISUAL_PRESET;
   const ACCENT = preset.accent;
   const TINTS = preset.tints;
+  const [tabBarCollapsed, setTabBarCollapsed] = useState(false);
 
   const [showIntro, setShowIntro] = useState(() => {
     try {
@@ -86,6 +87,7 @@ export default function App() {
       { to: '/feedback', label: '反馈', Icon: MessageSquare, gradient: ['#34D399', '#60A5FA'], glowColor: 'rgba(52,211,153,0.35)' },
       { to: '/admin', label: '管理', Icon: Settings, gradient: ['#6366F1', '#818CF8'], glowColor: 'rgba(99,102,241,0.35)' },
     ];
+    const activeItem = navItems.find(({ to }) => location.pathname === to || (to === '/' && location.pathname === '')) ?? navItems[0];
 
     return (
       <motion.nav
@@ -94,86 +96,178 @@ export default function App() {
         transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
         style={{
           display: 'flex',
-          justifyContent: 'space-between',
+          justifyContent: tabBarCollapsed ? 'space-between' : 'space-between',
           alignItems: 'center',
-          gap: '6px',
-          width: '100%',
-          padding: '8px 10px calc(8px + env(safe-area-inset-bottom))',
-          borderRadius: IOS_TOKENS.radius.sheet,
-          background: 'linear-gradient(145deg, rgba(255,255,255,0.86), rgba(246,244,252,0.8))',
-          border: '1px solid rgba(158,150,182,0.18)',
-          boxShadow: '0 12px 30px rgba(84,70,124,0.14), inset 0 1px 0 rgba(255,255,255,0.78)',
-          backdropFilter: IOS_TOKENS.blur.nav,
-          WebkitBackdropFilter: IOS_TOKENS.blur.nav,
+          gap: tabBarCollapsed ? '8px' : '6px',
+          width: tabBarCollapsed ? '168px' : '100%',
+          padding: tabBarCollapsed
+            ? '8px 10px calc(8px + env(safe-area-inset-bottom))'
+            : '8px 10px calc(8px + env(safe-area-inset-bottom))',
+          borderRadius: tabBarCollapsed ? '24px' : IOS_TOKENS.radius.sheet,
+          background: tabBarCollapsed
+            ? 'linear-gradient(145deg, rgba(255,255,255,0.93), rgba(247,244,253,0.9))'
+            : 'linear-gradient(145deg, rgba(255,255,255,0.88), rgba(246,244,252,0.82))',
+          border: '1px solid rgba(158,150,182,0.2)',
+          boxShadow: tabBarCollapsed
+            ? '0 10px 24px rgba(80,68,111,0.2), inset 0 1px 0 rgba(255,255,255,0.88)'
+            : '0 12px 30px rgba(84,70,124,0.16), inset 0 1px 0 rgba(255,255,255,0.8)',
+          backdropFilter: 'blur(20px) saturate(1.08)',
+          WebkitBackdropFilter: 'blur(20px) saturate(1.08)',
+          transition: 'all 0.24s ease',
         }}
       >
-        {navItems.map(({ to, label, Icon, gradient, glowColor }) => {
-          const isActive = location.pathname === to || (to === '/' && location.pathname === '');
-          return (
-            <Link key={to} to={to}
+        {tabBarCollapsed ? (
+          <>
+            <Link
+              to={activeItem.to}
               style={{
+                flex: 1,
                 display: 'flex',
-                flexDirection: 'column',
                 alignItems: 'center',
-                justifyContent: 'center',
-                gap: '3px',
-                minHeight: '44px',
-                minWidth: '62px',
-                padding: '5px 7px',
-                borderRadius: IOS_TOKENS.radius.control,
+                gap: '8px',
+                minHeight: '38px',
+                padding: '6px 10px',
+                borderRadius: '14px',
                 textDecoration: 'none',
-                background: isActive
-                  ? `linear-gradient(145deg, ${gradient[0]}24, ${gradient[1]}22)`
-                  : 'transparent',
-                border: isActive ? `1px solid ${gradient[0]}45` : '1px solid transparent',
-                boxShadow: isActive
-                  ? `0 6px 16px ${glowColor.replace('0.35', '0.22')}`
-                  : 'none',
-                transition: 'all 0.25s cubic-bezier(0.25,0.46,0.45,0.94)',
-                cursor: 'pointer',
-              }}
-              onMouseEnter={e => {
-                const el = e.currentTarget as HTMLElement;
-                if (!isActive) {
-                  el.style.background = `linear-gradient(145deg, ${gradient[0]}14, ${gradient[1]}12)`;
-                  el.style.borderColor = `${gradient[0]}22`;
-                  el.style.transform = 'translateY(-1px)';
-                  el.style.boxShadow = `0 6px 16px ${glowColor.replace('0.35', '0.15')}`;
-                }
-              }}
-              onMouseLeave={e => {
-                const el = e.currentTarget as HTMLElement;
-                if (!isActive) {
-                  el.style.background = 'transparent';
-                  el.style.borderColor = 'transparent';
-                  el.style.transform = 'translateY(0)';
-                  el.style.boxShadow = 'none';
-                }
+                background: `linear-gradient(145deg, ${activeItem.gradient[0]}20, ${activeItem.gradient[1]}1A)`,
+                border: `1px solid ${activeItem.gradient[0]}38`,
+                boxShadow: `0 6px 14px ${activeItem.glowColor.replace('0.35', '0.2')}`,
               }}
             >
-              {/* 图标容器 */}
               <div style={{
-                width: '24px', height: '24px', borderRadius: '8px',
-                background: isActive
-                  ? `linear-gradient(145deg, ${gradient[0]}, ${gradient[1]})`
-                  : `linear-gradient(145deg, ${gradient[0]}D9, ${gradient[1]}D9)`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: isActive ? `0 4px 12px ${glowColor.replace('0.35', '0.24')}` : `0 3px 8px ${glowColor.replace('0.35', '0.18')}`,
+                width: '20px',
+                height: '20px',
+                borderRadius: '7px',
+                background: `linear-gradient(145deg, ${activeItem.gradient[0]}, ${activeItem.gradient[1]})`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
               }}>
-                <Icon size={14} strokeWidth={2.2} color={isActive ? '#fff' : '#fff'} />
+                <activeItem.Icon size={12} strokeWidth={2.2} color="#fff" />
               </div>
               <span style={{
                 fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif',
-                fontSize: IOS_TOKENS.typography.navLabel, fontWeight: isActive ? 700 : 600,
-                color: isActive ? '#3F3656' : '#4D4860',
-                letterSpacing: '-0.01em',
+                fontSize: '0.64rem',
+                fontWeight: 700,
+                color: '#3F3656',
                 whiteSpace: 'nowrap',
               }}>
-                {label}
+                {activeItem.label}
               </span>
             </Link>
-          );
-        })}
+            <button
+              type="button"
+              onClick={() => setTabBarCollapsed(false)}
+              aria-label="展开导航栏"
+              style={{
+                width: '30px',
+                height: '30px',
+                borderRadius: '999px',
+                border: '1px solid rgba(139,128,171,0.24)',
+                background: 'linear-gradient(145deg, rgba(255,255,255,0.96), rgba(245,242,251,0.92))',
+                color: '#6F678A',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 4px 10px rgba(76,66,106,0.15)',
+                cursor: 'pointer',
+              }}
+            >
+              <PanelBottomOpen size={14} />
+            </button>
+          </>
+        ) : (
+          <>
+            {navItems.map(({ to, label, Icon, gradient, glowColor }) => {
+              const isActive = location.pathname === to || (to === '/' && location.pathname === '');
+              return (
+                <Link key={to} to={to}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '3px',
+                    minHeight: '44px',
+                    minWidth: '62px',
+                    padding: '6px 8px',
+                    borderRadius: IOS_TOKENS.radius.control,
+                    textDecoration: 'none',
+                    background: isActive
+                      ? `linear-gradient(145deg, ${gradient[0]}20, ${gradient[1]}1A)`
+                      : 'transparent',
+                    border: isActive ? `1px solid ${gradient[0]}40` : '1px solid transparent',
+                    boxShadow: isActive
+                      ? `0 6px 14px ${glowColor.replace('0.35', '0.2')}`
+                      : 'none',
+                    transition: 'all 0.22s cubic-bezier(0.25,0.46,0.45,0.94)',
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={e => {
+                    const el = e.currentTarget as HTMLElement;
+                    if (!isActive) {
+                      el.style.background = `linear-gradient(145deg, ${gradient[0]}14, ${gradient[1]}12)`;
+                      el.style.borderColor = `${gradient[0]}22`;
+                      el.style.transform = 'translateY(-1px)';
+                      el.style.boxShadow = `0 6px 16px ${glowColor.replace('0.35', '0.15')}`;
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    const el = e.currentTarget as HTMLElement;
+                    if (!isActive) {
+                      el.style.background = 'transparent';
+                      el.style.borderColor = 'transparent';
+                      el.style.transform = 'translateY(0)';
+                      el.style.boxShadow = 'none';
+                    }
+                  }}
+                >
+                  <div style={{
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '8px',
+                    background: isActive
+                      ? `linear-gradient(145deg, ${gradient[0]}, ${gradient[1]})`
+                      : `linear-gradient(145deg, ${gradient[0]}C7, ${gradient[1]}C7)`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: isActive ? `0 4px 12px ${glowColor.replace('0.35', '0.24')}` : `0 3px 8px ${glowColor.replace('0.35', '0.18')}`,
+                  }}>
+                    <Icon size={14} strokeWidth={2.2} color="#fff" />
+                  </div>
+                  <span style={{
+                    fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif',
+                    fontSize: '0.64rem', fontWeight: isActive ? 700 : 600,
+                    color: isActive ? '#3F3656' : '#4D4860',
+                    letterSpacing: '-0.01em',
+                    whiteSpace: 'nowrap',
+                  }}>
+                    {label}
+                  </span>
+                </Link>
+              );
+            })}
+            <button
+              type="button"
+              onClick={() => setTabBarCollapsed(true)}
+              aria-label="收起导航栏"
+              style={{
+                width: '30px',
+                height: '30px',
+                borderRadius: '999px',
+                border: '1px solid rgba(139,128,171,0.22)',
+                background: 'linear-gradient(145deg, rgba(255,255,255,0.9), rgba(244,241,251,0.86))',
+                color: '#6F678A',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 4px 10px rgba(76,66,106,0.12)',
+                cursor: 'pointer',
+              }}
+            >
+              <PanelBottomClose size={14} />
+            </button>
+          </>
+        )}
       </motion.nav>
     );
   };
@@ -292,7 +386,7 @@ export default function App() {
 
         {/* 主内容 */}
         <main
-          className="max-w-[1200px] w-[calc(100%-0.75rem)] sm:w-[calc(100%-1rem)] md:w-auto mx-auto px-3 sm:px-4 md:px-10 py-4 sm:py-6 md:py-10 pb-[max(6.5rem,env(safe-area-inset-bottom))] md:pb-24 relative z-10"
+          className="max-w-[1200px] w-[calc(100%-0.75rem)] sm:w-[calc(100%-1rem)] md:w-auto mx-auto px-3 sm:px-4 md:px-10 py-4 sm:py-6 md:py-10 md:pb-24 relative z-10"
           style={{
             background: 'linear-gradient(165deg, rgba(255,255,255,0.82) 0%, rgba(252,249,251,0.72) 45%, rgba(248,246,252,0.78) 100%)',
             backgroundBlendMode: 'normal',
@@ -303,6 +397,7 @@ export default function App() {
             WebkitBackdropFilter: 'blur(14px)',
             marginTop: '12px',
             marginBottom: '20px',
+            paddingBottom: tabBarCollapsed ? 'max(5rem, env(safe-area-inset-bottom))' : 'max(6.5rem, env(safe-area-inset-bottom))',
           }}
         >
           <Routes>
@@ -327,9 +422,10 @@ export default function App() {
           right: 'max(10px, env(safe-area-inset-right))',
           bottom: 0,
           zIndex: 120,
-          paddingBottom: 'max(8px, env(safe-area-inset-bottom))',
+          paddingBottom: tabBarCollapsed ? 'max(6px, env(safe-area-inset-bottom))' : 'max(8px, env(safe-area-inset-bottom))',
+          transition: 'all 0.24s ease',
         }}>
-          <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+          <div style={{ maxWidth: '900px', margin: '0 auto', display: 'flex', justifyContent: 'center' }}>
             <NavLinks />
           </div>
         </div>
@@ -353,18 +449,18 @@ export default function App() {
                 width: '28px', height: '28px', borderRadius: '8px',
                 background: `linear-gradient(135deg, ${TINTS.coral}, ${TINTS.orange})`,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '0.88remrem', boxShadow: SHADOW_TOKENS.glowSoft,
+                fontSize: '0.88rem', boxShadow: SHADOW_TOKENS.glowSoft,
               }}>☯</div>
               <span style={{
                 fontFamily: 'Outfit, sans-serif',
-                fontSize: '0.81remrem', color: '#6D628A', fontWeight: 600,
+                fontSize: '0.81rem', color: '#6D628A', fontWeight: 600,
               }}>
 用色彩读懂你的五行命理
               </span>
             </div>
             <p style={{
               fontFamily: 'Outfit, sans-serif',
-              fontSize: '0.69remrem', color: '#9FA3BE',
+              fontSize: '0.69rem', color: '#9FA3BE',
             }}>
               内容仅供娱乐参考 · 八字测算结果仅供参考
             </p>

@@ -548,6 +548,7 @@ export default function AiChatPage() {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [userList, setUserList] = useState<UserListItem[]>([]);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
+  const shellRef = useRef<HTMLDivElement>(null);
   const [currentStyle, setCurrentStyle] = useState<ChatStyle>('plain');
   const [styleUsageCount, setStyleUsageCount] = useState<Record<ChatStyle, number>>({
     plain: 0,
@@ -576,6 +577,14 @@ export default function AiChatPage() {
         }
       })
       .catch(console.error);
+  }, []);
+
+  // 从底部 Tab 进入 AI 页面时，自动将页面主体居中到可视区域。
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      shellRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 20);
+    return () => window.clearTimeout(timer);
   }, []);
 
   // 切换用户
@@ -829,7 +838,7 @@ export default function AiChatPage() {
   }
 
   return (
-    <div className={shellClass} style={{ boxShadow: SHADOW_TOKENS.glassCard }}>
+    <div ref={shellRef} className={shellClass} style={{ boxShadow: SHADOW_TOKENS.glassCard }}>
       <style>{`
         @keyframes aiScan {
           0% { transform: translateX(-45%); opacity: 0.0; }
@@ -870,7 +879,7 @@ export default function AiChatPage() {
         initial={{ opacity: 0, y: -6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.25 }}
-        className="mb-4 flex items-center justify-between gap-2 px-3 py-2.5 rounded-2xl border border-indigo-200/50 bg-white/65 backdrop-blur-md shadow-[0_10px_22px_rgba(76,90,176,0.10)] relative"
+        className="mb-4 flex items-center justify-between gap-2 px-3 py-2.5 rounded-2xl border border-indigo-200/50 bg-white/65 backdrop-blur-md shadow-[0_10px_22px_rgba(76,90,176,0.10)] relative z-[120]"
       >
         <div className="flex items-center gap-2 min-w-0">
           <button
@@ -885,9 +894,9 @@ export default function AiChatPage() {
           </div>
           <div className="min-w-0">
             <p className="text-sm font-semibold text-foreground truncate">AI 解读</p>
-            <p className="text-[10px] text-muted-foreground/70 truncate">
-              {loading ? '正在生成解读…' : '输入 / 查看快捷指令'}
-            </p>
+            {loading && (
+              <p className="text-[10px] text-muted-foreground/70 truncate">正在生成解读…</p>
+            )}
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
@@ -921,7 +930,7 @@ export default function AiChatPage() {
                 <motion.div
                   initial={{ opacity: 0, y: -6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="absolute right-0 top-full mt-2 w-[260px] bg-white rounded-2xl border border-indigo-100 shadow-[0_18px_30px_rgba(76,90,176,0.16)] z-50 overflow-hidden"
+                  className="absolute right-0 top-full mt-2 w-[260px] bg-white rounded-2xl border border-indigo-100 shadow-[0_18px_30px_rgba(76,90,176,0.16)] z-[220] overflow-hidden"
                 >
                   <div className="px-3 py-2 text-[10px] text-indigo-600 font-semibold border-b border-indigo-100 bg-gradient-to-r from-indigo-50 to-violet-50">
                     已录入用户 ({userList.length})

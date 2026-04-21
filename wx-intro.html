@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>五行色彩·运势 - 微信介绍图</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #0a0a1a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Noto Sans SC', sans-serif;
+  overflow: hidden;
+}
+.container {
+  width: 500px;
+  height: 900px;
+  background: linear-gradient(160deg, #0d0d2b 0%, #1a0533 40%, #0d1a3d 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 五行圆环背景 */
+.wuxing-ring {
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  top: 160px;
+  left: -10px;
+}
+
+/* 顶部装饰线 */
+.top-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #C084FC, #F472B6, #FB923C, #FBBF24, #34D399, #60A5FA, transparent);
+}
+
+/* 五行色彩光斑 */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.35;
+}
+.orb1 { width: 180px; height: 180px; background: #9333EA; top: 80px; left: 60px; }
+.orb2 { width: 140px; height: 140px; background: #F472B6; top: 200px; right: -20px; }
+.orb3 { width: 120px; height: 120px; background: #60A5FA; bottom: 280px; left: -30px; }
+.orb4 { width: 100px; height: 100px; background: #34D399; bottom: 180px; right: 40px; }
+.orb5 { width: 90px; height: 90px; background: #FBBF24; bottom: 100px; left: 80px; }
+
+/* Logo区域 */
+.logo-area {
+  position: absolute;
+  top: 56px;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+.logo-text {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 8px;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+}
+
+/* 主标题 */
+.main-title {
+  position: absolute;
+  top: 195px;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+.main-title .chinese {
+  font-size: 56px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #F472B6, #C084FC, #818CF8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 6px;
+  line-height: 1.1;
+}
+.main-title .sub {
+  font-size: 18px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 14px;
+  margin-top: 8px;
+}
+
+/* 五行图标行 */
+.elements-row {
+  position: absolute;
+  top: 370px;
+  left: 40px;
+  right: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.element-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.element-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+.element-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 1px;
+}
+
+/* 分隔线 */
+.divider {
+  position: absolute;
+  top: 470px;
+  left: 50px;
+  right: 50px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+}
+
+/* 功能描述区 */
+.features {
+  position: absolute;
+  top: 505px;
+  left: 50px;
+  right: 50px;
+}
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.feature-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.feature-text {
+  font-size: 14px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.5;
+}
+.feature-text span {
+  font-weight: 700;
+  color: #fff;
+}
+
+/* 底部标签 */
+.bottom-tags {
+  position: absolute;
+  bottom: 70px;
+  left: 50px;
+  right: 50px;
+}
+.tag-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.tag {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.6);
+}
+
+/* 底部二维码提示 */
+.qr-hint {
+  position: absolute;
+  bottom: 32px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 11px;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 2px;
+}
+
+/* 五行环 - SVG */
+.wuxing-svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 420px;
+  height: 420px;
+  opacity: 0.12;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="top-line"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="orb orb4"></div>
+  <div class="orb orb5"></div>
+
+  <!-- 五行环 -->
+  <svg class="wuxing-svg" viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
+    <!-- 外环 -->
+    <circle cx="210" cy="210" r="195" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="1" stroke-dasharray="4 8"/>
+    <!-- 内环 -->
+    <circle cx="210" cy="210" r="145" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1" stroke-dasharray="2 6"/>
+    <!-- 五行连线 -->
+    <polygon points="210,30 382,276 38,276" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+    <polygon points="382,276 38,276 210,390" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+    <!-- 中心点 -->
+    <circle cx="210" cy="210" r="3" fill="rgba(255,255,255,0.5)"/>
+    <!-- 刻度 -->
+    <line x1="210" y1="15" x2="210" y2="30" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+    <line x1="405" y1="210" x2="390" y2="210" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+    <line x1="210" y1="405" x2="210" y2="390" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+    <line x1="15" y1="210" x2="30" y2="210" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+  </svg>
+
+  <div class="logo-area">
+    <div class="logo-text">WUXING · COLOR · FORTUNE</div>
+  </div>
+
+  <div class="main-title">
+    <div class="chinese">五行 · 色彩</div>
+    <div class="sub">· 命 运 ·</div>
+  </div>
+
+  <div class="elements-row">
+    <div class="element-item">
+      <div class="element-icon" style="background:linear-gradient(135deg,#FBBF24,#F59E0B);box-shadow:0 4px 14px rgba(251,191,36,0.4);">木</div>
+      <div class="element-name">木</div>
+    </div>
+    <div class="element-item">
+      <div class="element-icon" style="background:linear-gradient(135deg,#EF4444,#DC2626);box-shadow:0 4px 14px rgba(239,68,68,0.4);">火</div>
+      <div class="element-name">火</div>
+    </div>
+    <div class="element-item">
+      <div class="element-icon" style="background:linear-gradient(135deg,#FB923C,#EA580C);box-shadow:0 4px 14px rgba(251,146,60,0.4);">土</div>
+      <div class="element-name">土</div>
+    </div>
+    <div class="element-item">
+      <div class="element-icon" style="background:linear-gradient(135deg,#60A5FA,#3B82F6);box-shadow:0 4px 14px rgba(96,165,250,0.4);">金</div>
+      <div class="element-name">金</div>
+    </div>
+    <div class="element-item">
+      <div class="element-icon" style="background:linear-gradient(135deg,#34D399,#10B981);box-shadow:0 4px 14px rgba(52,211,153,0.4);">水</div>
+      <div class="element-name">水</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="features">
+    <div class="feature-item">
+      <div class="feature-icon" style="background:rgba(192,132,252,0.15);border:1px solid rgba(192,132,252,0.3);">🌟</div>
+      <div class="feature-text"><span>AI 智能解读</span><br>输入生辰，自动分析命盘五行</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon" style="background:rgba(244,114,182,0.15);border:1px solid rgba(244,114,182,0.3);">🎨</div>
+      <div class="feature-text"><span>专属色彩搭配</span><br>根据五行属性定制穿搭配色</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon" style="background:rgba(96,165,250,0.15);border:1px solid rgba(96,165,250,0.3);">📿</div>
+      <div class="feature-text"><span>五行手串推荐</span><br>旺运材质与款式智能推荐</div>
+    </div>
+    <div class="feature-item">
+      <div class="feature-icon" style="background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.3);">✨</div>
+      <div class="feature-text"><span>今日运势提示</span><br>每日运势、方位、颜色全面指引</div>
+    </div>
+  </div>
+
+  <div class="bottom-tags">
+    <div class="tag-row">
+      <div class="tag">免费使用</div>
+      <div class="tag">AI 解读</div>
+      <div class="tag">个性化配色</div>
+      <div class="tag">每日运势</div>
+    </div>
+  </div>
+
+  <div class="qr-hint">长按识别二维码</div>
+</div>
+</body>
+</html>

@@ -2585,11 +2585,46 @@ export default function ResultPage() {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
   const sectionTabs = [
-    { id: 'sec-bazi', label: '八字' },
-    { id: 'sec-mingge', label: '命格' },
-    { id: 'sec-fortune', label: '运势' },
-    { id: 'sec-elements', label: '五行' },
-    { id: 'sec-dayun', label: '大运' },
+    {
+      id: 'sec-bazi',
+      label: '八字',
+      icon: <Home style={{ width: '14px', height: '14px', strokeWidth: 2.1 }} />,
+      bodyGrad: 'linear-gradient(118deg, #B8AFE8 0%, #A399DD 38%, #8F86CE 72%, #7D74BA 100%)',
+      dropShadow: '0 6px 18px rgba(110, 95, 190, 0.2)',
+      pulseGlow: ['rgba(130,115,200,0)', 'rgba(130,115,200,0.24)', 'rgba(130,115,200,0)'],
+    },
+    {
+      id: 'sec-mingge',
+      label: '命格',
+      icon: <PieChart style={{ width: '14px', height: '14px', strokeWidth: 2.1 }} />,
+      bodyGrad: 'linear-gradient(118deg, #E9A8C8 0%, #DD98BC 38%, #D08AAC 72%, #C27A9E 100%)',
+      dropShadow: '0 6px 18px rgba(200, 110, 150, 0.2)',
+      pulseGlow: ['rgba(210,130,160,0)', 'rgba(210,130,160,0.24)', 'rgba(210,130,160,0)'],
+    },
+    {
+      id: 'sec-fortune',
+      label: '运势',
+      icon: <TrendingUp style={{ width: '14px', height: '14px', strokeWidth: 2.1 }} />,
+      bodyGrad: 'linear-gradient(118deg, #E8C49A 0%, #E0AE8E 38%, #D99A9A 72%, #CF8FA8 100%)',
+      dropShadow: '0 6px 18px rgba(200, 130, 120, 0.18)',
+      pulseGlow: ['rgba(210,140,130,0)', 'rgba(210,140,130,0.22)', 'rgba(210,140,130,0)'],
+    },
+    {
+      id: 'sec-elements',
+      label: '五行',
+      icon: <Sparkles style={{ width: '14px', height: '14px', strokeWidth: 2.1 }} />,
+      bodyGrad: 'linear-gradient(118deg, #9BBCEE 0%, #89AEE6 38%, #789EDB 72%, #6A8DCC 100%)',
+      dropShadow: '0 6px 18px rgba(90, 120, 200, 0.2)',
+      pulseGlow: ['rgba(100,130,210,0)', 'rgba(100,130,210,0.24)', 'rgba(100,130,210,0)'],
+    },
+    {
+      id: 'sec-dayun',
+      label: '大运',
+      icon: <Coins style={{ width: '14px', height: '14px', strokeWidth: 2.1 }} />,
+      bodyGrad: 'linear-gradient(118deg, #A9D8B0 0%, #98CFA7 38%, #85C29A 72%, #75B78F 100%)',
+      dropShadow: '0 6px 18px rgba(90, 150, 120, 0.2)',
+      pulseGlow: ['rgba(110,180,140,0)', 'rgba(110,180,140,0.24)', 'rgba(110,180,140,0)'],
+    },
   ] as const;
 
   return (
@@ -2629,26 +2664,26 @@ export default function ResultPage() {
         </Link>
         <div style={{ flex: 1 }} />
         {ios ? (
-          <div style={{ position: 'relative' }}>
+          <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 4 }}>
             <motion.button
               onClick={() => setShowUserDropdown(!showUserDropdown)}
-              whileTap={{ scale: 0.96 }}
+              whileTap={{ scale: 0.95 }}
               style={{
-                width: '44px',
-                height: '44px',
-                borderRadius: '14px',
-                border: `1px solid ${css.accent}28`,
-                background: `linear-gradient(135deg, ${css.accent}14, ${PALETTE.orange}10, #FFFFFF)`,
-                color: css.textSecondary,
+                width: '62px',
+                height: '62px',
+                borderRadius: '22px',
+                border: '1.5px solid rgba(246, 190, 221, 0.72)',
+                background: 'linear-gradient(145deg, rgba(255,255,255,0.94), rgba(249,246,252,0.9))',
+                color: '#6E7484',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: `0 8px 18px ${css.accent}1F`,
+                boxShadow: '0 10px 20px rgba(122,116,150,0.12), inset 0 1px 0 rgba(255,255,255,0.92)',
                 cursor: 'pointer',
               }}
               aria-label="切换用户"
             >
-              <Users style={{ width: '18px', height: '18px' }} />
+              <Users style={{ width: '24px', height: '24px' }} />
             </motion.button>
             {showUserDropdown && userList.length > 1 && (
               <div style={{
@@ -2830,43 +2865,134 @@ export default function ResultPage() {
         )}
       </motion.div>
 
-      {/* ── iOS section tabs ── */}
+      {/* ── 快捷导航卡片（合并五个 tab） ── */}
       <motion.div {...fadeUp(0.01)} style={{ marginTop: ios ? '-2px' : 0 }}>
-        <div
-          style={{
+        <div style={{
+          width: '100%',
+          padding: ios ? '10px' : '12px',
+          borderRadius: '20px',
+          background: 'linear-gradient(165deg, rgba(255,255,255,0.92) 0%, rgba(248,246,255,0.88) 50%, rgba(255,252,254,0.9) 100%)',
+          border: '1px solid rgba(180, 172, 198, 0.18)',
+          boxShadow: '0 4px 18px rgba(100, 90, 130, 0.06)',
+          backdropFilter: 'blur(14px)',
+          WebkitBackdropFilter: 'blur(14px)',
+          boxSizing: 'border-box',
+          overflow: 'hidden',
+        }}>
+          <div style={{
             display: 'flex',
-            gap: '8px',
-            overflowX: 'auto',
-            padding: '2px 2px 4px',
-            scrollbarWidth: 'none',
-          }}
-        >
-          {sectionTabs.map((tab) => {
-            const active = activeSection === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => jumpToSection(tab.id)}
-                style={{
-                  borderRadius: 9999,
-                  border: active ? `1px solid ${css.accent}50` : '1px solid rgba(182,174,204,0.26)',
-                  background: active
-                    ? `linear-gradient(135deg, ${css.accent}1A, ${PALETTE.orange}12)`
-                    : 'rgba(255,255,255,0.72)',
-                  color: active ? css.accent : '#696580',
-                  fontFamily: 'Outfit, sans-serif',
-                  fontSize: '0.72rem',
-                  fontWeight: active ? 700 : 600,
-                  padding: ios ? '7px 12px' : '8px 14px',
-                  whiteSpace: 'nowrap',
-                  cursor: 'pointer',
-                  boxShadow: active ? `0 6px 14px ${css.accent}22` : 'none',
-                }}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
+            alignItems: 'center',
+            marginBottom: '8px',
+            paddingLeft: '2px',
+          }}>
+            <span style={{
+              fontFamily: 'Outfit, sans-serif',
+              fontSize: '0.94rem',
+              fontWeight: 800,
+              color: '#6B6578',
+              letterSpacing: '0.04em',
+            }}>快捷导航</span>
+          </div>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: ios ? 'repeat(2, minmax(0, 1fr))' : 'repeat(5, minmax(0, 1fr))',
+            gap: ios ? '6px' : '8px',
+            alignItems: 'stretch',
+          }}>
+            {sectionTabs.map((tab) => {
+              const active = activeSection === tab.id;
+              const glossTop = 'linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.06) 28%, transparent 50%)';
+              const glassIcon = 'linear-gradient(145deg, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.08) 100%)';
+              return (
+                <motion.button
+                  key={tab.id}
+                  whileHover={{ y: -2, boxShadow: `${tab.dropShadow}, 0 10px 24px rgba(80, 70, 120, 0.08)` }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => jumpToSection(tab.id)}
+                  style={{
+                    width: '100%',
+                    minWidth: 0,
+                    border: 'none',
+                    backgroundImage: `${glossTop}, ${tab.bodyGrad}`,
+                    borderRadius: '16px',
+                    padding: ios ? '9px 10px' : '10px 12px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                    gap: '10px',
+                    fontSize: ios ? '0.88rem' : '0.9rem',
+                    fontWeight: active ? 800 : 700,
+                    color: '#FFFFFF',
+                    textShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                    boxShadow: active
+                      ? `${tab.dropShadow}, inset 0 1px 0 rgba(255,255,255,0.24), 0 0 0 1px rgba(255,255,255,0.14)`
+                      : `${tab.dropShadow}, inset 0 1px 0 rgba(255,255,255,0.22)`,
+                    transition: 'all 0.22s ease',
+                    lineHeight: 1.25,
+                    textAlign: 'left',
+                    boxSizing: 'border-box',
+                    touchAction: 'manipulation',
+                    WebkitTapHighlightColor: 'transparent',
+                    opacity: active ? 1 : 0.95,
+                  }}
+                >
+                  <span style={{
+                    width: ios ? 32 : 34,
+                    height: ios ? 32 : 34,
+                    borderRadius: '12px',
+                    background: glassIcon,
+                    backdropFilter: 'blur(10px)',
+                    WebkitBackdropFilter: 'blur(10px)',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                    boxSizing: 'border-box',
+                  }}>
+                    <span style={{ color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', filter: 'drop-shadow(0 1px 1px rgba(0,0,0,0.15))' }}>
+                      {tab.icon}
+                    </span>
+                  </span>
+                  <span style={{ display: 'block', flex: 1, minWidth: 0 }}>{tab.label}</span>
+                  <motion.span
+                    style={{
+                      width: '24px',
+                      height: '24px',
+                      borderRadius: '10px',
+                      background: 'linear-gradient(145deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.1) 100%)',
+                      backdropFilter: 'blur(8px)',
+                      WebkitBackdropFilter: 'blur(8px)',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.45)',
+                    }}
+                    animate={{
+                      scale: [1, 1.07, 1],
+                      boxShadow: [
+                        `0 0 0 0 ${tab.pulseGlow[0]}`,
+                        `0 4px 14px ${tab.pulseGlow[1]}`,
+                        `0 0 0 0 ${tab.pulseGlow[2]}`,
+                      ],
+                    }}
+                    transition={{ duration: 1.45, repeat: Infinity, ease: 'easeInOut' }}
+                  >
+                    <motion.span
+                      animate={{ x: [0, 3, 0] }}
+                      transition={{ duration: 1.05, repeat: Infinity, ease: 'easeInOut' }}
+                      style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+                    >
+                      <ArrowLeft style={{ width: '11px', height: '11px', color: '#FFFFFF', opacity: 0.95, transform: 'rotate(180deg)' }} />
+                    </motion.span>
+                  </motion.span>
+                </motion.button>
+              );
+            })}
+          </div>
         </div>
       </motion.div>
 
