@@ -1676,24 +1676,24 @@ export default function HomePage() {
                       background: selectedId === r.id ? PALETTE.coral : `${PALETTE.coral}15`,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
-                      <span style={{ fontFamily: 'Outfit', fontSize: '0.98rem', fontWeight: 800, color: selectedId === r.id ? '#fff' : PALETTE.coral }}>
+                      <span style={{ fontFamily: 'Outfit', fontSize: '1.06rem', fontWeight: 800, color: selectedId === r.id ? '#fff' : PALETTE.coral }}>
                         {r.name.charAt(0)}
                       </span>
                     </div>
                     <p style={{
-                      fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.78rem' : '0.86rem', fontWeight: 800,
+                      fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.84rem' : '0.92rem', fontWeight: 800,
                       color: selectedId === r.id ? PALETTE.coral : '#1A1A2E',
                       marginBottom: '3px',
                       whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                     }}>{r.name}</p>
-                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.66rem' : '0.72rem', color: '#8B92A8', lineHeight: 1.4 }}>
+                    <p style={{ fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.7rem' : '0.78rem', color: '#8B92A8', lineHeight: 1.4 }}>
                       {r.birthYear}.{String(r.birthMonth).padStart(2,'0')}.{String(r.birthDay).padStart(2,'0')}
                     </p>
                     {selectedId === r.id && (
                       <div style={{
                         marginTop: '5px', paddingTop: '4px',
                         borderTop: `1px solid ${PALETTE.coralLight}`,
-                        fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.64rem' : '0.7rem', color: PALETTE.coral, fontWeight: 600,
+                        fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.68rem' : '0.74rem', color: PALETTE.coral, fontWeight: 600,
                       }}>已选中 ✓</div>
                     )}
                   </motion.div>
