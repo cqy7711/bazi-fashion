@@ -1762,7 +1762,7 @@ export default function HomePage() {
               },
               {
                 id: 'outfit-section',
-                label: '今日色彩搭配',
+                label: '今日色彩',
                 icon: (s: number) => <Palette style={{ width: s, height: s, strokeWidth: 2.1 }} />,
                 bodyGrad: 'linear-gradient(118deg, #E8C49A 0%, #E0AE8E 38%, #D99A9A 72%, #CF8FA8 100%)',
                 dropShadow: '0 6px 18px rgba(200, 130, 120, 0.2), 0 1px 4px rgba(140, 90, 90, 0.09)',
@@ -1770,7 +1770,7 @@ export default function HomePage() {
               },
               {
                 id: 'bracelet-section',
-                label: '今日手串推荐',
+                label: '今日手串',
                 icon: (s: number) => <Gem style={{ width: s, height: s, strokeWidth: 2.1 }} />,
                 bodyGrad: 'linear-gradient(118deg, #9BBCEE 0%, #89AEE6 38%, #789EDB 72%, #6A8DCC 100%)',
                 dropShadow: '0 6px 18px rgba(90, 120, 200, 0.22), 0 1px 4px rgba(60, 80, 140, 0.1)',
@@ -1936,6 +1936,18 @@ export default function HomePage() {
                 </div>
               </div>
 
+              {/* 统一内背景：将下方模块整合到同一面板 */}
+              <div style={{
+                zIndex: 1,
+                position: 'relative',
+                padding: navWideLayout ? '14px' : '12px',
+                borderRadius: '18px',
+                background: 'linear-gradient(152deg, rgba(255,255,255,0.86) 0%, rgba(252,251,254,0.74) 60%, rgba(245,248,255,0.78) 100%)',
+                border: '1px solid rgba(180, 172, 198, 0.12)',
+                boxShadow: '0 2px 10px rgba(72, 64, 88, 0.04)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(10px)',
+              }}>
               {/* 用户档案卡片：玻璃拟态 + 网格布局 */}
               {(() => {
                 const genderText = selectedRecord.gender === 'male' ? '男' : '女';
@@ -1950,12 +1962,12 @@ export default function HomePage() {
                 return (
                   <div style={{
                     marginBottom: '14px',
-                    padding: '12px 14px',
-                    borderRadius: '16px',
-                    background: 'linear-gradient(152deg, rgba(255,255,255,0.92) 0%, rgba(252,251,254,0.88) 100%)',
-                    border: '1px solid rgba(180, 172, 198, 0.14)',
-                    boxShadow: '0 2px 10px rgba(72, 64, 88, 0.05)',
-                    backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
+                    padding: 0,
+                    borderRadius: 0,
+                    background: 'transparent',
+                    border: 'none',
+                    boxShadow: 'none',
+                    backdropFilter: 'none', WebkitBackdropFilter: 'none',
                     zIndex: 1,
                     position: 'relative',
                   }}>
@@ -2069,11 +2081,12 @@ export default function HomePage() {
                 };
                 return (
                   <div style={{
-                    padding: '14px', borderRadius: '16px',
-                    background: `linear-gradient(150deg, rgba(255,255,255,0.9) 0%, ${elementColors[dmEl]}0D 55%, rgba(248,250,255,0.92) 100%)`,
-                    border: '1px solid rgba(180, 172, 198, 0.14)',
+                    padding: 0,
+                    borderRadius: 0,
+                    background: 'transparent',
+                    border: 'none',
                     marginBottom: '14px',
-                    boxShadow: '0 2px 10px rgba(72, 64, 88, 0.05)',
+                    boxShadow: 'none',
                     overflow: 'hidden',
                     minWidth: 0,
                     position: 'relative',
@@ -2142,8 +2155,7 @@ export default function HomePage() {
               {(() => {
                 const elementNames: Record<string, string> = { wood: '木', fire: '火', earth: '土', metal: '金', water: '水' };
                 const favEls = previewInfo.favorableElements || [];
-                const unfavEls = previewInfo.unfavorableElements || [];
-                if (favEls.length === 0 && unfavEls.length === 0) return null;
+                if (favEls.length === 0) return null;
                 return (
                   <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', position: 'relative', zIndex: 1 }}>
                     {favEls.length > 0 && (
@@ -2157,20 +2169,6 @@ export default function HomePage() {
                         <span style={{ fontFamily: 'Outfit', fontSize: '0.69rem', fontWeight: 800, color: '#2E7D32' }}>喜</span>
                         <span style={{ fontFamily: 'Outfit', fontSize: '0.69rem', fontWeight: 600, color: '#388E3C' }}>
                           {favEls.map((e: string) => elementNames[e] || e).join(' · ')}
-                        </span>
-                      </div>
-                    )}
-                    {unfavEls.length > 0 && (
-                      <div style={{
-                        padding: '5px 11px', borderRadius: '999px',
-                        background: 'rgba(255,105,144,0.12)', border: '1px solid rgba(230,160,170,0.28)',
-                        display: 'inline-flex', alignItems: 'center', gap: '5px',
-                        boxShadow: '0 2px 8px rgba(120,70,80,0.08)',
-                      }}>
-                        <X size={11} strokeWidth={3} color="#C62828" />
-                        <span style={{ fontFamily: 'Outfit', fontSize: '0.69rem', fontWeight: 800, color: '#C62828' }}>忌</span>
-                        <span style={{ fontFamily: 'Outfit', fontSize: '0.69rem', fontWeight: 600, color: '#D32F2F' }}>
-                          {unfavEls.map((e: string) => elementNames[e] || e).join(' · ')}
                         </span>
                       </div>
                     )}
@@ -2200,10 +2198,10 @@ export default function HomePage() {
                 };
                 return (
                   <div style={{
-                    padding: '12px', borderRadius: '14px',
-                    background: `linear-gradient(150deg, rgba(255,255,255,0.9) 0%, ${strongestColor}0D 52%, rgba(244,246,252,0.92) 100%)`,
-                    marginBottom: '12px', border: '1px solid rgba(180, 172, 198, 0.14)',
-                    boxShadow: '0 2px 10px rgba(72, 64, 88, 0.05)',
+                    padding: 0, borderRadius: 0,
+                    background: 'transparent',
+                    marginBottom: '12px', border: 'none',
+                    boxShadow: 'none',
                     position: 'relative', overflow: 'hidden',
                     zIndex: 1,
                   }}>
@@ -2220,7 +2218,7 @@ export default function HomePage() {
                       }}>
                         <Sparkles style={{ width: '12px', height: '12px', color: '#fff' }} />
                       </div>
-                      <span style={{ fontFamily: 'Outfit', fontSize: '0.81rem', fontWeight: 700, color: '#2D2D5A' }}>命格总结</span>
+                      <span style={{ fontFamily: 'Outfit', fontSize: '0.81rem', fontWeight: 700, color: '#2D2D5A' }}>五行总结</span>
                       {patName && (
                         <span style={{
                           fontFamily: 'Outfit', fontSize: '0.63rem', fontWeight: 600,
@@ -2310,6 +2308,7 @@ export default function HomePage() {
                   <ArrowRight style={{ width: '12px', height: '12px', color: '#fff' }} />
                 </div>
               </button>
+              </div>
             </div>
           ) : (
             selectedRecord && (
