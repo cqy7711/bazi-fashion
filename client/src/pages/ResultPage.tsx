@@ -2595,33 +2595,29 @@ export default function ResultPage() {
       id: 'sec-bazi',
       label: '八字',
       icon: <Home style={{ width: '14px', height: '14px', strokeWidth: 2.1 }} />,
-      bodyGrad: 'linear-gradient(118deg, #B8AFE8 0%, #A399DD 38%, #8F86CE 72%, #7D74BA 100%)',
-      dropShadow: '0 6px 18px rgba(110, 95, 190, 0.2)',
-      pulseGlow: ['rgba(130,115,200,0)', 'rgba(130,115,200,0.24)', 'rgba(130,115,200,0)'],
+      bodyGrad: 'linear-gradient(90deg, #F76397 0%, #F88A6C 100%)',
+      dropShadow: '0 8px 16px rgba(248, 118, 130, 0.28)',
     },
     {
       id: 'sec-mingge',
       label: '命格',
       icon: <PieChart style={{ width: '14px', height: '14px', strokeWidth: 2.1 }} />,
-      bodyGrad: 'linear-gradient(118deg, #E9A8C8 0%, #DD98BC 38%, #D08AAC 72%, #C27A9E 100%)',
-      dropShadow: '0 6px 18px rgba(200, 110, 150, 0.2)',
-      pulseGlow: ['rgba(210,130,160,0)', 'rgba(210,130,160,0.24)', 'rgba(210,130,160,0)'],
+      bodyGrad: 'linear-gradient(90deg, #5B63F0 0%, #7D49EA 100%)',
+      dropShadow: '0 8px 16px rgba(96, 88, 236, 0.3)',
     },
     {
       id: 'sec-fortune',
       label: '运势',
       icon: <TrendingUp style={{ width: '14px', height: '14px', strokeWidth: 2.1 }} />,
-      bodyGrad: 'linear-gradient(118deg, #E8C49A 0%, #E0AE8E 38%, #D99A9A 72%, #CF8FA8 100%)',
-      dropShadow: '0 6px 18px rgba(200, 130, 120, 0.18)',
-      pulseGlow: ['rgba(210,140,130,0)', 'rgba(210,140,130,0.22)', 'rgba(210,140,130,0)'],
+      bodyGrad: 'linear-gradient(90deg, #19BE73 0%, #31C8A2 100%)',
+      dropShadow: '0 8px 16px rgba(38, 192, 132, 0.28)',
     },
     {
       id: 'sec-elements',
       label: '五行',
       icon: <Sparkles style={{ width: '14px', height: '14px', strokeWidth: 2.1 }} />,
-      bodyGrad: 'linear-gradient(118deg, #9BBCEE 0%, #89AEE6 38%, #789EDB 72%, #6A8DCC 100%)',
-      dropShadow: '0 6px 18px rgba(90, 120, 200, 0.2)',
-      pulseGlow: ['rgba(100,130,210,0)', 'rgba(100,130,210,0.24)', 'rgba(100,130,210,0)'],
+      bodyGrad: 'linear-gradient(90deg, #4A8EF1 0%, #60B9F5 100%)',
+      dropShadow: '0 8px 16px rgba(84, 152, 241, 0.28)',
     },
   ] as const;
 
@@ -2899,51 +2895,50 @@ export default function ResultPage() {
           }}>
             {sectionTabs.map((tab) => {
               const active = activeSection === tab.id;
-              const glossTop = 'linear-gradient(180deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.06) 28%, transparent 50%)';
-              const glassIcon = 'linear-gradient(145deg, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.08) 100%)';
+              const glassIcon = 'linear-gradient(145deg, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0.1) 100%)';
               return (
                 <motion.button
                   key={tab.id}
-                  whileHover={{ y: -2, boxShadow: `${tab.dropShadow}, 0 10px 24px rgba(80, 70, 120, 0.08)` }}
+                  whileHover={{ y: -1.5, boxShadow: `${tab.dropShadow}, 0 10px 20px rgba(80, 70, 120, 0.1)` }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => jumpToSection(tab.id)}
                   style={{
                     width: '100%',
                     minWidth: 0,
                     border: 'none',
-                    backgroundImage: `${glossTop}, ${tab.bodyGrad}`,
-                    borderRadius: '16px',
-                    padding: ios ? '9px 10px' : '10px 12px',
+                    backgroundImage: tab.bodyGrad,
+                    borderRadius: '999px',
+                    padding: ios ? '8px 12px' : '8px 14px',
                     cursor: 'pointer',
                     display: 'flex',
                     flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'flex-start',
-                    gap: '10px',
-                    fontSize: ios ? '0.88rem' : '0.9rem',
+                    gap: '8px',
+                    fontSize: ios ? '0.86rem' : '0.88rem',
                     fontWeight: active ? 800 : 700,
                     color: '#FFFFFF',
                     textShadow: '0 1px 2px rgba(0,0,0,0.1)',
                     boxShadow: active
-                      ? `${tab.dropShadow}, inset 0 1px 0 rgba(255,255,255,0.24), 0 0 0 1px rgba(255,255,255,0.14)`
-                      : `${tab.dropShadow}, inset 0 1px 0 rgba(255,255,255,0.22)`,
+                      ? `${tab.dropShadow}, inset 0 1px 0 rgba(255,255,255,0.22), 0 0 0 1px rgba(255,255,255,0.22)`
+                      : `${tab.dropShadow}, inset 0 1px 0 rgba(255,255,255,0.18)`,
                     transition: 'all 0.22s ease',
-                    lineHeight: 1.25,
+                    lineHeight: 1.2,
                     textAlign: 'left',
                     boxSizing: 'border-box',
                     touchAction: 'manipulation',
                     WebkitTapHighlightColor: 'transparent',
-                    opacity: active ? 1 : 0.95,
+                    opacity: active ? 1 : 0.97,
                   }}
                 >
                   <span style={{
-                    width: ios ? 32 : 34,
-                    height: ios ? 32 : 34,
-                    borderRadius: '12px',
+                    width: ios ? 30 : 32,
+                    height: ios ? 30 : 32,
+                    borderRadius: '999px',
                     background: glassIcon,
                     backdropFilter: 'blur(10px)',
                     WebkitBackdropFilter: 'blur(10px)',
-                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4)',
+                    boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.4), 0 1px 3px rgba(0,0,0,0.08)',
                     display: 'inline-flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -2955,38 +2950,6 @@ export default function ResultPage() {
                     </span>
                   </span>
                   <span style={{ display: 'block', flex: 1, minWidth: 0 }}>{tab.label}</span>
-                  <motion.span
-                    style={{
-                      width: '24px',
-                      height: '24px',
-                      borderRadius: '10px',
-                      background: 'linear-gradient(145deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.1) 100%)',
-                      backdropFilter: 'blur(8px)',
-                      WebkitBackdropFilter: 'blur(8px)',
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                      boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.45)',
-                    }}
-                    animate={{
-                      scale: [1, 1.07, 1],
-                      boxShadow: [
-                        `0 0 0 0 ${tab.pulseGlow[0]}`,
-                        `0 4px 14px ${tab.pulseGlow[1]}`,
-                        `0 0 0 0 ${tab.pulseGlow[2]}`,
-                      ],
-                    }}
-                    transition={{ duration: 1.45, repeat: Infinity, ease: 'easeInOut' }}
-                  >
-                    <motion.span
-                      animate={{ x: [0, 3, 0] }}
-                      transition={{ duration: 1.05, repeat: Infinity, ease: 'easeInOut' }}
-                      style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
-                    >
-                      <ArrowLeft style={{ width: '11px', height: '11px', color: '#FFFFFF', opacity: 0.95, transform: 'rotate(180deg)' }} />
-                    </motion.span>
-                  </motion.span>
                 </motion.button>
               );
             })}

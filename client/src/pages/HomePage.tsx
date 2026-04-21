@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, type PanInfo } from 'framer-motion';
 import { MOTION_TOKENS } from '../theme/designTokens';
 import { 
   Loader2, Shirt, Gem, Plus, Sparkles, Star, TrendingUp, ArrowRight, MapPin, RefreshCw,
@@ -830,6 +830,8 @@ function ElementBadge({ el }: { el: string }) {
 }
 
 export default function HomePage() {
+  type SectionKey = 'mingpan' | 'fortune' | 'outfit' | 'bracelet';
+  const sectionOrder: SectionKey[] = ['mingpan', 'fortune', 'outfit', 'bracelet'];
   const CURRENT_RECORD_KEY = 'wuxing-current-record-id';
   const [records, setRecords] = useState<UserBirthInfoListItem[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(() => {
@@ -841,7 +843,8 @@ export default function HomePage() {
   });
   const [showForm, setShowForm] = useState(false);
   const [activeTab, setActiveTab] = useState<'outfit' | 'bracelet' | null>(null);
-  const [activeSection, setActiveSection] = useState<'mingpan' | 'fortune' | 'outfit' | 'bracelet' | null>('mingpan');
+  const [activeSection, setActiveSection] = useState<SectionKey | null>('mingpan');
+  const [slideDirection, setSlideDirection] = useState<1 | -1>(1);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
@@ -891,14 +894,43 @@ export default function HomePage() {
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   }, [activeSection]);
+  const switchSection = (nextSection: SectionKey) => {
+    const currentIndex = activeSection ? sectionOrder.indexOf(activeSection) : 0;
+    const nextIndex = sectionOrder.indexOf(nextSection);
+    if (currentIndex !== -1 && nextIndex !== -1 && currentIndex !== nextIndex) {
+      setSlideDirection(nextIndex > currentIndex ? 1 : -1);
+    }
+    setActiveSection(nextSection);
+  };
   const jumpToCard = (id: string) => {
-    const sectionMap: Record<string, 'mingpan' | 'fortune' | 'outfit' | 'bracelet'> = {
+    const sectionMap: Record<string, SectionKey> = {
       'mingpan-section': 'mingpan', 'fortune-section': 'fortune',
       'outfit-section': 'outfit', 'bracelet-section': 'bracelet',
     };
-    setActiveSection(sectionMap[id] || null);
+    const nextSection = sectionMap[id];
+    if (nextSection) {
+      switchSection(nextSection);
+    } else {
+      setActiveSection(null);
+    }
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const swipeToSection = (offset: number) => {
+    if (navWideLayout || !activeSection) return;
+    if (Math.abs(offset) < 55) return;
+    const currentIndex = sectionOrder.indexOf(activeSection);
+    if (currentIndex === -1) return;
+    if (offset < 0 && currentIndex < sectionOrder.length - 1) {
+      switchSection(sectionOrder[currentIndex + 1]);
+    } else if (offset > 0 && currentIndex > 0) {
+      switchSection(sectionOrder[currentIndex - 1]);
+    }
+  };
+
+  const handleSectionDragEnd = (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    swipeToSection(info.offset.x);
   };
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 768px)');
@@ -1206,24 +1238,50 @@ export default function HomePage() {
   // 动态生成「今日配色主张」文案
   const getColorAdvice = (): string => {
     if (!outfitRec) return '';
-    const { primaryColor, secondaryColor, avoidColor } = outfitRec;
-    const wuxing = (outfitRec as any)?.weatherInfo?.wuxing || '';
+    const {
+      primaryColor, secondaryColor, avoidColor,
+      primaryDesc, secondaryDesc, avoidDesc,
+      styleSuggestion, todayFortune,
+    } = outfitRec;
+    const weatherInfo = (outfitRec as any)?.weatherInfo || {};
+    const rawWuxing = weatherInfo?.wuxing || weatherInfo?.element || '';
     const scenes: any[] = (outfitRec as any)?.sceneRecommendations || [];
-    const mainLine = wuxing ? `今日${wuxing}气主导` : '今日推荐已更新';
-    const colorLine = primaryColor && secondaryColor
-      ? `主色${primaryColor}，辅色${secondaryColor}`
-      : primaryColor
-        ? `主色${primaryColor}`
-        : '按场景推荐配色';
-    const avoidLine = avoidColor ? `避色${avoidColor}` : '';
+    const elementMap: Record<string, string> = {
+      wood: '木', fire: '火', earth: '土', metal: '金', water: '水',
+      木: '木', 火: '火', 土: '土', 金: '金', 水: '水',
+    };
+    const wuxing = elementMap[String(rawWuxing).toLowerCase()] || elementMap[String(rawWuxing)] || '';
+    const shortText = (text?: string, max = 10) => {
+      if (!text) return '';
+      const cleaned = text.replace(/[:：]/g, '，').replace(/[。！!]+/g, '').trim();
+      const firstClause = cleaned.split(/[，、；;]/).find(Boolean) || cleaned;
+      return firstClause.slice(0, max);
+    };
+
+    const mainLine = (() => {
+      if (primaryColor && secondaryColor) {
+        return `${wuxing ? `今天主打${wuxing}系，` : ''}主色用${primaryColor}，辅色配${secondaryColor}`;
+      }
+      if (primaryColor) {
+        return `${wuxing ? `今天主打${wuxing}系，` : ''}主色用${primaryColor}`;
+      }
+      return wuxing ? `今天主打${wuxing}系穿搭` : '今天按推荐配色即可';
+    })();
     const sceneNames = scenes
       .map((s: any) => s?.sceneName || s?.scene || s?.name)
       .filter(Boolean)
       .slice(0, 3)
       .join('、');
-    const sceneLine = sceneNames ? `重点场景：${sceneNames}` : '';
-    const parts = [mainLine, colorLine, avoidLine, sceneLine].filter(Boolean);
-    return `${parts.join('，')}。`;
+    const sideParts = [
+      avoidColor ? `少用${avoidColor}` : '',
+      sceneNames ? `优先场景${sceneNames}` : '',
+      Array.isArray(todayFortune?.goodThings) && todayFortune.goodThings.length
+        ? `今天宜${shortText(todayFortune.goodThings[0], 8)}`
+        : '',
+      styleSuggestion ? `风格偏${shortText(styleSuggestion, 8)}` : '',
+    ].filter(Boolean);
+    const secondLine = sideParts.length ? sideParts.join('，') : '按今天推荐场景搭配';
+    return `${mainLine}。${secondLine}。`;
   };
 
   const renderInsightBlock = (
@@ -1768,6 +1826,7 @@ export default function HomePage() {
                 id: 'mingpan-section',
                 label: '命盘信息',
                 icon: (s: number) => <Star style={{ width: s, height: s, strokeWidth: 2.1 }} />,
+                iconColor: '#ECE5FF',
                 bodyGrad: 'linear-gradient(118deg, #B8AFE8 0%, #A399DD 38%, #8F86CE 72%, #7D74BA 100%)',
                 dropShadow: '0 6px 18px rgba(110, 95, 190, 0.22), 0 1px 4px rgba(70, 60, 120, 0.1)',
                 pulseGlow: ['rgba(130,115,200,0)', 'rgba(130,115,200,0.28)', 'rgba(130,115,200,0)'],
@@ -1776,6 +1835,7 @@ export default function HomePage() {
                 id: 'fortune-section',
                 label: '今日运势',
                 icon: (s: number) => <Sparkles style={{ width: s, height: s, strokeWidth: 2.1 }} />,
+                iconColor: '#FFE6F2',
                 bodyGrad: 'linear-gradient(118deg, #E9A8C8 0%, #DD98BC 38%, #D08AAC 72%, #C27A9E 100%)',
                 dropShadow: '0 6px 18px rgba(200, 110, 150, 0.22), 0 1px 4px rgba(130, 70, 100, 0.1)',
                 pulseGlow: ['rgba(210,130,160,0)', 'rgba(210,130,160,0.26)', 'rgba(210,130,160,0)'],
@@ -1784,6 +1844,7 @@ export default function HomePage() {
                 id: 'outfit-section',
                 label: '今日色彩',
                 icon: (s: number) => <Palette style={{ width: s, height: s, strokeWidth: 2.1 }} />,
+                iconColor: '#FFEBD9',
                 bodyGrad: 'linear-gradient(118deg, #E8C49A 0%, #E0AE8E 38%, #D99A9A 72%, #CF8FA8 100%)',
                 dropShadow: '0 6px 18px rgba(200, 130, 120, 0.2), 0 1px 4px rgba(140, 90, 90, 0.09)',
                 pulseGlow: ['rgba(210,140,130,0)', 'rgba(210,140,130,0.26)', 'rgba(210,140,130,0)'],
@@ -1792,6 +1853,7 @@ export default function HomePage() {
                 id: 'bracelet-section',
                 label: '今日手串',
                 icon: (s: number) => <Gem style={{ width: s, height: s, strokeWidth: 2.1 }} />,
+                iconColor: '#E1EEFF',
                 bodyGrad: 'linear-gradient(118deg, #9BBCEE 0%, #89AEE6 38%, #789EDB 72%, #6A8DCC 100%)',
                 dropShadow: '0 6px 18px rgba(90, 120, 200, 0.22), 0 1px 4px rgba(60, 80, 140, 0.1)',
                 pulseGlow: ['rgba(100,130,210,0)', 'rgba(100,130,210,0.28)', 'rgba(100,130,210,0)'],
@@ -1852,7 +1914,7 @@ export default function HomePage() {
                     boxSizing: 'border-box',
                   }}
                 >
-                  <span style={{ color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', filter: 'drop-shadow(0 1px 1px rgba(0,0,0,0.15))' }}>
+                  <span style={{ color: item.iconColor, display: 'flex', alignItems: 'center', justifyContent: 'center', filter: 'drop-shadow(0 1px 1px rgba(0,0,0,0.22))' }}>
                     {item.icon(iconPx)}
                   </span>
                 </span>
@@ -1897,12 +1959,72 @@ export default function HomePage() {
           </motion.div>
         )}
 
+        {/* 移动端分页指示器：支持点击切换四张主卡片 */}
+        {!navWideLayout && selectedRecord && activeSection && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '-4px 0 10px',
+          }}>
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '5px',
+              padding: '4px 7px',
+              borderRadius: '999px',
+              background: 'linear-gradient(145deg, rgba(255,255,255,0.72), rgba(244,241,252,0.56))',
+              border: '1px solid rgba(176, 168, 206, 0.28)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              boxShadow: '0 4px 10px rgba(86, 78, 132, 0.1), inset 0 1px 0 rgba(255,255,255,0.6)',
+            }}>
+              {sectionOrder.map((sec) => {
+                const active = activeSection === sec;
+                const labels: Record<SectionKey, string> = {
+                  mingpan: '命盘信息',
+                  fortune: '今日运势',
+                  outfit: '今日色彩',
+                  bracelet: '今日手串',
+                };
+                return (
+                  <button
+                    key={sec}
+                    type="button"
+                    onClick={() => switchSection(sec)}
+                    aria-label={`切换到${labels[sec]}`}
+                    style={{
+                      width: active ? '10px' : '4px',
+                      height: '4px',
+                      borderRadius: '999px',
+                      border: 'none',
+                      background: active
+                        ? 'linear-gradient(135deg, rgba(143,104,255,0.95), rgba(44,203,255,0.95))'
+                        : 'rgba(164, 160, 186, 0.34)',
+                      boxShadow: active ? '0 1px 5px rgba(95, 102, 190, 0.24)' : 'none',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      padding: 0,
+                    }}
+                    title={labels[sec]}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* ​—​ 第二行：用户详情 + 命盘信息 + 今日运势（选中用户时显示） —​ */}
         {(activeSection === 'mingpan' || activeSection === 'fortune' || activeSection === null) && selectedRecord && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+            key={`panel-${activeSection || 'mingpan'}`}
+            initial={{ opacity: 0, x: slideDirection > 0 ? 36 : -36, y: 12 }}
+            animate={{ opacity: 1, x: 0, y: 0 }}
             transition={{ duration: 0.35, delay: 0.08 }}
+            drag={navWideLayout ? false : 'x'}
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.12}
+            onDragEnd={handleSectionDragEnd}
             style={{
               display: 'grid',
               gridTemplateColumns: '1fr',
@@ -2680,7 +2802,17 @@ export default function HomePage() {
         {/* ​—​ 第三行：今日穿搭 + 手串推荐（选中用户时显示） —​ */}
         {/* ── 右栏：今日穿搭 + 手串 ── */}
         {((activeSection as 'mingpan'|'fortune'|'outfit'|'bracelet'|null) === 'outfit' || (activeSection as 'mingpan'|'fortune'|'outfit'|'bracelet'|null) === 'bracelet') && selectedRecord && previewInfo && previewInfo.baziResult && (
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }} style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'stretch' }}>
+          <motion.div
+            key={`panel-${activeSection || 'outfit'}`}
+            initial={{ opacity: 0, x: slideDirection > 0 ? 36 : -36 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+            drag={navWideLayout ? false : 'x'}
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.12}
+            onDragEnd={handleSectionDragEnd}
+            style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'stretch' }}
+          >
 
             {/* 今日色彩搭配建议卡片 */}
             {(activeSection as 'mingpan'|'fortune'|'outfit'|'bracelet'|null) === 'outfit' && outfitRec && (

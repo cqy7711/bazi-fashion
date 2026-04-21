@@ -27,6 +27,15 @@ DEFAULT_REMOTE_DIR="/var/www/bazi-fashion"
 # 默认远端临时目录：先上传到该目录，再由服务器本地 sudo rsync 到正式目录。
 DEFAULT_STAGING_DIR="/home/ubuntu/bazi-fashion-dist"
 
+# 默认健康检查地址，可通过参数覆盖。
+DEFAULT_HEALTH_URL=""
+
+# 健康检查重试次数。
+DEFAULT_HEALTH_RETRIES="5"
+
+# 健康检查重试间隔（秒）。
+DEFAULT_HEALTH_INTERVAL="2"
+
 # 反馈错误信息并退出的函数，便于统一处理异常场景。
 die() {
   # $1 为错误提示文本。
@@ -49,6 +58,9 @@ print_usage() {
   --staging-dir <远端临时目录>  中转目录，默认 /home/ubuntu/bazi-fashion-dist
   --skip-backup             跳过远端目录备份步骤
   --skip-reload             跳过 nginx reload（仅同步文件）
+  --health-url <URL>        健康检查 URL（默认 http://<host>/）
+  --health-retries <次数>    健康检查重试次数，默认 5
+  --health-interval <秒>     健康检查重试间隔秒数，默认 2
   --help                    显示帮助
 
 示例：
@@ -70,8 +82,12 @@ parse_args() {
   DEPLOY_USER="${DEFAULT_USER}"
   DEPLOY_REMOTE_DIR="${DEFAULT_REMOTE_DIR}"
   DEPLOY_STAGING_DIR="${DEFAULT_STAGING_DIR}"
+  DEPLOY_HEALTH_URL="${DEFAULT_HEALTH_URL}"
+  DEPLOY_HEALTH_RETRIES="${DEFAULT_HEALTH_RETRIES}"
+  DEPLOY_HEALTH_INTERVAL="${DEFAULT_HEALTH_INTERVAL}"
   SKIP_BACKUP="false"
   SKIP_RELOAD="false"
+  LAST_BACKUP_DIR=""
 
   # 使用 while + case 逐项解析参数。
   local i=0
@@ -108,6 +124,21 @@ parse_args() {
       --skip-reload)
         SKIP_RELOAD="true"
         ;;
+      --health-url)
+        i=$((i + 1))
+        [[ $i -lt ${#args[@]} ]] || die "--health-url 缺少参数值"
+        DEPLOY_HEALTH_URL="${args[$i]}"
+        ;;
+      --health-retries)
+        i=$((i + 1))
+        [[ $i -lt ${#args[@]} ]] || die "--health-retries 缺少参数值"
+        DEPLOY_HEALTH_RETRIES="${args[$i]}"
+        ;;
+      --health-interval)
+        i=$((i + 1))
+        [[ $i -lt ${#args[@]} ]] || die "--health-interval 缺少参数值"
+        DEPLOY_HEALTH_INTERVAL="${args[$i]}"
+        ;;
       --help)
         print_usage
         exit 0
@@ -125,6 +156,7 @@ check_requirements() {
   command -v npm >/dev/null 2>&1 || die "未找到 npm，请先安装 Node.js 与 npm"
   command -v rsync >/dev/null 2>&1 || die "未找到 rsync，请先安装 rsync"
   command -v ssh >/dev/null 2>&1 || die "未找到 ssh，请先安装 OpenSSH 客户端"
+  command -v curl >/dev/null 2>&1 || die "未找到 curl，请先安装 curl"
 }
 
 # 在 client 目录执行构建，产出 dist 静态文件。
@@ -156,6 +188,7 @@ backup_remote_if_needed() {
   local timestamp
   timestamp="$(date +%Y%m%d-%H%M%S)"
   local backup_dir="${DEPLOY_REMOTE_DIR%/}-backup-${timestamp}"
+  LAST_BACKUP_DIR="${backup_dir}"
 
   echo "[INFO] 正在创建远端备份：${backup_dir}"
 
@@ -185,7 +218,7 @@ promote_staging_to_remote() {
 }
 
 # 第三步：重载 Nginx 并做远端 HTTP 状态验证。
-reload_and_verify() {
+reload_nginx_if_needed() {
   if [[ "${SKIP_RELOAD}" == "true" ]]; then
     echo "[INFO] 已按参数要求跳过 nginx reload。"
     return
@@ -194,7 +227,38 @@ reload_and_verify() {
   echo "[INFO] 开始执行 nginx 配置校验与重载..."
   run_remote "sudo nginx -t && sudo systemctl reload nginx"
   echo "[INFO] nginx 重载完成。"
-  run_remote "curl -I \"http://${DEPLOY_HOST}/\""
+}
+
+# 发布完成后在本机执行 HTTP 健康检查，并支持重试。
+health_check() {
+  local health_url="${DEPLOY_HEALTH_URL}"
+  local retries="${DEPLOY_HEALTH_RETRIES}"
+  local interval="${DEPLOY_HEALTH_INTERVAL}"
+  local attempt=1
+
+  if [[ -z "${health_url}" ]]; then
+    health_url="http://${DEPLOY_HOST}/"
+  fi
+
+  echo "[INFO] 开始健康检查：${health_url}"
+  while [[ "${attempt}" -le "${retries}" ]]; do
+    if curl --silent --show-error --fail --max-time 8 "${health_url}" >/dev/null; then
+      echo "[INFO] 健康检查通过（第 ${attempt}/${retries} 次）。"
+      return
+    fi
+    echo "[WARN] 健康检查失败（第 ${attempt}/${retries} 次），${interval}s 后重试..."
+    attempt=$((attempt + 1))
+    sleep "${interval}"
+  done
+
+  echo "[ERROR] 健康检查最终失败：${health_url}" >&2
+  echo "[ERROR] 回滚建议：" >&2
+  if [[ -n "${LAST_BACKUP_DIR}" ]]; then
+    echo "        bash scripts/rollback-client.sh --user ${DEPLOY_USER} --port ${DEPLOY_PORT} --backup-dir \"${LAST_BACKUP_DIR}\"" >&2
+  else
+    echo "        bash scripts/rollback-client.sh --user ${DEPLOY_USER} --port ${DEPLOY_PORT} --list" >&2
+  fi
+  exit 1
 }
 
 # 主函数：串联参数解析、依赖检查、构建、备份、同步等完整流程。
@@ -207,10 +271,14 @@ main() {
   backup_remote_if_needed "${SKIP_BACKUP}"
   sync_dist_to_staging
   promote_staging_to_remote
-  reload_and_verify
+  reload_nginx_if_needed
+  health_check
 
   echo "[INFO] 发布完成：${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_REMOTE_DIR}"
-  echo "[INFO] 建议验证：curl -I http://${DEPLOY_HOST}/"
+  echo "[INFO] 建议验证：curl -I ${DEPLOY_HEALTH_URL:-http://${DEPLOY_HOST}/}"
+  if [[ -n "${LAST_BACKUP_DIR}" ]]; then
+    echo "[INFO] 最近备份：${LAST_BACKUP_DIR}"
+  fi
 }
 
 # 执行入口：把脚本参数完整传给 main。
