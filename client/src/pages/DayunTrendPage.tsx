@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, BarChart3, CandlestickChart, Check, ChevronsUpDown, TrendingUp, Users } from 'lucide-react';
+import { ArrowLeft, BarChart3, CandlestickChart, Check, ChevronsUpDown, Users } from 'lucide-react';
 import type { UserBirthInfo } from '../shared/types';
 import { COLOR_TOKENS, SHADOW_TOKENS } from '../theme/designTokens';
 import { DayunKLineChart, generateCandlestickData, generateDayunData, type DayunData } from './ResultPage';
@@ -34,7 +34,6 @@ export default function DayunTrendPage() {
   const [chartType, setChartType] = useState<'kline' | 'bar'>('bar');
   const [selectedDayunIndex, setSelectedDayunIndex] = useState(0);
   const [expandedDetailIndex, setExpandedDetailIndex] = useState<number | null>(null);
-  const [klineRange, setKlineRange] = useState<'1y' | '10y'>('10y');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const barScrollRef = useRef<HTMLDivElement | null>(null);
@@ -267,59 +266,30 @@ export default function DayunTrendPage() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 4px 10px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-              <button
-                type="button"
-                onClick={() => setKlineRange('1y')}
-                style={{
-                  border: 'none',
-                  background: 'transparent',
-                  padding: 0,
-                  fontSize: '0.85rem',
-                  fontWeight: klineRange === '1y' ? 900 : 650,
-                  color: klineRange === '1y' ? '#2F2B42' : '#8E88A6',
-                  position: 'relative',
-                }}
-              >
-                1y(流年)
-                {klineRange === '1y' && (
-                  <span style={{ position: 'absolute', left: 0, right: 0, bottom: -8, height: 3, borderRadius: 999, background: '#E6B400' }} />
-                )}
-              </button>
-              <button
-                type="button"
-                onClick={() => setKlineRange('10y')}
-                style={{
-                  border: 'none',
-                  background: 'transparent',
-                  padding: 0,
-                  fontSize: '0.85rem',
-                  fontWeight: klineRange === '10y' ? 900 : 650,
-                  color: klineRange === '10y' ? '#2F2B42' : '#8E88A6',
-                  position: 'relative',
-                }}
-              >
-                10y(大运)
-                {klineRange === '10y' && (
-                  <span style={{ position: 'absolute', left: 0, right: 0, bottom: -8, height: 3, borderRadius: 999, background: '#E6B400' }} />
-                )}
-              </button>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{
-                width: 34, height: 24, borderRadius: 8,
-                border: '1px solid rgba(145,138,173,0.18)',
-                background: 'rgba(255,255,255,0.85)',
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 4px 10px', gap: 10 }}>
+            <button
+              type="button"
+              onClick={() => setChartType('bar')}
+              style={{
+                height: 30,
+                padding: '0 11px',
+                borderRadius: 999,
+                border: '1px solid rgba(79,152,236,0.4)',
+                background: 'linear-gradient(135deg, rgba(74,142,241,0.14), rgba(96,185,245,0.12), #FFFFFF)',
+                color: '#4A73C8',
                 display: 'inline-flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                color: '#18B67A',
-              }}>
-                <TrendingUp size={16} />
-              </div>
-            </div>
+                gap: 6,
+                fontSize: '0.66rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                boxShadow: '0 6px 14px rgba(74,142,241,0.2), inset 0 1px 0 rgba(255,255,255,0.72)',
+              }}
+            >
+              <BarChart3 size={14} />
+              返回柱状图
+            </button>
+            <span style={{ fontSize: '0.72rem', color: '#8E88A6', fontWeight: 650 }}>10y(大运)</span>
           </div>
         </div>
       ) : (

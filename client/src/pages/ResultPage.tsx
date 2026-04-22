@@ -1586,13 +1586,7 @@ export function DayunKLineChart({
             起运年龄: {Math.round(startAge)}岁 · 每步大运10年
           </div>
         </div>
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: '6px',
-          padding: '6px 12px', background: 'linear-gradient(135deg, #ECFDF5, #F0F9FF)', borderRadius: '16px', border: '1px solid #A7F3D0'
-        }}>
-          <div style={{ width: '8px', height: '8px', background: '#52C41A', borderRadius: '50%' }} />
-          <span style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', color: '#52C41A' }}>已解锁</span>
-        </div>
+        <div />
       </div>
 
       {/* ── K线图 ── */}
@@ -1700,16 +1694,14 @@ export function DayunKLineChart({
         <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '1remrem', fontWeight: 700, color: '#333333', marginBottom: '12px' }}>
           大运详解
         </div>
-        {/* 横向滚动卡片列表 */}
+        {/* 大运详解卡片：移动端按柱状图同款双列排版 */}
         <div style={{
           display: isIOSCompact ? 'grid' : 'flex',
-          gridAutoFlow: isIOSCompact ? 'column' : undefined,
-          gridTemplateRows: isIOSCompact ? 'repeat(2, auto)' : undefined,
-          columnGap: isIOSCompact ? `${gap}px` : undefined,
-          rowGap: isIOSCompact ? '10px' : undefined,
+          gridTemplateColumns: isIOSCompact ? 'repeat(2, minmax(0, 1fr))' : undefined,
           gap: !isIOSCompact ? `${gap}px` : undefined,
-          overflowX: 'auto',
-          overflowY: isIOSCompact ? 'hidden' : undefined,
+          rowGap: isIOSCompact ? '10px' : undefined,
+          columnGap: isIOSCompact ? '10px' : undefined,
+          overflowX: isIOSCompact ? 'hidden' : 'auto',
           paddingBottom: '8px',
           WebkitOverflowScrolling: 'touch',
         }}>
@@ -1723,48 +1715,51 @@ export function DayunKLineChart({
               <div
                 key={`detail-${i}`}
                 onClick={() => {
-                  if (isFuture) {
-                    // 未来大运：显示待解锁提示
-                    alert(`${d.year}-${d.yearEnd}年 ${d.ganZhi}大运尚未到来，点击详解待解锁`);
-                    return;
-                  }
+                  if (isFuture) return;
                   setSelectedIndex(i);
                 }}
                 style={{
                   flexShrink: 0,
-                  width: `${itemWidth}px`,
-                  padding: '14px 10px',
-                  background: isFuture ? '#F5F5F5' : (isSelected ? (d.score >= 60 ? '#FFF0EE' : '#F0FFF4') : '#FAFAFA'),
+                  width: isIOSCompact ? '100%' : `${itemWidth}px`,
+                  minWidth: 0,
+                  padding: isIOSCompact ? '10px 9px' : '14px 10px',
+                  background: isFuture ? '#F6F6F8' : (isSelected ? '#FFFFFF' : '#FAFAFA'),
                   borderRadius: '10px',
-                  border: isFuture ? '1px solid #E0E0E0' : (isSelected ? `1px solid ${color}40` : '1px solid transparent'),
+                  border: isFuture ? '1px solid #E6E6EB' : (isSelected ? `1px solid ${color}60` : `1px solid ${color}30`),
                   cursor: isFuture ? 'not-allowed' : 'pointer',
                   transition: 'all 0.2s ease',
-                  opacity: isFuture ? 0.7 : 1,
+                  opacity: isFuture ? 0.8 : 1,
+                  boxShadow: isFuture
+                    ? 'none'
+                    : isSelected
+                      ? `0 8px 16px ${color}26`
+                      : '0 4px 10px rgba(122,116,150,0.08)',
+                  transform: isSelected ? 'translateY(-2px)' : 'none',
                 }}
               >
                 {/* 年龄范围 */}
-                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.75remrem', fontWeight: 700, color: isFuture ? '#AAAAAA' : '#333333', marginBottom: '2px' }}>
+                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.8rem' : '0.75remrem', fontWeight: 800, color: isFuture ? '#A9A9B2' : '#323048', marginBottom: '2px' }}>
                   {Math.round(d.age)}-{Math.round(d.endAge)}岁
                 </div>
                 {/* 干支 */}
-                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: isFuture ? '#CCCCCC' : '#999999', marginBottom: '6px' }}>
+                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.72rem' : '0.69remrem', color: isFuture ? '#B5B5BE' : '#6A6581', marginBottom: '6px' }}>
                   {d.ganZhi}
                 </div>
                 {/* 年份 */}
-                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: '0.63remrem', color: '#BBBBBB', marginBottom: '8px' }}>
+                <div style={{ fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.66rem' : '0.63remrem', color: '#A8A3BB', marginBottom: '8px' }}>
                   {d.year}-{d.yearEnd}年
                 </div>
                 {/* 分数 */}
                 <div style={{
-                  fontFamily: 'Outfit, sans-serif', fontSize: '1.13remrem', fontWeight: 800,
-                  color: isFuture ? '#CCCCCC' : color,
-                  marginBottom: '6px',
+                  fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.9rem' : '1.13remrem', fontWeight: 900,
+                  color: isFuture ? '#BEBEC7' : color,
+                  marginBottom: '4px',
                 }}>
                   {isFuture ? '🔒' : `${d.score}分`}
                 </div>
                 {/* 详情 */}
                 <div style={{
-                  fontFamily: 'Outfit, sans-serif', fontSize: '0.69remrem', color: '#999999',
+                  fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? '0.7rem' : '0.69remrem', color: isFuture ? '#AFAFC0' : '#7B7794',
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between'
                 }}>
                   <span>{isFuture ? '待解锁' : (isSelected ? '收起' : '详情')}</span>
