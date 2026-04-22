@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, BarChart3, CandlestickChart, Check, ChevronsUpDown, Share2, TrendingUp, Users } from 'lucide-react';
+import { ArrowLeft, BarChart3, CandlestickChart, Check, ChevronsUpDown, TrendingUp, Users } from 'lucide-react';
 import type { UserBirthInfo } from '../shared/types';
 import { COLOR_TOKENS, SHADOW_TOKENS } from '../theme/designTokens';
 import { DayunKLineChart, generateCandlestickData, generateDayunData, type DayunData } from './ResultPage';
@@ -244,127 +244,7 @@ export default function DayunTrendPage() {
                 </p>
               </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, position: 'relative' }}>
-              <button
-                type="button"
-                aria-label="分享"
-                onClick={() => {
-                  try { navigator?.clipboard?.writeText?.(location.href); } catch { /* ignore */ }
-                }}
-                style={{
-                  width: 34, height: 34, borderRadius: 12,
-                  border: '1px solid rgba(145,138,173,0.22)', background: 'rgba(255,255,255,0.92)',
-                  color: '#6B6583', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                }}
-              >
-                <Share2 size={16} />
-              </button>
-              <button
-                type="button"
-                aria-label="切换柱状图"
-                onClick={() => setChartType(prev => (prev === 'kline' ? 'bar' : 'kline'))}
-                style={{
-                  width: 36, height: 36, borderRadius: 12,
-                  border: '1px solid rgba(79,152,236,0.38)',
-                  background: 'linear-gradient(135deg, rgba(74,142,241,0.18), rgba(96,185,245,0.14), rgba(255,255,255,0.96))',
-                  color: '#2F6EE6',
-                  boxShadow: '0 10px 18px rgba(74,142,241,0.22), inset 0 1px 0 rgba(255,255,255,0.78)',
-                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                }}
-              >
-                <BarChart3 size={18} />
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowUserMenu(v => !v)}
-                style={{
-                  width: 36, height: 36, borderRadius: 12,
-                  border: '1px solid rgba(128,120,160,0.22)',
-                  background: 'rgba(255,255,255,0.92)',
-                  color: '#4B4661',
-                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                }}
-              >
-                <Users size={18} />
-              </button>
-              {showUserMenu && (
-                <div style={{
-                  position: 'absolute',
-                  right: 0,
-                  top: 42,
-                  width: 248,
-                  maxHeight: 280,
-                  overflowY: 'auto',
-                  borderRadius: 12,
-                  border: '1px solid rgba(91,92,255,0.2)',
-                  background: '#FFFFFF',
-                  boxShadow: '0 10px 22px rgba(76,90,176,0.16)',
-                  zIndex: 80,
-                  overflow: 'hidden',
-                }}>
-                  <div style={{ padding: '9px 12px', borderBottom: '1px solid rgba(143,104,255,0.12)', background: '#F8F9FC' }}>
-                    <span style={{ fontSize: '0.66rem', color: '#8E88A6', fontWeight: 600 }}>
-                      已录入用户 ({userList.length})
-                    </span>
-                  </div>
-                  {userList.map((u) => {
-                    const selected = u.id === (routeUserId || userInfo.id);
-                    return (
-                      <div
-                        key={u.id}
-                        onClick={() => switchUser(u.id)}
-                        style={{
-                          padding: '10px 12px',
-                          cursor: 'pointer',
-                          background: selected ? 'rgba(143,104,255,0.08)' : 'transparent',
-                          borderBottom: '1px solid #F8F8F8',
-                          transition: 'background 0.15s',
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                          <div style={{
-                            width: 30,
-                            height: 30,
-                            borderRadius: 10,
-                            background: selected
-                              ? 'linear-gradient(135deg, #8F68FF, #2CCBFF)'
-                              : '#E8E8E8',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontSize: '0.75rem',
-                            fontWeight: 700,
-                            color: selected ? '#FFFFFF' : '#999',
-                            flexShrink: 0,
-                          }}>
-                            {u.name.charAt(0)}
-                          </div>
-                          <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                              <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#3F3656', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                {u.name}
-                              </span>
-                              {selected && (
-                                <span style={{ fontSize: '0.6rem', padding: '2px 6px', background: 'rgba(143,104,255,0.18)', color: '#7A5EE0', borderRadius: 4, fontWeight: 600 }}>
-                                  当前
-                                </span>
-                              )}
-                            </div>
-                            <span style={{ fontSize: '0.63rem', color: '#8E88A6' }}>
-                              {u.birthYear && u.birthMonth && u.birthDay
-                                ? `${u.birthYear}.${String(u.birthMonth).padStart(2, '0')}.${String(u.birthDay).padStart(2, '0')}`
-                                : '生日信息未完善'}
-                              {u.gender ? ` · ${u.gender === 'male' ? '男' : u.gender === 'female' ? '女' : u.gender}` : ''}
-                            </span>
-                          </div>
-                          {selected && <Check size={12} color="#6A58C8" />}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
+            {/* 右上角 3 个图标按产品要求移除 */}
           </div>
 
           <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', padding: '14px 4px 8px' }}>

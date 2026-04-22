@@ -1701,7 +1701,18 @@ export function DayunKLineChart({
           大运详解
         </div>
         {/* 横向滚动卡片列表 */}
-        <div style={{ display: 'flex', gap: `${gap}px`, overflowX: 'auto', paddingBottom: '8px' }}>
+        <div style={{
+          display: isIOSCompact ? 'grid' : 'flex',
+          gridAutoFlow: isIOSCompact ? 'column' : undefined,
+          gridTemplateRows: isIOSCompact ? 'repeat(2, auto)' : undefined,
+          columnGap: isIOSCompact ? `${gap}px` : undefined,
+          rowGap: isIOSCompact ? '10px' : undefined,
+          gap: !isIOSCompact ? `${gap}px` : undefined,
+          overflowX: 'auto',
+          overflowY: isIOSCompact ? 'hidden' : undefined,
+          paddingBottom: '8px',
+          WebkitOverflowScrolling: 'touch',
+        }}>
           {data.map((d, i) => {
             const isSelected = selectedIndex === i;
             // 判断是否未来大运（结束年份 > 当前年份2026）

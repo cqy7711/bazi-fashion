@@ -159,6 +159,31 @@ check_requirements() {
   command -v curl >/dev/null 2>&1 || die "未找到 curl，请先安装 curl"
 }
 
+# 统一的 SSH 选项：开启连接复用，避免多次输入密码。
+# 说明：ControlMaster/ControlPersist 会在第一次 SSH 连接后复用同一条 TCP 连接给后续 ssh/rsync 使用。
+init_ssh_opts() {
+  # ControlPath 长度有系统限制（通常 104 字符左右），用 /tmp 下的短路径更稳。
+  SSH_CONTROL_PATH="/tmp/wuxing-ssh-%r@%h:%p"
+  SSH_BASE_OPTS=(
+    -p "${DEPLOY_PORT}"
+    -o ControlMaster=auto
+    -o ControlPersist=600
+    -o "ControlPath=${SSH_CONTROL_PATH}"
+    -o ServerAliveInterval=30
+    -o ServerAliveCountMax=3
+    -o StrictHostKeyChecking=accept-new
+  )
+
+  # rsync 的 -e 只接受字符串；这里把 SSH_BASE_OPTS 安全地转成可执行的 ssh 命令串，
+  # 确保 rsync 与 ssh 使用同一套 ControlPath（从而复用连接，避免多次输入密码）。
+  local q=()
+  local opt
+  for opt in "${SSH_BASE_OPTS[@]}"; do
+    q+=("$(printf '%q' "${opt}")")
+  done
+  RSYNC_SSH_CMD="ssh ${q[*]}"
+}
+
 # 在 client 目录执行构建，产出 dist 静态文件。
 build_client() {
   echo "[INFO] 开始构建前端..."
@@ -171,7 +196,7 @@ build_client() {
 run_remote() {
   # $1：要在远端执行的完整 shell 命令字符串。
   local remote_cmd="$1"
-  ssh -p "${DEPLOY_PORT}" "${DEPLOY_USER}@${DEPLOY_HOST}" "${remote_cmd}"
+  ssh "${SSH_BASE_OPTS[@]}" "${DEPLOY_USER}@${DEPLOY_HOST}" "${remote_cmd}"
 }
 
 # 在远端创建备份目录并备份现有版本，防止发布后回滚困难。
@@ -201,7 +226,7 @@ backup_remote_if_needed() {
 sync_dist_to_staging() {
   echo "[INFO] 开始同步 dist 到远端临时目录：${DEPLOY_STAGING_DIR}"
   run_remote "mkdir -p \"${DEPLOY_STAGING_DIR}\""
-  rsync -avz --delete -e "ssh -p ${DEPLOY_PORT}" \
+  rsync -avz --delete -e "${RSYNC_SSH_CMD}" \
     "${CLIENT_DIR}/dist/" \
     "${DEPLOY_USER}@${DEPLOY_HOST}:${DEPLOY_STAGING_DIR}/"
   echo "[INFO] 临时目录同步完成。"
@@ -267,6 +292,7 @@ main() {
   # $1...$n：传给脚本的全部选项；即使为空也要安全传递，避免 set -u 触发未绑定错误。
   parse_args "$@"
   check_requirements
+  init_ssh_opts
   build_client
   backup_remote_if_needed "${SKIP_BACKUP}"
   sync_dist_to_staging
