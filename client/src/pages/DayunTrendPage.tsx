@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, BarChart3, CandlestickChart, Check, ChevronsUpDown, Users } from 'lucide-react';
+import { ArrowLeft, BarChart3, CandlestickChart, Check, ChevronsUpDown, Share2, TrendingUp, Users } from 'lucide-react';
 import type { UserBirthInfo } from '../shared/types';
 import { COLOR_TOKENS, SHADOW_TOKENS } from '../theme/designTokens';
 import { DayunKLineChart, generateCandlestickData, generateDayunData, type DayunData } from './ResultPage';
+import { getOrCreateAnonUserId } from '../utils/userIdentity';
 
-const USER_ID = 'user_default';
+const USER_ID = getOrCreateAnonUserId();
 
 async function readJsonSafe(res: Response) {
   const text = await res.text();
@@ -33,6 +34,7 @@ export default function DayunTrendPage() {
   const [chartType, setChartType] = useState<'kline' | 'bar'>('bar');
   const [selectedDayunIndex, setSelectedDayunIndex] = useState(0);
   const [expandedDetailIndex, setExpandedDetailIndex] = useState<number | null>(null);
+  const [klineRange, setKlineRange] = useState<'1y' | '10y'>('10y');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const barScrollRef = useRef<HTMLDivElement | null>(null);
@@ -174,6 +176,14 @@ export default function DayunTrendPage() {
   const candlestickData = generateCandlestickData(dayunData, bazi.dayMaster, bazi.dayMasterElement, userInfo.favorableElements || []);
   const startAge = candlestickData[0]?.age || 3;
   const maxScore = Math.max(100, ...dayunData.map(d => d.score || 0));
+  const selectedKline = candlestickData[Math.min(Math.max(selectedDayunIndex, 0), Math.max(0, candlestickData.length - 1))];
+  const currentScore = typeof selectedKline?.score === 'number' ? selectedKline.score : (dayunData[0]?.score || 60);
+  const prevScore = typeof candlestickData?.[Math.max(0, selectedDayunIndex - 1)]?.score === 'number'
+    ? candlestickData[Math.max(0, selectedDayunIndex - 1)].score
+    : currentScore;
+  const pct = prevScore ? ((currentScore - prevScore) / Math.max(1, prevScore)) * 100 : 0;
+  const scoreMax = Math.max(...candlestickData.map(d => d?.high ?? 0), 0);
+  const scoreMin = Math.min(...candlestickData.map(d => d?.low ?? 100), 100);
   const buildTenYearOverall = (kline: any) => {
     const yearly = Array.isArray(kline?.yearlyDetails) ? kline.yearlyDetails : [];
     if (!yearly.length) return (kline?.summary || '').trim();
@@ -213,70 +223,290 @@ export default function DayunTrendPage() {
       boxShadow: SHADOW_TOKENS.glassCard,
       padding: isIOS ? '10px 10px 14px' : '14px 14px 18px',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: isIOS ? 10 : 12 }}>
-        <Link
-          to={routeUserId ? `/result/${encodeURIComponent(routeUserId)}` : '/'}
-          style={{
-            width: isIOS ? 34 : 36, height: isIOS ? 34 : 36, borderRadius: isIOS ? 11 : 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            border: '1px solid rgba(145,138,173,0.24)', background: '#FFFFFF', color: '#625D79',
-          }}
-        >
-          <ArrowLeft size={isIOS ? 15 : 16} />
-        </Link>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ fontSize: isIOS ? '0.98rem' : '1.02rem', fontWeight: 800, color: '#3A3650' }}>大运走势</p>
-          <p style={{ fontSize: isIOS ? '0.72rem' : '0.75rem', color: '#8E88A6' }}>{userInfo.name} · 独立详情页</p>
+      {/* iOS: screenshot-like KPI header for K-line */}
+      {isIOS && chartType === 'kline' ? (
+        <div style={{ padding: '6px 4px 8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+              <Link
+                to={routeUserId ? `/result/${encodeURIComponent(routeUserId)}` : '/'}
+                style={{
+                  width: 34, height: 34, borderRadius: 12,
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                  border: '1px solid rgba(145,138,173,0.22)', background: 'rgba(255,255,255,0.9)', color: '#4B4661',
+                }}
+              >
+                <ArrowLeft size={16} />
+              </Link>
+              <div style={{ minWidth: 0 }}>
+                <p style={{ fontSize: '0.9rem', fontWeight: 900, color: '#2F2B42', letterSpacing: '-0.02em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  {userInfo.name} / 人生K线
+                </p>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, position: 'relative' }}>
+              <button
+                type="button"
+                aria-label="分享"
+                onClick={() => {
+                  try { navigator?.clipboard?.writeText?.(location.href); } catch { /* ignore */ }
+                }}
+                style={{
+                  width: 34, height: 34, borderRadius: 12,
+                  border: '1px solid rgba(145,138,173,0.22)', background: 'rgba(255,255,255,0.92)',
+                  color: '#6B6583', display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                }}
+              >
+                <Share2 size={16} />
+              </button>
+              <button
+                type="button"
+                aria-label="切换柱状图"
+                onClick={() => setChartType(prev => (prev === 'kline' ? 'bar' : 'kline'))}
+                style={{
+                  width: 36, height: 36, borderRadius: 12,
+                  border: '1px solid rgba(79,152,236,0.38)',
+                  background: 'linear-gradient(135deg, rgba(74,142,241,0.18), rgba(96,185,245,0.14), rgba(255,255,255,0.96))',
+                  color: '#2F6EE6',
+                  boxShadow: '0 10px 18px rgba(74,142,241,0.22), inset 0 1px 0 rgba(255,255,255,0.78)',
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                }}
+              >
+                <BarChart3 size={18} />
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowUserMenu(v => !v)}
+                style={{
+                  width: 36, height: 36, borderRadius: 12,
+                  border: '1px solid rgba(128,120,160,0.22)',
+                  background: 'rgba(255,255,255,0.92)',
+                  color: '#4B4661',
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                }}
+              >
+                <Users size={18} />
+              </button>
+              {showUserMenu && (
+                <div style={{
+                  position: 'absolute',
+                  right: 0,
+                  top: 42,
+                  width: 248,
+                  maxHeight: 280,
+                  overflowY: 'auto',
+                  borderRadius: 12,
+                  border: '1px solid rgba(91,92,255,0.2)',
+                  background: '#FFFFFF',
+                  boxShadow: '0 10px 22px rgba(76,90,176,0.16)',
+                  zIndex: 80,
+                  overflow: 'hidden',
+                }}>
+                  <div style={{ padding: '9px 12px', borderBottom: '1px solid rgba(143,104,255,0.12)', background: '#F8F9FC' }}>
+                    <span style={{ fontSize: '0.66rem', color: '#8E88A6', fontWeight: 600 }}>
+                      已录入用户 ({userList.length})
+                    </span>
+                  </div>
+                  {userList.map((u) => {
+                    const selected = u.id === (routeUserId || userInfo.id);
+                    return (
+                      <div
+                        key={u.id}
+                        onClick={() => switchUser(u.id)}
+                        style={{
+                          padding: '10px 12px',
+                          cursor: 'pointer',
+                          background: selected ? 'rgba(143,104,255,0.08)' : 'transparent',
+                          borderBottom: '1px solid #F8F8F8',
+                          transition: 'background 0.15s',
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <div style={{
+                            width: 30,
+                            height: 30,
+                            borderRadius: 10,
+                            background: selected
+                              ? 'linear-gradient(135deg, #8F68FF, #2CCBFF)'
+                              : '#E8E8E8',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                            color: selected ? '#FFFFFF' : '#999',
+                            flexShrink: 0,
+                          }}>
+                            {u.name.charAt(0)}
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#3F3656', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {u.name}
+                              </span>
+                              {selected && (
+                                <span style={{ fontSize: '0.6rem', padding: '2px 6px', background: 'rgba(143,104,255,0.18)', color: '#7A5EE0', borderRadius: 4, fontWeight: 600 }}>
+                                  当前
+                                </span>
+                              )}
+                            </div>
+                            <span style={{ fontSize: '0.63rem', color: '#8E88A6' }}>
+                              {u.birthYear && u.birthMonth && u.birthDay
+                                ? `${u.birthYear}.${String(u.birthMonth).padStart(2, '0')}.${String(u.birthDay).padStart(2, '0')}`
+                                : '生日信息未完善'}
+                              {u.gender ? ` · ${u.gender === 'male' ? '男' : u.gender === 'female' ? '女' : u.gender}` : ''}
+                            </span>
+                          </div>
+                          {selected && <Check size={12} color="#6A58C8" />}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', padding: '14px 4px 8px' }}>
+            <div>
+              <div style={{ fontSize: '2.4rem', fontWeight: 950, color: '#18B67A', letterSpacing: '-0.03em', lineHeight: 1 }}>
+                {Number(currentScore).toFixed(2)}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginTop: 8 }}>
+                <span style={{ fontSize: '0.82rem', color: '#6F6A85', fontWeight: 650 }}>
+                  当前年龄: {Math.round(selectedKline?.age ?? startAge)}岁
+                </span>
+                <span style={{ fontSize: '0.82rem', color: pct >= 0 ? '#18B67A' : '#E1526D', fontWeight: 800 }}>
+                  {pct >= 0 ? '+' : ''}{pct.toFixed(2)}%
+                </span>
+              </div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: '0.78rem', color: '#8E88A6' }}>最高 {Number(scoreMax || 0).toFixed(2)}</div>
+              <div style={{ fontSize: '0.78rem', color: '#8E88A6', marginTop: 6 }}>最低 {Number(scoreMin || 0).toFixed(2)}</div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 4px 10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
+              <button
+                type="button"
+                onClick={() => setKlineRange('1y')}
+                style={{
+                  border: 'none',
+                  background: 'transparent',
+                  padding: 0,
+                  fontSize: '0.85rem',
+                  fontWeight: klineRange === '1y' ? 900 : 650,
+                  color: klineRange === '1y' ? '#2F2B42' : '#8E88A6',
+                  position: 'relative',
+                }}
+              >
+                1y(流年)
+                {klineRange === '1y' && (
+                  <span style={{ position: 'absolute', left: 0, right: 0, bottom: -8, height: 3, borderRadius: 999, background: '#E6B400' }} />
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => setKlineRange('10y')}
+                style={{
+                  border: 'none',
+                  background: 'transparent',
+                  padding: 0,
+                  fontSize: '0.85rem',
+                  fontWeight: klineRange === '10y' ? 900 : 650,
+                  color: klineRange === '10y' ? '#2F2B42' : '#8E88A6',
+                  position: 'relative',
+                }}
+              >
+                10y(大运)
+                {klineRange === '10y' && (
+                  <span style={{ position: 'absolute', left: 0, right: 0, bottom: -8, height: 3, borderRadius: 999, background: '#E6B400' }} />
+                )}
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{
+                width: 34, height: 24, borderRadius: 8,
+                border: '1px solid rgba(145,138,173,0.18)',
+                background: 'rgba(255,255,255,0.85)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#18B67A',
+              }}>
+                <TrendingUp size={16} />
+              </div>
+            </div>
+          </div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6, position: 'relative' }}>
-          <button
-            type="button"
-            onClick={() => setChartType(prev => (prev === 'kline' ? 'bar' : 'kline'))}
+      ) : (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: isIOS ? 10 : 12 }}>
+          <Link
+            to={routeUserId ? `/result/${encodeURIComponent(routeUserId)}` : '/'}
             style={{
-              height: isIOS ? 30 : 32,
-              padding: '0 11px',
-              borderRadius: 999,
-              border: chartType === 'bar' ? '1px solid rgba(255,120,144,0.48)' : '1px solid rgba(79,152,236,0.4)',
-              background: chartType === 'bar'
-                ? 'linear-gradient(135deg, rgba(255,111,145,0.18), rgba(255,173,102,0.14), #FFFFFF)'
-                : 'linear-gradient(135deg, rgba(74,142,241,0.14), rgba(96,185,245,0.12), #FFFFFF)',
-              color: chartType === 'bar' ? '#D94F77' : '#4A73C8',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              fontSize: isIOS ? '0.66rem' : '0.7rem',
-              fontWeight: 800,
-              cursor: 'pointer',
-              boxShadow: chartType === 'bar'
-                ? '0 6px 14px rgba(255,111,145,0.22), inset 0 1px 0 rgba(255,255,255,0.74)'
-                : '0 6px 14px rgba(74,142,241,0.2), inset 0 1px 0 rgba(255,255,255,0.72)',
+              width: isIOS ? 34 : 36, height: isIOS ? 34 : 36, borderRadius: isIOS ? 11 : 12, display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              border: '1px solid rgba(145,138,173,0.24)', background: '#FFFFFF', color: '#625D79',
             }}
           >
-            {chartType === 'bar' ? <CandlestickChart size={14} /> : <BarChart3 size={14} />}
-            {chartType === 'bar' ? '切换K线图' : '返回柱状图'}
-          </button>
-          <button
-            type="button"
-            onClick={() => setShowUserMenu(v => !v)}
-            style={{
-              height: isIOS ? 30 : 32,
-              padding: '0 10px',
-              borderRadius: 999,
-              border: '1px solid rgba(128,120,160,0.25)',
-              background: '#FFFFFF',
-              color: '#625D79',
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 6,
-              fontSize: isIOS ? '0.66rem' : '0.7rem',
-              fontWeight: 700,
-              cursor: 'pointer',
-            }}
-          >
-            <Users size={14} />
-            切换用户
-            <ChevronsUpDown size={12} />
-          </button>
-          {showUserMenu && (
+            <ArrowLeft size={isIOS ? 15 : 16} />
+          </Link>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <p style={{ fontSize: isIOS ? '0.98rem' : '1.02rem', fontWeight: 800, color: '#3A3650' }}>大运走势</p>
+            <p style={{ fontSize: isIOS ? '0.72rem' : '0.75rem', color: '#8E88A6' }}>{userInfo.name} · 独立详情页</p>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, position: 'relative' }}>
+            <button
+              type="button"
+              onClick={() => setChartType(prev => (prev === 'kline' ? 'bar' : 'kline'))}
+              style={{
+                height: isIOS ? 30 : 32,
+                padding: '0 11px',
+                borderRadius: 999,
+                border: chartType === 'bar' ? '1px solid rgba(255,120,144,0.48)' : '1px solid rgba(79,152,236,0.4)',
+                background: chartType === 'bar'
+                  ? 'linear-gradient(135deg, rgba(255,111,145,0.18), rgba(255,173,102,0.14), #FFFFFF)'
+                  : 'linear-gradient(135deg, rgba(74,142,241,0.14), rgba(96,185,245,0.12), #FFFFFF)',
+                color: chartType === 'bar' ? '#D94F77' : '#4A73C8',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                fontSize: isIOS ? '0.66rem' : '0.7rem',
+                fontWeight: 800,
+                cursor: 'pointer',
+                boxShadow: chartType === 'bar'
+                  ? '0 6px 14px rgba(255,111,145,0.22), inset 0 1px 0 rgba(255,255,255,0.74)'
+                  : '0 6px 14px rgba(74,142,241,0.2), inset 0 1px 0 rgba(255,255,255,0.72)',
+              }}
+            >
+              {chartType === 'bar' ? <CandlestickChart size={14} /> : <BarChart3 size={14} />}
+              {chartType === 'bar' ? '切换K线图' : '返回柱状图'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowUserMenu(v => !v)}
+              style={{
+                height: isIOS ? 30 : 32,
+                padding: '0 10px',
+                borderRadius: 999,
+                border: '1px solid rgba(128,120,160,0.25)',
+                background: '#FFFFFF',
+                color: '#625D79',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                fontSize: isIOS ? '0.66rem' : '0.7rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              <Users size={14} />
+              切换用户
+              <ChevronsUpDown size={12} />
+            </button>
+            {showUserMenu && (
             <div style={{
               position: 'absolute',
               right: 0,
@@ -361,6 +591,7 @@ export default function DayunTrendPage() {
           )}
         </div>
       </div>
+      )}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
         {chartType === 'kline' ? (
           <DayunKLineChart
@@ -370,6 +601,8 @@ export default function DayunTrendPage() {
             dayMaster={bazi.dayMaster}
             dayElement={bazi.dayMasterElement}
             favorableElements={userInfo.favorableElements || []}
+            controlledIndex={selectedDayunIndex}
+            onIndexChange={(idx) => setSelectedDayunIndex(idx)}
           />
         ) : (
           <div style={{

@@ -3,8 +3,9 @@ import { motion } from 'framer-motion';
 import { Send, Loader2, MessageCircle, Sparkles, Trash2, BookOpen, Shirt, Gem, RefreshCw, ArrowLeft, Info, ChevronDown, Users, Gamepad2, Briefcase, TrendingUp, Eye, X } from 'lucide-react';
 import type { UserBirthInfo } from '../shared/types';
 import { SHADOW_TOKENS } from '../theme/designTokens';
+import { getOrCreateAnonUserId } from '../utils/userIdentity';
 
-const USER_ID = 'user_default';
+const USER_ID = getOrCreateAnonUserId();
 
 // 用户列表项类型
 interface UserListItem {

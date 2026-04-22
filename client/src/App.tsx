@@ -312,6 +312,7 @@ export default function App() {
         style={{
           background: preset.pageBg,
           color: COLOR_TOKENS.text.primary,
+          fontSize: isIOSDevice ? '18px' : undefined,
           minHeight: '100vh',
           position: 'relative',
           overflow: 'hidden',

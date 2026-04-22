@@ -5,6 +5,7 @@ import { Loader2, ArrowLeft, TrendingUp, Users, Heart, Activity, Sparkles, Edit2
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, ReferenceLine, Cell } from 'recharts';
 import type { UserBirthInfo, FiveElementsAnalysis, LanguageStyle } from '../shared/types';
 import { COLOR_TOKENS, SHADOW_TOKENS, RADIUS_TOKENS } from '../theme/designTokens';
+import { getOrCreateAnonUserId } from '../utils/userIdentity';
 
 const ELEMENT_NAMES: Record<string, string> = { wood: '木', fire: '火', earth: '土', metal: '金', water: '水' };
 const ELEMENT_COLORS: Record<string, string> = {
@@ -15,7 +16,7 @@ const ELEMENT_BG: Record<string, string> = {
   wood: 'rgba(0,196,122,0.12)', fire: 'rgba(255,107,107,0.12)',
   earth: 'rgba(212,160,0,0.12)', metal: 'rgba(123,143,168,0.12)', water: 'rgba(0,168,232,0.12)',
 };
-const USER_ID = 'user_default';
+const USER_ID = getOrCreateAnonUserId();
 
 const PALETTE = {
   coral: COLOR_TOKENS.brand.coral, coralLight: 'rgba(255,107,157,0.1)',
@@ -1376,12 +1377,27 @@ function getLiuNianGanZhi(year: number): string {
 }
 
 // 参考图样式K线图组件
-export function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElement, favorableElements }: { 
-  data: CandlestickData[]; startAge: number; userInfo: UserBirthInfo;
-  dayMaster?: string; dayElement?: string; favorableElements?: string[];
+export function DayunKLineChart({
+  data,
+  startAge,
+  userInfo,
+  dayMaster,
+  dayElement,
+  favorableElements,
+  controlledIndex,
+  onIndexChange,
+}: {
+  data: CandlestickData[];
+  startAge: number;
+  userInfo: UserBirthInfo;
+  dayMaster?: string;
+  dayElement?: string;
+  favorableElements?: string[];
+  controlledIndex?: number | null;
+  onIndexChange?: (idx: number) => void;
 }) {
   const isIOSCompact = typeof navigator !== 'undefined' && /iP(hone|od|ad)/i.test(navigator.userAgent);
-  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+  const [uncontrolledSelectedIndex, setUncontrolledSelectedIndex] = useState<number | null>(null);
   const [showYearlyChart, setShowYearlyChart] = useState(false);
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
 
@@ -1516,17 +1532,32 @@ export function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElemen
     return { career, fortune, marriage, health };
   };
 
+  const selectedIndex = controlledIndex !== undefined ? controlledIndex : uncontrolledSelectedIndex;
+  const setSelectedIndex = (idx: number | null) => {
+    if (idx === null) {
+      setUncontrolledSelectedIndex(null);
+      return;
+    }
+    if (controlledIndex !== undefined) {
+      onIndexChange?.(idx);
+      return;
+    }
+    setUncontrolledSelectedIndex(idx);
+  };
+
   const selectedDayun = selectedIndex !== null ? data[selectedIndex] : null;
   const yearlyData = selectedDayun ? generateYearlyData(selectedDayun) : [];
 
   // K线图与卡片横向对齐的参数
-  const itemWidth = 100;     // 每个大运项宽度（蜡烛+下方卡片一致）
-  const gap = 16;            // 间距
-  const chartHeight = 240;    // K线图高度
-  const paddingLeft = 20;     // 左边距
-  const paddingRight = 20;    // 右边距
-  const paddingTop = 28;
-  const paddingBottom = 64;   // 底部给标签留空间
+  // iOS 下不要用 viewBox 等比缩放整张图（会导致“整体变小”），而是直接把每根K线做得更窄、间距更紧，
+  // 让 totalWidth 接近屏幕宽度，从而在移动端保持足够大的可视高度与笔画粗细。
+  const itemWidth = isIOSCompact ? 34 : 100;      // 每个大运项宽度（蜡烛+下方卡片一致）
+  const gap = isIOSCompact ? 10 : 16;             // 间距
+  const chartHeight = isIOSCompact ? 320 : 240;   // K线图高度
+  const paddingLeft = isIOSCompact ? 12 : 20;     // 左边距
+  const paddingRight = isIOSCompact ? 12 : 20;    // 右边距
+  const paddingTop = isIOSCompact ? 22 : 28;
+  const paddingBottom = isIOSCompact ? 52 : 64;   // 底部给标签留空间
   const minScore = 0;         // Y轴0-100
   const maxScore = 100;
 
@@ -1565,10 +1596,11 @@ export function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElemen
       </div>
 
       {/* ── K线图 ── */}
-      <div style={{ width: '100%', overflowX: isIOSCompact ? 'hidden' : 'auto', overflowY: 'visible', padding: '10px 16px 12px' }}>
+      <div style={{ width: '100%', overflowX: isIOSCompact ? 'hidden' : 'auto', overflowY: 'visible', padding: isIOSCompact ? '10px 12px 12px' : '10px 16px 12px' }}>
         <svg
           width={isIOSCompact ? '100%' : totalWidth}
           height={chartHeight}
+          // iOS 下 totalWidth 设计为接近屏宽，因此保持 1:1 渲染，不再出现“整张图被缩小”的问题
           viewBox={isIOSCompact ? `0 0 ${totalWidth} ${chartHeight}` : undefined}
           preserveAspectRatio={isIOSCompact ? 'xMidYMid meet' : undefined}
           style={{ display: 'block', minWidth: isIOSCompact ? undefined : totalWidth, overflow: 'visible' }}
@@ -1578,13 +1610,13 @@ export function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElemen
             <g key={v}>
               <line
                 x1={paddingLeft} y1={scaleY(v)} x2={totalWidth - paddingRight} y2={scaleY(v)}
-                stroke={GRID_COLOR} strokeWidth={1} strokeDasharray="4 4"
+                stroke={GRID_COLOR} strokeWidth={1} strokeDasharray={isIOSCompact ? "3 4" : "4 4"}
               />
               {/* 左侧Y轴刻度 */}
               <text
                 x={paddingLeft - 6} y={scaleY(v) + 4}
                 textAnchor="end"
-                style={{ fontFamily: 'Outfit, sans-serif', fontSize: 9, fill: TEXT_COLOR }}
+                style={{ fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? 10 : 9, fill: TEXT_COLOR }}
               >
                 {v}
               </text>
@@ -1596,13 +1628,13 @@ export function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElemen
             const x = paddingLeft + i * (itemWidth + gap) + itemWidth / 2;
             const prev = i > 0 ? data[i - 1] : null;
             if (!prev) return (
-              <circle key={`ma-${i}`} cx={x} cy={scaleY(d.score)} r={3} fill={MA_COLOR} />
+              <circle key={`ma-${i}`} cx={x} cy={scaleY(d.score)} r={isIOSCompact ? 3.5 : 3} fill={MA_COLOR} />
             );
             const prevX = paddingLeft + (i - 1) * (itemWidth + gap) + itemWidth / 2;
             return (
               <g key={`ma-${i}`}>
-                <line x1={prevX} y1={scaleY(prev.score)} x2={x} y2={scaleY(d.score)} stroke={MA_COLOR} strokeWidth={1.5} />
-                <circle cx={x} cy={scaleY(d.score)} r={3} fill={MA_COLOR} />
+                <line x1={prevX} y1={scaleY(prev.score)} x2={x} y2={scaleY(d.score)} stroke={MA_COLOR} strokeWidth={isIOSCompact ? 2.2 : 1.5} />
+                <circle cx={x} cy={scaleY(d.score)} r={isIOSCompact ? 3.5 : 3} fill={MA_COLOR} />
               </g>
             );
           })}
@@ -1619,6 +1651,9 @@ export function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElemen
             // 60分以上红色（吉运），60分以下绿色（平/逆）
             const color = d.score >= 60 ? UP_COLOR : DOWN_COLOR;
             const isSelected = selectedIndex === i;
+            const bodyInset = isIOSCompact ? 9 : 30;
+            const bodyWidth = Math.max(10, itemWidth - bodyInset * 2);
+            const wickWidth = isIOSCompact ? 2.2 : 1.5;
 
             return (
               <g key={d.ganZhi} onClick={() => setSelectedIndex(i)} style={{ cursor: 'pointer' }}>
@@ -1631,26 +1666,26 @@ export function DayunKLineChart({ data, startAge, userInfo, dayMaster, dayElemen
                   />
                 )}
                 {/* 影线 */}
-                <line x1={cx} y1={wickTop} x2={cx} y2={bodyTop} stroke={color} strokeWidth={1.5} />
-                <line x1={cx} y1={bodyBottom} x2={cx} y2={wickBottom} stroke={color} strokeWidth={1.5} />
+                <line x1={cx} y1={wickTop} x2={cx} y2={bodyTop} stroke={color} strokeWidth={wickWidth} />
+                <line x1={cx} y1={bodyBottom} x2={cx} y2={wickBottom} stroke={color} strokeWidth={wickWidth} />
                 {/* 蜡烛体 */}
                 <rect
-                  x={x + 30} y={bodyTop} width={itemWidth - 60} height={bodyH}
+                  x={x + bodyInset} y={bodyTop} width={bodyWidth} height={bodyH}
                   fill={color} rx={2}
                 />
                 {/* X轴标签：年龄 */}
                 <text
-                  x={cx} y={chartHeight - 28}
+                  x={cx} y={chartHeight - (isIOSCompact ? 30 : 28)}
                   textAnchor="middle"
-                  style={{ fontFamily: 'Outfit, sans-serif', fontSize: 11, fontWeight: 500, fill: LABEL_COLOR }}
+                  style={{ fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? 11 : 11, fontWeight: 600, fill: LABEL_COLOR }}
                 >
                   {Math.round(d.age)}岁
                 </text>
                 {/* X轴标签：干支 */}
                 <text
-                  x={cx} y={chartHeight - 14}
+                  x={cx} y={chartHeight - (isIOSCompact ? 14 : 14)}
                   textAnchor="middle"
-                  style={{ fontFamily: 'Outfit, sans-serif', fontSize: 10, fill: TEXT_COLOR }}
+                  style={{ fontFamily: 'Outfit, sans-serif', fontSize: isIOSCompact ? 10 : 10, fill: TEXT_COLOR }}
                 >
                   {d.ganZhi}
                 </text>

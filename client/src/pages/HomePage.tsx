@@ -12,6 +12,7 @@ import {
 import type { UserBirthInfoListItem, UserBirthInfo, OutfitRecommendation, BraceletRecommendation, DailyFortune } from './types';
 import type { LanguageStyle } from '../shared/types';
 import { getFortuneAnalysis } from './ResultPage';
+import { getOrCreateAnonUserId } from '../utils/userIdentity';
 
 // ── 多巴胺配色系统 ──
 const PALETTE = {
@@ -23,7 +24,7 @@ const PALETTE = {
   purple: '#8F68FF', purpleLight: 'rgba(143,104,255,0.14)',
 };
 
-const USER_ID = 'user_default';
+const USER_ID = getOrCreateAnonUserId();
 
 // 中国主要城市列表
 const MAJOR_CITIES = [
@@ -1199,6 +1200,22 @@ export default function HomePage() {
   const getFortuneAdvice = (): string => {
     if (!dailyFortune) return '';
     const { totalScore, totalLabel, dayRelation, mainTip, luckyColor, luckyDirection, luckyTime, careerScore, wealthScore, loveScore, healthScore } = dailyFortune;
+    const bazi: any = previewInfo?.baziResult || {};
+    const dayMaster = String(bazi?.dayMaster || '').trim();
+    const dayElRaw = String(bazi?.dayMasterElement || '').trim();
+    const elementMap: Record<string, string> = { wood: '木', fire: '火', earth: '土', metal: '金', water: '水', 木: '木', 火: '火', 土: '土', 金: '金', 水: '水' };
+    const dayEl = elementMap[dayElRaw.toLowerCase()] || elementMap[dayElRaw] || dayElRaw;
+
+    const dayMasterPlaybook = (el: string) => {
+      if (el === '木') return { focus: '推进计划与输出成果', avoid: '情绪闷着不说', tone: '生发' };
+      if (el === '火') return { focus: '曝光表达与关键沟通', avoid: '冲动拍板', tone: '热场' };
+      if (el === '土') return { focus: '稳住节奏与落地执行', avoid: '拖延与内耗', tone: '稳盘' };
+      if (el === '金') return { focus: '做减法与定规则', avoid: '硬刚人情', tone: '决断' };
+      if (el === '水') return { focus: '学习吸收与灵活调整', avoid: '分心乱跑', tone: '流动' };
+      return { focus: '稳步推进核心事项', avoid: '分散精力', tone: '平衡' };
+    };
+    const pb = dayMasterPlaybook(dayEl);
+
     const dims = [
       { name: '事业', score: careerScore },
       { name: '财运', score: wealthScore },
@@ -1224,7 +1241,13 @@ export default function HomePage() {
     }
 
     // 流日提示
-    const relationTip = dayRelation ? `流日${dayRelation}，${mainTip?.slice(0, 20) || ''}` : '';
+    const shortTip = (text?: string, max = 18) => {
+      if (!text) return '';
+      const cleaned = String(text).replace(/[。！!]+/g, '').trim();
+      const first = cleaned.split(/[，、；;]/).find(Boolean) || cleaned;
+      return first.slice(0, max);
+    };
+    const relationTip = dayRelation ? `流日${dayRelation}，${shortTip(mainTip, 18)}` : '';
 
     // 幸运要素
     const luckyStr = luckyColor?.name ? `幸运色${luckyColor.name}` : '';
@@ -1232,7 +1255,13 @@ export default function HomePage() {
     const timeStr = luckyTime ? `旺时${luckyTime}` : '';
     const luckyParts = [luckyStr, dirStr, timeStr].filter(Boolean);
 
-    return `${tone}。${strategy}${relationTip ? ' ' + relationTip + '。' : ''}${luckyParts.length ? ' · ' + luckyParts.join('·') : ''}`;
+    const masterLine = (dayMaster || dayEl)
+      ? `${dayMaster ? `${dayMaster}日主` : ''}${dayEl ? `${dayEl ? (dayMaster ? '·' : '') + dayEl : ''}` : ''}偏${pb.tone}：主打${pb.focus}，少做${pb.avoid}。`
+      : `今日主打${pb.focus}，少做${pb.avoid}。`;
+
+    const bestLine = `今天更适合先抓${best.name}（${best.score}分），${worst.name}（${worst.score}分）放慢一点。`;
+
+    return `${masterLine}${relationTip ? ` ${relationTip}。` : ''}${luckyParts.length ? ` ${luckyParts.join('·')}。` : ''}${tone}。${bestLine}`;
   };
 
   // 动态生成「今日配色主张」文案
@@ -1959,60 +1988,7 @@ export default function HomePage() {
           </motion.div>
         )}
 
-        {/* 移动端分页指示器：支持点击切换四张主卡片 */}
-        {!navWideLayout && selectedRecord && activeSection && (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            margin: '-4px 0 10px',
-          }}>
-            <div style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '1px',
-              padding: '1px 2px',
-              borderRadius: '999px',
-              background: 'linear-gradient(145deg, rgba(255,255,255,0.64), rgba(244,241,252,0.5))',
-              border: '1px solid rgba(176, 168, 206, 0.2)',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
-              boxShadow: '0 1px 3px rgba(86, 78, 132, 0.08), inset 0 1px 0 rgba(255,255,255,0.5)',
-            }}>
-              {sectionOrder.map((sec) => {
-                const active = activeSection === sec;
-                const labels: Record<SectionKey, string> = {
-                  mingpan: '命盘信息',
-                  fortune: '今日运势',
-                  outfit: '今日色彩',
-                  bracelet: '今日手串',
-                };
-                return (
-                  <button
-                    key={sec}
-                    type="button"
-                    onClick={() => switchSection(sec)}
-                    aria-label={`切换到${labels[sec]}`}
-                    style={{
-                      width: active ? '4px' : '1px',
-                      height: active ? '2px' : '1px',
-                      borderRadius: '999px',
-                      border: 'none',
-                      background: active
-                        ? 'linear-gradient(135deg, rgba(143,104,255,0.95), rgba(44,203,255,0.95))'
-                        : 'rgba(164, 160, 186, 0.18)',
-                      boxShadow: active ? '0 1px 3px rgba(95, 102, 190, 0.2)' : 'none',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      padding: 0,
-                    }}
-                    title={labels[sec]}
-                  />
-                );
-              })}
-            </div>
-          </div>
-        )}
+        {/* 移动端分页指示器已移除（按产品要求） */}
 
         {/* ​—​ 第二行：用户详情 + 命盘信息 + 今日运势（选中用户时显示） —​ */}
         {(activeSection === 'mingpan' || activeSection === 'fortune' || activeSection === null) && selectedRecord && (

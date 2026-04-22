@@ -48,11 +48,12 @@ export const IOS_TOKENS = {
     pill: '9999px',
   },
   typography: {
-    navLabel: '0.68rem',
-    title: '1.02rem',
-    subtitle: '0.74rem',
-    body: '0.88rem',
-    caption: '0.68rem',
+    // iOS: bump typography by ~2px (user request: "等比调大2号")
+    navLabel: '0.805rem',
+    title: '1.145rem',
+    subtitle: '0.865rem',
+    body: '1.005rem',
+    caption: '0.805rem',
   },
   blur: {
     nav: 'blur(16px)',
