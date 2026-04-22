@@ -1,25 +1,34 @@
 import { useState } from 'react';
 
 export default function FeedbackPage() {
-  // 保存输入框中的反馈内容，默认值为空字符串。
   const [feedbackText, setFeedbackText] = useState('');
-
-  // 保存提交后的状态提示，用于向用户反馈提交结果。
   const [submitMessage, setSubmitMessage] = useState('');
+  const feedbackEmail = String((import.meta as any)?.env?.VITE_FEEDBACK_EMAIL || '').trim();
 
-  // 处理反馈提交事件，当前先做前端提示，后续可接入后端接口。
   const handleSubmit = () => {
-    // 如果用户没有填写内容，直接提示并阻止“空提交”。
     if (!feedbackText.trim()) {
       setSubmitMessage('请先填写反馈内容后再提交。');
       return;
     }
 
-    // 临时反馈提示：当前版本先展示成功信息，便于快速上线反馈入口。
-    setSubmitMessage('感谢你的反馈！我们会尽快查看并优化。');
+    if (!feedbackEmail) {
+      setSubmitMessage('反馈邮箱未配置，请先在环境变量中设置 VITE_FEEDBACK_EMAIL。');
+      return;
+    }
 
-    // 提交后清空输入框，方便用户继续提交新的建议。
-    setFeedbackText('');
+    const subject = encodeURIComponent('五行色彩搭配 - 用户反馈');
+    const body = encodeURIComponent(
+      [
+        feedbackText.trim(),
+        '',
+        '---',
+        `Page: ${window.location.href}`,
+        `UA: ${navigator.userAgent}`,
+        `Time: ${new Date().toISOString()}`,
+      ].join('\n'),
+    );
+    window.location.href = `mailto:${feedbackEmail}?subject=${subject}&body=${body}`;
+    setSubmitMessage(`已打开邮箱客户端，收件人：${feedbackEmail}`);
   };
 
   return (
@@ -45,16 +54,24 @@ export default function FeedbackPage() {
         style={{
           color: '#6e667f',
           lineHeight: 1.7,
-          marginBottom: '16px',
+          marginBottom: '8px',
         }}
       >
         欢迎告诉我们你在使用过程中的问题或建议，你的反馈会帮助我们持续改进。
+      </p>
+      <p
+        style={{
+          color: '#6e667f',
+          fontSize: '0.88rem',
+          marginBottom: '16px',
+        }}
+      >
+        反馈邮箱：{feedbackEmail || '未配置（请设置 VITE_FEEDBACK_EMAIL）'}
       </p>
 
       <textarea
         value={feedbackText}
         onChange={(event) => {
-          // 监听输入内容变化，并实时同步到状态。
           setFeedbackText(event.target.value);
         }}
         placeholder="请输入你的反馈内容..."
@@ -88,7 +105,7 @@ export default function FeedbackPage() {
           boxShadow: '0 10px 20px rgba(127, 141, 248, 0.28)',
         }}
       >
-        提交反馈
+        发送到邮箱
       </button>
 
       {submitMessage ? (

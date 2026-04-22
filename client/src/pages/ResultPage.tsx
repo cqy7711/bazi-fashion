@@ -1547,6 +1547,12 @@ export function DayunKLineChart({
 
   const selectedDayun = selectedIndex !== null ? data[selectedIndex] : null;
   const yearlyData = selectedDayun ? generateYearlyData(selectedDayun) : [];
+  const scrollToYearlySection = () => {
+    if (typeof window === 'undefined') return;
+    window.setTimeout(() => {
+      document.getElementById('sec-liuyear')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 140);
+  };
 
   // K线图与卡片横向对齐的参数
   // iOS 下不要用 viewBox 等比缩放整张图（会导致“整体变小”），而是直接把每根K线做得更窄、间距更紧，
@@ -1717,6 +1723,7 @@ export function DayunKLineChart({
                 onClick={() => {
                   if (isFuture) return;
                   setSelectedIndex(i);
+                  scrollToYearlySection();
                 }}
                 style={{
                   flexShrink: 0,

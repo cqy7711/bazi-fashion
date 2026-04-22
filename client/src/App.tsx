@@ -412,7 +412,24 @@ export default function App() {
                 color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: '0.8rem', fontWeight: 700,
               }}>☯</div>
-              <span style={{ fontSize: IOS_TOKENS.typography.title, fontWeight: 700, color: '#2F2B40' }}>五行 App</span>
+              <span
+                style={{
+                  fontSize: IOS_TOKENS.typography.title,
+                  fontWeight: 650,
+                  letterSpacing: '0.015em',
+                  color: '#2F2B40',
+                  display: 'inline-flex',
+                  alignItems: 'baseline',
+                  gap: '0.18em',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <span style={{ color: '#2F2B40' }}>WUXING</span>
+                <span style={{ color: '#A79FC2', fontWeight: 500 }}>·</span>
+                <span style={{ color: '#6A7DE3' }}>COLOR</span>
+                <span style={{ color: '#A79FC2', fontWeight: 500 }}>·</span>
+                <span style={{ color: '#AA65D8' }}>FORTUNE</span>
+              </span>
             </div>
             <span style={{ fontSize: IOS_TOKENS.typography.caption, color: '#8E88A6' }}>iOS Edition</span>
           </div>
